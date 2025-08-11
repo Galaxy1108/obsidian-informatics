@@ -4,33 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "656c7ee8c412aec2",
+        "id": "d28f0603f6099cce",
         "type": "tabs",
         "children": [
           {
-            "id": "19a1a619cc8caee3",
+            "id": "52655744b5b1a5c3",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "solution/2025.08.11.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "2025.08.11"
-            }
-          },
-          {
-            "id": "cb478971e68b81a0",
-            "type": "leaf",
-            "state": {
-              "type": "pdf",
-              "state": {
-                "file": "contest/2025.07.24/statement.pdf"
-              },
-              "icon": "lucide-file-text",
-              "title": "statement"
+              "title": "新标签页"
             }
           }
         ]
@@ -182,16 +166,16 @@
       "vscode-editor:新建代码文件": false
     }
   },
-  "active": "8aa6b3db535cb52b",
+  "active": "52655744b5b1a5c3",
   "lastOpenFiles": [
+    "contest/2025.07.24/statement.pdf",
+    "solution/2025.08.11.md",
     "contest/2024.08.29/source/data",
     "contest/data",
     "gitignore",
-    "solution/2025.08.11.md",
     "contest/2025.07.24/solution.pdf",
     "solution/2025.07.23.md",
     "solution/2025.07.24.md",
-    "contest/2025.07.24/statement.pdf",
     "solution/2025.07.22.md",
     "solution/2025.07.21.md",
     "solution/2025.07.19.md",
@@ -200,7 +184,6 @@
     "contest/2025.07.24/source/齐冠宇7.24/ruin/chk.cpp",
     "contest/2025.07.24/source/齐冠宇7.24/ruin",
     "contest/2025.07.24/source/齐冠宇7.24/mex/mex.cpp",
-    "contest/2025.07.24/source/齐冠宇7.24/mex",
     "knowledge/复杂动态规划模型的构建.md",
     "knowledge/动态规划-N.md",
     "solution/P11830.md",
