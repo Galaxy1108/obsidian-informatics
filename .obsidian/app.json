@@ -1,0 +1,12 @@
+{
+  "trashOption": "local",
+  "legacyEditor": false,
+  "alwaysUpdateLinks": true,
+  "showUnsupportedFiles": true,
+  "pdfExportSettings": {
+    "pageSize": "A4",
+    "landscape": false,
+    "margin": "0",
+    "downscalePercent": 100
+  }
+}

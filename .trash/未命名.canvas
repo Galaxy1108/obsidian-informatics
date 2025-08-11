@@ -1,0 +1,9 @@
+{
+	"nodes":[
+		{"id":"89683e6fca6b29d3","x":-95,"y":-358,"width":250,"height":60,"type":"text","text":"114515"},
+		{"id":"3f7756c0ffc4d891","x":-120,"y":-260,"width":400,"height":400,"type":"link","url":"https://www.luogu.com.cn"}
+	],
+	"edges":[
+		{"id":"9719af865811b836","fromNode":"3f7756c0ffc4d891","fromSide":"top","toNode":"89683e6fca6b29d3","toSide":"bottom"}
+	]
+}

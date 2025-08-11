@@ -1,0 +1,51 @@
+{
+  "collapse-filter": false,
+  "search": "path:knowledge  ",
+  "showTags": false,
+  "showAttachments": false,
+  "hideUnresolved": false,
+  "showOrphans": true,
+  "collapse-color-groups": false,
+  "colorGroups": [
+    {
+      "query": "[\"熟练度\":t1]",
+      "color": {
+        "a": 1,
+        "rgb": 16711680
+      }
+    },
+    {
+      "query": "[\"熟练度\":t2]",
+      "color": {
+        "a": 1,
+        "rgb": 16766208
+      }
+    },
+    {
+      "query": "[\"熟练度\":t3]",
+      "color": {
+        "a": 1,
+        "rgb": 65518
+      }
+    },
+    {
+      "query": "path:solution  ",
+      "color": {
+        "a": 1,
+        "rgb": 5399264
+      }
+    }
+  ],
+  "collapse-display": false,
+  "showArrow": false,
+  "textFadeMultiplier": -2,
+  "nodeSizeMultiplier": 1.00155925155925,
+  "lineSizeMultiplier": 1.00155925155925,
+  "collapse-forces": false,
+  "centerStrength": 0.518713248970312,
+  "repelStrength": 20,
+  "linkStrength": 1,
+  "linkDistance": 250,
+  "scale": 0.0078125,
+  "close": true
+}

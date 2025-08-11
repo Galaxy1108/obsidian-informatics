@@ -1,0 +1,33 @@
+#include<bits/stdc++.h>
+#define int long long
+#define N 200000
+#define Q 1000000
+using namespace std;
+int read(){
+	int f=1,g=0;
+	char ch=getchar();
+	while(ch<'0'||ch>'9'){
+		if(ch=='-')f=-1;
+		ch=getchar();
+	}
+	while('0'<=ch&&ch<='9'){
+		g=g*10+ch-'0';
+		ch=getchar();
+	}
+	return f*g;
+}
+void print(int x){
+	if(x<0){
+		putchar('-');
+		x*=-1;
+	}
+	if(x>9)print(x/10);
+	putchar(x%10+'0');
+	return;
+}
+main(){
+	freopen("wildboar.in","r",stdin);
+	freopen("wildboar.out","w",stdout);
+	print(-1);
+	return 0;
+}

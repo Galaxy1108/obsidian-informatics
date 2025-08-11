@@ -1,0 +1,229 @@
+{
+  "main": {
+    "id": "28830a306f1b5476",
+    "type": "split",
+    "children": [
+      {
+        "id": "656c7ee8c412aec2",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "19a1a619cc8caee3",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "solution/2025.08.11.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "2025.08.11"
+            }
+          },
+          {
+            "id": "cb478971e68b81a0",
+            "type": "leaf",
+            "state": {
+              "type": "pdf",
+              "state": {
+                "file": "contest/2025.07.24/statement.pdf"
+              },
+              "icon": "lucide-file-text",
+              "title": "statement"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "009a26eab6535a0a",
+    "type": "split",
+    "children": [
+      {
+        "id": "79d35324ba8ef8ec",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "8aa6b3db535cb52b",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": true
+              },
+              "icon": "lucide-folder-closed",
+              "title": "文件列表"
+            }
+          },
+          {
+            "id": "3c6c04822fcebae3",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "动态规划",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "搜索"
+            }
+          },
+          {
+            "id": "963927c3dd414dcc",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "书签"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 307.5
+  },
+  "right": {
+    "id": "09738040cfb4ad52",
+    "type": "split",
+    "children": [
+      {
+        "id": "638b3e7560e0ab50",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "9c216d4a277f9a68",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "启发式搜索.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": false
+              },
+              "icon": "links-coming-in",
+              "title": "启发式搜索 的反向链接列表"
+            }
+          },
+          {
+            "id": "5edb26d09a7695d7",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "标签"
+            }
+          },
+          {
+            "id": "081bfdb4991409c8",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "题解/2025.3.8 T2.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "2025.3.8 T2 的大纲"
+            }
+          },
+          {
+            "id": "55a7407db70d2bb6",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "solution/2025.07.21.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": false
+              },
+              "icon": "links-going-out",
+              "title": "2025.07.21 的出链列表"
+            }
+          }
+        ],
+        "currentTab": 3
+      }
+    ],
+    "direction": "horizontal",
+    "width": 348.5,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:打开快速切换": false,
+      "graph:查看关系图谱": false,
+      "canvas:新建白板": false,
+      "daily-notes:打开/创建今天的日记": false,
+      "templates:插入模板": false,
+      "command-palette:打开命令面板": false,
+      "vscode-editor:新建代码文件": false
+    }
+  },
+  "active": "8aa6b3db535cb52b",
+  "lastOpenFiles": [
+    "contest/2024.08.29/source/data",
+    "contest/data",
+    "gitignore",
+    "solution/2025.08.11.md",
+    "contest/2025.07.24/solution.pdf",
+    "solution/2025.07.23.md",
+    "solution/2025.07.24.md",
+    "contest/2025.07.24/statement.pdf",
+    "solution/2025.07.22.md",
+    "solution/2025.07.21.md",
+    "solution/2025.07.19.md",
+    "contest/2025.07.23/statement.pdf",
+    "contest/2025.07.24/source/齐冠宇7.24/ruin/testlib.h",
+    "contest/2025.07.24/source/齐冠宇7.24/ruin/chk.cpp",
+    "contest/2025.07.24/source/齐冠宇7.24/ruin",
+    "contest/2025.07.24/source/齐冠宇7.24/mex/mex.cpp",
+    "contest/2025.07.24/source/齐冠宇7.24/mex",
+    "knowledge/复杂动态规划模型的构建.md",
+    "knowledge/动态规划-N.md",
+    "solution/P11830.md",
+    "随机变量的期望与方差.md",
+    "knowledge/动态规划的常用优化.md",
+    "knowledge/动态规划-提.md",
+    "knowledge/莫比乌斯反演.md",
+    "knowledge/数论分块.md",
+    "knowledge/向量空间与线性相关.md",
+    "knowledge/斯特林（Stirling）数.md",
+    "contest/2025.07.19/statement.md",
+    "contest/2025.07.19/solution.md",
+    "knowledge/容斥原理.md",
+    "knowledge/初等数论-N.md",
+    "knowledge/数学与其他-N.md",
+    "knowledge/初等数论-提.md",
+    "knowledge/数学与其他-提.md",
+    "knowledge/离散与组合数学-N.md",
+    "knowledge/离散与组合数学-提.md",
+    "未命名.canvas",
+    "contest/2024.09.16/p1.png",
+    "contest/2024.09.16/p3.png",
+    "contest/2024.09.16/p2.png",
+    "contest/2024.09.15/9.15 easydp/source/胡昊泽/stack/ans.png"
+  ]
+}
