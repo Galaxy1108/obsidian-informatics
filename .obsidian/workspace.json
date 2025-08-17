@@ -14,7 +14,21 @@
               "type": "empty",
               "state": {},
               "icon": "lucide-file",
-              "title": "新标签页"
+              "title": "statement"
+            }
+          },
+          {
+            "id": "64c366cab003c55c",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "solution/2025.08.15.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "2025.08.15"
             }
           }
         ]
@@ -74,7 +88,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 307.5
+    "width": 200
   },
   "right": {
     "id": "09738040cfb4ad52",
@@ -161,7 +175,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 256.5
+    "width": 636.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -177,7 +191,9 @@
   },
   "active": "067d0038fc805fb0",
   "lastOpenFiles": [
-    "knowledge/倍增法.md",
+    "未命名.md",
+    "solution/2025.08.15.md",
+    "solution/2025.08.14.md",
     "contest/2025.08.14/source/齐冠宇/rabbit/rabbit.cpp",
     "contest/2025.08.14/source/齐冠宇/lcm/lcm.cpp",
     "contest/2025.08.14/source/齐冠宇/calc/calc.cpp",
@@ -190,8 +206,6 @@
     "contest/2025.08.14/source/马姚源/rabbit/rabbit.out",
     "contest/2025.08.14/statement.md",
     "contest/2025.08.14/solution.md",
-    "未命名.md",
-    "solution/2025.08.14.md",
     "contest/2025.08.11/statement.md",
     "solution/2025.07.19.md",
     "solution/2025.07.24.md",
