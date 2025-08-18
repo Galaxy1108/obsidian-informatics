@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "e7dad3bb03e82229",
+        "id": "c3ef81521b6697eb",
         "type": "tabs",
         "children": [
           {
-            "id": "6293935a0cf366de",
+            "id": "067d0038fc805fb0",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "contest/2025.08.11/statement.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "statement"
+              "title": "新标签页"
             }
           },
           {
@@ -35,8 +31,7 @@
               "title": "2025.08.15"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -194,7 +189,7 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "30b0cdcb450af4d2",
+  "active": "067d0038fc805fb0",
   "lastOpenFiles": [
     "未命名.md",
     "solution/2025.08.15.md",
