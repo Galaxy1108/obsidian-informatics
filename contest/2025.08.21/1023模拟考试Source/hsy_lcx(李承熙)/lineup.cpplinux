@@ -1,0 +1,46 @@
+#include<bits/stdc++.h>
+using namespace std;
+inline int qread()
+{
+	register int a=0,f=1;register char ch=getchar();
+	while(ch>'9'||ch<'0'){if(ch=='-')f=-1;ch=getchar();}
+	while(ch>='0'&&ch<='9'){(a*=10)+=(ch^48);ch=getchar();}
+	return a*f;
+}
+int n,pos[100010],p,ans,id;
+struct poin
+{
+	int h,id;
+}a[100010],b[100010];
+inline bool cmp(poin x,poin y){return x.h==y.h?x.id<y.id:x.h<y.h;}
+int main()
+{
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	n=qread();
+	for(register int i=1;i<=n;++i)b[i].h=a[i].h=qread(),a[i].id=b[i].id=i;
+	sort(b+1,b+1+n,cmp);
+	for(register int i=1;i<=n;++i)pos[b[i].id]=i;
+	for(register int i=n*n;i;--i)
+	{
+		for(register int j=n;j;--j)
+		{
+			id=a[j].id;
+			p=j;
+			if(pos[id]<j)
+			{
+				for(register int k=j-1;k;--k)
+				{
+					if(pos[a[k].id]>=p&&k>=pos[id])
+					{
+						swap(a[p],a[k]);
+						ans+=abs(p-k);
+						p=k;
+					}
+				}
+			}
+		}
+	}
+	printf("%d",ans*2);
+	return 0;
+}

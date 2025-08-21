@@ -1,0 +1,44 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+#define int long long
+#define MAXN 205
+int n,vis[MAXN] = {0};
+
+int gcd( int a , int b ){
+	return b ? gcd( b , a % b ) : a;
+}
+
+signed main(){
+	freopen("divisors.in","r",stdin);
+	freopen("divisors.out","w",stdout);
+	scanf("%lld",&n);
+	int t1 = 2,t2 = 3;
+	vis[3] = 1;
+	for( int i = 1 ; i <= n - 1 ; i ++ ){
+		printf("%lld ",t1 * t2);
+		int flag = 0;
+		for( int j = 2 ; j <= n ; j ++ ){
+			if( !vis[j] && gcd( j , t1 ) == 1 ){
+				t1 = t2,t2 = j;
+				flag = 1;
+				break;
+			}
+		}
+		if( !flag ){
+			for( int j = 2 ; j <= n ; j ++ ){
+				if( !vis[j] ){
+					t1 = t2;
+					t2 = j;
+				}
+			}
+		}
+	}
+	printf("%lld\n",t2);
+	for( int i = 1 ; i <= n - 1 ; i ++ ){
+		printf("%lld %lld\n",i,i + 1);
+	}
+	fclose(stdin);
+	fclose(stdout);
+	return 0;
+}

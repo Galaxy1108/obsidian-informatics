@@ -1,0 +1,37 @@
+#include <bits/stdc++.h>
+using namespace std;
+int n;
+struct ed{
+	int id,val;
+}a[101];
+inline int read(){
+	int x=0,f=1;
+	char g=getchar();
+	while(!isdigit(g)){
+		if(g=='-')f=-f;
+		g=getchar();
+	}
+	while(isdigit(g)){
+		x=(x<<3)+(x<<1)+(g^48);
+		g=getchar();
+	}
+	return x*f;
+}
+bool cmp(ed c,ed d){
+	if(c.val!=d.val)return c.val<d.val;
+	else return c.id<d.id;
+}
+int main(){
+	 freopen("lineup.in","r",stdin);
+    freopen("lineup.out","w",stdout);
+	n=read();
+	for(int i=1;i<=n;++i){
+		a[i].val=read();
+		a[i].id=i;
+	}
+	int sum=0;
+	sort(a+1,a+n+1,cmp);
+	for(int i=1;i<=n;++i)sum+=abs(a[i].id-i);
+	cout<<sum<<endl;
+	return 0;
+}

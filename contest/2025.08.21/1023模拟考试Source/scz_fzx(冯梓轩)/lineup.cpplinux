@@ -1,0 +1,37 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long
+inline int read(){
+	int x=0;char ch=getchar();
+	while(!isdigit(ch))ch=getchar();
+	while(isdigit(ch))x=(x<<3)+(x<<1)+(ch^48),ch=getchar();
+	return x;
+}
+inline void write(ll x){
+	if(x>9)write(x/10);
+	putchar(x%10|48);
+}
+inline void writeln(ll x){
+	write(x),putchar('\n');
+}
+struct node{
+	int id,h;
+}a[55];
+bool cmp(node ax,node bx){
+	if(ax.h!=bx.h)return ax.h<bx.h;
+	return ax.id<bx.id;
+}
+int main(){
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	int n=read();
+	ll s=0;
+	for(int i=1;i<=n;++i){
+		a[i].h=read();
+		a[i].id=i;
+	}
+	sort(a+1,a+n+1,cmp);
+	for(int i=1;i<=n;++i)s+=abs(a[i].id-i);
+	writeln(s);
+	return 0;
+}

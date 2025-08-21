@@ -1,0 +1,69 @@
+#pragma GCC optimize(3)
+#pragma GCC target("avx,sse2,sse3,sse4,mmx")
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("inline")
+#include<bits/stdc++.h>
+using namespace std;
+long long a,b,d[300001],an,cn[300001],u[300001],mod=1e9+7,pw[5001][5005],sum[100001],inv[1000001],fac[1000001];
+inline int read(){int sum=0,nega=1;char ch=getchar();while(ch>'9'||ch<'0'){if(ch=='-') nega=-1;ch=getchar();}while(ch<='9'&&ch>='0') sum=sum*10+ch-'0',ch=getchar();return sum*nega;}
+long long pow_(long long qq,long long ww){long long ee=1;while(ww){if(ww&1) ee*=qq,ee%=mod;qq*=qq,qq%=mod,ww>>=1;}return ee%mod;}
+long long get(long long qq,long long ww)
+{
+	for(int i=1;i<=ww+2;i++) sum[i]=sum[i-1]+pw[ww][i],sum[i]%=1000000007;
+	if(qq<=ww+2) return sum[qq];
+	long long ann=0;
+	if(qq>1000000)
+	{
+		for(int i=1;i<=ww+2;i++)
+		{
+			long long gg=sum[i];
+			for(int j=1;j<=ww+2;j++)
+			{
+				if(j==i) continue;
+				gg=gg*(qq-j)%mod*pow_(i-j,mod-2)%mod;
+			}ann+=gg,ann%=mod;
+		}
+		return ann;
+	}
+	long long t1=fac[qq-1]*inv[qq-ww-3]%1000000007;
+	for(int i=1;i<=ww+2;i++)
+	{
+		long long fl=(ww+2-i)%2?-1:1;
+		ann+=inv[i-1]*inv[ww+2-i]%1000000007*fl*t1%1000000007*fac[qq-i-1]%1000000007*sum[i]%1000000007*inv[qq-i];ann%=mod;
+	}
+	return ann;
+}
+int main()
+{
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	scanf("%lld",&a);
+	long long tt=1;fac[0]=1;
+	for(int i=1;i<=1000000;i++) fac[i]=fac[i-1]*i%mod;
+	inv[1000000]=pow_(fac[1000000],mod-2);for(int i=999999;i>=0;i--) inv[i]=inv[i+1]*(i+1)%mod;
+	for(int i=1;i<=a+2;i++) pw[0][i]=1;
+	for(int i=1;i<=5000;i++) for(int j=1;j<=5002;j++) pw[i][j]=pw[i-1][j]*j%1000000007;
+	for(int i=1;i<=a;i++)
+	{
+		scanf("%lld",&d[i]),tt=tt*pow_(d[i],mod-2)%mod;
+	}
+	sort(d+1,d+a+1);
+	long long la=0;
+	for(long long i=1;i<=a;i++)
+	{
+		long long gg=1,hh=1;
+		long long L=d[i-1]+1,R=d[i];
+		for(int j=1;j<i;j++) hh=hh*d[j]%1000000007;
+		for(int j=1;j<=a;j++) gg=gg*min(d[j],L-1)%1000000007;la=gg;
+		if(L>R) continue;
+		gg=pow_(L,a-i+1)*hh-la;gg%=mod;
+		an+=gg*L,an%=mod;
+		if(L==R) continue;
+		gg=pow_(R,a-i+1)*R%mod;
+		gg+=get(L-1,a-i+1)-get(R-1,a-i+1); 
+		gg-=L*pow_(L,a-i+1);gg%=mod;
+		an+=gg*hh;an%=mod;
+	}
+	printf("%lld",(an%mod*tt%mod+mod)%mod);
+	return 0;
+}

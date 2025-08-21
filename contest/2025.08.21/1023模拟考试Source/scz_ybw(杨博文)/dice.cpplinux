@@ -1,0 +1,279 @@
+#include <bits/stdc++.h>
+
+#ifndef use_ios11
+#define use_ios11
+using namespace std;
+#define log(a) cerr << "\033[32m[DEBUG] " << #a << '=' << (a) << " @ line " << __LINE__ << "\033[0m" << endl
+typedef long long ll;
+#define pb push_back
+typedef pair<int, int> pii;
+
+#define mem(p) memset(&p, 0, sizeof(p))
+typedef pair<long long, long long> pll;
+#define ir(x) \
+    int x;    \
+    yin >> x
+#define foor(action, actionx2, actionx4, width)         \
+    do                                                  \
+    {                                                   \
+        unsigned long __width = (unsigned long)(width); \
+        unsigned long __increment = __width >> 2;       \
+        for (; __increment > 0; __increment--)          \
+        {                                               \
+            actionx4;                                   \
+        }                                               \
+        switch (__width & 3)                            \
+        {                                               \
+        case 2:                                         \
+            actionx2;                                   \
+            break;                                      \
+        case 3:                                         \
+            actionx2;                                   \
+        case 1:                                         \
+            action;                                     \
+            break;                                      \
+        }                                               \
+    } while (0)
+struct ins
+{
+	int ans;
+	ins()
+	{
+		ans = 1;
+	}
+#define endl '\n'
+	void read()
+	{
+	}
+	void read1(char &s)
+	{
+		char c = getchar();
+		for (; !isprint(c) || c == ' ' || c == '\n' || c == '\t'; c = getchar())
+			;
+		s = c;
+		if (c == EOF)
+			ans = 0;
+	}
+	void read1(string &s)
+	{
+		s = "";
+		char c = getchar();
+		for (; !isprint(c) || c == ' ' || c == '\n' || c == '\t'; c = getchar())
+			;
+		for (; isprint(c) && c != ' ' && c != '\n' && c != '\t'; c = getchar())
+			s += c;
+		if (c == EOF)
+			ans = 0;
+	}
+	void read1(char *s)
+	{
+		char c = getchar();
+		int tt = 0;
+		for (; !isprint(c) || c == ' ' || c == '\n' || c == '\t'; c = getchar())
+			;
+		for (; isprint(c) && c != ' ' && c != '\n' && c != '\t'; c = getchar())
+			s[tt++] = c;
+		s[tt] = '\0';
+		if (c == EOF)
+			ans = 0;
+	}
+
+	template <typename T>
+	void read1(T &n)
+	{
+		T x = 0;
+		int f = 1;
+		char c = getchar();
+		for (; !isdigit(c); c = getchar())
+		{
+			if (c == '-')
+				f = -1;
+			if (c == EOF)
+			{
+				ans = 0;
+				return;
+			}
+		}
+		for (; isdigit(c); c = getchar())
+			x = x * 10 + c - 48;
+		n = x * f;
+		if (c == EOF)
+			ans = 0;
+		if (c != '.')
+			return;
+		T l = 0.1;
+		while ((c = getchar()) <= '9' && c >= '0')
+			x = x + (c & 15) * l, l *= 0.1;
+		n = x * f;
+		if (c == EOF)
+			ans = 0;
+	}
+	void write() {}
+	void write1(string s)
+	{
+		int n = s.size();
+		for (int i = 0; i < n; i++)
+			putchar(s[i]);
+	}
+	void write1(const char *s)
+	{
+		int n = strlen(s);
+		for (int i = 0; i < n; i++)
+			putchar(s[i]);
+	}
+	void write1(char *s)
+	{
+		int n = strlen(s);
+		for (int i = 0; i < n; i++)
+			putchar(s[i]);
+	}
+
+	void write1(char s)
+	{
+		putchar(s);
+	}
+	void write1(float s, int x = 6)
+	{
+		char y[10001];
+		sprintf(y, "%%.%df", x);
+		printf(y, s);
+	}
+	void write1(double s, int x = 6)
+	{
+		char y[10001];
+		sprintf(y, "%%.%dlf", x);
+		printf(y, s);
+	}
+	void write1(long double s, int x = 6)
+	{
+		char y[10001];
+		sprintf(y, "%%.%dLf", x);
+		printf(y, s);
+	}
+	template <typename T>
+	void write1(T n)
+	{
+		if (n < 0)
+			n = -n, putchar('-');
+		if (n > 9)
+			write1(n / 10);
+		putchar('0' + n % 10);
+	}
+	friend ins operator>>(ins x, char *n);
+	template <typename T>
+	friend ins operator>>(ins x, T &n);
+	template <typename T>
+	friend ins operator<<(ins x, T n);
+	operator bool()
+	{
+		return ans;
+	}
+};
+
+ins operator>>(ins x, char *n)
+{
+	if (!x.ans)
+		return x;
+	x.read1(n);
+	return x;
+}
+
+template <typename T>
+ins operator>>(ins x, T &n)
+{
+	if (!x.ans)
+		return x;
+	x.read1(n);
+	return x;
+}
+template <typename T>
+ins operator<<(ins x, T n)
+{
+	x.write1(n);
+	return x;
+}
+ins yin;
+ins yout;
+#endif
+const int mod = 1e9 + 7;
+const int maxn = 5e3 + 10;
+int n, a[maxn];
+ll ksm(ll a, ll n)
+{
+	ll ans = 1;
+	while (n)
+	{
+		if (n & 1)ans = ans * a % mod;
+		a = a * a % mod;
+		n >>= 1;
+	}
+	return ans;
+}
+ll y[maxn * 2], x[maxn * 2];
+ll p[maxn * 2], invx[maxn * 2];
+ll ss[maxn * 2], sr[maxn * 2];
+ll get(ll k, int n)
+{
+	if (k == x[n])
+		return y[n];
+	ll ans = 0;
+	ss[0] = 1;
+	for (int i = 1; i <= n; i++)
+		ss[i] = ss[i - 1] * (k - x[i]) % mod;
+	sr[n + 1] = 1;
+	for (int i = n; i >= 1; i--)
+		sr[i] = sr[i + 1] * (k - x[i]) % mod;
+	for (int i = 1; i <= n; i++)
+	{
+		// cerr << i << " " << y[i] << " " << invx[i - 1] << " " << invx[n - i] << " " << ss[i - 1] << ' ' << sr[i + 1] << " " << x[1] << " " << x[2] << endl;
+		if ((n - i) & 1)
+			ans -= y[i] * invx[i - 1] % mod * invx[n - i] % mod * ss[i - 1] % mod * sr[i + 1] % mod;
+		else
+			ans += y[i] * invx[i - 1] % mod * invx[n - i] % mod * ss[i - 1] % mod * sr[i + 1] % mod;
+		ans += mod;
+		ans %= mod;
+	}
+	// cerr << (562500008ll * 2 + 937500011ll * 3) % mod << endl;
+	return ans % mod;
+}
+int main()
+{
+	freopen("dice.in", "r", stdin);
+	freopen("dice.out", "w", stdout);
+	yin >> n;
+	for (int i = 1; i <= n; i++)
+		yin >> a[i];
+	p[0] = 1;
+	for (int i = 1; i <= 2 * n; i++)
+		p[i] = p[i - 1] * i % mod;
+	// cerr << "!!!" << endl;
+	invx[2 * n] = ksm(p[2 * n], mod - 2);
+	for (int i = 2 * n; i >= 1; i--)
+		invx[i - 1] = invx[i] * i % mod;
+	sort(a + 1, a + n + 1);
+	ll inv = 1;
+	// cerr << "!!!" << endl;
+	for (int i = 1; i <= n; i++)
+		inv = inv * ksm(a[i], mod - 2) % mod;
+	ll sum = 0;
+	for (int i = 1; i <= n; i++)
+	{
+		// cerr << i << endl;
+		int tot = 0;
+		// ll tmp = sum;
+		for (int j = a[i - 1] + 1; j <= min(a[i - 1] + n - i + 3 , a[i]); j++)
+		{
+			x[++tot] = j;
+			sum += mod + 1 - inv * ksm(j - 1, n - i + 1) % mod;
+			sum %= mod;
+			y[tot] = sum;
+		}
+		inv = inv * a[i] % mod;
+		// cerr << (y[3] - tmp + mod) * 8 % mod << "!!!" << endl;
+		// ll xx = sum;
+		sum = get(a[i], tot);
+		// cerr << (sum - xx + mod) * 8 % mod << " " << x[tot] << endl;
+	}
+	yout << sum << endl;
+	return 0;
+}

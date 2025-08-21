@@ -1,0 +1,63 @@
+#include<bits/stdc++.h>
+using namespace std;
+int n, a[55], sum[55], vis[55], ans;
+struct node{
+	int a, id;
+	node(int x = 0, int y = 0){
+		a = x, id = y;
+	}
+	bool operator <(const node & rhs)const{
+		return a == rhs.a ? id < rhs.id : a < rhs.a;
+	}
+}li[55];
+priority_queue<node, vector<node>, less<node> > q;
+int main(){
+	freopen("lineup.in", "r", stdin);
+	freopen("lineup.out", "w", stdout);
+	cin >> n;
+	for(int i = 1; i <= n; i++){
+		cin >> a[i];
+		li[i] = node(a[i], i);
+	}
+	sort(li + 1, li + n + 1);
+	for(int i = 1; i <= n; i++){
+		a[li[i].id] = i;
+		sum[li[i].id] = a[li[i].id] - li[i].id;
+		vis[li[i].id] = abs(sum[li[i].id]);
+		q.push(node(abs(sum[li[i].id]), li[i].id));
+	}
+	while(!q.empty()){
+		node now = q.top();
+		q.pop();
+		if(vis[li[a[now.id]].id] != now.a || now.a == 0) continue;
+		if(sum[li[a[now.id]].id] > 0){
+			for(int i = now.id + 1; i <= now.id + now.a; i++){
+				if(sum[li[a[i]].id] <= now.id - i){
+					sum[li[a[i]].id] += i - now.id;
+					vis[li[a[i]].id] = abs(sum[li[a[i]].id]);
+					sum[li[a[now.id]].id] -= i - now.id;
+					vis[li[a[now.id]].id] = abs(sum[li[a[now.id]].id]);
+					q.push(node(abs(sum[li[a[i]].id]), now.id));
+					q.push(node(abs(sum[li[a[now.id]].id]), i));
+					swap(a[i], a[now.id]);
+					ans += 2 * (i - now.id);
+				}
+			}
+		}else{
+			for(int i = now.id - 1; i >= now.id - now.a; i--){
+				if(sum[li[a[i]].id] >= now.id - i){
+					sum[li[a[i]].id] -= now.id - i;
+					vis[li[a[i]].id] = abs(sum[li[a[i]].id]);
+					sum[li[a[now.id]].id] += now.id - i;
+					vis[li[a[now.id]].id] = abs(sum[li[a[now.id]].id]);
+					q.push(node(abs(sum[li[a[i]].id]), now.id));
+					q.push(node(abs(sum[li[a[now.id]].id]), i));
+					swap(a[i], a[now.id]);
+					ans += 2 * (now.id - i);
+				}
+			}
+		}
+	}
+	cout << ans;
+	return 0;
+}

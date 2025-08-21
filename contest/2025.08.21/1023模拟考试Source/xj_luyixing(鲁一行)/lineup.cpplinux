@@ -1,0 +1,32 @@
+#include <bits/stdc++.h>
+#define Dtmyj trash
+#define ll long long
+using namespace std;
+
+struct height{
+	int id,val;
+}h[60];
+
+int n,a[60],ans;
+
+int main(){
+	ios::sync_with_stdio(0);
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	cin>>n;
+	for(int i=1;i<=n;i++){
+		cin>>h[i].val;
+		h[i].id=i;
+	}
+	for(int i=1;i<=n-1;i++){
+		if(h[i].val>h[i+1].val){
+			swap(h[i],h[i+1]);
+			a[h[i].id]+=2;
+		}
+	}
+	for(int i=1;i<=n;i++){
+		ans+=a[i];
+	}
+	cout<<ans<<endl;
+	return 0;
+}

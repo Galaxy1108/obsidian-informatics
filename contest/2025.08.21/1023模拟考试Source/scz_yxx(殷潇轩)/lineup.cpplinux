@@ -1,0 +1,78 @@
+#include<bits/stdc++.h>
+using namespace std;
+int read(){
+	int xx = 0, f = 1; char ch = getchar();
+	while(ch < '0' || ch > '9'){
+        if(ch == '-')f = -1;
+        else f = 1;
+		ch = getchar();
+	}
+	while(ch >= '0' && ch <= '9'){
+		xx = xx * 10 + ch - '0'; ch = getchar();
+	}
+	return xx * f;
+}
+int n, a[114], b[114], c[114], ans = 0;
+bool f[114];
+int main(){
+	freopen("lineup.in", "r", stdin);
+	freopen("lineup.out", "w", stdout);
+	n = read();
+	for (int i = 1; i <= n; ++i){
+		a[i] = read(); b[i] = a[i];
+	}
+	for (int i = 1 ; i < n; ++i){
+		for (int j = 1; j <= n - i; ++j){
+			if (b[j] > b[j + 1])swap(b[j], b[j + 1]);
+		}
+	}
+	for (int i = 1; i <= n; ++i){
+		if (a[i] == b[i]){
+			c[i] = i; f[i] = true;
+		}
+	}
+	for (int i = 1; i <= n; ++i){
+		if (a[i] == b[i])continue;
+		else {
+			for (int j = 1; i - j > 0 || i + j <= n; ++j){
+				if (i - j > 0 && a[i - j] == b[i] && !f[i - j]){
+					c[i - j] = i; f[i - j] = true; break;
+				}
+				else if (i + j <= n && a[i + j] == b[i] && !f[i + j]){
+					c[i + j] = i; f[i + j] = true; break;
+				}
+			}
+		}
+	}
+	int i; bool fl = true;
+	while(1){
+		fl = true;
+		for (i = n; i >= 1; --i){
+			if (c[i] < i){
+				fl = false;
+				int k = i;
+				for (int j = k - 1; j >= c[k]; --j){
+					if (c[j] >= k){
+						swap(c[j], c[k]); ans += (k - j)*2;
+						k = j;
+					}
+				}
+			}
+		}
+		for (i = 1; i <= n; ++i){
+			if (c[i] > i){
+				fl = false;
+				int k = i;
+				for (int j = k + 1; j <= c[k]; ++j){
+					if (c[j] <= k){
+						swap(c[j], c[k]); ans += (j - k)*2;
+						k = j;
+					}
+				}
+			}
+		}
+		if (fl == true)break;
+	}
+	printf("%d\n", ans);
+	return 0;
+}

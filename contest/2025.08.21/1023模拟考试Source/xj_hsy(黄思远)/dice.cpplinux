@@ -1,0 +1,77 @@
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
+#include <bits/stdc++.h>
+#define int long long
+// const long long Inf=2e18;
+#define pii pair <int, int> 
+#define i64 long long
+using namespace std;
+inline int read(void) {
+	int x=0,sgn=1,ch=getchar();
+	while(ch<48||57<ch) {if(ch==45)sgn=0;ch=getchar();}
+	while(47<ch&&ch<58) {x=x*10+ch-48;   ch=getchar();}
+	return sgn? x:-x;
+}
+void write(int x) {
+    if(x<0) putchar('-'),x=-x;
+    if(x>9) write(x/10);
+    putchar(x%10+'0');
+}
+const int mod=1000000007;
+inline i64 ksm(int x,i64 a=mod-2) {
+    int res=1;
+    for(; a; a>>=1,x=1ll*x*x%mod) (a&1) && (res=1ll*res*x%mod);
+    return res;
+}
+const int maxk = 5003;
+int F[maxk+1][maxk+1];
+int fac[maxk+1], y[maxk+1];
+inline void init() {
+    for(int i=1; i<=maxk; ++i) F[i][0]=1;
+    for(int t=1; t< maxk; ++t) 
+        for(int i=1; i<=maxk; ++i)
+            F[i][t]=F[i][t-1]*i%mod;
+    fac[0]=1;
+    for(int i=1; i<=maxk; ++i) fac[i]=fac[i-1]*i%mod;
+}
+inline void I(int k) {
+    for(int i=1; i<=k+2; ++i) (y[i]=y[i-1]+F[i][k])>=mod && (y[i]-=mod);
+}
+int Solve(int n,int k) {
+    if(n<=0) return 0;
+    if(n<=k+2) return y[n];
+    int ans=0,prod=1,sig;
+    for(int i=n-k-2; i<n; ++i) prod=prod*i%mod;
+    for(int i=1; i<=k+2; ++i) {
+        int fz = prod*ksm(n-i)%mod;
+        int fm = ksm(fac[i-1]*fac[k+2-i]%mod);
+        if((k+2-i)%2==0) sig=1;
+        else sig=-1;
+        ans=(ans+sig*y[i]*fz%mod*fm%mod)%mod;
+    }
+    return (ans%mod+mod)%mod;
+}
+
+int n,mul=1,Ans;
+int a[5005];
+signed main() {
+    freopen("dice.in" ,"r",stdin );
+    freopen("dice.out","w",stdout);
+    n=read(); init();
+    for(int i=1; i<=n; ++i) a[i]=read();
+    sort(a+1,a+n+1); 
+    for(int i=1; i<=n; ++i) {
+        if(a[i]!=a[i-1]) {
+            int res=0; I(n-i+1); int k=n-i+1;
+            res=ksm(a[i],k+1)-ksm(a[i-1],k+1);
+            res-=Solve(a[i  ]-1,k);
+            res+=Solve(a[i-1]-1,k);
+            res%=mod;
+            (Ans=Ans+res*mul)%mod;
+        }
+        mul=mul*a[i]%mod;
+    }
+    for(int i=1; i<=n; ++i) Ans=Ans*ksm(a[i])%mod;
+    write((Ans%mod+mod)%mod); puts("");
+	return 0;
+}

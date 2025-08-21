@@ -1,0 +1,80 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define N 2502
+#define fo(i, l, r) for (int i = (l), ed = (r); i <= ed; i ++)
+#define fd(i, l, r) for (int i = (l), ed = (r); i >= ed; i --)
+#define pb push_back
+#define fi first
+#define se second
+#define INF 2147483647 //9223372036854775807
+template <typename T> void gi(T &s){
+	s = 0;
+	int b = 1;
+	char ch = getchar();
+	while (ch < '0' || ch > '9') b *= (ch == '-') ? (-1) : 1, ch = getchar();
+	while (ch >= '0' && ch <= '9') s = s * 10 + ch - '0', ch = getchar();
+	s *= b;
+}
+
+struct graph{
+	vector < int > v;
+	vector < pair < int , int > > e;
+} g[N];
+
+int n, vis[N], bz[N];
+
+void init(){
+	vis[3] = vis[4] = vis[5] = vis[6] = vis[7] = vis[8] = vis[9] = vis[10] = 1;
+	g[3].e = {{1, 2}, {2, 3}};
+	g[3].v = {2, 6, 3};
+	g[4].e = {{1, 2}, {2, 3}, {3, 4}};
+	g[4].v = {3, 6, 8, 12};
+	g[5].e = {{1, 2}, {2, 3}, {3, 4}, {4, 5}};
+	g[5].v = {10, 15, 6, 8, 4};
+	g[6].e = {{1, 2}, {2, 3}, {3, 4}, {4, 5}};
+	g[6].v = {15, 18, 24, 20, 15};
+	g[7].e = {{1, 2}, {2, 3}, {3, 4}, {4, 5}, {5, 6}};
+	g[7].v = {7, 21, 18, 24, 20, 15};
+	g[8].e = {{1, 2}, {2, 3}, {3, 4}, {4, 5}, {5, 6}, {6, 7}};
+	g[8].v = {7, 21, 18, 24, 16, 20, 15};
+	g[9].e = {{1, 2}, {2, 3}, {3, 4}, {4, 5}, {5, 6}, {6, 7}, {7, 8}, {8, 9}};
+	g[9].v = {9, 9, 7, 21, 18, 24, 16, 20, 15};
+	g[10].e = {{1, 2}, {2, 3}, {3, 4}, {4, 5}, {5, 6}, {6, 7}, {7, 8}, {8, 9}, {9, 10}};
+	g[10].v = {9, 9, 7, 21, 18, 24, 16, 20, 30, 15};
+}
+
+void solve(int m){
+	if (vis[m]) return ;
+	vis[m] = 1;
+	int w = sqrt(m);
+	solve(w);
+	int now = g[w].v.size();
+	g[m] = g[w];
+	fo (i, w + 1, m) if (bz[i]) {
+		graph k = g[m / i];
+		int sp = (now ? now -- : 0), jl = g[m].v.size();
+		for (int i : k.v){
+			if (i == k.v[0]) g[m].v[sp - 1] *= i;
+			else g[m].v.pb(i);
+		}
+		for (auto i : k.e){
+			g[m].e.pb({i.fi == 1 ? now : i.fi + jl, i.se == 1 ? now : i.se + jl});
+		}
+	}
+}
+
+int main(){
+	freopen("divisors.in", "r", stdin);
+	freopen("divisors.out", "w", stdout);
+	scanf("%d", &n);
+	fo (i, 2, n) if (!bz[i])
+		fo (j, 2, n / i) bz[i * j] = 1;
+	init();
+	solve(n);
+	for (int i : g[n].v) printf("%d ", i);
+	fo (i, 1, n - g[n].v.size()) printf("1 ");
+	printf("\n");
+	for (auto i : g[n].e) printf("%d %d\n", i.fi, i.se);
+	fo (i, 1, n - g[n].v.size()) printf("%d %d\n", g[n].v.size() + i, g[n].v.size() + i - 1);
+}

@@ -1,0 +1,42 @@
+#include<bits/stdc++.h>
+using namespace std;
+inline int read(){
+	int f=1,x=0;char ch=getchar();
+	while(ch>'9'||ch<'0'){if(ch=='-')f=-1;ch=getchar();}
+	while(ch>='0'&&ch<='9'){x=(x<<1)+(x<<3)+(ch^48);ch=getchar();}
+	return x*f;
+}
+inline void write(int x){
+	char ch;stack<int>y;
+	if(x==0){putchar('0');return;}
+	if(x<0){putchar('-');x=-x;}
+	while(x!=0){y.push(x%10);x/=10;}
+	while(!y.empty()){ch=(y.top()^48);putchar(ch);y.pop();}
+	return;
+}
+int main(){
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	int n=read(),h[55],h2[55],rnk[205],ans=0;
+	for(int i=1;i<=n;i++){
+		h[i]=read();
+		h2[i]=h[i];
+	}
+	sort(h2+1,h2+n+1);
+	for(int i=1;i<=n;i++)rnk[h2[i]]=i;
+	for(int t=1;t<=n;t++){
+		int tmp,minn=100000000;
+		for(int i=1;i<=n;i++){
+			if(abs(i-rnk[h[i]])<minn&&abs(i-rnk[h[i]])){
+				minn=abs(i-rnk[h[i]]);
+				tmp=i;
+			}
+		}
+		if(minn!=100000000){
+			ans+=2*abs(tmp-rnk[h[tmp]]);
+			swap(h[tmp],h[rnk[h[tmp]]]);
+		}
+	}
+	write(ans);putchar('\n');
+	return 0;
+}

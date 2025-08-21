@@ -1,0 +1,25 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define F(i,a,b) for(int i=a;i<=b;i++)
+#define Fd(i,a,b) for(int i=a;i>=b;i--)
+#define N 100
+
+int gcd(int x,int y){return !y?x:gcd(y,x%y);}
+
+int lcm(int x,int y){return x/gcd(x,y)*y;}
+
+int n,a[N];
+
+int main(){
+	freopen("divisors.in","r",stdin);
+	freopen("divisors.out","w",stdout);
+	scanf("%d",&n);
+	int w=1;
+	F(i,2,n)w=lcm(w,i);
+	F(i,2,n)a[i-1]=i;
+	a[n]=w;
+	F(i,1,n)printf("%d ",a[i]);
+	printf("\n");
+	F(i,1,n-1)printf("%d %d\n",n,i);
+	return 0;
+}

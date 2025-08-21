@@ -1,0 +1,40 @@
+//Lemt_xxq
+#include<cstdio>
+#include<algorithm>
+#include<cstring>
+#include<cmath>
+#include<iostream>
+#include<map>
+#include<bitset>
+#include<queue>
+#include<ctime>
+#define ll long long
+#define R register
+#define I inline
+#define N 1005
+#define mo
+#define F freopen("far.in","r",stdin),freopen("far.out","w",stdout);
+using namespace std;
+ll ss,ff,n,m,l[N],r[N],ans,bj[N],d[N]; char ch;
+I ll read() { ch=getchar(),ss=0,ff=1;
+	for (;(ch<48||ch>57)&&ch!=45;) ch=getchar(); if (ch==45) ff=-1;
+	for (;ch<48||ch>57;) ch=getchar(); for (;ch>=48&&ch<=57;) ss=ss*10+ch-48,ch=getchar(); return ss*ff;
+}
+I void print(ll Lz) {Lz<0?putchar(45),Lz=-Lz:Lz=Lz; if (Lz>9) print(Lz/10); putchar(Lz%10+48);}
+I void pd(ll lim) {
+	R ll xr=0,tot=0;
+	for (R ll i=1;i<=lim;i++) {
+		xr^=d[i];
+	} memset(bj,0,sizeof(bj));
+	while (xr) bj[++tot]=xr%2,xr/=2;
+	for (R ll i=1;i<=m/2;i++) if (bj[i]!=bj[m-i+1]) return; ans++;
+}
+I void dfs(ll x,ll lim) {
+	if (x>lim) {pd(lim); return;}
+	for (R ll i=l[x];i<=r[x];i++) d[x]=i,dfs(x+1,lim);
+}
+int main() {
+	F n=read(),m=read();
+	for (R ll i=1;i<=n;i++) l[i]=read(),r[i]=read();
+	for (R ll i=1;i<=n;i++) ans=0,dfs(1,i),print(ans),putchar('\n');
+}

@@ -1,0 +1,41 @@
+#include<bits/stdc++.h>
+#define fo(i,a,b) for(int i=a;i<=b;++i)
+#define fd(i,a,b) for(int i=a;i>=b;--i)
+using namespace std;
+typedef long long ll;
+const int N=50, mod=998244353;
+int n,m,s1,s2,fac[N],ifac[N],ans;
+ll l[N],r[N];
+int C(int n,int m){return (ll)fac[n] * ifac[m] % mod * ifac[n-m] % mod;}
+int power(ll x,int n){
+	ll a=1;
+	while(n){
+		if(n&1)a=a*x%mod;
+		x=x*x%mod;
+		n>>=1;
+	}
+	return a;
+}
+int main(){
+	freopen("far.in","r",stdin);
+	freopen("far.out","w",stdout);
+	scanf("%d%d",&n,&m);
+	fo(i,1,n)scanf("%lld%lld",&l[i],&r[i]);
+	fac[0]=1;
+	fo(i,1,n)fac[i]=(ll)fac[i-1] * i % mod;
+	ifac[n]=power(fac[n],mod-2);
+	fd(i,n,1)ifac[i-1]=(ll)ifac[i] * i % mod;
+	fo(k,1,n){
+		s1=0;s2=0;
+		fo(i,0,k){
+			if(i&1)s1=(C(k,i) + s1) % mod;
+			else s2=(C(k,i) + s2) % mod;
+		}
+		ans=1;
+		fo(i,1,m/2)ans=(ll)ans * ((ll)s1*s1%mod + (ll)s2*s2%mod) % mod;
+		if(m&1)ans=(ll)ans * (s1+s2) % mod;
+		printf("%d\n",ans);
+	}
+
+	return 0;
+}

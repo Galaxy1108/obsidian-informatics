@@ -1,0 +1,119 @@
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+using namespace std;
+long long pow_mod(long long n, long long p, long long mod) {
+	long long ans = 1;
+	for (; p; p >>= 1, n = n * n % mod) if (p & 1) ans = ans * n % mod;
+	return ans;
+}
+template<long long maxn>
+struct sum {
+	long long n, k;
+	long long pcnt;
+	long long tab[maxn + 10];
+	long long p[maxn + 10];
+	long long f[maxn + 10];
+	long long pre[maxn + 10];
+	long long suf[maxn + 10];
+	long long fac[maxn + 10];
+	long long inv[maxn + 10];
+	long long ans, mod;
+	void allinit() {
+		fac[0] = 1;
+		fac[1] = 1;
+		inv[0] = 1;
+		inv[1] = 1;
+		for (long long i = 2; i < maxn; i++) {
+			fac[i] = fac[i - 1] * i % mod;
+			inv[i] = (mod - mod / i) * inv[mod % i] % mod;
+		}
+		for (long long i = 2; i < maxn; i++) {
+			inv[i] = inv[i - 1] * inv[i] % mod;
+		}
+	}
+	void init() {
+		pcnt = 0;
+		memset(tab, 0, sizeof(tab));
+		ans = 0;
+	}
+	void sieve(long long limit) {
+		f[1] = 1;
+		for (long long i = 2; i <= limit; i++) {
+			if (tab[i] == 0) {
+				p[++pcnt] = i;
+				f[i] = pow_mod(i, k, mod);
+			}
+			for (long long j = 1; j <= pcnt && i * p[j] <= limit; j++) {
+				tab[i * p[j]] = 1;
+				f[i * p[j]] = f[i] * f[p[j]] % mod;
+				if (i % p[j] == 0) {
+					break;
+				}
+			}
+		}
+		for (long long i = 2; i <= limit; i++) {
+			f[i] = (f[i - 1] + f[i]) % mod;
+		}
+	}
+	void solve() {
+		init();
+		sieve(k + 2);
+		if (n <= k + 2) {
+			ans = f[n];
+			return;
+		}
+		pre[0] = 1;
+		suf[k + 3] = 1;
+		for (long long i = 1; i <= k + 2; i++) {
+			pre[i] = pre[i - 1] * (n - i) % mod;
+		}
+		for (long long i = k + 2; i >= 1; i--) {
+			suf[i] = suf[i + 1] * (n - i) % mod;
+		}
+		for (long long i = 1; i <= k + 2; i++) {
+			long long p = pre[i - 1] * suf[i + 1] % mod;
+			long long q = inv[i - 1] * inv[k + 2 - i] % mod;
+			long long mul;
+			if ((k + 2 - i) & 1) {
+				mul = -1;
+			} else {
+				mul = 1;
+			}
+			ans = (ans + (q * mul + mod) % mod * p % mod * f[i] % mod) % mod;
+		}
+	}
+};
+sum<5010> s;
+long long solve(long long l, long long r, long long k) {
+	long long ansr, ansl;
+	s.k = k;
+	s.n = r;
+	s.solve();
+	ansr = s.ans;
+	s.n = l - 1;
+	s.solve();
+	ansl = s.ans;
+	return ansr - ansl;
+}
+long long n, a[5010], k[5010], ans = 0;
+const long long mod = 1e9 + 7;
+int main() {
+	freopen("dice.in", "r", stdin);
+	freopen("dice.out", "w", stdout);
+	s.mod = mod;
+	s.allinit();
+	scanf("%lld", &n);
+	for (long long i = 1; i <= n; i++) scanf("%lld", &a[i]);
+	sort(a + 1, a + n + 1);
+	k[0] = 1;
+	for (long long i = 1; i <= n; i++) k[i] = k[i - 1] * a[i] % mod;
+	a[0] = 0;
+	for (long long i = 1; i <= n; i++) {
+		ans = (ans + k[i - 1] * solve(a[i - 1] + 1, a[i], n - i + 1)) % mod;
+	}
+	ans = (k[n] * (a[n] + 1) % mod - ans + mod) % mod;
+	ans = ans * pow_mod(k[n], mod - 2, mod) % mod;
+	printf("%lld\n", ans);
+	return 0;
+}

@@ -1,0 +1,53 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define ull unsigned long long
+#define l(x) x<<1
+#define r(x) x<<1|1
+#define mpr make_pair
+//mt19937_64 ra(time(0) ^ (*new char));
+const ll SIZE = 2005;
+const ll mod = 998244353;
+ll n;
+
+inline ll rd(){
+	ll f = 1, x = 0;
+	char ch = getchar();
+	while(ch < '0' || ch > '9'){
+		if(ch == '-') f = -1;
+		ch = getchar();
+	}
+	while(ch >= '0' && ch <= '9'){
+		x = (x << 1) + (x << 3) + (ch ^ 48);
+		ch = getchar();
+	}
+	return f*x;
+}
+
+struct A{
+	ll h, id;
+}a[SIZE];
+
+bool cmp(A x, A y){
+	return (x.h == y.h) ? (x.id < y.id) : (x.h < y.h);
+}
+
+int main(){
+	freopen("lineup.in", "r", stdin);
+	freopen("lineup.out", "w", stdout);
+	n = rd();
+	for(ll i = 1; i <= n; i++) a[i].h = rd(), a[i].id = i;
+	sort(a+1, a+n+1, cmp);
+	ll ans = 0;
+	for(ll i = 1; i <= n; i++){
+		ans += abs(a[i].id - i);
+	}
+	printf("%lld", ans);
+	return 0;
+}
+
+/*
+9
+5 6 1 2 3 6 3 4 2
+*/
+

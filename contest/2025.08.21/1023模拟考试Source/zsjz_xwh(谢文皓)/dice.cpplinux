@@ -1,0 +1,52 @@
+#include<bits/stdc++.h>
+using namespace std;
+int i,j,n,m,k,l,o,p;
+int a[55],b[205];
+int now;
+inline int read()
+{
+	int f(1),x(0);
+	char ch=getchar();
+	while (!isdigit(ch)) {if (ch=='-') f*=-1;ch=getchar();}
+	while (isdigit(ch)) x=(x<<1)+(x<<3)+ch-'0',ch=getchar();
+	return f*x;
+}
+inline void writ(int x)
+{
+	if (x<0) putchar('-'),x=-x;
+	if (x/10) writ(x/10);
+	putchar((char)(x%10+'0'));
+}
+inline void write(int x)
+{
+	writ(x);
+	putchar('\n');
+}
+int bz[55];
+int ans[55];
+int main()
+{
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	n=read();
+	for (i=1;i<=n;i++) a[i]=read(),b[a[i]]++;
+	for (i=1;i<=200;i++) b[i]+=b[i-1];
+	for (i=n;i>=1;i--) a[i]=b[a[i]]--;
+	for (i=1;i<=n;i++)
+	{
+		if (a[i]>=i) continue;
+		memset(bz,0,sizeof bz),j=a[i],bz[j]=i;
+		while (j<i) bz[a[j]]=j,j=a[j];
+		ans[a[i]]+=i-a[i];
+		int num[55][2],now=0;
+		for (j=1;j<=n;j++) if (bz[j]!=0) num[++now][0]=j,num[now][1]=bz[j];
+		int t=a[i];
+		num[++now][0]=num[1][0],num[now][1]=num[1][1];
+		for (j=2;j<now;j++) ans[num[j][0]]+=abs(num[j][1]-num[j+1][1]);
+		for (j=now;j>1;j--) a[num[j][1]]=num[j-1][0];
+		a[t]=t;
+	}
+	int sum=0;
+	for (i=1;i<=n;i++) sum+=ans[i];
+	printf("%d",sum);
+}

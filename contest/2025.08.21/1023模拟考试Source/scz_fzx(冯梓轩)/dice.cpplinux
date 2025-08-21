@@ -1,0 +1,45 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define mod 1000000007 
+inline int read(){
+	int x=0;char ch=getchar();
+	while(!isdigit(ch))ch=getchar();
+	while(isdigit(ch))x=(x<<3)+(x<<1)+(ch^48),ch=getchar();
+	return x;
+}
+inline void write(int x){
+	if(x>9)write(x/10);
+	putchar(x%10|48);
+}
+inline void writeln(int x){
+	write(x),putchar('\n');
+}
+int f[5005],a[5005],p[5005];
+int ksm(int x,int p){
+	int ans=1;
+	while(p){
+		if(p&1)ans=ans*1ll*x%mod;
+		x=x*1ll*x%mod;
+		p>>=1;
+	}
+	return ans;
+}
+int main(){
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	int n=read(),ans=0;
+	p[n+1]=1;
+	for(int i=1;i<=n;++i)a[i]=read();
+	sort(a+1,a+n+1);
+	for(int i=n;i>=1;--i)p[i]=p[i+1]*1ll*a[i]%mod;
+	for(int i=1;i<=n;++i){
+		int tmp=ksm(p[i],mod-2);
+		for(int j=a[i-1]+1;j<=a[i];++j){
+			int y=tmp*1ll*ksm(j,n-i+1)%mod;
+			ans=(ans+y)%mod;
+		}
+	}
+	ans=(a[n]+1-ans+mod)%mod;
+	writeln(ans);
+	return 0;
+}

@@ -1,0 +1,34 @@
+#include<cstdio>
+#include<algorithm>
+using namespace std;
+const int N=55;
+int a[N],b[N],c[N];
+int redd(){
+	int xx=0,fl=1;char ch=getchar();
+	while((ch<'0'||ch>'9')&&ch!='-')ch=getchar();
+	if(ch=='-'){ch=getchar();fl=-1;}
+	for(;ch>='0'&&ch<='9';ch=getchar())
+		xx=(xx<<3)+(xx<<1)+ch-'0';
+	return xx*fl;
+}
+int abss(int x){
+	return x>0?x:(-x);
+}
+int main(){
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	int n,ans=0;
+	n=redd();
+	for(int i=1;i<=n;i++){
+		a[i]=b[i]=redd();
+		c[i]=i;
+	}
+	sort(b+1,b+n+1);
+	for(int i=1;i<=n;i++){
+		a[i]=lower_bound(b+1,b+n+1,a[i])-b;
+		ans+=abss(i-c[a[i]]);
+		c[a[i]]++;
+	}
+	printf("%d\n",ans);
+	return 0;
+}

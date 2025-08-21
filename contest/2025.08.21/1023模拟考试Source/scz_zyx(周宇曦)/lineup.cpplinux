@@ -1,0 +1,29 @@
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long LL;
+template <typename T> inline void read(T &FF) {
+    int RR = 1; FF = 0; char CH = getchar();
+    for(; !isdigit(CH); CH = getchar()) if(CH == '-') RR = -RR;
+    for(; isdigit(CH); CH = getchar()) FF = FF * 10 + CH - 48;
+    FF *= RR;
+}
+inline void file(string str) {
+    freopen((str + ".in").c_str(), "r", stdin);
+    freopen((str + ".out").c_str(), "w", stdout);
+}
+const int N = 55, M = 300;
+int pi[N], n; vector<int> id[M];
+int main() {
+    file("lineup");
+    read(n);
+    for(int i = 1; i <= n; i++) read(pi[i]), id[pi[i]].emplace_back(i);
+    sort(pi + 1, pi + n + 1);
+    LL ans = 0;
+    for(int i = 1; i <= n; i++) {
+        ans += abs(id[pi[i]][0] - i);
+        id[pi[i]].erase(id[pi[i]].begin());
+    }
+    cout << ans << endl;
+
+    return 0;
+}

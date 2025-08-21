@@ -1,0 +1,121 @@
+#include<cstdio>
+#include<cctype>
+#include<cstring>
+#include<algorithm>
+#include<unordered_map>
+#include<vector>
+using namespace std;
+inline char nc()
+{
+	static char buf[99999],*l,*r;
+	return l==r&&(r=(l=buf)+fread(buf,1,99999,stdin),l==r)?EOF:*l++;
+}
+template <class code>inline code read(const code &a)
+{
+    code x=0;short w=0;char ch=0;
+    while(!isdigit(ch)) {w|=ch=='-';ch=nc();}
+    while(isdigit(ch)) {x=(x<<3)+(x<<1)+(ch^48);ch=nc();}
+    return w?-x:x;
+}
+void print(int x){
+	if(x<0)putchar('-'),x=-x;
+	if(x>=10)print(x/10);
+	putchar(x%10+48);
+}
+const int mod=998244353;
+int n,m,cm[105],dp1[105],dp[105][105],ans[105];
+long long l[105],r[105],a[105];
+int add(int x){
+    return x>=mod?x-mod:x;
+}
+int solve(long long ql){
+    int fx=0;
+    for(int i=m;i>=(m+1)/2;i--){
+        int sy=1;
+        long long now=1ll<<i;
+		dp1[0]=1;
+		for(int j=1;j<=n;j++)dp1[j]=(a[j]+1)%mod*dp1[j-1]%mod;
+		int tot=1,hg=0;
+		for(int j=n;j>=1;j--){
+			if(a[j]&now)a[j]^=now,hg=(hg+1ll*dp1[j-1]*tot)%mod;
+			tot=(a[j]+1)%mod*tot%mod;
+		}
+        // printf("%d %d\n",i,hg);
+        fx=(fx+1ll*hg*cm[m/2+1-(m-i+1)])%mod;
+	}
+    long long s=0;
+    for(int i=m/2+1;i<=m;i++)s=((s<<1)|(((1ll<<i)&ql)!=0));
+    for(int i=(m+1)/2-1;i>=1;i--){
+        long long now=1ll<<i;
+		dp[0][0]=1;
+		for(int j=1;j<=n;j++){
+			if(a[j]&now){
+				dp[j][0]=((a[j]-now+1)%mod*dp[j-1][1]+now%mod*dp[j-1][0])%mod;
+				dp[j][1]=((a[j]-now+1)%mod*dp[j-1][0]+now%mod*dp[j-1][1])%mod;
+			}else{
+				dp[j][0]=(a[j]+1)%mod*dp[j-1][0]%mod;
+				dp[j][1]=(a[j]+1)%mod*dp[j-1][1]%mod;
+			}
+		}
+		int tot=1,sj=0;
+        if(s&now)sj=1;
+		for(int j=n;j>=1;j--){
+			if(a[j]&now){
+				fx=(fx+1ll*dp[j-1][sj]*tot)%mod;
+				a[j]^=now;sj^=1;
+			}
+			tot=(a[j]+1)%mod*tot%mod;
+		}
+		if(sj)return fx;
+    }
+    int sy=0;
+	for(int j=1;j<=n;j++)sy+=a[j];
+	if(sy)fx=(fx+cm[sy-1])%mod;
+    else if(s%2==0)fx=(fx+1)%mod;
+    return fx;
+}
+int main()
+{	
+	freopen("far.in","r",stdin);
+	freopen("far.out","w",stdout);
+    cm[0]=1;
+    for(int i=1;i<=100;i++)cm[i]=cm[i-1]*2%mod;
+    n=read(n),m=read(m);
+    --m;
+    for(int i=1;i<=n;i++)l[i]=read(l[i]),r[i]=read(r[i]);
+    int cd=n;
+    while(n){
+        int op=0;
+        for(int i=1;i<=n;i++)op|=l[i];
+        if(!op){
+            long long mq=0;
+            for(int i=1;i<=n;i++)a[i]=r[i],mq^=a[i];
+            ans[n]=solve(mq);
+            --n;
+            continue;
+        }
+        for(int i=0;i<(1<<n);i++){
+            int tot=0,fg=0;
+            long long mq=0;
+            for(int j=1;j<=n;j++){
+                if((1<<(j-1))&i){
+                    ++tot;
+                    a[j]=r[j];
+                }else a[j]=l[j]-1;
+                if(a[j]<0){
+                    fg=1;
+                    break;
+                }
+                mq^=a[j];
+            }
+            if(fg)continue;
+            int zg=0;
+            if((n-tot)&1)zg=add(mod-solve(mq));
+            else zg=solve(mq);
+            ans[n]=add(ans[n]+zg);
+        }
+        --n;
+    }
+    for(int i=1;i<=cd;i++)printf("%d\n",ans[i]);
+	return 0;
+}

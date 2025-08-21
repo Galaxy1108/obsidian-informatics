@@ -1,0 +1,23 @@
+#include<cstdio>
+#include<algorithm>
+#define fo(i,x,y) for(int i = x;i <= y;++i)
+using namespace std;
+int n,a[60],b[60];
+int main()
+{
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	scanf("%d",&n);
+	fo(i,1,n) scanf("%d",&a[i]),b[i] = a[i];
+	sort(b + 1,b + n + 1);
+	int l = 1,ans = 0;
+	while(l <= n)
+	{
+		fo(i,1,n) if(a[i] == b[l])
+		{
+			ans += abs(i - l),++l;
+			if(b[l] ^ b[l - 1]) break;
+		}
+	}
+	printf("%d\n",ans);
+}

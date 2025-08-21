@@ -1,0 +1,100 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define N (1 << 21)
+#define fo(i, l, r) for (int i = (l), ed = (r); i <= ed; i ++)
+#define fd(i, l, r) for (int i = (l), ed = (r); i >= ed; i --)
+#define pb push_back
+#define fi first
+#define se second
+#define INF 2147483647 //9223372036854775807
+template <typename T> void gi(T &s){
+	s = 0;
+	int b = 1;
+	char ch = getchar();
+	while (ch < '0' || ch > '9') b *= (ch == '-') ? (-1) : 1, ch = getchar();
+	while (ch >= '0' && ch <= '9') s = s * 10 + ch - '0', ch = getchar();
+	s *= b;
+}
+
+const int P = 998244353, inv2 = 499122177;
+int T, n, m, f[N], g[N], bz[N], ans;
+ll l[N], r[N];
+
+int add(int x, int y){
+	return x + y >= P ? x + y - P : x + y;
+}
+
+int del(int x, int y){
+	return x - y < 0 ? x - y + P : x - y;
+}
+
+namespace subsp{
+	int check(){
+		fo (i, 1, n){
+			if (l[i]) return 0;
+			ll x = r[i];
+			while (x){
+				if (x % 2 == 0) return 0;
+				x /= 2;
+			}
+		}
+		return 1;
+	}
+	void solve(){
+		ll x = r[1], k = 0;
+		while (x) x /= 2, k ++;
+		k = (k + 1) / 2;
+		ll ans = (1ll << k) % P;
+		fo (i, 1, n){
+			printf("%lld\n", ans);
+			ans = ans * ((r[i] + 1) % P) % P;
+		}
+		exit(0);
+	}
+}
+
+void fwt(int *a){
+	fo (i, 0, n - 1)
+		fo (j, 0, (1 << m) - 1) if (j & (1 << i)){
+			int x = a[j ^ (1 << i)], y = a[j];
+			a[j ^ (1 << i)] = add(x, y);
+			a[j] = del(x, y);
+		}
+}
+
+void ifwt(int *a){
+	fo (i, 0, n - 1)
+		fo (j, 0, (1 << m) - 1) if (j & (1 << i)){
+			int x = a[j ^ (1 << i)], y = a[j];
+			a[j ^ (1 << i)] = 1ll * (x + y) * inv2 % P;
+			a[j] = 1ll * (x - y + P) * inv2 % P;
+		}
+}
+
+int check(int x){
+	fo (i, 1, m / 2) 
+		if (((x & (1 << (i - 1))) > 0) ^ ((x & (1 << (m - i))) > 0)) 
+			return 0;
+	return 1;
+}
+
+int main(){
+	freopen("far.in", "r", stdin);
+	freopen("far.out", "w", stdout);
+	gi(n), gi(m);
+	fo (i, 1, n) gi(l[i]), gi(r[i]);
+	if (subsp::check()) subsp::solve();
+	f[0] = 1;
+	fo (i, 0, (1 << m) - 1) bz[i] = check(i);
+	fo (i, 1, n){
+		memset(g, 0, sizeof(g));
+		fo (j, l[i], r[i]) g[j] = 1;
+		fwt(f), fwt(g);
+		fo (j, 0, (1 << m) - 1) f[j] = 1ll * f[j] * g[j] % P;
+		ifwt(f);
+		ans = 0;
+		fo (i, 0, (1 << m) - 1) ans = add(ans, bz[i] * f[i]);
+		printf("%d\n", ans);
+	}
+}

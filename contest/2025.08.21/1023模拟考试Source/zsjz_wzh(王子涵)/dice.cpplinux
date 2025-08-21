@@ -1,0 +1,59 @@
+#include <bits/stdc++.h>
+using namespace std;
+const int N = 5010, P = 1e9 + 7;
+int n, ans;
+map <int, int> q;
+int s[N][N], inv[N];
+int pls(int x, int y) {
+    return x + y < P ? x + y : x + y - P;
+}
+int sub(int x, int y) {
+    return x < y ? x + P - y : x - y;
+}
+int mul(int x, int y) {
+    return (long long) x * y % P;
+}
+int quick_pow(int x, int y) {
+    int res = 1;
+    for (; y; y >>= 1, x = mul(x, x))
+        if (y & 1)
+            res = mul(res, x);
+    return res;
+}
+int query(int k, int x) {
+    int res = 0, pro = 1;
+    for (int i = 0; i <= k; ++i) {
+        pro = mul(pro, sub(x, i));
+        res = pls(res, mul(mul(s[k][i], pro), inv[i + 1]));
+    }
+    return res;
+}
+int main() {
+    freopen("dice.in", "r", stdin);
+    freopen("dice.out", "w", stdout);
+    scanf("%d", &n);
+    int lst = 0, cnt = 0, pro = 1, mx = 0;
+    for (int i = 1; i <= n; ++i) {
+        int x;
+        scanf("%d", &x);
+        mx = max(mx, x);
+        ++q[x];
+        pro = mul(pro, quick_pow(x, P - 2));
+    }
+    s[0][0] = 1;
+    for (int i = 1; i <= n; ++i)
+        for (int j = 1; j <= n; ++j)
+            s[i][j] = pls(s[i - 1][j - 1], mul(j, s[i - 1][j]));
+    inv[1] = 1;
+    for (int i = 2; i <= n + 1; ++i)
+        inv[i] = sub(0, mul(inv[P % i], P / i));
+    ans = mx;
+    for (auto i : q) {
+        ans = sub(ans, mul(pro, sub(query(n - cnt, i.first), query(n - cnt, lst))));
+        lst = i.first;
+        cnt += i.second;
+        pro = mul(pro, quick_pow(i.first, i.second));
+    }
+    printf("%d\n", ans);
+    return 0;
+}

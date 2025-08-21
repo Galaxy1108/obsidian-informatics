@@ -1,0 +1,23 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+#define int long long
+#define MAXN 55
+int n,ans = 0,a[MAXN] = {0},c[205][55] = {0},cnt[205] = {0};
+
+signed main(){
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	scanf("%lld",&n);
+	for( int i = 1 ; i <= n ; i ++ ){
+		scanf("%lld",&a[i]);
+		c[a[i]][++c[a[i]][0]] = i;
+	}
+	sort( a + 1 , a + n + 1 );
+	for( int i = 1 ; i <= n ; i ++ )
+		ans = ans + abs( c[a[i]][++cnt[a[i]]] - i );
+	printf("%lld\n",ans);
+	fclose(stdin);
+	fclose(stdout);
+	return 0;
+}

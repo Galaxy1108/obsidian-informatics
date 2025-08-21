@@ -1,0 +1,49 @@
+#include <bits/stdc++.h>
+#define INF 1000000007
+#define LL long long
+using namespace std;
+inline int read(){
+	int x=0,w=1;
+	char ch=getchar();
+	while(!isdigit(ch)){
+		if(ch=='-') w=-1;
+		ch=getchar();
+	}
+	while(isdigit(ch)){
+		x=x*10+(ch-'0');
+		ch=getchar();
+    }
+    return x*w;
+}
+LL n,maxn=INT_MIN,ans;
+double tot;
+LL a[5021];
+void dfs(int dep,LL maxn){
+	if(dep>n){
+		tot++;
+		ans+=maxn;
+		return;
+	}
+	for(LL i=1;i<=a[dep];i++)
+		dfs(dep+1,max(maxn,i));
+}
+int main()
+{
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	n=read();
+	bool f=1;
+	for(LL i=1;i<=n;i++) {
+		a[i]=read();
+		if(a[i]!=a[i-1]) f=0;
+	}
+	if(f){
+		cout<<a[1]%INF<<endl;
+		return 0;
+	}
+	sort(a+1,a+1+n);
+	dfs(1,0);
+	double res=ans/tot-int(ans/tot);
+	cout<<int(res*1000000000)%INF<<endl;
+    return 0;
+}

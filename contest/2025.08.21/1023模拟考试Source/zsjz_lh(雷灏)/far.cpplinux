@@ -1,0 +1,65 @@
+#include<cstdio>
+#define fo(i,x,y) for(int i = x;i <= y;++i)
+#define ll long long
+#define p 998244353
+using namespace std;
+int n,m,f[1048576],g[1048576];
+ll l,r,M;
+void inc(int &x,int y) {x = (x + y >= p) ? x + y - p : x + y;}
+void FWT(int *a)
+{
+	ll mi = 1;
+	fo(i,1,m)
+	{
+		for(int j = 0;j < M;j += (1 << i)) fo(k,0,mi - 1)
+		{
+			int x = a[j + k + mi];
+			a[j + k + mi] = a[j + k],inc(a[j + k],x),inc(a[j + k + mi],p - x);
+		}
+		mi <<= 1;
+	}
+}
+int pa[1000010];
+void dg(int x,ll S)
+{
+	if(x == (m + 2 >> 1))
+	{
+		pa[++pa[0]] = S;
+		if(m & 1) pa[++pa[0]] = S | (1 << x - 1);
+		return;
+	}
+	dg(x + 1,S),dg(x + 1,S | (1 << x - 1) | (1 << m - x));
+}
+int main()
+{
+	freopen("far.in","r",stdin);
+	freopen("far.out","w",stdout);
+	scanf("%d%d",&n,&m),M = 1ll << m;
+	int iM = 1;
+	fo(i,1,m) iM = 499122177ll * iM % p;
+	f[0] = 1;
+	fo(i,1,n)
+	{
+		scanf("%lld%lld",&l,&r);
+		if(l == 0 && r == M - 1)
+		{
+			int res = 0;
+			if(i == 1) res = 1;
+			else {fo(j,0,M - 1) inc(res,f[i]);}
+			res = (1ll << (m + 1 >> 1)) % p * res % p;
+			printf("%d\n",res);
+			fo(j,i + 1,n) scanf("%lld%lld",&l,&r),res = (r - l + 1) % p * res % p,printf("%d\n",res);
+			break;
+		}
+		fo(j,0,M - 1) g[j] = 0;
+		fo(j,l,r) g[j] = 1;
+		FWT(f),FWT(g);
+		fo(i,0,M - 1) f[i] = 1ll * f[i] * g[i] % p;
+		FWT(f);
+		fo(i,0,M - 1) f[i] = 1ll * f[i] * iM % p;
+		int res = 0;
+		if(pa[0] == 0) dg(1,0);
+		fo(i,1,pa[0]) inc(res,f[pa[i]]);
+		printf("%d\n",res);
+	}
+}

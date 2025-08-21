@@ -1,0 +1,94 @@
+#include <bits/stdc++.h>
+using namespace std;
+int n;
+int h[55],hr[55],to[55],fro[55];
+bool haxi[55]={0};
+vector<int> wow[1005]; 
+int kk=0;
+void dfs(int idx)
+{
+	wow[kk].push_back(idx);
+	if(haxi[to[idx]]) return;
+	haxi[to[idx]]=1;
+	dfs(to[idx]);
+}
+bool cmp(int a,int b)
+{
+	return a>b;
+}
+int tn[55];
+void dfss(int idx)
+{
+	wow[kk].push_back(idx);
+	if(haxi[tn[to[idx]]]) return;
+	haxi[tn[to[idx]]]=1;
+	dfs(tn[to[idx]]);
+}
+int main()
+{
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	scanf("%d",&n);
+	int i,j;
+	for(i=1;i<=n;i++)
+	{
+		scanf("%d",&h[i]);
+		hr[i]=h[i];
+	}
+	sort(hr+1,hr+1+n);
+	for(i=1;i<=n;i++) if(hr[i]==h[i]) haxi[i]=1,to[i]=i;
+	for(i=1;i<=n;i++)
+	{
+		if(to[i]) continue;
+		for(j=1;j<=n;j++)
+			if(hr[j]==h[i]&&haxi[j]==0) 
+			{
+				to[i]=j;
+				fro[j]=i;
+				haxi[j]=1;
+				break;
+			}
+	}
+	memset(haxi,0,sizeof(haxi));
+	for(i=1;i<=n;i++)
+		if(haxi[i]==0)
+		{
+			++kk;
+			haxi[i]=1;
+			dfs(i);
+		}
+	int now[55];
+	for(i=1;i<=n;i++) now[i]=i,tn[i]=i; 
+	int ans=0;
+	for(i=1;i<=kk;i++)
+	{
+		sort(wow[i].begin(),wow[i].end(),cmp);
+		memset(haxi,0,sizeof(haxi));
+		if(wow[i].size()==2)
+		{
+			ans+=2*abs(now[wow[i][0]]-now[wow[i][1]]);
+			continue;
+		}
+		for(int k:wow[i]) 
+		{
+			if(now[k]<to[k])
+			{
+				swap(now[k],now[wow[i][0]]);
+				ans+=2*abs(now[k]-now[wow[i][0]]);
+			} 
+		}
+		for(int k:wow[i]) tn[now[k]]=k;//cout<<now[k]<<" ";
+	//	for(int k:wow[i]) if(now[k]==to[k]) to[fro[k]]=to[k];
+		for(int k:wow[i])
+		{
+			if(now[k]!=to[k]&&haxi[k]==0) 
+			{
+				++kk;
+				haxi[k]=1;
+				dfss(k);
+			}
+		}
+	}
+	printf("%d\n",ans);
+	return 0;
+}

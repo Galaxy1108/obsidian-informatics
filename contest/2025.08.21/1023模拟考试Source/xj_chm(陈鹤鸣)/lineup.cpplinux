@@ -1,0 +1,90 @@
+#include<bits/stdc++.h>
+using namespace std;
+const int M=1e5+5;
+int n,sum,ans=M,z[60];
+struct hight
+{
+	int h,num,tru;
+}a[110];
+signed main()
+{
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	scanf("%d",&n);
+	for(int i=1;i<=n;++i)
+	{
+		scanf("%d",&a[i].h);
+		a[i].num=i;
+		a[i].tru=i;
+		z[i]=a[i].h;
+	}
+	bool flag=true;
+	while(flag)
+	{
+		flag=false;
+		for (int i=1;i<n;++i)
+		{
+			if (a[i].h>a[i + 1].h)
+			{
+				int t=a[i].h;
+    	    	a[i].h= a[i + 1].h;
+        		a[i + 1].h = t;
+        		flag=true;
+        		a[i].tru=a[i].num+1;
+        		a[i+1].tru=a[i+1].num-1;
+	      	}
+		}
+	}
+	for(int i=1;i<=n;++i)
+		a[i].h=z[i];//还原
+	for(int i=n+1;i<=2*n;++i)
+	{
+		a[i].h=a[i-n].h;
+		a[i].num=a[i-n].num;
+		a[i].tru=a[i-n].tru;
+	}
+//	for(int i=1;i<=n;++i)
+//	{
+//		cout<<"num"<<i<<"="<<a[i].num<<endl;
+//		cout<<"tru"<<i<<"="<<a[i].tru<<endl;
+//		cout<<"h"<<i<<"="<<a[i].h<<endl;
+//	}
+//	cout<<endl;
+	for(int i=1;i<=n;++i)
+	{
+		sum=0;
+		for(int j=i;j<=n+i-1;++j)
+		{
+			if(a[j].num!=a[j].tru)
+			{
+				sum+=abs(a[j].tru-a[j].num);
+				int t=a[j].num;
+				a[j].num=a[a[j].tru].num;
+    			a[a[j].tru].num=t;
+			}
+		}
+		ans=min(ans,sum);
+	}
+//	for(int i=1;i<=n;++i)
+//	{
+//		cout<<"num"<<i<<"="<<a[i].num<<endl;
+//		cout<<"tru"<<i<<"="<<a[i].tru<<endl;
+//		cout<<"h"<<i<<"="<<a[i].h<<endl;
+//	}
+	cout<<ans*2<<endl;
+	return 0;
+}
+//num 2   1   3
+//tru 2   1   3
+//h   171 165 181
+//sum=1;
+
+//num 1   2   3   4   5   6   7   8   9   10
+//tru 9   3   2   6   4   8   10  7   5   1
+//h   181 153 148 166 153 171 190 166 153 120
+//
+//
+//120 148 153 153 153 166 166 171 181 190
+//1 2 3 4 5 6 7 8 9
+//9 1 2 3 4 5 6 7 0
+//16

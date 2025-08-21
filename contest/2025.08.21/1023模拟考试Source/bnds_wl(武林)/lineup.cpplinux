@@ -1,0 +1,29 @@
+#include <cstdio>
+#include <cmath>
+#include <algorithm>
+
+using namespace std;
+
+int a[55], b[55];
+bool cmp(int x, int y)
+{
+	return ((a[x] != a[y]) ? (a[x] < a[y]) : (x < y));
+}
+
+int main()
+{
+	freopen("lineup.in", "r", stdin);
+	freopen("lineup.out", "w", stdout);
+	int n, i, ans = 0;
+	scanf("%d", &n);
+	for(i = 1; i <= n; i++)
+	{
+		scanf("%d", a + i);
+		b[i] = i;
+	}
+	sort(b + 1, b + n + 1, cmp);
+	for(i = 1; i <= n; i++)
+		ans += abs(i - b[i]);
+	printf("%d\n", ans);
+	return 0;
+}

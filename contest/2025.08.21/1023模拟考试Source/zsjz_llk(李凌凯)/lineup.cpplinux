@@ -1,0 +1,49 @@
+                                        #include<bits/stdc++.h>
+using namespace std;
+#define F(i,a,b) for(int i=a;i<=b;i++)
+#define Fd(i,a,b) for(int i=a;i>=b;i--)
+#define S 20000010
+#define N 10
+
+int f[S],g[S],n,sz,s[N],Min,ans;
+struct node{int v,p;}a[N];
+
+void dfs(int x,int ti){
+	if(ti>10)return;
+	int Mx=0,sta=0;
+	F(i,1,n)sta=sta*8+a[i].p-1,Mx=max(Mx,s[i]);
+	bool flag=1;
+	F(i,2,n)if(a[i].v<a[i-1].v)flag=0;
+	if(Mx>f[sta])return;
+	if(Mx==f[sta]&&x>=g[sta])return;
+	if(flag){
+		if(Mx==f[sta])g[sta]=x;
+		if(Mx<f[sta])f[sta]=Mx,g[sta]=x;
+		return;
+	}
+	F(i,1,n) F(j,i+1,n){
+		s[a[i].p]+=j-i;
+		s[a[j].p]+=j-i;
+		swap(a[i],a[j]);
+		dfs(x+(j-i)*2,ti+1);
+		swap(a[i],a[j]);
+		s[a[i].p]-=j-i;
+		s[a[j].p]-=j-i;
+	}
+}
+
+int main(){
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	scanf("%d",&n);
+	F(i,1,n)scanf("%d",&a[i].v),a[i].p=i;
+	F(i,0,S-10)f[i]=g[i]=n*(n+1)/2;
+	dfs(0,0);
+	Min=ans=114514;
+	F(i,0,S-10){
+		if(f[i]<Min)Min=f[i],ans=g[i];
+		else if(f[i]==Min)ans=min(ans,g[i]);
+	}
+	printf("%d",ans);
+	return 0;
+}

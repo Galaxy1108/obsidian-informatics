@@ -1,0 +1,52 @@
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+const int N = 1e5+10;
+const int mod = 1e9+7;
+int n;
+inline ll qp(ll x,ll y){
+	ll s=1;
+	while(y){
+		if(y&1) s=s*x%mod;
+		x=x*x%mod;
+		y>>=1;
+	}
+	return s;
+}
+ll inv[N];
+int main(){
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	cin >> n;
+	vector<int>vec(n, 0);
+	for (int i = 0; i < n; i++)
+		cin >> vec[i];
+	sort(vec.begin(), vec.end());
+	for (int i = 0; i < n; i++) {
+		inv[i]=qp(vec[i],mod-2);
+	}
+	ll res = 0;
+	int maxnum = vec[n - 1];
+	for (int i = 1; i <= maxnum; i++){  
+		ll p = 0;					
+		int pos = 0;					
+		while (vec[pos] < i) pos++;
+		for (int j = pos; j < n; j++){  
+			ll pj = 1;				
+			for (int k = pos; k < n; k++){
+				if (j == k)
+					pj = pj * inv[k] % mod;				
+				else if (k > j)
+					pj = pj * i * inv[k] % mod;		
+				else if (k < j)
+					pj = pj * (i - 1) * inv[k] % mod;	
+			}
+			p += pj;
+			p %= mod;					
+		}
+		res += i * p;					
+		res %= mod;
+	}
+	printf("%lld\n", res);
+	return 0;
+}

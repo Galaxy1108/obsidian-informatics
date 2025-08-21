@@ -1,0 +1,64 @@
+#include<bits/stdc++.h>
+using namespace std;
+long long read(){
+	char c=getchar();
+	while(c<'0'||c>'9')c=getchar();
+	long long x=0;
+	while(c>='0'&&c<='9'){
+		x=x*10+c-'0';
+		c=getchar();
+	}
+	return x;
+}
+long long n,a[1000005],N=1e9+7,ans,tot=1,maxi,jc[100005],njc[100005];
+long long ksm(long long x,long long y){
+	long long z=1;
+	while(y){
+		if(y%2){
+			z=z*x%N;
+		}
+		x=x*x%N;
+		y/=2;
+	}
+	return z;
+}
+long long C(int n,int m){
+	return (jc[n]*njc[m]%N)*njc[n-m]%N;
+}
+bool FLAG=1;
+int main(){
+    freopen("dice.in","r",stdin);
+    freopen("dice.out","w",stdout);
+	n=read();
+	for(int i=1;i<=n;i++){
+		a[i]=read();
+		tot=tot*a[i]%N;
+		maxi=max(maxi,a[i]);
+//		if(i>1){
+//			if(a[i]!=a[i-1])FLAG=0;
+//		}
+	}
+	sort(a+1,a+n+1);
+	tot=ksm(tot,N-2);
+	long long lastp=0,sum=1,idx=1;
+	for(long long i=1;i<=maxi;i++){
+		long long p,cnt=0;
+		bool f=1;
+		while(i>a[idx]&&idx<=n){
+			sum*=a[idx];
+			sum%=N;
+			idx++;
+		}
+		p=sum*ksm(i,n-idx+1)%N;
+//			cout<<' '<<p<<sum<<' '<<i<<' '<<idx<<'\n';
+		p-=lastp;
+		lastp+=p;
+		lastp%=N;
+		p=(p+N)%N;
+//			cout<<i<<' '<<p<<'\n';
+		ans=ans+(p*i%N)*tot%N;
+		ans%=N;
+	}
+	printf("%lld",ans);
+	return 0;
+}

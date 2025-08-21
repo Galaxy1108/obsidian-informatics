@@ -1,0 +1,43 @@
+#include<bits/stdc++.h>
+#define yukiyo sb
+using namespace std;
+int n;
+struct duan{
+	int l,r,hi,start;
+}h[55];
+bool cmp(duan x,duan y){
+	return x.hi<y.hi;
+}
+int main()
+{
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	cin>>n;
+	for(int i=1;i<=n;i++){
+		cin>>h[i].hi;
+		h[i].start=i;
+		h[i].l=n+1;
+	}
+	sort(h+1,h+n+1,cmp);
+	for(int i=1;i<=n;i++){
+		h[i].l=i;
+		if(h[i-1].hi==h[i].hi) h[i].l=h[i-1].l;
+	}
+	for(int i=n;i>=1;i--){
+		h[i].r=i;
+		if(h[i+1].hi==h[i].hi) h[i].r=h[i+1].r;
+	}
+	//for(int i=1;i<=n;i++) cout<<h[i].hi<<" "<<h[i].l<<" "<<h[i].r<<endl;
+	int ans=0;
+	bool l1=0,l2=0;
+	for(int i=1;i<=n;i++){
+		//if(h[i].start>=h[i].l&&h[i].start<=h[i].r) continue;
+		ans+=min(abs(h[i].start-h[i].l),abs(h[i].start-h[i].r));
+		if(h[i+1].hi==h[i].hi){
+			if(abs(h[i].start-h[i].l)<abs(h[i].start-h[i].r)) h[i+1].l++;
+			else if(abs(h[i].start-h[i].l)>abs(h[i].start-h[i].r)) h[i+1].r--;
+		}
+	}
+	cout<<ans<<endl;
+    return 0;
+}

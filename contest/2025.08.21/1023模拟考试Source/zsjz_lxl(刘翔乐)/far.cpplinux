@@ -1,0 +1,68 @@
+#if IN_LOCAL
+import local;
+#endif // IN_LOCAL
+#include<iostream>
+using namespace std;
+#if !IN_LOCAL
+#include<fstream>
+ifstream fin("far.in", ifstream::binary);
+ofstream fout("far.out", ofstream::binary);
+#define cin fin
+#define cout fout
+#endif // !IN_LOCAL
+#define SC(a, b) static_cast<a>(b)
+using ull = unsigned long long;
+constexpr const unsigned mod = 998244353;
+inline constexpr unsigned Power(unsigned a, unsigned b)
+{
+	unsigned ans = 1;
+	for (; b; a = SC(ull, a) * a % mod, b /= 2)
+	{
+		if (b % 2)
+		{
+			ans = ans * SC(ull, a) % mod;
+		}
+	}
+	return ans;
+}
+unsigned n, m, ans[44];
+struct Range
+{
+	ull l, r;
+}ran[44];
+inline void DFS(const unsigned step, const ull val)
+{
+	bool flag = 1;
+	for (unsigned i = 0; i < m; ++i)
+	{
+		if (((val >> i) & 1) != ((val >> (m - 1 - i)) & 1))
+		{
+			flag = 0;
+			break;
+		}
+	}
+	ans[step] += flag;
+	if (step < n)
+	{
+		for (ull i = ran[step].l; i <= ran[step].r; DFS(step + 1, val ^ (i++)));
+	}
+	return;
+}
+int main()
+{
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	cin >> n >> m;
+	for (unsigned i = 0; i < n; cin >> ran[i].l >> ran[i].r, ++i);
+	if (n * m <= 24)
+	{
+		DFS(0, 0);
+	}
+	else
+	{
+		for (unsigned i = 1; i <= n; ans[i] = Power(2, m * (i - 1) + m - m / 2), ++i);
+	}
+	for (unsigned i = 1; i <= n; cout << ans[i++] << '\n');
+	return 0;
+}

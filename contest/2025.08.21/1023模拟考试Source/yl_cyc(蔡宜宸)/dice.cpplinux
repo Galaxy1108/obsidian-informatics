@@ -1,0 +1,86 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+inline int read(){
+	int s=0,w=1;char ch=getchar();
+	while((ch<'0')||(ch>'9')){if(ch=='-'){w=-1;}ch=getchar();}
+	while((ch>='0')&&(ch<='9')){s=(s<<3)+(s<<1)+ch-'0';ch=getchar();}
+	return s*w;
+}
+const int N=5005;
+const int Mod=1000000007;
+int n,ans,maxx,a[N];
+bool flag1,flag2,flag3;
+inline int qp(int x,int y){
+	int res=1;
+	while(y){
+		if(y&1)res=(res*x)%Mod;
+		x=(x*x)%Mod;y>>=1;
+	}
+	return res;
+}
+namespace Brute{
+	inline void Main(){
+		sort(a+1,a+n+1);
+		for(int i=1;i<=a[n];i++){
+			int p=0;int pos=1;
+			while(a[pos]<i)pos++;
+			for(int j=pos;j<=n;j++){
+				int pj=1;
+				for(int k=pos;k<=n;k++){
+					if(j==k)pj=(pj*qp(a[k],Mod-2))%Mod;
+					if(k>j)pj=(((pj*i)%Mod)*qp(a[k],Mod-2))%Mod;
+					if(k<j)pj=(((pj*(i-1))%Mod)*qp(a[k],Mod-2))%Mod;
+				}
+				p=(p+pj)%Mod;
+			}
+			ans=(ans+i*p)%Mod;
+		}
+		printf("%lld\n",ans);
+		return ;
+	}
+}
+namespace Sub3{
+	int maxx=0,Inv[N];
+	inline void Main(){
+		for(int i=1;i<=n;i++)maxx=max(maxx,a[i]);
+		for(int i=1;i<=n;i++)Inv[i]=qp(a[i],Mod-2);
+		ans=maxx;
+		for(int i=1;i<maxx;i++){
+			int res=1;
+			for(int j=1;j<=n;j++)if(a[j]>=i)res=(((res*i)%Mod)*Inv[j])%Mod;
+			ans=(ans+Mod-res)%Mod;
+		} 
+		printf("%lld\n",ans);
+		return ;
+	}
+}
+namespace Sub4{
+	int maxx=0,Inv[N];
+	inline void Main(){
+		for(int i=1;i<=n;i++)maxx=max(maxx,a[i]);
+		for(int i=1;i<=a[1];i++)ans=(ans+i*(qp(i,n)-qp(i-1,n)+Mod)%Mod)%Mod;
+		ans=(ans*qp(qp(a[1],n),Mod-2))%Mod;
+		printf("%lld\n",ans);
+		return ;
+	}
+}
+inline void Solve(){
+	n=read();flag1=flag2=flag3=true;
+	for(int i=1;i<=n;i++)a[i]=read();
+	for(int i=1;i<=n;i++)flag1&=(a[i]<=500);
+	for(int i=1;i<=n;i++)flag2&=(a[i]<=1000000);
+	for(int i=1;i<=n;i++)flag3&=(a[i]==a[1]);
+	if(n<=500&&flag1==true){Brute::Main();return ;}
+	if(n<=5000&&flag2==true){Sub3::Main();return ;}
+	if(n<=5000&&flag3==true){Sub4::Main();return ;}
+	return ;
+}
+signed main(){
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	Solve();
+	fclose(stdin);
+	fclose(stdout);
+	return 0;
+}

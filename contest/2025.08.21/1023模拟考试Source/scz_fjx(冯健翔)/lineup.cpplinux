@@ -1,0 +1,32 @@
+#include<bits/stdc++.h>
+#define ll long long 
+using namespace std;
+template<typename T>inline void read(T& t){
+	int c=getchar();t=0;
+	while(!isdigit(c))c=getchar();
+	while(isdigit(c))t=t*10+c-48,c=getchar();
+}
+template<typename T,typename ...Args>inline void read(T& t,Args&... args){
+	read(t);read(args...);
+}
+void print(ll n){
+	if(n>9)print(n/10);
+	putchar(n%10+'0');
+}
+ll n,ans;
+int ab(int a){return a<0?-a:a;}
+struct zz{
+	int h,id;
+}a[55];
+bool com(zz a,zz b){
+	return a.h<b.h;
+}
+int main(){
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	read(n);
+	for(int i=1;i<=n;++i)read(a[i].h),a[i].id=i;
+	sort(a+1,a+1+n,com);
+	for(int i=1;i<=n;++i)ans+=ab(i-a[i].id);
+	print(ans);
+} 

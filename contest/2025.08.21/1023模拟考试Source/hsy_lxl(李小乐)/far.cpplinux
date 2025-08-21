@@ -1,0 +1,39 @@
+#include<bits/stdc++.h>
+#define int long long
+using namespace std;
+void read(int &x){
+	x=0;char c=getchar();
+	int w=0;
+	while(!isdigit(c)){
+		(c=='-')&&(w=1);
+		c=getchar();
+	}
+	while(isdigit(c)){
+		x=x*10+(c^48);
+		c=getchar();
+	}
+	w&&(x=-x);
+}
+int n,m,ans[16],l[15],r[15];
+void dfs(int x,int xo){
+	for(int i=1;i<=m;i++){
+		if(((xo>>(i-1))&1)!=((xo>>(m-i))&1))goto l1;
+	}
+	ans[x-1]++;
+l1:	if(x==n+1)return;
+	for(int i=l[x];i<=r[x];i++){
+		dfs(x+1,xo^i);
+	}
+}
+signed main(){
+	freopen("far.in","r",stdin);
+	freopen("far.out","w",stdout);
+	read(n);
+	read(m);
+	for(int i=1;i<=n;i++){
+		read(l[i]);
+		read(r[i]);
+	}
+	dfs(1,0);
+	for(int i=1;i<=n;i++)cout<<ans[i]<<endl;
+}

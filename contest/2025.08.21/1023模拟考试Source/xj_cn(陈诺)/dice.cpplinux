@@ -1,0 +1,58 @@
+//回家？我没有家可以回，我没有退路。
+#include<bits/stdc++.h>
+using namespace std;
+inline int read(){
+   int s=0,w=1;
+   char ch=getchar();
+   while(ch<'0'||ch>'9'){if(ch=='-')w=-1;ch=getchar();}
+   while(ch>='0'&&ch<='9') s=s*10+ch-'0',ch=getchar();
+   return s*w;
+}
+const int p=1e9+7;
+int qp(int x,int y)
+{
+	int res=1;
+	for(int t=x; y; y>>=1,t=1ll*t*t%p)
+		if(y&1) res=1ll*res*t%p;
+	return res;
+}
+int a[5003],fac[6003],ifac[6003],inv[6003],B[5003];
+int C(int n,int m)
+{
+	return 1ll*fac[n]*ifac[m]%p*ifac[n-m]%p;
+}
+int F(int x,int y)
+{
+	++x,++y;
+	int res=0,pw=1;
+	for(int i=1; i<=y; ++i)
+		pw=1ll*pw*x%p,res=(res+1ll*C(y,i)*B[y-i]%p*pw)%p;
+	return 1ll*res*inv[y]%p;
+}
+const int N=6000;
+signed main()
+{
+#ifndef local
+	freopen("dice.in","r",stdin),
+	freopen("dice.out","w",stdout);
+#endif
+	int n=read(),d=1;
+	fac[0]=ifac[0]=inv[0]=B[0]=1;
+	for(int i=1; i<=N; ++i) fac[i]=1ll*fac[i-1]*i%p;
+	ifac[N]=qp(fac[N],p-2);
+	for(int i=N-1; i>=1; --i) ifac[i]=1ll*ifac[i+1]*(i+1)%p;
+	for(int i=1; i<=N; ++i) inv[i]=1ll*fac[i-1]*ifac[i]%p;
+	for(int i=1; i<=n; ++i)
+	{
+		for(int j=0; j<i; ++j)
+			B[i]=(B[i]+1ll*C(i+1,j)*B[j])%p;
+		B[i]=1ll*B[i]*(p-inv[i+1])%p;
+	}
+	for(int i=1; i<=n; ++i) a[i]=read(),d=1ll*d*a[i]%p;
+	sort(a+1,a+n+1),d=qp(d,p-2);
+	int ans=(a[n]+1)%p;
+	for(int i=1; i<=n; d=1ll*d*a[i++]%p)
+		ans=(ans+p-1ll*d*(F(a[i],n+1-i)+p-F(a[i-1],n+1-i))%p)%p;
+	printf("%d\n",ans);
+	return 0;
+}

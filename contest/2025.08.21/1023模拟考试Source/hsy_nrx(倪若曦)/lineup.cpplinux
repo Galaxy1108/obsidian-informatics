@@ -1,0 +1,71 @@
+#include<bits/stdc++.h>
+#define il inline
+#define cs const
+#define ri register
+#define int long long
+#define clock() (clock*1000/CLOCKS_PER_SEC)
+#define F(s) freopen(#s".in","r",stdin),freopen(#s".out","w",stdout);
+using namespace std; 
+namespace Q{
+	il int rd(){
+		ri int x=0,f=1;ri char c=getchar();
+		while(c<'0'||c>'9') f=(c=='-')?-1:1,c=getchar();
+		while(c>='0'&&c<='9') x=x*10+(c^48),c=getchar();
+		return x*f; 
+	}
+	il void wt(int x){
+		if(x<0) x=-x,putchar('-');
+		if(x>=10) wt(x/10);
+		return putchar(x%10+48),void(); 
+	}
+}
+using namespace Q;
+cs int N=55;
+int n,h[N],b[N],as,c[N],mxx;
+il bool ck(){
+	int s=c[1];
+	for(ri int i=2;i<=n;++i){
+		if(h[i]<h[i-1]) return 0;
+	}
+	return 1;
+}
+il void dfs(int mx,int s){
+	if(mx>mxx) return;
+	if(ck()){
+		if(mx==mxx) as=min(s,as);
+		else mxx=mx,as=s;
+		return;
+	}
+	for(ri int i=1;i<=n;++i){
+		for(ri int j=i+1;j<=n;++j){
+			if(h[i]>h[j]){
+				swap(b[i],b[j]),c[i]+=abs(i-j),c[j]+=abs(i-j);
+				dfs(max(max(mx,c[i]),c[j]),s+2*abs(i-j));
+				swap(b[i],b[j]),c[i]-=abs(i-j),c[j]-=abs(i-j);			
+			}
+
+		}
+	}
+}
+signed main(){
+	F(lineup)
+	n=rd();
+	for(ri int i=1;i<=n;++i){
+		b[i]=h[i]=rd();
+	} 
+	for(ri int i=1;i<=n;++i){
+		for(ri int j=i;j<n;++j){
+			if(b[j]>b[j+1]){
+				swap(b[j],b[j+1]);
+				c[j]++,c[j+1]++;
+			} 
+		}
+	}
+	for(ri int i=1;i<=n;++i){
+		mxx=max(mxx,c[i]);
+		as+=c[i],b[i]=h[i],c[i]=0;
+	}
+//	dfs(0,0);
+	wt(as);
+	return 0;
+}

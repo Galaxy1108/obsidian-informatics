@@ -1,0 +1,166 @@
+#include <cstdio>
+#include <algorithm>
+#include <iostream>
+#include <cstring>
+#include <string>
+#include <queue>
+#include <deque>
+#include <cmath>
+#include <vector>
+#include <map>
+#include <stack>
+#include <set>
+#define LL long long
+#define ULL unsigned long long
+#define IT set<int>::iterator
+using namespace std;
+const int MAXN = 55;
+int n, a[MAXN], b[MAXN], c[MAXN], tar1[MAXN], ans, cnt, tmp[MAXN];
+bool vis[MAXN];
+struct num
+{
+	int a, tar;
+} nu[MAXN];
+int read()
+{
+	int x = 0;
+	bool flag = 1;
+	char c = getchar();
+	while(c < '0' || c > '9')
+	{
+		if(c == '-') flag = 0;
+		c = getchar();
+	}
+	while(c >= '0' && c <= '9')
+	{
+		x = x * 10 + c - '0';
+		c = getchar();
+	}
+	return flag ? x : ~(x - 1);
+}
+bool cmp(int x, int y)
+{
+	int pl1 = abs(x - nu[nu[x].tar].tar) - abs(nu[x].tar - nu[nu[x].tar].tar);
+	int pl2 = abs(y - nu[nu[y].tar].tar) - abs(nu[y].tar - nu[nu[y].tar].tar);
+	return pl1 < pl2;
+}
+int main()
+{
+	freopen("lineup.in", "r", stdin);
+	freopen("lineup.out", "w", stdout);
+	n = read();
+	for(int i = 1; i <= n; ++i)
+	{
+		a[i] = read();
+		b[i] = a[i];
+	}
+	sort(b + 1, b + n + 1);
+	for(int i = 1; i <= n; ++i)
+	{
+		a[i] = lower_bound(b + 1, b + n + 1, a[i]) - b;
+		c[i] = a[i];
+	}
+	sort(c + 1, c + n + 1);
+	for(int i = 1; i <= n; ++i)
+	{
+		if(!vis[i])
+		{
+			if(c[a[i]] != c[a[i] - 1] && c[a[i]] != c[a[i] + 1]) //Î¨Ò»
+				tar1[i] = a[i];
+			else
+			{
+				int cnt = 0;
+				for(int j = 1; j < i; ++j)
+					if(a[j] == a[i]) ++cnt;
+				tar1[i] = a[i] + cnt;
+			}
+		}
+	}
+	for(int i = 1; i <= n; ++i)
+	{
+//		printf("%d ", a[i]);
+		if(i == tar1[i])
+		{
+			vis[i] = 1;
+			++cnt;
+		}
+	}
+//	puts("");
+	for(int i = 1; i <= n; ++i)
+	{
+		nu[i] = {a[i], tar1[i]};
+	}
+	while(cnt < n)
+	{
+		for(int i = 1; i <= n; ++i) //³É¶ÔµÄ 
+		{
+			if(vis[i]) continue;
+//			if(i == 2)
+//			{
+//				printf("2:%d %d\n", nu[2].tar, nu[nu[2].tar].tar);
+//			}
+			if(nu[nu[i].tar].tar == i)
+			{
+//				printf("%d and %d\n", i, nu[i].tar);
+				ans += abs(nu[i].tar - i) << 1;
+				vis[i] = vis[nu[i].tar] = 1;
+				swap(nu[i], nu[nu[i].tar]);
+				cnt += 2;
+//				for(int j = 1; j <= n; ++j)
+//				{
+//					printf("%d ", nu[j].a);
+//				}
+//				puts("");
+			}
+		}
+//		printf("ans=%d\n", ans);
+		if(cnt >= n) break;
+		int minn = 114514;
+		int cnt_tmp = 0;
+		for(int i = 1; i <= n; ++i)
+		{
+//			if(i == 5) printf("tar5 = %d\n", nu[5].tar);
+			if(vis[i]) continue;
+			if(abs(nu[i].tar - i) < minn)
+			{
+				int pl = abs(i - nu[nu[i].tar].tar) - abs(nu[i].tar - nu[nu[i].tar].tar);
+				if(pl < 0)
+				{
+					cnt_tmp = 0;
+					minn = abs(nu[i].tar - i);
+					tmp[++cnt_tmp] = i;
+				}
+				else
+					tmp[++cnt_tmp] = i;
+			}
+			if(abs(nu[i].tar - i) == minn)
+			{
+				tmp[++cnt_tmp] = i;
+			}
+		}
+//		printf("minn = %d\n", minn);
+		sort(tmp + 1, tmp + cnt_tmp + 1, cmp); //°´Æ«ÀëÄ¿±ê·½Ïò´ÓÐ¡µ½´óÅÅÐò(Èô·½ÏòÏàÍ¬ÔòÎª¸ºÊý) 
+		int sw1 = tmp[1], sw2 = nu[tmp[1]].tar; //½»»»µÄÏÂ±ê
+//		printf("sw1 = %d, sw2 = %d\n", sw1, sw2); 
+		ans += abs(sw2 - sw1) << 1;
+		swap(nu[sw1], nu[sw2]);
+		if(nu[sw1].tar == sw1)
+		{
+			vis[sw1] = 1;
+			++cnt;
+		}
+		if(nu[sw2].tar == sw2)
+		{
+			vis[sw2] = 1;
+			++cnt;
+		}
+//		for(int j = 1; j <= n; ++j)
+//		{
+//			printf("%d ", nu[j].a);
+//		}
+//		puts("");
+//		printf("ans=%d\n", ans);
+	}
+	printf("%d\n", ans);
+	return 0;
+}

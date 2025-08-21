@@ -1,0 +1,92 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+#define fo(i,a,b) for(int i=a;i<=b;++i)
+#define fd(i,a,b) for(int i=a;i>=b;--i)
+#define ll long long
+
+const int mo = 1e9 + 7;
+
+int ksm(int x, int y) {
+	int sum = 1;
+	for(; y; y >>= 1) {
+		if(y & 1) sum = (ll)sum * x % mo;
+		x = (ll)x * x % mo;
+	}
+	return sum;
+}
+
+const int D = 5002;
+
+int n;
+int a[5005], ia[5005];
+int ans = 0;
+int mi[5005], mc = 0;
+int f[5005];
+int fac[5005], ifac[5005];
+int qz[5005], hz[5005];
+
+int lang(int x, int c) {
+	qz[0] = 1;
+	fo(i, 1, c) {
+		qz[i] = (ll)qz[i - 1] * (x - i + mo) % mo;
+	}
+	hz[c + 1] = 1;
+	fd(i, c, 1) {
+		hz[i] = (ll)hz[i + 1] * (x - i + mo) % mo;
+	}
+	int res = 0;
+	fo(i, 1, c) {
+		int mul = (ll)f[i] * qz[i - 1] % mo * hz[i + 1] % mo;
+		int mul2 = (ll)ifac[i - 1] * ifac[c - i] % mo;
+		if((c - i) & 1) mul2 = (mo - mul2) % mo;
+		(res += (ll)mul * mul2 % mo) %= mo;
+	}
+	return res;
+}
+
+int jisuan(int l, int r, int c) {
+	//to calc [l,r]^c sum
+	if(l > r) return 0;
+	while(mc < c) {
+		fo(i, 1, D) mi[i] = (ll)mi[i] * i % mo;
+		++mc;
+	}
+	f[0] = 0;
+	fo(i, 1, c + 2) f[i] = (f[i - 1] + mi[i]) % mo;
+	return (lang(r, c + 2) - lang(l - 1, c + 2) + mo) % mo;
+}
+
+int main() {
+	freopen("dice.in", "r", stdin);
+	freopen("dice.out", "w", stdout);
+	scanf("%d", &n);
+	fo(i, 1, n) {
+		scanf("%d", &a[i]);
+	}
+	sort(a + 1, a + 1 + n);
+	fo(i, 1, n) {
+		ia[i] = ksm(a[i], mo - 2);
+	}
+	fac[0] = ifac[0] = 1;
+	fo(i, 1, D) {
+		mi[i] = 1;
+		fac[i] = (ll)fac[i - 1] * i % mo;
+		ifac[i] = ksm(fac[i], mo - 2);
+	}
+	fd(i, n, 1) {
+		if(a[i] == a[i - 1]) continue;
+		int gd = 1;
+		fo(j, i, n) gd = (ll)gd * ia[j] % mo;
+		int l = a[i - 1] + 1, r = a[i];
+		int c = n - i + 1;
+		int res = (ksm(r, c + 1) - (ll)l * ksm(l - 1, c) % mo + mo) % mo;
+//		fo(t, l, r - 1) {
+//			res = (res - ksm(t, c) + mo) % mo;
+//		}
+		res = (res - jisuan(l, r - 1, c) + mo) % mo;
+		(ans += (ll)gd * res % mo) %= mo;
+	}
+	printf("%d\n", ans);
+	return 0;
+}

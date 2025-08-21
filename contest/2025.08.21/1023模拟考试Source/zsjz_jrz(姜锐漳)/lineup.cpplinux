@@ -1,0 +1,29 @@
+#include<bits/stdc++.h>
+using namespace std;
+int a[55],t[55],c[205];
+int n;
+int main(){
+    freopen("lineup.in","r",stdin);
+    freopen("lineup.out","w",stdout);
+    scanf("%d",&n);
+    for (int i=1;i<=n;++i) scanf("%d",&a[i]),++c[a[i]];
+    for (int i=1;i<=200;++i) c[i]+=c[i-1];
+    for (int i=1;i<=n;++i) t[i]=++c[a[i]-1];
+    int ans=0;
+    for (int i=1;i<=n;++i){
+        int idx=i;
+        for (int j=i+1;j<=n;++j) if (a[j]<a[idx]) idx=j;
+        while (idx>i){
+            for (int k=i;k<idx;++k)
+                if (t[k]>=idx){
+                    ans+=2*abs(idx-k);
+                    swap(t[k],t[idx]);
+                    swap(a[k],a[idx]);
+                    idx=k;
+                    break;
+                }
+        }
+    }
+    printf("%d\n",ans);
+    return 0;
+}

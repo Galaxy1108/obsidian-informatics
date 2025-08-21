@@ -1,0 +1,49 @@
+#include<iostream>
+#include<cstdio>
+#include<algorithm>
+#include<cmath>
+#include<cstring>
+#include<cstdlib>
+using namespace std;
+#define re int
+inline int read(){
+	int x=0,ff=1;char c=getchar();
+	while(c<'0'||c>'9'){if(c=='-')ff=-1;c=getchar();}
+	while(c>='0'&&c<='9'){x=(x<<1)+(x<<3)+(c^'0');c=getchar();}
+	return x*ff;
+}
+#include<random>
+mt19937 mt(233333);
+const int mn=11000;
+int n,fa[2505],a[2505];
+inline int gcd(int x,int y){
+	if(!y)return x;
+	return gcd(y,x%y);
+}
+int main(){
+	freopen("divisors.in","r",stdin);
+	freopen("divisors.out","w",stdout);
+	n=read();a[1]=2;a[2]=6;a[3]=3;
+	fa[2]=1;fa[3]=2;
+	for(re i=4;i<=n;i++){
+		int u=mt()%(i-1)+1;
+		int v=i/gcd(a[u],i)*a[u];
+		while(v>mn){
+			u=mt()%(i-1)+1;v=i/gcd(a[u],i)*a[u];
+		}
+		for(re j=2;j<i;j++){
+			int x=i/gcd(a[j],i)*a[j];
+			if(x<v){
+				u=j;v=x;
+			}
+		}
+		a[u]*=i/gcd(a[u],i);
+		fa[i]=u;a[i]=i;
+	}
+	for(re i=1;i<=n;i++)printf("%d ",a[i]);
+	puts("");
+	for(re i=2;i<=n;i++){
+		printf("%d %d\n",fa[i],i);
+	}
+	return 0;
+}

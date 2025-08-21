@@ -1,0 +1,40 @@
+// #pragma GCC optimize("O3")
+// // #pragma GCC optimize("Ofast")
+// #pragma GCC optimize("unroll-loops")
+// #pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,tune=native")
+#include <bits/stdc++.h>
+using namespace std;
+
+#define PB emplace_back
+#define int long long
+#define ll long long
+#define vi vector<int>
+#define siz(a) ((int)((a).size()))
+#define rep(i, a, b) for (int i = (a); i <= (b); ++i)
+#define per(i, a, b) for (int i = (a); i >= (b); --i)
+
+const int N = 50;
+int a, s[N + 5], id[N + 5];
+bool vis[N + 5];
+
+void remove(vi &n, int m) {
+	vi res;
+	rep(i, 0, siz(n) - 1) if(i != m) res.PB(n[i]);
+	n = res;
+}
+
+signed main() {
+	freopen("lineup.in", "r", stdin);
+	freopen("lineup.out", "w", stdout);
+	ios::sync_with_stdio(0);
+	cin.tie(0), cout.tie(0);
+	cin >> a;
+	rep(i, 1, a) cin >> s[i], id[i] = i;
+	sort(id + 1, id + a + 1, [&](int n, int m) {return s[n] < s[m] || (s[n] == s[m] && n < m);});
+	int ans = 0;
+	rep(i, 1, a) {
+		ans += abs(id[i] - i);
+	}
+	cout << ans;
+	return 0;
+}

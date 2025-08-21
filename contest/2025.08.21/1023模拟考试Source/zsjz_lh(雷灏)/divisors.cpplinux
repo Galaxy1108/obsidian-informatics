@@ -1,0 +1,13 @@
+#include<cstdio>
+#define fo(i,x,y) for(int i = x;i <= y;++i)
+using namespace std;
+int n;
+int main()
+{
+    freopen("divisors.in","r",stdin);
+    freopen("divisors.out","w",stdout);
+    scanf("%d",&n);
+    printf("2520 ");
+    fo(i,2,n) printf("%d ",i);puts("");
+    fo(i,2,n) printf("1 %d\n",i);
+}

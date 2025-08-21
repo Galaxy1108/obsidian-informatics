@@ -1,0 +1,14 @@
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+using namespace std;
+pair<int,int> a[100011];int n;
+int Abs(int x){return x<0?-x:x;}
+int main()
+{
+	freopen("lineup.in","r",stdin);freopen("lineup.out","w",stdout);
+	scanf("%d",&n);for(int i=1;i<=n;++i)scanf("%d",&a[i].first),a[i].second=i;
+	sort(a+1,a+1+n);int ans=0;for(int i=1;i<=n;++i)ans+=Abs(i-a[i].second);
+	printf("%d\n",ans);
+	fclose(stdin);fclose(stdout);return 0;
+}

@@ -1,0 +1,35 @@
+#include<bits/stdc++.h>
+#define LL long long 
+using namespace std;
+const LL N=1e4+7 , S=1e9+7;
+LL a[N],b[N],n,m,k,x,y,ans;
+
+LL ksm(LL x,LL y)
+{
+	if (!y) return 1;
+	if (y==1) return x%S;
+	if (y%2==0) return ksm(x*x%S,y/2);
+	return ksm(x*x%S,y/2)*x%S;
+}
+
+int main()
+{
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	scanf("%lld",&n);
+	for (LL i=1;i<=n;i++) scanf("%lld",&a[i]) , m=max(m,a[i]);
+	sort(a+1,a+n+1);  b[0]=1;
+	for (LL i=1;i<=n;i++) b[i]=a[i]*b[i-1]%S;
+	if (m<=1e6)
+	{
+		k=0; 
+		for (LL i=1;i<=m;i++)
+		{
+			while (a[k+1]<i && k<n) k++;
+			x=b[k]*ksm(i,n-k)%S;  y=n-k;
+			ans+=(x*y%S*ksm(i,S-2)%S-x*(y-1)%S*ksm(ksm(i,y),S-2)%S+S)%S*i%S;
+			ans%=S;
+		}
+	}
+	printf("%lld\n",ans*ksm(b[n],S-2)%S);
+}

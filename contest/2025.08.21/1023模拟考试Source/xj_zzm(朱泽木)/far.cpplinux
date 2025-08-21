@@ -1,0 +1,160 @@
+#include<bits/stdc++.h>
+#define int long long
+#define pb push_back
+#define mp make_pair
+#define pii pair<int,int>
+#define x first
+#define y second
+#define vi vector<int>
+#define vpi vector<pii>
+#define WT int TT=read();while(TT--)
+using namespace std;
+
+inline int read()
+{
+    char c=getchar();int x=0;bool f=0;
+    for(;!isdigit(c);c=getchar())f^=!(c^45);
+    for(;isdigit(c);c=getchar())x=(x<<1)+(x<<3)+(c^48);
+    if(f)x=-x;return x;
+}
+inline void ckmax(int &a,int b){a=(a>b?a:b);}
+inline void ckmin(int &a,int b){a=(a<b?a:b);}
+
+const int Mod=998244353;
+const int M=45;
+int n,m,l[M],r[M];
+
+struct solve1
+{
+	struct poly
+	{
+		int f[1<<15];
+		void clear(){memset(f,0,sizeof(f));}
+	}a,b;
+	void XOR(poly &a,int x,int len)
+	{
+		for (int w=2;w<=len;w<<=1)
+			for (int i=0;i<len;i+=w)
+				for (int k=i;k<=i+w/2-1;k++)
+				{
+					int X=a.f[k],Y=a.f[k+w/2];
+					a.f[k]=(X+Y)*x%Mod,a.f[k+w/2]=(X-Y+Mod)*x%Mod;
+				}
+	}
+	int get(int x)
+	{
+		int res=0;
+		for (int i=0;i<m/2;i++)res|=(((x>>i)&1)^((x>>(m-i-1))&1))<<i;
+		return res;
+	}
+	void solve()
+	{
+		a.f[0]=1;int len=m/2;
+		for (int i=1;i<=n;i++)
+		{
+			b.clear();
+			for (int j=l[i];j<=r[i];j++)
+				b.f[get(j)]++;
+			XOR(a,1,1<<len),XOR(b,1,1<<len);
+			for (int i=0;i<(1<<len);i++)a.f[i]=a.f[i]*b.f[i]%Mod;
+			XOR(a,(Mod+1)/2,1<<len);
+			cout<<a.f[0]<<'\n';
+		}
+	}
+}T1;
+
+struct node
+{
+	int v[64],f[64],s[64],tmp;
+	void clear()
+	{
+			memset(v,0,sizeof(v));
+			memset(f,0,sizeof(f));
+			memset(s,0,sizeof(s));
+			tmp=0;
+		}
+		int query(int x)
+		{
+			for (int i=m-1;i>=0;i--)
+				if (((x>>i)&1)!=f[i])return v[i];
+			return tmp;
+		}
+		void init(int x,int V)
+		{
+			int now=0;if (x==(1<<m))x--,tmp=V;
+			for (int i=m-1;i>=0;i--)
+			{
+				f[i]=(x>>i)&1;
+				if (f[i])now|=1ll<<i,v[i]=V;
+			}
+			for (int i=1;i<=m-1;i++)s[i]=(s[i-1]+(1ll<<(i-1))%Mod*v[i-1])%Mod;
+		}
+	};
+	node operator * (node a,node b)
+	{
+		node c;c.clear();int sum=0;
+		for (int i=m-1;i>=0;i--)
+			if (a.f[i]==b.f[i])
+			{
+				c.f[i]=0,c.v[i]=(sum+a.v[i]*b.s[i]+a.s[i]*b.v[i])%Mod,
+				sum=(sum+(1ll<<i)%Mod*a.v[i]%Mod*b.v[i])%Mod;
+			}
+			else
+			{
+				c.f[i]=1,c.v[i]=(sum+a.v[i]*b.s[i]+a.s[i]*b.v[i])%Mod,
+				sum=(sum+(1ll<<i)%Mod*a.v[i]%Mod*b.v[i])%Mod;
+			}
+		c.tmp=(sum+a.tmp*b.tmp)%Mod;c.s[0]=c.tmp;
+		for (int i=1;i<=m-1;i++)c.s[i]=(c.s[i-1]+(1ll<<(i-1))%Mod*c.v[i-1])%Mod;
+		return c;
+	}
+	int query(node x)
+	{
+		int res=0,f=0;vi v;
+		for (int i=m-1;i>=0;i--)
+		{
+			v.pb(x.f[i]^1);
+			if (i>=m/2)res=(res+(1<<(i-m/2))*x.v[i])%Mod;
+			else if (x.f[i]==v[i]){res=(res+x.v[i]);f=1;break;}
+		}
+		if (f==0)res=(res+x.tmp);
+		return res;
+	}
+	
+
+struct solve2
+{
+	node T1,T2,tmp;
+	void solve()
+	{
+		T1.init(1,1);vector<node>v;v.pb(T1);
+		for (int i=1;i<=n;i++)
+		{
+			if (l[i]==0)
+				tmp.clear(),tmp.init(r[i]+1,1),T1=T1*tmp;
+			else
+			{
+				vector<node>v2;
+				for (auto x:v)
+					tmp.clear(),tmp.init(r[i]+1,1),v2.pb(x*tmp),
+					tmp.clear(),tmp.init(l[i],Mod-1),v2.pb(x*tmp);
+				v=v2;
+			}int ans=0;
+			for (auto x:v)
+				ans=(ans+query(x*T1))%Mod;
+			cout<<ans<<'\n';
+		}
+	}
+}T2;
+
+signed main()
+{
+	freopen("far.in","r",stdin);
+	freopen("far.out","w",stdout);
+	n=read(),m=read();
+	for (int i=1;i<=n;i++)l[i]=read(),r[i]=read();
+//	T2.solve();
+	if (m<=30)T1.solve();
+	else T2.solve();
+	return 0;
+}

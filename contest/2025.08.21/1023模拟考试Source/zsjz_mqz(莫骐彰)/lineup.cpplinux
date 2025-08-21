@@ -1,0 +1,32 @@
+#include<iostream>
+#include<cstdio>
+#include<algorithm>
+using namespace std;
+#define fo(i,a,b) for(int i=a;i<=b;++i)
+#define fod(i,a,b) for(int i=a;i>=b;--i)
+int n;
+int h[10011],px[10011];
+int c[10011];
+bool cmp(int x,int y){
+	return (h[x]<h[y]||(h[x]==h[y]&&x<y));
+}
+int Abs(int x){
+	if(x<0)return -x;
+	return x;
+}
+int main(){
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	scanf("%d",&n);
+	fo(i,1,n){
+		scanf("%d",&h[i]);
+		px[i]=i;
+	}
+	sort(px+1,px+n+1,cmp);
+	int ans=0;
+	fo(i,1,n){
+		ans+=Abs(px[i]-i);
+	}
+	cout<<ans;
+	return 0;
+}

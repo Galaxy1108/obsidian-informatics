@@ -1,0 +1,109 @@
+#include <bits/stdc++.h>
+#define sz(a) int((a).size())
+#define FOR(i, l, r) for(int i = (l); i <= (r); i++)
+#define ROF(i, r, l) for(int i = (r); i >= (l); i--)
+#define ll long long
+#define ull unsigned long long
+#define vi vector<int>
+#define pr pair<ull, int>
+using namespace std;
+const int N = 40 + 10, M = 60 + 10, P = 998244353, inv2 = (P + 1) / 2;
+int n, m, ip2[M];
+ull l[N], r[N];
+map<pair<ull, int>, int> dp[N];
+vector<pair<ull, int>> rg[N];
+vector<pair<pair<ull, int>, int>> ch[N];
+map<pair<ull, int>, int> cnt;
+void dfs(ull l, ull r, int x, vector<pair<ull, int>> &rg) {
+    if(x == 0) {
+        rg.emplace_back(l, x);
+        return;
+    }
+    if((l >> (x - 1) & 1) == (r >> (x - 1) & 1)) {
+        dfs(l, r, x - 1, rg);
+        return;
+    }
+    if((l & ((1ll << x) - 1)) == 0 && (r & ((1ll << x) - 1)) == (1ll << x) - 1) {
+        rg.emplace_back(l, x);
+        return;
+    }
+    dfs(l, l | ((1ll << (x - 1)) - 1), x - 1, rg);
+    dfs(r & (~((1ll << (x - 1)) - 1)), r, x - 1, rg);
+}
+pr nxt (pr a, pr b) {
+    pr c;
+    c.first = a.first ^ b.first;
+    c.second = max(a.second, b.second);
+    c.first = (c.first >> c.second) << c.second;
+    return c;
+}
+vector<pair<ull, int>> arr[M], rra[M];
+int qval(vector<pr> &a, ull v) {
+    auto pos = lower_bound(a.begin(), a.end(), pr{v, -1});
+    if(pos != a.end() && pos -> first == v) return pos -> second;
+    return 0;
+}
+int main() {
+    freopen("far.in", "r", stdin);
+    freopen("far.out", "w", stdout);
+    ios :: sync_with_stdio(0), cin.tie(0), cout.tie(0);
+    cin >> n >> m;
+    ip2[0] = 1;
+    FOR(i, 1, m / 2) ip2[i] = (ll)ip2[i - 1] * inv2 % P;
+    FOR(i, 0, n - 1) {
+        cin >> l[i] >> r[i];
+        dfs(l[i], r[i], m, rg[i]);
+        cnt.clear();
+        for(auto [pf, x] : rg[i]) {
+            ull y = 0;
+            FOR(j, x, m / 2 - 1) y |= (ll)((pf >> j & 1) ^ (pf >> (m - 1 - j) & 1)) << j;
+            int nx = min(x, m / 2);
+            (cnt[{y, nx}] += (1ll << x) % P) %= P;
+        }
+        for(auto [pf, x] : cnt) {
+            ch[i].emplace_back(pf, x);
+        }
+    }
+    dp[0][{0, 0}] = 1;
+    FOR(i, 0, n / 2 - 1) {
+        for(auto [p, val] : dp[i]) {
+            for(auto [q, cnt] : ch[i]) {
+                (dp[i + 1][nxt(p, q)] += (ll)val * cnt % P) %= P;
+            }
+        }
+        int sum = 0;
+        FOR(j, 0, m / 2) (sum += (ll)dp[i + 1][{0, j}] * ip2[j] % P) %= P;
+        cout << sum << "\n";
+    }
+    for(auto [p, val] : dp[n / 2]) {
+        arr[p.second].emplace_back(p.first, val);
+        FOR(j, p.second, m / 2) {
+            ull ax = (p.first >> j) << j;
+            if(!rra[j].empty() && rra[j].back().first == ax) {
+                (rra[j].back().second += val) %= P;
+            } else {
+                rra[j].emplace_back(ax, val);
+            }
+        }
+    }
+    FOR(i, 0, n / 2) dp[i].clear();
+    dp[0][{0, 0}] = 1;
+    FOR(i, 0, n - n / 2 - 1) {
+        for(auto [p, val] : dp[i]) {
+            for(auto [q, cnt] : ch[n / 2 + i]) {
+                (dp[i + 1][nxt(p, q)] += (ll)val * cnt % P) %= P;
+            }
+        }
+        int sum = 0;
+        for(auto [p, val] : dp[i + 1]) {
+            (sum += (ll)qval(rra[p.second], p.first) * val % P * ip2[p.second] % P) %= P;
+            FOR(j, p.second + 1, m / 2) {
+                int x = j;
+                ull v = (p.first >> x) << x;
+                (sum += (ll)qval(arr[j], v) * val % P * ip2[x] % P) %= P;
+            }
+        }
+        cout << sum << "\n";
+    }
+    return 0;
+}

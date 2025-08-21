@@ -1,0 +1,60 @@
+#include <algorithm>
+#include <iostream>
+#include <cstdio>
+using namespace std;
+#define ll long long
+namespace IO {
+	const int MAXSIZE = 1 << 20;
+	char buf[MAXSIZE], *p1, *p2;
+	#define gc() (p1 == p2 && (p2 = (p1 = buf) + fread(buf, 1, MAXSIZE, stdin), p1 == p2) ? EOF : *p1++)
+	inline ll rd() {
+		ll an(0), ch(gc());
+		for (; !isdigit(ch) ; ch = gc());
+		for (; isdigit(ch) ; ch = gc())
+			an = (an << 3) + (an << 1) + (ch ^ 48);
+		return an;
+	}
+}
+using namespace IO;
+
+const ll mod = 1e9 + 7;
+const int N = 5010;
+ll a[N], s[N], t[N], cnt, ans;
+int n;
+inline ll ksm(ll x, ll y) {
+	ll an(1);
+	while (y) {
+		if (y & 1)an = an * x % mod;
+		x = x * x % mod;
+		y >>= 1;
+	}
+	return an;
+}
+inline bool cmp(ll x, ll y) {
+	return x > y;
+}
+int main() {
+	freopen("dice.in", "r", stdin);
+	freopen("dice.out", "w", stdout);
+	n = rd();
+	for (int i(1) ; i <= n ; ++i)
+		a[i] = rd();
+	sort(a + 1, a + n + 1, cmp);
+	s[0] = 1;
+	for (int i(1) ; i <= n ; ++i)
+		s[i] = s[i - 1] * a[i] % mod;
+	t[n + 1] = 1;
+	for (int i(n) ; i ; --i)
+		t[i] = t[i + 1] * a[i] % mod;
+	for (int i(n) ; i ; --i) {
+		if (a[i] != a[i + 1]) {
+			cnt = s[i] * (a[i] - a[i + 1]) % mod;
+			for (ll j(a[i + 1]) ; j < a[i] ; ++j)
+				cnt = (cnt - ksm(j, i) + mod) % mod;
+			ans = (ans + t[i + 1] * cnt) % mod;
+		}
+	}
+	printf("%lld\n", ans * ksm(s[n],  mod - 2) % mod);
+	fclose(stdin);fclose(stdout);
+	return 0;
+}

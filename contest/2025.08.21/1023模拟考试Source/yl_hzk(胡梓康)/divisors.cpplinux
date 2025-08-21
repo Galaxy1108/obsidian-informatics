@@ -1,0 +1,66 @@
+#include <bits/stdc++.h>
+using namespace std;
+const int N = 2.5e3 + 5;
+int n,vst[N],has[N];
+int w[N],tot;
+int ans1[N],ans2[N];
+inline int NewNode(int val)
+{
+	int p = ++tot;
+	w[p] = val;
+	return p;
+}
+int ect = 0;
+inline void Addedge(int u1,int u2)
+{
+	++ect;ans1[ect] = u1;ans2[ect] = u2;
+}
+int Nd[N];
+inline int lcm(int a,int b) { return 1ll * a / __gcd(a,b) * b;}
+int main()
+{
+	freopen("divisors.in","r",stdin);
+	freopen("divisors.out","w",stdout);
+	scanf("%d",&n);
+	int l = 1;
+	for(int i = 2;i <= n;i++) l = lcm(l,i);
+	printf("%d ",l);
+	for(int i = 2;i <= n;i++) printf("%d ",i);
+	printf("\n");
+	for(int i = 1;i < n;i++)
+		printf("%d %d\n",1,i + 1);
+	// vector<int> deal;
+	// for(int i = 2;i <= n;i++) if(!vst[i]) deal.push_back(i);
+	// int lstp = 0,p = 0;
+	// for(int i = 0;i < deal.size();i += 2)
+	// {
+	// 	p = lcm(deal[i],deal[i + 1]);
+	// 	p = NewNode(p);
+	// 	Addedge()
+	// 	if(lstp)
+
+	// }
+	// int Num = 0;
+	// for(int i = n;i >= 1;i--)
+	// {
+	// 	for(int j = 2;j < i;j++)
+	// 	{
+	// 		if(i % j) continue;
+	// 		if(vst[j] == 0) vst[j] = 1,has[i] = 1,printf("%d-%d\n",i,j),++Num; 
+	// 	}
+	// 	if(has[i]) ++Num;
+	// }
+	// int hasnt = 0;
+	// for(int i = 1;i <= n;i++) if(!vst[i]) printf("no:%d\n",i),++hasnt;
+	// cout << Num << endl;
+	// cout << hasnt << endl;
+	// int Num = 0;
+	// for(int i = 1;i <= n;i++)
+	// {
+	// 	if(vst[i]) continue;
+	// 	for(int j = i * 2;j <= n;j *= 2)
+	// 		if(!vst[j]) vst[j] = true,printf("%d-%d\n",i,j),++Num;
+	// 		else break;
+	// }
+	// cout << Num << endl;
+}

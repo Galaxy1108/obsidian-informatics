@@ -1,0 +1,51 @@
+//#pragma GCC optimize(3)
+//#pragma GCC optimize("inline")
+//#pragma GCC optimize("Ofast")
+//#pragma GCC target("sse3","sse2","sse")
+//#pragma GCC diagnostic error "-std=c++14"
+//#pragma GCC diagnostic error "-fwhole-program"
+//#pragma GCC diagnostic error "-fcse-skip-blocks"
+//#pragma GCC diagnostic error "-funsafe-loop-optimizations"
+//#pragma GCC optimize("fast-math","unroll-loops","no-stack-protector","inline")
+#include<bits/stdc++.h>
+#define ll long long
+#define N 100005
+#define M 55
+#define inf 1000000007
+#define fo(i,a,b) for(int i=a;i<=b;++i)
+#define fd(i,a,b) for(int i=a;i>=b;--i)
+using namespace std;
+int n,h[M],g[M],p[N],ans;
+int read(){
+	int res=0,f=1;
+	char ch=getchar();
+	while(ch<'0'||ch>'9'){
+		if(ch=='-'&&((ch=getchar())>='0'&&(ch)<='9')) f=-1;
+		else ch=getchar();
+	}
+	while(ch>='0'&&ch<='9')res=res*10+ch-'0',ch=getchar();
+	return res*f;
+}
+bool cmp(int a,int b){
+	return a<b;
+}
+int main(){
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	n=read();
+	fo(i,1,n)g[i]=h[i]=read();
+	sort(g+1,g+n+1,cmp);
+	fo(i,1,n){
+		fo(j,1,n){
+			if(g[j]==h[i]){
+				if(p[h[i]]<j){
+					p[h[i]]=j,ans+=abs(j-i);
+					break;
+				}
+			}
+		}
+	}
+	printf("%d",ans);
+}
+
+

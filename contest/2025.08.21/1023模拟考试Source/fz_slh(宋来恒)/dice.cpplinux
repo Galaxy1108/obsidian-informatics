@@ -1,0 +1,88 @@
+#include <cstdio>
+#include <iostream>
+#include <algorithm>
+#include <cstring>
+#include <queue>
+using namespace std;
+#define fi first
+#define sc second
+#define mkp make_pair
+#define pii pair<int,int>
+typedef long long ll;
+const int N=5005,oo=1e9,mod=1e9+7;
+inline int read() {
+    int x=0,flag=0;char ch=getchar();
+    while(ch<'0'||ch>'9') {flag|=(ch=='-');ch=getchar();}
+    while('0'<=ch&&ch<='9') {x=(x<<3)+(x<<1)+ch-'0';ch=getchar();}
+    return flag?-x:x;
+}
+inline int mx(int x,int y) {return x>y?x:y;}
+inline int mn(int x,int y) {return x<y?x:y;}
+inline void swp(int &x,int &y) {x^=y^=x^=y;}
+inline int as(int x) {return x>0?x:-x;}
+
+int n,a[N],inv[N];
+inline int ksm(int a,int b=mod-2) {
+    int ans=1;
+    while(b) {
+        if(b&1) ans=1ll*ans*a%mod;
+        a=1ll*a*a%mod;
+        b>>=1;
+    }
+    return ans;
+}
+int S[N][N],fac[N],ifac[N];
+inline void prep() {
+    for(int i=1;i<=n+2;++i) S[1][i]=i;
+    for(int i=2;i<=n;++i) 
+        for(int j=1;j<=n+2;++j)
+            S[i][j]=1ll*S[i-1][j]*j%mod;
+    for(int i=1;i<=n;++i)
+        for(int j=1;j<=n+2;++j)
+            S[i][j]=(S[i][j-1]+S[i][j])%mod;
+    fac[0]=ifac[0]=1;
+    for(int i=1;i<=n+2;++i) fac[i]=1ll*fac[i-1]*i%mod;
+    ifac[n+2]=ksm(fac[n+2]);
+    for(int i=n+2;i>=2;--i) ifac[i-1]=1ll*ifac[i]*i%mod;
+}
+int pre[N],suf[N];
+inline int solve(int _n,int k) {
+    if(_n<=n+2) return S[k][_n];
+    pre[0]=1;
+    for(int i=1;i<=k+2;++i) pre[i]=1ll*pre[i-1]*(_n-i)%mod;
+    suf[k+3]=1;
+    for(int i=k+2;i>=1;--i) suf[i]=1ll*suf[i+1]*(_n-i)%mod;
+    int ans=0;
+    for(int i=1,mul1,mul2;i<=k+2;++i) {
+        mul1=1ll*pre[i-1]*suf[i+1]%mod; mul2=1ll*ifac[i-1]*ifac[k+2-i]%mod;
+        if((k+2-i)&1) mul2=mod-mul2;
+        ans=(ans+1ll*S[k][i]*mul1%mod*mul2)%mod;
+    }
+    return ans;
+}
+int main() {
+#ifndef ONLINE_JUDGE
+    freopen("dice.in","r",stdin);
+    freopen("dice.out","w",stdout);
+#endif
+    n=read();
+    prep();
+    for(int i=1;i<=n;++i) a[i]=read();
+    sort(a+1,a+n+1);
+    for(int i=1;i<=n;++i) inv[i]=ksm(a[i]);
+    for(int i=n-1;i>=1;--i) inv[i]=1ll*inv[i]*inv[i+1]%mod;
+    int ans=0;
+    for(int p=0,sum;p<n;++p) {
+        sum=(solve(a[p+1]-1,n-p)-(a[p]==0?0:solve(a[p]-1,n-p))+mod)%mod;
+        sum=1ll*sum*inv[p+1]%mod;
+        ans=(1ll*ans+mod+(a[p+1]-a[p])-sum)%mod;
+    }
+    // for(int i=0,sum;i<maxn;++i) {
+    //     sum=1;
+    //     for(int j=1;j<=n;++j)
+    //         sum=1ll*sum*mn(a[j],i)%mod*inv[j]%mod;
+    //     ans=(ans+mod+1-sum)%mod;
+    // }
+    printf("%d\n",ans);
+    return 0;
+}

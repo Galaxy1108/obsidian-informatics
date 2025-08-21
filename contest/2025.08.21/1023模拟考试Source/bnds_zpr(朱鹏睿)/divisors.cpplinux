@@ -1,0 +1,15 @@
+#include <cstdio>
+#include <cstring>
+#include <cstdlib>
+int n,cnt=1;bool in[100011],flg;int pth[100011];
+inline int gcd(int a,int b){return !b?a:gcd(b,a%b);}
+int main()
+{
+	freopen("divisors.in","r",stdin);freopen("divisors.out","w",stdout);
+	scanf("%d",&n);
+	for(int i=2;i<n;i+=2)pth[i]=++cnt;
+	for(int i=n-1-!(n-1&1);i>0;i-=2)pth[i]=++cnt;
+	printf("%d ",pth[1]);for(int i=2;i<=n-1;++i)printf("%d ",pth[i-1]*pth[i]/gcd(pth[i],pth[i-1]));printf("%d ",pth[n-1]);putchar(10);
+	for(int i=1;i<n;++i)printf("%d %d\n",i,i+1);
+	fclose(stdin);fclose(stdout);return 0;
+}

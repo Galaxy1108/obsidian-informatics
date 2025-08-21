@@ -1,0 +1,36 @@
+#if IN_LOCAL
+import local;
+#endif // IN_LOCAL
+#include<iostream>
+#include<algorithm>
+using namespace std;
+#if !IN_LOCAL
+#include<fstream>
+ifstream fin("lineup.in");
+ofstream fout("lineup.out");
+#define cin fin
+#define cout fout
+#endif // !IN_LOCAL
+inline constexpr unsigned ABS(const int val) { return val < 0 ? -val : val; }
+bool book[55];
+unsigned h[55], a[55];
+int main()
+{
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	unsigned n;
+	cin >> n;
+	for (unsigned i = 1; i <= n; cin >> h[i], a[i] = h[i], ++i);
+	sort(a + 1, a + n + 1);
+	unsigned ans = 0;
+	for (unsigned i = 1; i <= n; ++i)
+	{
+		unsigned j = 1;
+		for (; book[j] || h[j] != a[i]; ++j);
+		book[j] = 1;
+		ans += ABS(i - j);
+	}
+	cout << ans;
+	return 0;
+}

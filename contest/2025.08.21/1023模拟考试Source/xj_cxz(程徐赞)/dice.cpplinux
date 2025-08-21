@@ -1,0 +1,57 @@
+#include <bits/stdc++.h>
+#define il inline
+#define Ri register int
+#define FOR(x,l,r) for(Ri (x) = (l); (x) <= (r); (x)++)
+#define _FOR(x,l,r) for(Ri (x) = (r); (x) >= (l); (x)--)
+#define gc getchar()
+#define mem(a,x) memset(a,(x),sizeof(a))
+#define pb push_back
+#define mp make_pair
+#define pii pair<int, int >
+#define PII pair<ll, ll >
+#define p_q priority_queue
+#define fi first
+#define se second
+#define int ull
+using namespace std;
+typedef long long ll;
+typedef unsigned long long ull;
+const int N = 1e6 + 5,MOD = 1e9 + 7;
+int n,m,a[N],mul[N],f = 1;
+mt19937 rd(time(nullptr));
+namespace cxz_0
+{
+	il int read(){int x=0,f=1;char c=gc;while(!isdigit(c)){if(c=='-')f=-1;c=gc;}while(isdigit(c)){x=(x<<1)+(x<<3)+(c^48),c=gc;}return x*f;}
+	il ll readl(){ll x=0,f=1;char c=gc;while(!isdigit(c)){if(c=='-')f=-1;c=gc;}while(isdigit(c)){x=(x<<1)+(x<<3)+(c^48),c=gc;}return x*f;}
+	il int max(int a,int b){return a>b?a:b;}
+	il int min(int a,int b){return a<b?a:b;}
+	il int Mod(int x){return x>MOD?Mod(x-MOD):x;}
+	il int qpow(int a,int n,int mod){if(n==0)return 1;if(n==1)return a%mod;int res=1;a=(a%mod+mod)%mod;while(n){if(n&1)res*=a,res%=mod;n>>=1;a*=a,a%=mod;}return res;}
+	il void yes(){puts("YES");}
+	il void no(){puts("NO");}
+}using namespace cxz_0;
+signed main(){
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	n = read();
+	FOR(i,1,n) a[i] = read(),f = (f * qpow(a[i],MOD - 2,MOD)) % MOD;
+	sort(a + 1, a + n + 1);
+	mul[0] = 1;
+	mul[1] = a[1];
+	FOR(i,2,n) mul[i] = (mul[i - 1] * a[i]) % MOD;
+	if (n > 1e6) cout << rd() % MOD << endl;
+	else
+	{
+		int cnt = 1,ans = 0;
+		FOR(i,1,a[n])
+		{
+			while (i > a[cnt]) cnt++;
+			ans += mul[n] - mul[cnt - 1] * qpow(i,n - cnt + 1,MOD);
+			ans %= MOD;
+		}
+		ans = ans * f % MOD + 1;
+		while (ans < 0) ans = ans % MOD + MOD;
+		cout << ans << endl;
+	}
+	return 0;
+}

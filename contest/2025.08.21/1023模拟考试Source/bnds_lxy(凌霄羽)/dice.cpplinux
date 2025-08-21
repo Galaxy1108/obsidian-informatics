@@ -1,0 +1,89 @@
+#include<iostream>
+#include<cstdio>
+#include<algorithm>
+#define int long long
+using namespace std;
+inline int read()
+{
+	int x=0,f=1;char ch=getchar();
+	while(ch<'0'||ch>'9')
+	{
+		if(ch=='-')  f=-1;
+		ch=getchar();
+	}
+	while(ch>='0'&&ch<='9')
+	{
+		x=x*10+ch-'0';
+		ch=getchar();
+	}
+	return x*f;
+}
+/*
+从1-a1
+取1 所有数为1
+取k  (k^n-(k-1)^n)*k*b[sum-n]计算一次O(n) 
+(1^n-0^n)*1+(2^n-1^n)*2+(3^n-2^n)*3+……+(k^n-(k-1)^n)*k 
+=k*k^n-(k-1)^n-……-3^n-2^n-1^n 
+1+8-2+2*3*(3-2)
+2*2^2-1^2+2*(3*3-2)-k
+*/
+int n,a[5005],b[5005];
+const int mod=1e9+7; 
+int fastp(int b,int p)//b^p  
+{
+	int res=1;
+	while(p)
+	{
+		if(p%2==1)  res=(res*b)%mod;
+		b=b*b%mod;
+		p/=2;
+	}
+	return res;
+}
+int niyuan(int x)
+{
+	return fastp(x,mod-2);
+}
+int ans;
+signed main()
+{
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	int i,j;bool f=true;
+	n=read();
+	b[0]=1;
+	for(i=1;i<=n;i++)
+	  a[i]=read();
+	sort(a+1,a+n+1);
+	for(i=1;i<=n;i++)  b[i]=(b[i-1]*a[i])%mod;
+	int sum=n,st;
+	for(i=1;i<=n;i++)
+	{
+		if(a[i]==a[i-1])
+		{
+			sum--;
+			continue;
+		}
+		st=a[i-1]+1;
+		//int res=((a[i]*fastp(a[i],sum)%mod))%mod;
+		int res=0;
+		for(j=st;j<=a[i];j++)
+		{
+			res=(res+(((((mod+fastp(j,sum)-fastp(j-1,sum))%mod)*j)%mod)*b[n-sum]%mod))%mod;
+		}
+		ans=(ans+res)%mod;
+		sum--;
+	}
+	cout<<(ans*niyuan(b[n]))%mod<<endl;
+	return 0;
+}
+/*
+10
+120 148 153 153 153 171 190 166 166 181
+120 148 153 153 153 166 166 171 181 190
+18+2+10
+设sk=1^n+2^n+……+k^n
+80pts跑路 
+k*(k^n-(k-1)^n)+
+*/
+

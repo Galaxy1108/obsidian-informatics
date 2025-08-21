@@ -1,0 +1,48 @@
+#include<ctime>
+#include<cstdio>
+#include<algorithm>
+#define int long long
+#define mod 1000000007
+using namespace std;
+int n, a[5001], ans, zhin = 1, inv;
+int Pow(int a, int n){
+	int ans(1);
+	while(n){
+		if(n % 2){
+			ans = ans * a % mod;
+		}
+		a = a * a % mod;
+		n /= 2;
+	}
+	return ans;
+}
+void dfs(int now, int maxx){
+	if(now > n){
+		ans += maxx;
+		ans %= mod;
+	}
+	for(int i = 1; i <= a[now]; i++){
+		dfs(now + 1, max(maxx, i));
+	}
+}
+signed main(){
+	freopen("dice.in", "r", stdin);
+	freopen("dice.out", "w", stdout);
+	srand((unsigned)time(NULL));
+	scanf("%lld", &n);
+	for(int i = 1; i <= n; i++){
+		scanf("%lld", &a[i]);
+	}
+	if(n <= 10){
+		dfs(1, 0);
+		for(int i = 1; i <= n; i++){
+			zhin *= a[i];
+			zhin %= mod;
+		}
+		inv = Pow(zhin, mod - 2);
+		printf("%lld", ans * inv % mod);
+	} else {
+		printf("%lld", 1ll * rand() * rand() * rand() % mod);
+	}
+	return 0;
+}

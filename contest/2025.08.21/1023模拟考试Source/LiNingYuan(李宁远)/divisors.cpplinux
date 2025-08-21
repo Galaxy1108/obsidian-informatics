@@ -1,0 +1,137 @@
+#include<bits/stdc++.h>
+#define itn int
+#define ll long long
+using namespace std;
+
+ll read(){
+	ll a=0,b=0;char c=getchar();
+	while(c<'0'||c>'9')b^=(c=='-'),c=getchar();
+	while(c>='0'&&c<='9')a=a*10-48+c,c=getchar();
+	return b?-a:a;
+}
+
+const int N=11005;
+
+int gcd(int a, int b){return b?gcd(b, a%b):a;}
+int lcm(int a, int b){return a/gcd(a, b)*b;}
+
+
+
+int st[N], a[N], us[N], ct, is[N], ma[N];
+struct pir{int a, b;};
+vector<pir>e;
+int las;
+int n;
+int mn;
+int g;
+vector<int>hv[N];
+mt19937 rnd(20221023);
+bool cho(int i, int ri){
+	if(!ri)return 1;
+	if(g==1)return a[i]>a[ri];
+	if(g==2)return a[i]<a[ri];
+	if(g==3)return i<ri;
+	if(g==4)return i>ri;
+	return rnd()&1;
+}
+static char vi[N];
+vector<int>ee[N];
+
+void dfs(int u, int p, int g){
+	g=gcd(g, a[u]);
+	if(p&&g<=n)vi[g]=1;
+	for(int v:ee[u])if(v!=p)dfs(v, u, g);
+}
+
+bool chk(){
+	for(int i=1;i<=n;i++)ee[i].clear();
+	memset(vi, 0, sizeof vi);
+	for(int i=0;i+1<n;i++){int a=e[i].a, b=e[i].b;ee[a].push_back(b); ee[b].push_back(a);}
+	for(int i=1;i<=n;i++)dfs(i, 0, 0);
+	for(int i=1;i<=n;i++)if(!vi[i])return 0;
+	return 1;
+}
+
+void build(int v){
+	int u=0;
+	if(ct>=1){
+		int ri=0;
+		for(int i=1;i<=ct;i++)if(lcm(a[i], v)<=11000){
+			int k=lcm(a[i], v);
+			if(ma[i]&&gcd(k, ma[i])!=a[i])continue;
+			if(hv[i].size()){
+				int ag=0;
+				for(int j:hv[i]){
+					if(gcd(k, a[j])!=is[j]){ag=1;break;}
+				}
+				if(ag)continue;
+			}
+			if(cho(i, ri))ri=i;
+		}
+		if(ri){
+			int k=lcm(a[ri], v);
+			for(int j:hv[ri])ma[j]=k;
+			a[ri]=lcm(a[ri], v);
+			u=ri;
+		}
+	}
+	if(!u){
+		a[++ct]=v, us[ct]=1;
+		u=ct;
+		if(ct>1){
+		//	cerr<<1<<' '<<u<<'\n';
+			e.push_back(pir{1, u});
+		}
+	}
+	for(int k=max(mn, 5);k<=v&&k<=n;k++)if(v%k==0&&!st[k]){
+		a[++ct]=k;us[ct]=1;st[k]=ct;is[ct]=k;ma[ct]=a[u];
+		//cerr<<u<<' '<<ct<<' '<<a[u]<<' '<<a[ct]<<' '<<v<<' '<<k<<'\n';
+		hv[u].push_back(ct);
+		e.push_back(pir{u, ct});
+	}
+}
+
+void sol(int N){
+	n=N;e.clear();
+	for(int i=1;i<=n;i++)hv[i].clear();
+	memset(st,0,sizeof st);memset(a,0,sizeof a);memset(us,0,sizeof us);
+	memset(is,0,sizeof is);memset(ma,0,sizeof ma);
+	ct=0;
+	int v=1;
+	for(int i=n;i>=mn;i--)if(!st[i]){
+		if(lcm(v, i)>11000){
+			build(v);
+			v=i;
+		}else{
+			v=lcm(v, i);
+		}
+	}
+	if(v!=1)build(v);
+	
+	if(e.size()<n){
+		for(int i=1;i<=n;i++)if(!us[i])e.push_back(pir{i, 1}), a[i]=n-i+2;
+	}
+	if(chk()){
+		for(int i=1;i<=n;i++)cout<<a[i]<<' ';cout<<'\n';
+		for(int i=0;i+1<n;i++)cout<<e[i].a<<' '<<e[i].b<<'\n';
+		exit(0);
+	}
+//	if(g!=5)cerr<<n<<" : "<<e.size()<<"   ";
+}
+
+
+int main(){
+	freopen("divisors.in","r",stdin);
+	freopen("divisors.out","w",stdout);
+	int n=read();
+	mn=2;
+	if(n>70)mn=11;
+	if(n>430)mn=17;
+	g=1;sol(n);
+	g=2;sol(n);
+	g=3;sol(n);
+	g=4;sol(n);
+	
+	cerr<<n<<" ???\t";
+	return 0;
+}

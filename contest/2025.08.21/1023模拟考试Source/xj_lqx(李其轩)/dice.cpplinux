@@ -1,0 +1,81 @@
+#include <bits/stdc++.h>
+#define sz(a) int((a).size())
+#define FOR(i, l, r) for(int i = (l); i <= (r); i++)
+#define ROF(i, r, l) for(int i = (r); i >= (l); i--)
+#define ll long long
+#define vi vector<int>
+using namespace std;
+const int N = 5e3 + 10, P = 1e9 + 7;
+int n, a[N];
+int fac[N], ifac[N];
+vi coef;
+int power(int a, int b, int c = 1) {
+    for(; b; b >>= 1, a = (ll)a * a % P) if(b & 1) c = (ll)c * a % P;
+    return c;
+}
+void initm(int n) {
+    fac[0] = 1;
+    FOR(i, 1, n) fac[i] = (ll)fac[i - 1] * i % P;
+    ifac[n] = power(fac[n], P - 2);
+    ROF(i, n - 1, 0) ifac[i] = (ll)ifac[i + 1] * (i + 1) % P;
+}
+vi operator + (const vi a, const vi b) {
+    vi c = a;
+    if(sz(c) < sz(b)) c.resize(sz(b));
+    FOR(i, 0, sz(b) - 1) (c[i] += b[i]) %= P;
+    return c;
+}
+vi operator * (const vi a, const vi b) {
+    vi c(sz(a) + sz(b) - 1);
+    FOR(i, 0, sz(a) - 1) {
+        FOR(j, 0, sz(b) - 1) {
+            (c[i + j] += (ll)a[i] * b[j] % P) %= P;
+        }
+    }
+    return c;
+}
+vi inv(const vi a) {
+    vi b(sz(a));
+    b[0] = power(a[0], P - 2);
+    FOR(i, 1, sz(b) - 1) {
+        FOR(j, 1, i) {
+            (b[i] += P - (ll)a[j] * b[i - j] % P) %= P;
+        }
+        b[i] = (ll)b[i] * b[0] % P;
+    }
+    return b;
+}
+int S(int x, int k) {
+    (x += 1) %= P;
+    int pwx = 1, sum = 0;
+    FOR(i, 0, k) {
+        pwx = (ll)pwx * x % P;
+        (sum += (ll)pwx * ifac[i + 1] % P * coef[k - i] % P) %= P;
+    }
+    sum = (ll)sum * fac[k] % P;
+    return sum;
+}
+int main() {
+    freopen("dice.in", "r", stdin);
+    freopen("dice.out", "w", stdout);
+    ios :: sync_with_stdio(0), cin.tie(0), cout.tie(0);
+    cin >> n;
+    initm(N - 10);
+    coef.resize(n + 1);
+    FOR(i, 0, n) coef[i] = ifac[i + 1];
+    coef = inv(coef);
+    FOR(i, 1, n) cin >> a[i];
+    sort(a + 1, a + n + 1);
+    int ans = 1;
+    FOR(i, 1, n) ans = (ll)ans * a[i] % P;
+    ans = (ll)ans * (a[n] + 1) % P;
+    int C = 1;
+    FOR(i, 1, n) {
+        int sum = (S(a[i], n - i + 1) - S(a[i - 1], n - i + 1) + P) % P;
+        (ans += P - (ll)sum * C % P) %= P;
+        C = (ll)C * a[i] % P;
+    }
+    FOR(i, 1, n) ans = (ll)ans * power(a[i], P - 2) % P;
+    cout << ans << "\n";
+    return 0;
+}

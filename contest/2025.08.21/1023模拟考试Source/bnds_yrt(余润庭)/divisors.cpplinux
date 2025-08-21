@@ -1,0 +1,72 @@
+
+
+#include <iostream>
+#include <fstream>
+#include <deque>
+#include <algorithm>
+
+const int MAXN = 2.5e3+9;
+using namespace std;
+
+int N, ans[MAXN];
+
+inline void Read () {
+	ifstream fin ("divisors.in");
+	// ios::sync_with_stdio(false);
+	// cin >> N;
+	fin >> N;
+	
+	fin.close();
+}
+
+inline void Solve () {
+	deque<int> q;
+	q.push_back(2);
+	q.push_back(2);
+	for (int i = 3; i < N+1; i++) {
+		if (q.front() > q.back()) {
+			// if (__gcd(q[q.size()-2], i) > 1) {
+				// q[0] *= i/__gcd(i, q[0]);
+				// q.push_front(i);
+				// continue;
+			// }
+			q[q.size()-1] *= i/__gcd(i, q[q.size()-1]);
+			q.push_back(i);
+		}
+		else {
+			// if (__gcd(q[1], i) > 1) {
+				// q[q.size()-1] *= i/__gcd(i, q[q.size()-1]);
+				// q.push_back(i);
+				// continue;
+			// }
+			q[0] *= i/__gcd(i, q[0]);
+			q.push_front(i);
+		}
+	}
+	for (int i = 0; i < N; i++) ans[i+1] = q[i];
+	
+	ofstream fout("divisors.out");
+
+	for (int i = 1; i < N+1; i++) {
+		// cout << ans[i] << ' ';
+		// cout.flush();
+		fout << ans[i] << ' ';
+	}
+	// cout << endl;
+	// cout.flush();
+	fout << endl;
+	
+	for (int i = 1; i < N; i++) {
+		// cout << i << ' ' << i+1 << endl;
+		// cout.flush();
+		fout << i << ' ' << i+1 << endl;
+	}
+	fout.close();
+}
+
+int main () {
+	Read();
+	Solve();
+	
+	return 0;
+}

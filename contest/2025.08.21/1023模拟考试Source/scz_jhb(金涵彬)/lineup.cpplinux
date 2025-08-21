@@ -1,0 +1,29 @@
+#include<bits/stdc++.h>
+using namespace std;
+int n,a[100];
+struct Info{
+	int s,l;
+}b[100];
+bool p(Info aa,Info bb){
+	return aa.s<bb.s;
+} 
+int c[100],ans=0;
+int main(){
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	cin>>n;
+	for(int i=1;i<=n;i++){
+		cin>>a[i];
+		b[i].s=a[i];
+		b[i].l=i;
+	}
+	sort(b+1,b+n+1,p);
+	for(int i=1;i<=n;i++){
+		c[b[i].l]=i-b[i].l;
+	}
+	for(int i=1;i<=n;i++){
+		ans+=abs(c[i]);
+	}
+	cout<<ans<<endl;
+	return 0;
+}

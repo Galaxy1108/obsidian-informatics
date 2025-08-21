@@ -1,0 +1,16 @@
+#include <bits/stdc++.h>
+#define fo(i,a,b) for(int i=a;i<=b;++i)
+using namespace std;
+pair<int,int> a[55];
+int main()
+{
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	int n;scanf("%d",&n); 
+	fo(i,1,n)scanf("%d",&a[i].first),a[i].second=i;
+	sort(a+1,a+n+1);
+	int ans=0;
+	fo(i,1,n)ans+=abs(i-a[i].second);
+	printf("%d",ans); 
+	return 0;
+}

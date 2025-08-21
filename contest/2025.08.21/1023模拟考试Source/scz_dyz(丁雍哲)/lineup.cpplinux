@@ -1,0 +1,94 @@
+#include<bits/stdc++.h>
+using namespace std;
+int n,ans=0;
+int a[12345],c[12345];
+struct node{
+	int x,y;
+}w[12345],b[12345];
+int check(int p){
+	int t1=w[p].x;
+	for(int i=1;i<=n;i++){
+		if(b[i].y==w[p].y){
+			return b[i].x;
+		}
+	}
+}
+map<int,int>m;
+int ch(int p){
+	int t=0;
+	for(int i=1;i<p;i++){
+		if(b[i].y==b[p].y)t++;
+	}
+	return t;
+}
+int check1(int i){
+	if(w[i].x!=0&&c[i]!=0)return abs(w[i].x-c[i]);
+}
+bool check2(){
+	int s=0;
+	for(int i=1;i<=n;i++){
+		if(w[i].y==b[i].y)s++;
+	}
+	if(s==n)return true;
+	else return false;
+}
+void work(){
+	int maxn=0,maxi;
+	for(int i=1;i<=n;i++){
+		if(check1(i)>maxn){
+			maxn=check1(i);
+			maxi=i;
+		}
+	}
+	int t1=a[maxi],d=maxi;
+	a[d]=w[d].x=w[d].y=0;
+	maxn=maxi=0;
+	for(int i=1;i<=n;i++){
+		if(check1(i)>maxn){
+			maxn=check1(i);
+			maxi=i;
+		}
+	}
+	int t2=a[maxi],e=maxi;
+	ans+=abs(d-e)*2;
+	int d1=c[d],d2=c[e];
+	a[e]=t1;w[e].x=e;w[e].y=t1;
+	a[d]=t2;w[d].x=d;w[d].y=t2;
+	c[d]=d2;
+	c[e]=d1;
+}
+bool cmp(node a,node b){
+	return a.y<b.y;
+}
+int main(){
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout); 
+	scanf("%d",&n);
+	for(int i=1;i<=n;i++){
+		scanf("%d",&a[i]);
+		b[i].x=i;
+		b[i].y=a[i];
+		w[i].x=i;
+		w[i].y=a[i];
+		m[a[i]]++; 
+	}
+	sort(b+1,b+n+1,cmp);
+	for(int i=1;i<=n;i++)b[i].x=i;
+	for(int i=1;i<=n;i++)c[i]=check(i);
+	for(int i=1;i<=n;i++){
+		if(ch(i)>0){
+			int s1=0;
+			for(int j=1;j<=n;j++){
+				if(w[j].y==b[i].y){
+				    s1++;
+					if(s1==ch(i)+1)c[j]+=ch(i);
+				}
+			}
+		}
+	}
+	while(check2()==false){
+		work();
+	}
+	cout<<ans<<endl;
+	return 0;
+}

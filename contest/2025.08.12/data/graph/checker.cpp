@@ -8,8 +8,8 @@ map<pair<int,int>,int> G;
 pair<int,int> tmp;
 int main(int argc, char *argv[])
 {
-	// registerTestlibCmd(argc, argv);
-	registerLemonChecker(argc, argv);
+	registerTestlibCmd(argc, argv);
+//	registerLemonChecker(argc, argv);
 	
 	T=inf.readInt();
 	while(T--)

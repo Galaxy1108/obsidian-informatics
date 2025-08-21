@@ -1,0 +1,39 @@
+#include<cstdio>
+using namespace std;
+const int mo=998244353;
+int l[11],r[11],ans[11],n,a[11],m;
+void dg(int x)
+{
+	if (x>1)
+	{
+		int ret=0;
+		bool bj=false;
+		for (int i=1;i<=n;i++) ret^=a[i];
+		for (int i=1,j=m;i<j;i++,j--)
+			if ((bool)(ret&(1<<(i-1)))!=(bool)(ret&(1<<(j-1))))
+			{
+				bj=true;
+				break;
+			}
+		if (!bj) ans[x-1]=(ans[x-1]+1)%mo;
+	}
+	if (x>n) return;
+	for (int i=l[x];i<=r[x];i++)
+	{
+		a[x]=i;
+		dg(x+1);
+		a[x]=0;
+	}
+}
+int main()
+{
+	freopen("far.in","r",stdin);
+	freopen("far.out","w",stdout);
+	scanf("%d%d",&n,&m);
+	for (int i=1;i<=n;i++)
+		scanf("%d%d",&l[i],&r[i]);
+	dg(1);
+	for (int i=1;i<=n;i++)
+		printf("%d\n",ans[i]);
+	return 0;
+}

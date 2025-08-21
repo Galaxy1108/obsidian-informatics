@@ -1,0 +1,95 @@
+#include<iostream>
+#include<cstdio>
+#include<map>
+#include<algorithm>
+using namespace std;
+#define fo(i,a,b) for(register int i=a;i<=b;++i)
+#define fod(i,a,b) for(register int i=a;i>=b;--i)
+#define p 1000000007
+#define LL long long
+int ksm(int x,int y){
+	if(!x)return 1;
+	if(x==1)return y;
+	LL u=ksm(x/2,y);
+	u=u*u%p;
+	if(x&1)u=u*y%p;
+	return u;
+}
+int a[5011],n;
+map<int,int>bz;
+int b[5011],m;
+LL f[5011][5011];
+LL qz[5011],hz[5011];
+LL ny[5011];
+void ycl(){
+	ny[0]=1;
+	fo(i,1,n){
+		ny[i]=(LL)ksm(p-2,i)*ny[i-1]%p;
+	}
+	fo(i,1,n+2){
+		f[i][1]=i;
+		fo(j,2,n){
+			f[i][j]=(LL)f[i][j-1]*i%p;
+		}
+	}
+	fo(i,1,n+2){
+		fo(j,1,n)
+		f[i][j]=(f[i-1][j]+f[i][j])%p;
+	}
+}
+LL find(int x,int u){
+	if(x<=0)return 0;
+	LL v=0;
+	qz[0]=1;
+	fo(i,1,u+2){
+		qz[i]=(LL)qz[i-1]*(x-i)%p;
+	}
+	hz[u+3]=1;
+	fod(i,u+2,1){
+		hz[i]=(LL)hz[i+1]*(x-i)%p;
+	}
+	fo(i,1,u+2){
+		int h=(LL)qz[i-1]*hz[i+1]%p*ny[i-1]%p*ny[u+2-i]%p;
+		if((u+2-i)&1){
+			h=p-h;
+		}
+		v+=(LL)h*f[i][u]%p;
+	}
+	v%=p;
+	return v;
+}
+int main(){
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	scanf("%d",&n);
+	fo(i,1,n){
+		scanf("%d",&a[i]);
+		if(!bz[a[i]]){
+			bz[a[i]]=1;
+			b[++m]=a[i];
+		}
+	}
+	sort(b+1,b+m+1);
+	ycl();
+	LL ans=0;
+	fo(i,1,m){
+		int u=0,v=1;
+		fo(j,1,n){
+			if(a[j]>=b[i])++u;
+			else v=(LL)v*a[j]%p;
+		}
+		LL h=0;
+		h=(LL)b[i]*ksm(u,b[i])%p-(LL)b[i-1]*ksm(u,b[i-1])%p;
+		h-=find(b[i]-1,u);
+		h+=find(b[i-1]-1,u);
+		h%=p;
+		ans+=(LL)v*h%p;
+	}
+	ans%=p;
+	fo(i,1,n){
+		ans=(LL)ans*ksm(p-2,a[i])%p;
+	}
+	if(ans<0)ans+=p;
+	printf("%lld",ans);
+	return 0;
+}

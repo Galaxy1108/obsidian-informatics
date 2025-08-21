@@ -1,0 +1,48 @@
+#include <algorithm>
+#include <cstdio>
+using namespace std;
+const int N=5e3;
+const long long mod=1e9+7;
+int n,a[N+5],p[N+5];
+long long fm,fz,ans;
+long long fastpow(long long base,long long exp){
+	long long res=1ll;
+	while (exp){
+		if (exp&1ll)
+			res=(res*base)%mod;
+		base=(base*base)%mod;
+		exp>>=1ll;
+	}
+	return res;
+}
+long long inverse(long long num,long long den){
+	return (num*fastpow(den,mod-2))%mod;
+}
+long long pi(int l,int r,int lim){
+	long long res=1ll;
+	for (int i=l;i<=r;i++)
+		res=(res*min(a[i],lim))%mod;
+	return res;
+}
+int main(){
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	scanf("%d",&n);
+	for (int i=1;i<=n;i++)
+		scanf("%d",&a[i]);
+	sort(a+1,a+1+n);
+	for (int i=1;i<=a[n];i++)
+		for (int j=1;j<=n;j++)
+			if (a[j]>=i)
+				p[i]++;
+	fm=pi(1,n,a[n]);
+	fz=1ll;
+	for (int i=2;i<=a[n];i++)
+		for (int j=n-p[i]+1;j<=n;j++)
+			fz=(fz+(i*((pi(1,j-1,i)*pi(j+1,n,i))%mod))%mod)%mod;
+	ans=inverse(fz,fm);
+	printf("%lld",ans);
+	fclose(stdin);
+	fclose(stdout);
+	return 0;
+}

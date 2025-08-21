@@ -1,0 +1,72 @@
+/*
+Criteria:
+1.read the problem carefully; WRITE DOWN SPECIAL CONSTRAINTS when the problem is long;
+2.consider special situations/constraints to get observations;
+3.think of everything throughout before coding;
+4.return to the initial list of notifications after coding.
+*/
+#include <bits/stdc++.h>
+namespace IO {
+  #define iL (1 << 20)
+  char ibuf[iL], *iS = ibuf + iL, *iT = ibuf + iL;
+  #define gc() ((iS == iT) ? (iT = (iS = ibuf) + fread(ibuf, 1, iL, stdin), iS == iT ? EOF : *iS ++) : *iS ++)
+  template<class T> inline void read(T &x) {
+    x = 0;int f = 0;char ch = gc();
+    for (; !isdigit(ch); f |= ch == '-', ch = gc());
+    for (; isdigit(ch); x = (x << 1) + (x << 3) + (ch ^ 48), ch = gc());
+    x = (f == 1 ? ~ x + 1 : x);
+  }
+  char Out[iL], *iter = Out;
+  #define flush() fwrite(Out, 1, iter - Out, stdout), iter = Out
+  template<class T> inline void write(T x, char ch = '\n') {
+    T l, c[35];
+    if (x < 0) *iter ++ = '-', x = ~ x + 1;
+    for (l = 0; !l || x; c[l] = x % 10, l++, x /= 10);
+    for (; l; -- l, *iter ++ = c[l] + '0');*iter ++ = ch;
+    flush();
+  }
+}
+using namespace IO;
+#define N 105
+#define ll long long
+#define DEBUG
+#define pii pair<int, int>
+#define mp make_pair
+#define fi first
+#define se second
+#define MOD 998244353
+using namespace std;
+int n, m, l[N], r[N], nn;
+namespace sub1 {
+  int a[N], ans, b[N], cnt;
+  void calc() { cnt = 0;
+    int v = 0; for (int i = 1; i <= n; i++) v ^= a[i];
+    for (int i = 1; i <= m; i++) b[++ cnt] = v % 2, v /= 2;
+    for (int i = 1; i <= m; i++) if (b[i] != b[m - i + 1]) return ;
+    ans ++;
+  }
+  void dfs(int x) {
+    if (x > n) { calc() ; return ; }
+    for (int i = l[x]; i <= r[x]; i++) {
+      a[x] = i; dfs(x + 1); a[x] = 0;
+    }
+  }
+  void main() {
+    nn = n;
+    for (n = 1; n <= nn; n++) {
+      ans = 0; dfs(1); write(ans);
+    }
+  }
+}
+int main() {
+// #ifndef ONLINE_JUDGE
+//   freopen("test.in", "r", stdin);
+//   freopen("test.out", "w", stdout);
+// #endif
+  freopen("far.in", "r", stdin);
+  freopen("far.out", "w", stdout);
+  read(n), read(m); for (int i = 1; i <= n; i++) read(l[i]), read(r[i]);
+  // if (n <= 3 && m <= 3) { sub1::main(); return 0; }
+  sub1::main();
+  return 0;
+}

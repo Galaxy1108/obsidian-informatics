@@ -1,0 +1,84 @@
+#include<bits/stdc++.h>
+#define ll long long
+#define ri register
+using namespace std;
+inline int read(){
+	int s=0;
+	char ch=getchar();
+	while(ch<'0'||ch>'9')ch=getchar();
+	while(ch>='0'&&ch<='9')s=(s<<3)+(s<<1)+(ch^48),ch=getchar();
+	return s;
+}
+const int N=5051,p=1e9+7;
+ll qpow(ll x,int k){
+	ll ans=1;
+	while(k){
+		if(k&1)ans=(ans*x)%p;
+		x=(x*x)%p;
+		k>>=1;
+	}
+	return ans;
+}
+ll pre[N],nxt[N],fac[N],ifac[N],y[N];
+int mi[5051][5051];
+ll work(ll x,int k){
+	ll ans=0;
+//	cout<<x<<" "<<k<<" ";
+	pre[0]=nxt[k+3]=1;
+	for(ri int i=1;i<=k+2;i++){
+		pre[i]=(1ll*pre[i-1]*(x-i))%p;
+	}
+	for(ri int i=k+2;i>=1;i--){
+		nxt[i]=(1ll*nxt[i+1]*(x-i))%p;
+	}
+	for(ri int i=1;i<=k+2;i++){
+		y[i]=(mi[i][k]+y[i-1])%p;
+		ll fz=(pre[i-1]*nxt[i+1])%p,fm=(ifac[i-1]*ifac[k+2-i])%p;
+		if((k-i)%2)ans=((ans-y[i]*fz%p*fm)%p+p)%p;
+		else ans=((ans+y[i]*fz%p*fm)%p+p)%p;
+	}
+//	cout<<ans<<endl;
+	return ans;
+}
+int n;
+void init(){
+	fac[0]=1;
+	for(ri int i=1;i<=n+5;i++){
+		fac[i]=(fac[i-1]*i*1ll)%p;
+	}
+	ifac[n+5]=qpow(fac[n+5],p-2);
+	for(ri int i=n+4;i>=0;i--){
+		ifac[i]=(1ll*ifac[i+1]*(i+1))%p;
+	}
+	for(int i=1;i<=n+2;i++){
+		mi[i][0]=1;
+		for(int j=1;j<=n;j++){
+			mi[i][j]=(1ll*mi[i][j-1]*i)%p;
+		}
+	}
+}
+ll a[N],pi=1,ans;
+int main(){
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	n=read();
+	init();
+	for(int i=1;i<=n;i++)a[i]=read(),pi=(pi*a[i])%p;
+	sort(a+1,a+n+1);
+	int l=0;
+	ll lst=0,res=1,now=1;
+	for(int i=1;i<=n;i++){
+		if(a[i]==a[i-1]){
+			res=(res*a[i])%p;
+			continue;
+		}
+		ll sum=(qpow(a[i],n-i+2)-(work(a[i]-1,n-i+1)-work(l,n-i+1)+p)%p+p)%p;
+		ans=(ans+(res*sum)%p-(lst*(l+1))%p+p)%p;
+		res=(res*a[i])%p;
+		lst=(res*qpow(a[i],n-i))%p;
+		l=a[i];
+	}
+	ans=(ans*qpow(pi,p-2))%p;
+	cout<<ans<<endl;
+	return 0;
+}

@@ -1,0 +1,50 @@
+#include<bits/stdc++.h>
+#define int long long
+#define MAXN 5010
+#define p 1000000007
+using namespace std;
+const int N=5005;
+int qpow(int x,int y){
+	int ret=1;
+	for(;y;y>>=1,x=x*x%p)if(y&1)ret=ret*x%p;
+	return ret;
+}
+int n,ans,a[MAXN],inv[MAXN];
+int unq[MAXN],cnt;
+int pre[MAXN],suf[MAXN],sum[MAXN];
+int fac[MAXN],ifac[MAXN];
+int pw[MAXN][MAXN];
+int lagrange(int x,int k){
+	int ret=0;
+	for(int i=0;i<=k;i++)pre[i]=(i?pre[i-1]:1)*(x-i+p)%p;
+	suf[k+1]=1;for(int i=k;i>=0;i--)suf[i]=suf[i+1]*(x-i+p)%p;
+	for(int i=0;i<=k;i++)
+		ret=(ret+sum[i]*(i?pre[i-1]:1)%p*suf[i+1]%p*ifac[i]%p*((k-i)&1?p-ifac[k-i]:ifac[k-i])%p)%p;
+	return ret;
+}
+int calc(int l,int r,int k){
+	for(int i=1;i<=k+1;i++)sum[i]=(sum[i-1]+pw[i][k])%p;
+	return (lagrange(r,k+1)-lagrange(l-1,k+1)+p)%p;
+}
+signed main(){
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	fac[0]=1;for(int i=1;i<=N;i++)fac[i]=fac[i-1]*i%p;
+	ifac[N]=qpow(fac[N],p-2);
+	for(int i=N;i;i--)ifac[i-1]=ifac[i]*i%p;
+	for(int i=1;i<=N;i++){
+		pw[i][0]=1;
+		for(int j=1;j<=N;j++)pw[i][j]=pw[i][j-1]*i%p;
+	}
+	scanf("%lld",&n);
+	for(int i=1;i<=n;i++)scanf("%lld",&a[i]),unq[++cnt]=a[i]+1,inv[i]=qpow(a[i],p-2);
+	sort(unq+1,unq+cnt+1);cnt=unique(unq+1,unq+cnt+1)-unq-1;unq[0]=1;
+	for(int i=1;i<=cnt;i++){
+		int co=1,cnt=0;
+		for(int j=1;j<=n;j++)
+			if(unq[i]<=a[j]+1)co=co*inv[j]%p,cnt++;
+		ans=(ans-co*calc(unq[i-1],unq[i]-1,cnt)%p+p)%p;
+	}ans=(ans+unq[cnt])%p;
+	printf("%lld",ans);
+	return 0;
+}

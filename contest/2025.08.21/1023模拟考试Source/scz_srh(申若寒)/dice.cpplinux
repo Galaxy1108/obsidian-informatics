@@ -1,0 +1,95 @@
+#include<bits/stdc++.h>
+#define ll long long
+using namespace std;
+inline int read(){
+	int sum = 0, fh = 1; char ch = getchar();
+	while(!isdigit(ch)) {if(ch == '-') fh = -1; ch = getchar();}
+	while(isdigit(ch)) {sum = sum * 10 + ch - '0'; ch = getchar();}
+	return fh * sum;
+}
+const int p = 1e9 + 7, MAXN = 5010;
+int power (int a, int b)
+{
+	int ret = 1 % p;
+	while (b)
+	{
+		if (b & 1)	ret = (ll)ret * a % p;
+		a = (ll)a * a % p;
+		b >>= 1;
+	}
+	return ret;
+}
+int a[MAXN], c[MAXN], h[MAXN], f[MAXN], s[MAXN];
+void inv (ll n)
+{
+	c[1] = 1; c[0] = 1;
+	for (ll i = 2; i <= n; i++)
+		c[i] = (ll)((p - p / i) * c[p%i]) % p;
+	for (ll i = 2; i <= n; i++)
+		c[i] = (ll)c[i] * c[i - 1] % p;
+	s[1] = 1; s[0] = 1;
+	for (ll i = 2; i <= n; i++)
+		s[i] = (ll)s[i - 1] * i % p;
+}
+int C (int n, int m)
+{
+	return (ll)s[n] * c[m] % p * c[n - m] % p;
+}
+bool cmp (int x, int y)
+{
+	return x < y;
+}
+int main()
+{
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	int n = read();
+	inv(n + 5);
+	int tot = 0;
+	for (int i = 1; i <= n; i++)
+	{
+		a[i] = read();
+	}
+	sort(a + 1, a + 1 + n, cmp);
+	for(int i = 1; i <= n; i++)
+	{
+		if(a[i] != a[i - 1])
+		{
+			f[++tot] = a[i];
+			h[tot] = 1;
+			continue;
+		}
+		h[tot]++;
+	}
+	for (int i = tot - 1; i >= 1; i--)
+	{
+		h[i] += h[i+1];
+	}
+	int y = 1;
+	ll ans = 1, m = 1, d = 1;
+//	cout << C(2, 2) << endl;
+	for (int i = 2; i <= f[n]; i++)
+	{
+		ll l = 0, k = 1, x = i - 1;
+		if(f[y]<i)
+		{
+			d *= power(f[y], h[y] - h[y + 1]);
+			d %= p;
+			y++;
+		}
+		for(int j = h[y]; j >= 1; j--)
+		{
+			l += (ll)C(h[y], j) * k % p;
+		//	cout << h[y] << ' ' << j << ' ' << k << ' ' << C(h[y], j) << ' ' << (ll)C(h[y], j) * k % p << endl;
+			l %= p;
+			k = k * x % p;
+		}
+	//	cout << l << ' ' << d << endl;
+		ans += (ll)l * d % p * i % p;
+		m += (ll)l * d % p;
+		ans %= p;
+	}
+	ans = ans * power(m, p - 2) % p;
+	cout << ans;
+	return 0;
+}

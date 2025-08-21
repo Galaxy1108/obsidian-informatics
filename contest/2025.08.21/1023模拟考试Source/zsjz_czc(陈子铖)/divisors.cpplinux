@@ -1,0 +1,55 @@
+#include <iostream>
+#include <cstdio>
+using namespace std;
+
+struct way {
+	int lst, u, v;
+}w[5005];
+int head[2505], cur;
+int val[2505], g[5005][5005];
+int n;
+inline void add(int u, int v) {
+	w[++cur] = (way) {head[u], u, v};
+	head[u] = cur;
+}
+int main() {
+	freopen("divisors.in", "r", stdin);
+	freopen("divisors.out", "w", stdout);
+	scanf("%d", &n);
+	for (int i(1) ; i <= 5000 ; ++i) {
+		g[0][i] = g[i][0] = g[i][i] = i;
+		for (int j(1) ; j < i ; ++j)
+			g[i][j] = g[j][i] = g[j][i % j];
+	}
+	if (n == 3) {
+		printf("2 6 3\n1 2\n2 3\n");
+		fclose(stdin);fclose(stdout);
+		return 0;
+	}
+	val[1] = 2;val[2] = 6;val[3] = 3;
+	add(1, 2);add(2, 1);
+	add(2, 3);add(3, 2);
+	for (int i(4) ; i <= n ; ++i) {
+		for (int j(1) ; j < i ; ++j) {
+			int now = val[j] * i / g[i][val[j]], pd(1);
+			if (now > 5000)continue;
+			for (int k(head[j]) ; k ; k = w[k].lst)
+				if (g[now][val[w[k].v]] != g[val[j]][val[w[k].v]]) {
+					pd = 0;break;
+				}
+			if (pd) {
+				val[j] = now;
+				val[i] = i;
+				add(j, i);
+				add(i, j);
+				break;
+			}
+		}
+	}
+	for (int i(1) ; i <= n ; ++i)
+		printf("%d ", val[i]);
+	for (int i(1) ; i + 2 <= 2 * n ; i += 2)
+		printf("%d %d\n", w[i].u, w[i].v);
+	fclose(stdin);fclose(stdout);
+	return 0;
+}

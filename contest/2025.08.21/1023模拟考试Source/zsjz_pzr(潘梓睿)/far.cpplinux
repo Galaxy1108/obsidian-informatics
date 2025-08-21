@@ -1,0 +1,27 @@
+#include<bits/stdc++.h>
+#define p 998244353
+using namespace std;
+int n,m,l[100],r[100],f[2][2000000],cnt,bz,ans;
+int main(){
+	freopen("far.in","r",stdin);
+	freopen("far.out","w",stdout);
+	scanf("%d%d",&n,&m);
+	for(int i=1;i<=n;i++)
+	scanf("%d%d",&l[i],&r[i]);
+	f[0][0]=1;
+	for(int i=1;i<=n;i++){
+		for(int j=0;j<(1<<m);j++)
+		if(f[cnt][j]){
+			for(int k=l[i];k<=r[i];k++)
+			(f[cnt^1][j^k]+=f[cnt][j])%=p;
+			f[cnt][j]=0;
+		}
+		cnt^=1;ans=0;
+		for(int j=0;j<(1<<m);j++){
+			bz=1;
+			for(int k=0;k<m;k++)
+			if(((j&(1<<k))>0)!=((j&(1<<(m-k-1)))>0)){bz=0;break;}
+			(ans+=bz*f[cnt][j])%=p;
+		}printf("%d\n",ans);
+	}
+}

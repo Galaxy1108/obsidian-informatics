@@ -1,0 +1,42 @@
+#include<iostream>
+#include<cstdio>
+#include<cmath>
+#include<algorithm>
+#define R register
+using namespace std;
+const long long mo=1e9+7;
+const int N=1e6+5;
+int n;
+long long fm,ans,a[N];
+long long ksm(long long ds,long long zs)
+{
+	if (zs==0) return 1;
+	long long c=1;
+	while (zs>1)
+	{
+		if (zs&1) c=c*ds%mo;
+		ds=ds*ds%mo;zs>>=1;
+	}
+	return c*ds%mo;
+}
+int main()
+{
+	freopen("dice.in","r",stdin);freopen("dice.out","w",stdout);
+	scanf("%d",&n);
+	fm=1;for (int i=1;i<=n;++i) scanf("%lld",&a[i]),fm=fm*a[i]%mo;
+	fm=ksm(fm,mo-2);
+	sort(a+1,a+1+n);
+	for (int i=1;i<=n;++i)
+	{
+		for (int j=1;j<=a[i];++j)
+		{
+			long long sum=j;
+			for (int k=1;k<i;++k)
+				sum=sum*min(a[k],(long long)(j-1))%mo;
+			sum=sum*ksm(j,n-i)%mo;
+			ans=(ans+sum)%mo;
+		}
+	}
+	printf("%lld\n",fm*ans%mo);
+	return 0;
+}

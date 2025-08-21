@@ -1,0 +1,49 @@
+#include <bits/stdc++.h>
+using namespace std;
+const int N = 2510;
+int n;
+int a[N], fa[N];
+vector <int> vec[N];
+int gcd(int x, int y) {
+    return y ? gcd(y, x % y) : x;
+}
+int lcm(int x, int y) {
+    return x / gcd(x, y) * y;
+}
+int main() {
+    freopen("divisors.in", "r", stdin);
+    freopen("divisors.out", "w", stdout);
+    scanf("%d", &n);
+    a[1] = 6;
+    a[2] = 2;
+    a[3] = 3;
+    vec[1].emplace_back(2);
+    vec[1].emplace_back(3);
+    fa[2] = fa[3] = 1;
+    for (int i = 4; i <= n; ++i) {
+        for (int j = i - 1; j; --j)
+            if (!(a[j] % i)) {
+                fa[i] = j;
+                a[i] = i;
+                vec[j].emplace_back(i);
+                break;
+            }
+        if (a[i])
+            continue;
+        for (int j = 1; j < i; ++j)
+            if (lcm(i, a[j]) <= 11000) {
+                fa[i] = j;
+                a[j] = lcm(i, a[j]);
+                a[i] = i;
+                vec[j].emplace_back(i);
+                break;
+            }
+    }
+    for (int i = 1; i <= n; ++i)
+        printf("%d ", a[i]);
+    puts("");
+    for (int i = 1; i <= n; ++i)
+        for (int j : vec[i])
+            printf("%d %d\n", i, j);
+    return 0;
+}

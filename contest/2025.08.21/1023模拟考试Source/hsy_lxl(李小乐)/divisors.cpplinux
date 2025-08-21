@@ -1,0 +1,31 @@
+#include<bits/stdc++.h>
+using namespace std;
+void read(int &x){
+	x=0;char c=getchar();
+	int w=0;
+	while(!isdigit(c)){
+		(c=='-')&&(w=1);
+		c=getchar();
+	}
+	while(isdigit(c)){
+		x=x*10+(c^48);
+		c=getchar();
+	}
+	w&&(x=-x);
+}
+int n;
+int main(){
+	freopen("divisors.in","r",stdin);
+	freopen("divisors.out","w",stdout);
+	read(n);
+	if(n<=10){
+		cout<<2520<<" ";
+		for(int i=2;i<=n;i++){
+			cout<<i<<" ";
+		}
+		cout<<endl;
+		for(int i=2;i<=n;i++){
+			cout<<1<<" "<<i<<endl;
+		}
+	}
+}

@@ -1,0 +1,38 @@
+#include<bits/stdc++.h>
+#define ll long long
+using namespace std;
+inline int read(){
+	int x=0,f=1;char ch=getchar();
+	while (ch<'0'||ch>'9'){if (ch=='-') f=-1;ch=getchar();}
+	while (ch>='0'&&ch<='9'){x=x*10+ch-48;ch=getchar();}
+	return x*f;
+}
+int a[55];
+int t[55];
+ll ans;
+void msort(int l,int r){
+	if(l==r) return;
+	int mid=(l+r)/2;
+	msort(l,mid);
+	msort(mid+1,r);
+	int i=l,j=mid+1,k=l;
+	while(i<=mid&&j<=r){
+		if(a[j]<a[i]){
+			ans+=mid-i+1;
+			t[k++]=a[j++];
+		}
+		else t[k++]=a[i++];
+	}
+	while(i<=mid) t[k++]=a[i++];
+	while(j<=r) t[k++]=a[j++];
+	for(int i=l;i<=r;i++) a[i]=t[i];
+}
+int main(){
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	int n=read();
+	for(int i=1;i<=n;i++) a[i]=read();
+	msort(1,n);
+	cout<<ans*2;
+	return 0;
+}

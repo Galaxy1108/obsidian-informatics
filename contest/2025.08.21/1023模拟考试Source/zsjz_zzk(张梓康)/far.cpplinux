@@ -1,0 +1,57 @@
+#include<cstdio>
+using namespace std;
+typedef long long ll;
+ll n,m,l[101],r[101],d=998244353,s,f=1,v,g[21][2000001]; 
+int main()
+{
+	freopen("far.in","r",stdin);
+	freopen("far.out","w",stdout);
+	ll i,j,k;
+	scanf("%lld%lld",&n,&m);
+	for(i=1;i<=n;++i)
+	{
+		scanf("%lld%lld",l+i,r+i);
+		if(l[i]!=0||r[i]!=(1ll<<m)-1)
+		  f=0;
+	}
+	if(f==0)
+	{
+		g[0][0]=1;
+		for(i=1;i<=n;++i)
+		{
+			for(j=0;j<=(1<<m)-1;++j)
+			{
+				for(k=l[i];k<=r[i];++k)
+				  g[i][j]=(g[i][j]+g[i-1][j^k])%d;
+			}
+		}
+		for(i=1;i<=n;++i)
+		{
+			s=0;
+			for(j=0;j<=(1<<m)-1;++j)
+			{
+				v=0;
+				for(k=1;k<=m;++k)
+				  v=(v<<1)|(1&j>>k-1);
+				if(v!=j)
+				  continue;
+				s=(s+g[i][j])%d;
+			}
+			printf("%lld\n",s);
+		}
+		return 0;
+	}
+	if(m%2==1)
+	  v=1ll<<(m+1>>1);
+	else
+	  v=1ll<<(m>>1);
+	v=v%d;
+	for(i=1;i<=n;++i)
+	{
+		s=f*v%d;
+		for(j=1;j<=m;++j)
+		  f=(f<<1)%d;
+		printf("%lld\n",s);
+	}
+	return 0;
+}

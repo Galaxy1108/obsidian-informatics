@@ -1,0 +1,39 @@
+#include <bits/stdc++.h>
+#define maxN 60
+#define LL long long
+using namespace std;
+struct Pair{ int val, id; };
+Pair a[maxN];
+int read ()
+{
+	int x = 0, Fu = 1;
+	char c = getchar();
+	while(c < '0' || c > '9')
+	{
+		if(c == '-') Fu = -1;
+		c = getchar();
+	}
+	while(c >= '0' && c <= '9')
+	{
+		x = x * 10 + (c - '0');
+		c = getchar();
+	}
+	return x * Fu;
+}
+int Min (int x, int y) { return x < y ? x : y; }
+int Max (int x, int y) { return x > y ? x : y; }
+bool cmp (Pair P, Pair Q) { return (P.val < Q.val) || (P.val == Q.val && P.id < Q.id); }
+int Abs (int x) { return (x >= 0) ? x : (-x); }
+int main ()
+{
+	freopen("lineup.in", "r", stdin);
+	freopen("lineup.out", "w", stdout);
+	int n = read(); 
+	for(int i = 1;i <= n; i++) { int x = read(); a[i] = (Pair){x, i}; }
+	sort(a + 1, a + n + 1, cmp);
+	int Ans = 0;
+	for(int i = 1;i <= n; i++)
+		Ans += Abs(a[i].id - i);
+	printf("%d", Ans);
+	return 0;
+}

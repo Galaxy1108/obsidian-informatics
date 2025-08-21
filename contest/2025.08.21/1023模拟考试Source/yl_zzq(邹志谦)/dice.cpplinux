@@ -1,0 +1,31 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+const int Mx=5e3+5,mod=1e9+7;
+int qpow(int a,int b){
+	int res=1;
+	while(b){
+		if(b&1)res=res*a%mod;
+		a=a*a%mod;
+		b>>=1;
+	}
+	return res;
+}
+int n,p[Mx],pre[Mx];
+bool cmp(int i,int j){return i>j;}
+signed main(){
+	freopen("dice.in","r",stdin);
+    freopen("dice.out","w",stdout);
+	scanf("%lld",&n);
+	for(int i=1;i<=n;i++)scanf("%lld",&p[i]);
+	sort(p+1,p+n+1,cmp);
+	int ans=0,Max=p[1];pre[0]=1;
+	for(int i=1;i<=n;i++)pre[i]=pre[i-1]*p[i]%mod;
+	int l=1;
+	for(int i=Max;i>=1;i--){
+		while(p[l+1]>=i&&l+1<=n)l++;
+		ans=(ans+i*((qpow(i,l)-qpow(i-1,l)+mod)%mod*qpow(pre[l],mod-2)%mod)%mod)%mod;
+	}
+	printf("%lld\n",ans);
+	return 0;
+}

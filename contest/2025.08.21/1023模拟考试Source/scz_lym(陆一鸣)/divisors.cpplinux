@@ -1,0 +1,31 @@
+# include <bits/stdc++.h>
+using namespace std;
+int n;
+int Gcd(int x,int y)
+{
+	if(x % y == 0) return y;
+	else return Gcd(y,x % y);
+}
+int lcm(int x,int y)
+{
+	return x * y / Gcd(x,y);
+}
+int main(void) 
+{
+	freopen("divisors.in","r",stdin);
+	freopen("divisors.out","w",stdout);
+	scanf("%d",&n);
+	int g = 2;
+	for(int i = 3; i <= n; i++) g = lcm(g,i);
+	printf("%d ",g);
+	for(int i = 2; i <= n; i++) 
+	{
+		printf("%d ",i);
+	}
+	printf("\n");
+	for(int i = 2; i <= n; i++)
+	{
+		printf("1 %d\n",i);
+	}
+	return 0;
+}

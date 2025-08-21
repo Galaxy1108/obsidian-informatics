@@ -1,0 +1,56 @@
+#include <bits/stdc++.h>
+using namespace std;
+const int N = 40,M = 60,P = 998244353,inv2 = (P + 1) / 2;
+inline int Add(int a,int b) { return (a + b >= P) ? (a + b - P) : (a + b);}
+inline int Sub(int a,int b) { return (a < b) ? (a - b + P) : (a - b);}
+namespace Subtask1{
+	const int L = 1 << 20;
+	int n,m;
+	long long l[N],r[N];
+	inline void FWT_XOR(int *f,int n,int sign)
+	{
+		for(int k = 2;k <= (1 << n);k <<= 1)
+			for(int i = 0;i < (1 << n);i += k)
+				for(int j = 0;j < (k >> 1);j++)
+				{
+					int x = f[i + j],y = f[i + j + (k >> 1)];
+					if(sign == 1) f[i + j] = Add(x,y),f[i + j + (k >> 1)] = Sub(x,y);
+					else f[i + j] = 1ll * Add(x,y) * inv2 % P,f[i + j + (k >> 1)] = 1ll * Sub(x,y) * inv2 % P;
+				}
+	}
+	int Now[L],Mul[L];
+	inline void Main()
+	{
+		scanf("%d%d",&n,&m);
+		for(int i = 1;i <= n;i++)
+			scanf("%lld%lld",&l[i],&r[i]);
+		int lim = 1 << m;
+		for(int i = 0;i < lim;i++) Mul[i] = 1;
+		for(int i = 1;i <= n;i++)
+		{
+			for(int j = 0;j < lim;j++) Now[j] = (l[i] <= j) && (j <= r[i]);
+			FWT_XOR(Now,m,1);
+			for(int j = 0;j < lim;j++) Mul[j] = 1ll * Mul[j] * Now[j] % P;
+			FWT_XOR(Mul,m,-1);
+			int res = 0;
+			for(int S = 0;S < (1 << m);++S)
+			{
+				static int s[25];
+				for(int i = 0;i < m;i++) s[i] = (S >> i) & 1;
+				int flag = 1;
+				for(int i = 0;i < m;i++) if(s[i] != s[m - i -1]) {flag = 0;break;}
+				if(flag) (res += Mul[S]) %= P;
+			}
+			FWT_XOR(Mul,m,1);
+			cout << res << endl;
+		}
+		
+	}
+}
+int main()
+{
+	freopen("far.in","r",stdin);
+	freopen("far.out","w",stdout);
+	Subtask1::Main();
+	return 0;
+}

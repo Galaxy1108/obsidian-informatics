@@ -1,0 +1,16 @@
+#include<bits/stdc++.h>
+#define int long long
+using namespace std;
+int n,num=1;
+inline int lcm(int x,int y){return x*y/__gcd(x,y);}
+signed main(){
+	freopen("divisors.in","r",stdin);
+	freopen("divisors.out","w",stdout);
+	scanf("%lld",&n);
+	for(int i(2);i<=n;++i)num=lcm(num,i);
+	printf("%lld ",num);
+	for(int i(2);i<=n;++i)printf("%lld ",i);
+	putchar('\n');
+	for(int i(2);i<=n;++i)printf("1 %lld\n",i);
+	return 0;
+}

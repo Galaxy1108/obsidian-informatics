@@ -1,0 +1,47 @@
+#include<bits/stdc++.h>
+#define db double
+#define int ll
+#define ll long long
+#define ull unsigned long long
+#define pb push_back
+#define MP make_pair
+#define pii pair<int, int>
+#define fi first
+#define se second
+#define ls(k) S[k].lc
+#define rs(k) S[k].rc
+#define CLK (double)clock()/(double)CLOCKS_PER_SEC*1000.0
+using namespace std;
+inline int read(){
+	register int x=0,f=1;
+	register char ch=getchar();
+	while(ch<'0'||ch>'9'){if(ch=='-')f=-1;ch=getchar();}
+	while(ch>='0'&&ch<='9'){x=x*10+ch-'0';ch=getchar();}
+	return x*f;
+}
+inline void write(register int x){
+	if(x<0){putchar('-');x=-x;}
+	if(x>9)write(x/10);
+	putchar(x%10+'0');
+}
+const int N=2505;
+int n,a[N],vis[N],pri[N],tot;
+signed main(){   
+	freopen("divisors.in","r",stdin);
+ 	freopen("divisors.out","w",stdout);
+    n=read();int p=n,q=1;
+    for(int i=1;i<=n;i++){
+        a[i]=p*q;if(i&1^1)p--;else q++;
+    }
+    for(int i=1;i<=n;i++)cout<<a[i]<<' ';cout<<"\n";
+    for(int i=1;i<n;i++)cout<<i<<' '<<i+1<<"\n";
+    /*for(int i=2;i<=n;i++){
+        if(!vis[i])pri[++tot]=i,cout<<i<<"\n";
+        for(int j=1;j<=tot&&i*pri[j]<=n;j++){
+            vis[i*pri[j]]=1;cout<<i<<' '<<i*pri[j]<<"\n";
+            if(i%pri[j]==0)break;
+        }
+    }*/
+//  printf("\nTIME:%lf\n",(double)clock()/CLOCKS_PER_SEC);
+	return 0;
+}

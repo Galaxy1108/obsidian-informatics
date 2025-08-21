@@ -1,0 +1,56 @@
+#include<iostream>
+#include<cstdio>
+#include<cstdlib>
+#include<cstring>
+#include<cmath>
+#include<algorithm>
+using namespace std;
+int read()
+{
+	char x=getchar();int v=0,bj=1;
+	while((x!='-')&&(x<'0'||x>'9'))x=getchar();
+	if(x=='-')
+	{
+		bj=-1;
+		x=getchar();
+	}
+	while(!(x<'0'||x>'9'))v=(v<<1)+(v<<3)+x-'0',x=getchar();
+	return v*bj;
+}
+const int mo=1e9+7;
+long long ksm(long long x,int k)
+{
+	long long now=1;
+	while(k)
+	{
+		if(k&1)now=now*x%mo;
+		x=x*x%mo;
+		k>>=1;
+	}
+	return now;
+}
+const int N=5005;
+long long a[N];
+int main() 
+{
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	int n=read();long long div=1,ans=0,rest=1;
+	for(register int i=1;i<=n;i++)a[i]=read(),div=div*ksm(a[i],mo-2)%mo;
+	sort(a+1,a+n+1);
+	for(register int i=1,st=0;i<=n;i++)
+	{
+		if(a[i]!=a[i+1])
+		{	
+			for(register int j=a[st]+1,p=ksm(j-1,n-st),t;j<=a[i];j++)
+			{
+				t=ksm(j,n-st);
+				ans=(ans+j*(t-p)%mo*rest%mo+mo)%mo;
+				p=t;
+			}
+			for(register int j=st+1;j<=i;j++)rest=(rest*a[j])%mo;
+			st=i;
+		}
+	}
+	printf("%lld",ans*div%mo);
+}

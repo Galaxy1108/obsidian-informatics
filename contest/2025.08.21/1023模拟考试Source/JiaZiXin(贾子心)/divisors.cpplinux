@@ -1,0 +1,19 @@
+#include<bits/stdc++.h>
+using namespace std;
+void solve1(int n){
+	cout<<"2520 ";
+	for(int i=2;i<=n;i++){
+		cout<<i<<' ';
+	}
+	cout<<endl;
+	for(int i=2;i<=n;i++){
+		cout<<"1 "<<i<<endl;
+	}
+}
+int main(){
+	freopen("divisors.in","r",stdin);
+	freopen("divisors.out","w",stdout);
+	int n;cin>>n;
+	if(n<=10)solve1(n);
+	return 0;
+}

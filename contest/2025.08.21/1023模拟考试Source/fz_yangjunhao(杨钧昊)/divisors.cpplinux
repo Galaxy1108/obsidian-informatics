@@ -1,0 +1,60 @@
+#include<cstdio>
+#include<cctype>
+#include<cstring>
+#include<algorithm>
+#include<unordered_map>
+#include<vector>
+using namespace std;
+inline char nc()
+{
+	static char buf[99999],*l,*r;
+	return l==r&&(r=(l=buf)+fread(buf,1,99999,stdin),l==r)?EOF:*l++;
+}
+template <class code>inline code read(const code &a)
+{
+    code x=0;short w=0;char ch=0;
+    while(!isdigit(ch)) {w|=ch=='-';ch=nc();}
+    while(isdigit(ch)) {x=(x<<3)+(x<<1)+(ch^48);ch=nc();}
+    return w?-x:x;
+}
+void print(int x){
+	if(x<0)putchar('-'),x=-x;
+	if(x>=10)print(x/10);
+	putchar(x%10+48);
+}
+int cnt=0,bj[11005],sj[10005],f[10005];
+int xj(int x){
+    ++cnt;
+    sj[cnt]=x;
+    return cnt;
+}
+int find(int x){
+    return f[x]=f[x]==x?x:find(f[x]);
+}
+vector<int>w[10005];
+int main()
+{	
+	freopen("divisors.in","r",stdin);
+	freopen("divisors.out","w",stdout);
+    int n=read(n);
+    for(int i=1;i<=n;i++)f[i]=i;
+    int l=1,r=n;
+    int la=1;sj[1]=n;cnt=1;
+    for(int i=1;i<=n;i++){
+        if(l==r)break;
+        if(i%2==0)--r;
+        else ++l;
+        int v=xj(l*r);
+        w[la].emplace_back(v);
+        la=v;
+    }
+    if(cnt<n)sj[n]=1,w[n-1].emplace_back(n);
+    for(int i=1;i<=n;i++)printf("%d ",sj[i]);
+    puts("");
+    for(int i=1;i<=n;i++){
+        for(int ne:w[i]){
+            printf("%d %d\n",i,ne);
+        }
+    }
+	return 0;
+}

@@ -1,0 +1,30 @@
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long LL;
+template <typename T> inline void read(T &FF) {
+    int RR = 1; FF = 0; char CH = getchar();
+    for(; !isdigit(CH); CH = getchar()) if(CH == '-') RR = -RR;
+    for(; isdigit(CH); CH = getchar()) FF = FF * 10 + CH - 48;
+    FF *= RR;
+}
+inline void file(string str) {
+    freopen((str + ".in").c_str(), "r", stdin);
+    freopen((str + ".out").c_str(), "w", stdout);
+}
+const int N = 1e5 + 10;
+int ai[N];
+int main() {
+    file("divisors");
+    int n; read(n);
+    int tot = 0;
+    for(int i = 1; i <= n; i += 2)
+        ai[i] = ++tot;
+    for(int i = 2; i <= n; i += 2)
+        ai[i] = ++tot;
+    for(int i = 2; i <= n; i++)
+        cout << ai[i] * ai[i - 1] << " ";
+    cout << ai[n] << endl;
+    for(int i = 1; i < n; i++)
+        cout << i << " " << i + 1 << '\n';
+    return 0;
+}

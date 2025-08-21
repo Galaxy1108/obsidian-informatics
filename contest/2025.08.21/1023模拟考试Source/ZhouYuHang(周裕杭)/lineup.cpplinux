@@ -1,0 +1,33 @@
+#include <vector>
+#include <iostream>
+#include <algorithm>
+
+const int MAXN = 300;
+
+int n;
+int h[MAXN];
+
+std::vector <int> pos[MAXN];
+
+int main () {
+	freopen("lineup.in", "r", stdin);
+	freopen("lineup.out", "w", stdout);
+	
+	std::cin >> n;
+	for (int i = 1; i <= n; ++i) {
+		std::cin >> h[i];
+		pos[h[i]].push_back(i);
+	}
+	
+	std::sort(h + 1, h + n + 1);
+	
+	int ans = 0;
+	for (int i = n; i; --i) {
+		ans += std::abs(pos[h[i]].back() - i);
+		pos[h[i]].pop_back();
+	}
+	
+	std::cout << ans;
+	
+	return 0;
+}

@@ -1,0 +1,45 @@
+#include<cstring>
+#include<iostream>
+#include<cstdio>
+#include<algorithm>
+using namespace std;
+int n;
+long long a[5050],S,ans;
+const long long mod=1e9+7;
+long long pw(long long x,long long y){
+	long long sum=1;
+	while(y){
+		if(y%2==1) sum=(sum*x)%mod;
+		x=(x*x)%mod;
+		y/=2; 
+	}
+	return sum;
+}
+long long clac(long long l,long long r,long long x){
+	long long sum=0;
+	for(long long i=l;i<=r;i++) sum=(sum+pw(i,x))%mod;
+	return sum;
+}
+long long clac2(long long l,long long r,long long x){
+	long long sum=0;
+	for(long long i=l;i<=r;i++) sum=(sum+pw(i-1,x)*i%mod)%mod;
+	return sum;
+}
+int main(){
+	freopen("dice.in","r",stdin); 
+	freopen("dice.out","w",stdout);
+	scanf("%d",&n);
+	for(register int i=1;i<=n;i++) scanf("%lld",&a[i]);
+	sort(a+1,a+n+1);
+	S=1;
+	for(register int i=1;i<=n;i++){
+		if(a[i]==a[i-1]){
+			S=(S * a[i])%mod;
+			continue;
+		}
+		long long l=a[i-1]+1,r=a[i];
+		ans=(ans+S*clac(l,r,n-i+2)%mod-S*clac2(l,r,n-i+1)%mod+mod)%mod;
+		S=(S * a[i])%mod;
+	}
+	printf("%lld\n",ans*pw(S,mod-2)%mod);
+}

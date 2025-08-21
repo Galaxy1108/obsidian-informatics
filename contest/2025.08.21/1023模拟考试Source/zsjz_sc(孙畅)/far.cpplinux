@@ -1,0 +1,88 @@
+#include <bits/stdc++.h>
+#define fo(i,a,b) for(int i=a;i<=b;++i)
+#define fd(i,a,b) for(int i=a;i>=b;--i)
+#define max(a,b) ((a)>(b)?(a):(b))
+#define min(a,b) ((a)<(b)?(a):(b))
+using namespace std;
+#define mo 998244353
+#define LL long long
+LL mi[65];
+struct cx{
+	LL l,r;
+}jq[50];
+#define N 40000
+#define ad(x,y) x+=y,x-=(x>=mo?mo:0)
+int n,m,zt[N],f[33][N][2],g[N];
+void cal(LL nu,int id)
+{
+	if(nu<0)return;
+	memset(f,0,sizeof f);
+	f[m+1][0][1]=1;
+	int mid=m>>1;
+	fd(i,m,1)
+	{
+		fo(j,0,mi[mid]-1)
+		if(f[i+1][j][0]||f[i+1][j][1]){
+			int mb0=j,mb1;
+			if(i<=mid)mb1=j^mi[i-1];
+			else{
+				if(m&1)
+				{
+					if(i!=mid+1)mb1=j^mi[mid*2-i+1];
+					else mb1=j;
+				}else mb1=j^mi[mid*2-i];
+			}
+			if(nu&mi[i-1])
+			{
+				ad(f[i][mb0][0],(f[i+1][j][1]+f[i+1][j][0])%mo);
+				ad(f[i][mb1][1],f[i+1][j][1]);
+				ad(f[i][mb1][0],f[i+1][j][0]);
+			}else{
+				ad(f[i][mb0][1],f[i+1][j][1]);
+				ad(f[i][mb0][0],f[i+1][j][0]);
+				ad(f[i][mb1][0],f[i+1][j][0]);
+			}
+		}
+	}
+	fo(i,0,mi[mid]-1)zt[i]+=id*(f[1][i][0]+f[1][i][1])%mo,zt[i]=(zt[i]+mo)%mo; 
+}
+void fwt_xor(int *f,int len,int ki)
+{
+	for(int o=2,k=1;o<=len;o<<=1,k<<=1)
+		for(int i=0;i<len;i+=o)
+			fo(j,0,k-1)
+			{
+				f[i+j]+=f[i+j+k];
+				f[i+j+k]=(1ll*f[i+j]-f[i+j+k]*2)%mo;
+				f[i+j]=1ll*f[i+j]*ki%mo;f[i+j+k]=1ll*f[i+j+k]*ki%mo;
+			}
+	fo(i,0,len-1)f[i]+=(f[i]<0?mo:0);
+}
+int main()
+{
+	freopen("far.in","r",stdin);
+	freopen("far.out","w",stdout);
+	scanf("%d%d",&n,&m);
+	bool a1=0;
+	mi[0]=1;fo(i,1,m)mi[i]=mi[i-1]<<1;
+	fo(i,1,n)scanf("%lld%lld",&jq[i].l,&jq[i].r),a1|=(jq[i].l||jq[i].r!=mi[m]-1);
+	if(!a1)
+	{
+		int an=mi[m+1>>1]%mo;
+		fo(i,1,n)printf("%d\n",an),an=mi[m]%mo*an%mo;
+		return 0;
+	}
+	g[0]=1;
+	fo(i,1,n)
+	{
+		memset(zt,0,sizeof zt);
+		cal(jq[i].l-1,-1);
+		cal(jq[i].r,1);
+		int len=mi[m>>1];
+		fwt_xor(zt,len,1);fwt_xor(g,len,1);
+		fo(i,0,len-1)g[i]=1ll*g[i]*zt[i]%mo;
+		fwt_xor(g,len,499122177);
+		printf("%d\n",g[0]);
+	}
+	return 0;
+}

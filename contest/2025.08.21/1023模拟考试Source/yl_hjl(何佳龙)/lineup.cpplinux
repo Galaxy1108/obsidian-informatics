@@ -1,0 +1,42 @@
+#include<bits/stdc++.h>
+#define db double
+//define int ll
+#define ll long long
+#define ull unsigned long long
+#define pb push_back
+#define MP make_pair
+#define pii pair<int, int>
+#define fi first
+#define se second
+#define ls(k) S[k].lc
+#define rs(k) S[k].rc
+#define CLK (double)clock()/(double)CLOCKS_PER_SEC*1000.0
+using namespace std;
+inline int read(){
+	register int x=0,f=1;
+	register char ch=getchar();
+	while(ch<'0'||ch>'9'){if(ch=='-')f=-1;ch=getchar();}
+	while(ch>='0'&&ch<='9'){x=x*10+ch-'0';ch=getchar();}
+	return x*f;
+}
+inline void write(register int x){
+	if(x<0){putchar('-');x=-x;}
+	if(x>9)write(x/10);
+	putchar(x%10+'0');
+}
+const int N=55;
+int n,ans;
+struct node{int a,i;}a[N];
+bool cmp(node a,node b){return a.a<b.a||(a.a==b.a&&a.i<b.i);}
+signed main(){   
+	freopen("lineup.in","r",stdin);
+ 	freopen("lineup.out","w",stdout);
+    n=read();
+    for(int i=1;i<=n;i++)a[i].a=read(),a[i].i=i;
+    sort(a+1,a+1+n,cmp);
+    for(int i=1;i<=n;i++)ans+=abs(i-a[i].i);
+    cout<<ans;
+//  printf("\nTIME:%lf\n",(double)clock()/CLOCKS_PER_SEC);
+	return 0;
+}
+

@@ -1,0 +1,17 @@
+#include<bits/stdc++.h>
+using namespace std;
+int n;
+struct p{
+    int h,pos,rnk;
+}a[105];
+bool cmp(p i,p j){return i.h<j.h;}
+int main(){
+	freopen("lineup.in","r",stdin);
+    freopen("lineup.out","w",stdout);
+    scanf("%d",&n);
+    for(int i=1;i<=n;i++)scanf("%d",&a[i].h),a[i].pos=i;
+    sort(a+1,a+n+1,cmp);int ans=0;
+	for(int i=1;i<=n;i++)ans+=abs(i-a[i].pos);
+	printf("%d",ans);
+    return 0;
+}

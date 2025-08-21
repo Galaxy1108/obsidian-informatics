@@ -1,0 +1,28 @@
+#include <cstdio>
+#include <iostream>
+#include <algorithm>
+using namespace std;
+const int N = 55;
+int n, ans;
+int w[N], p[N];
+template <typename T> inline void read(T &ss) {
+	ss = 0;
+	char ch = getchar();
+	for (; !isdigit(ch); ch = getchar());
+	for (; isdigit(ch); ch = getchar()) ss = (ss << 1) + (ss << 3) + (ch ^ 48);
+}
+bool cmp(const int & x, const int & y) {
+	if (w[x] != w[y]) return w[x] < w[y];
+	return x < y;
+}
+int main() {
+	freopen("lineup.in", "r", stdin);
+	freopen("lineup.out", "w", stdout);
+	read(n);
+	for (int i = 1; i <= n; ++i)
+		read(w[i]), p[i] = i;
+	sort(p + 1, p + 1 + n, cmp);
+	for (int i = 1; i <= n; ++i) ans += abs(p[i] - i);
+	printf("%d\n", ans);
+	return 0;
+}

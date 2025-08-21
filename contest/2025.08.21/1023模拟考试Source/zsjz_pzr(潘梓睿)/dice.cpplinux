@@ -1,0 +1,44 @@
+#pragma GCC optimize(3)
+#include<bits/stdc++.h>
+#define p 1000000007
+#define ll long long
+#define N 5010
+using namespace std;
+int n,a[N];
+ll s[N][N],now,sum,v,inv[N],ans;
+ll qpow(ll x,ll v){
+	ll y=1;
+	while(v){
+		if(v&1)y=y*x%p;
+		x=x*x%p;v>>=1;
+	}return y;
+}
+ll find(ll n,ll k){
+	if(n<=0)return 0;
+	sum=0;v=1;
+	for(int i=0;i<=k;i++){
+		v=v*(n+1-i)%p;
+		sum=(sum+s[k][i]*v%p*inv[i+1])%p;
+	}return sum;
+}
+int main(){
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	scanf("%d",&n);
+	for(int i=1;i<=n;i++)
+	scanf("%d",&a[i]);
+	sort(a+1,a+n+1);inv[0]=1;
+	for(int i=1;i<=n+2;i++)inv[i]=qpow(i,p-2);
+	for(int i=0;i<=n+2;i++){
+		s[i][0]=(i==0);
+		for(int j=1;j<=i;j++)
+		s[i][j]=(s[i-1][j-1]+s[i-1][j]*j)%p;
+	}now=1;
+	for(int i=n;i>=1;i--)
+	if(a[i]!=a[i-1]){
+		now=now*qpow(a[i],p-2)%p;
+		ans=(ans+(find(a[i],n-i+2)+3ll*p-find(a[i-1],n-i+2)-
+		find(a[i]-1,n-i+1)+find(a[i-1]-1,n-i+1)-
+		find(a[i]-1,n-i+2)+find(a[i-1]-1,n-i+2))%p*now)%p;
+	}printf("%lld",ans);
+} 

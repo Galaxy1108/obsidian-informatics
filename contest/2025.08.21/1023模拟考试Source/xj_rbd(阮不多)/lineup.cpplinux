@@ -1,0 +1,36 @@
+#include <bits/stdc++.h>
+#include <math.h>
+#include <iomanip>
+using namespace std;
+int main()
+{
+    
+//  cout << setiosflags(ios::fixed) << setprecision(5);//总是记不住
+//  ios::sync_with_stdio(0);//使输入输出时间更快
+//    cin.tie(0);
+//    cout.tie(0);
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+    
+    int n,hao=0,a[55],b[55];
+    bool pei[55];
+    memset(pei,0,sizeof(pei));
+    
+    cin >> n;
+    for(int i=0;i<n;i++) cin >> a[i],b[i]=a[i];
+    
+    sort(a,a+n);
+    
+    for(int i=0;i<n;i++)
+    	for(int j=0;j<n;j++)
+    		if(a[i]==b[j] and !pei[j]){
+    			(i>j) ? hao+=i-j : hao+=j-i,pei[j]=true;break;
+			}
+    			
+    
+    cout << hao;
+    
+    
+    return 0;
+    
+}

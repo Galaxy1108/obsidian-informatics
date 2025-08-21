@@ -1,0 +1,90 @@
+#include<cstdio>
+using namespace std;
+const int N=2e5+10;
+int n,cnt,t[N],p[N];
+int gcd(int a,int b){return b?gcd(b,a%b):a;}
+int lcm(int a,int b){return 1ll*a*b/gcd(a,b);}
+int find(int x)
+{
+	int s=1;
+	while(s*3<=x) s*=3;
+	return s;
+}
+int a[50],id[50];
+void dfs2(int x)
+{
+	if(x>n) return;
+	t[x]=1;
+	dfs2(x*3);
+}
+void dfs1(int x)
+{
+	if(x>n) return;
+	dfs1(x*2);
+	dfs2(x);
+}
+int v[N];
+struct my_array{
+	int len,q[N],q1[N];
+	void push(int x,int y)
+	{
+		q[++len]=x;
+		q1[len]=y;
+	}
+	int find(int x)
+	{
+		for(int i=1;i<=len;i++)
+			if(lcm(q[i],x)<=11000) {q[i]=lcm(q[i],x);return q1[i];}
+		return 0;
+	}
+	void output()
+	{
+		for(int i=1;i<=len;i++)
+			printf("%d %d\n",q[i],q1[i]);
+	}
+	void work()
+	{
+		for(int i=1;i<=len;i++) v[q1[i]]=q[i];
+	}
+}q,q2;
+void add(int x,int y){if(x!=y) q2.push(x,y);}
+void work(int x)
+{
+	for(int i=0;(1<<i)*x<=n;i++)
+		id[i]=++cnt,a[i]=x*find(n/x/(1<<i))*(1<<i),q.push(a[i],id[i]);
+	int l=a[0];
+	add(id[0],++cnt),add(1,id[0]);
+	for(int i=1;(1<<i)*x<=n;i++)
+	{
+		if(lcm(l,a[i])>=11000) v[cnt++]=l,l=a[i],add(cnt,cnt-1);
+		add(id[i],cnt),l=lcm(l,a[i]);
+	}
+	v[cnt]=l;
+	dfs1(x);
+}
+int main()
+{
+	freopen("divisors.in","r",stdin);
+	freopen("divisors.out","w",stdout);
+	scanf("%d",&n);
+	for(int i=1;i<=n;i++)
+	{
+		if(t[i]) continue;
+		if(i*3<=n)
+		{
+			if(i%2!=0&&i%3!=0) work(i);
+		}
+		else
+		{
+			int w;
+			w=q.find(i);
+			if(w) add(w,++cnt),v[cnt]=i;
+			else add(cnt+1,cnt+2),cnt+=2,q.push(i,cnt-1),add(1,cnt),v[cnt]=i;
+		}
+	}
+	while(cnt<n) add(1,++cnt),v[cnt]=1;
+	q.work();
+	for(int i=1;i<=n;i++) printf("%d ",v[i]);
+	printf("\n");
+	q2.output();
+}

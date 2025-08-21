@@ -1,0 +1,36 @@
+#pragma GCC optimize("Ofast")
+#include<bits/stdc++.h>
+using namespace std;
+const int NUM=210;
+int read()
+{
+    int x=0,f=1;
+    char c=getchar();
+    while(c<'0'||c>'9')
+	{
+        if(c=='-') f=-1;
+		c=getchar();
+	}
+    while(c>='0'&&c<='9') x=(x<<3)+(x<<1)+c-'0',c=getchar();
+    return x*f;
+}
+int n;
+vector<int> vec[NUM];
+int main()
+{
+    freopen("lineup.in","r",stdin);
+    freopen("lineup.out","w",stdout);
+    int k,ans;
+    n=read();
+    k=ans=0;
+    for(int i=1;i<=n;i++) vec[read()].push_back(i);
+    for(int i=120;i<=200;i++)
+    {
+        for(int j=0;j<vec[i].size();j++)
+        {
+            k++;
+            ans+=abs(vec[i][j]-k);
+        }
+    }
+    printf("%d",ans);
+}

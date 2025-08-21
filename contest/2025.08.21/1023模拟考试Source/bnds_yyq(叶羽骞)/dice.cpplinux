@@ -1,0 +1,84 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+//a从大到小排序
+//T[x]为a[x]到a[n]的乘积 
+//S[x][y]为1^y+2^y+...+x^y 
+//(a[i + 1],a[i]]的贡献为T[n - i] * ( a[i] ^ ( i + 1 ) - a[i + 1] ^ i * ( a[i + 1] + 1 ) - ( S[a[i] - 1][i] - S[a[i + 1]][i] ) )
+
+#define int long long
+#define mod 1000000007
+#define MAXN 10005
+
+int n,a[MAXN] = {0},T[MAXN] = {0},ans = 0;
+int fac[MAXN] = {0},inv[MAXN] = {0},invfac[MAXN] = {0},fr[MAXN] = {0},be[MAXN] = {0},y[MAXN] = {0};
+
+int fp( int x , int p ){
+	int res = 1;
+	while( p ){
+		if( p & 1 ) res = res * x % mod;
+		x = x * x % mod;
+		p >>= 1; 
+	}
+	return res;
+}
+
+int work( int n , int m ){
+	int res = 0;
+	for( int i = 1 ; i <= m + 2 ; i ++ )
+		y[i] = ( y[i - 1] + fp( i , m ) ) % mod;
+	fr[0] = be[m + 3] = 1;
+	for( int i = 1 ; i <= m + 2 ; i ++ )
+		fr[i] = fr[i - 1] * ( n - i ) % mod; //统计前缀积 
+	for( int i = m + 2 ; i >= 1 ; i -- )
+		be[i] = be[i + 1] * ( n - i ) % mod; //统计后缀积 
+	for( int i = 1 ; i <= m + 2 ; i ++ ){
+		int a = fr[i - 1] * be[i + 1] % mod;
+		int b = ( invfac[i - 1] * ( ( m + 2 - i ) & 1 ? -1 : 1 ) * invfac[m + 2 - i] + mod ) % mod; 
+		res = ( res + y[i] * a % mod * b % mod ) % mod;
+	}
+	return ( res + mod ) % mod;
+}
+
+/*int work( int n , int m ){
+	int res = 0;
+	for( int i = 1 ; i <= m + 2 ; i ++ )
+		y[i] = ( y[i - 1] + fp( i , m ) ) % mod;
+	fr[0] = be[m + 3] = 1;
+	for( int i = 1 ; i <= m + 2 ; i ++ )
+		fr[i] = fr[i - 1] * ( n - i ) % mod; //统计前缀积 
+	for( int i = m + 2 ; i >= 1 ; i -- )
+		be[i] = be[i + 1] * ( n - i ) % mod; //统计后缀积 
+	for( int i = 1 ; i <= m + 2 ; i ++ ){
+		int a = fr[i - 1] * be[i + 1] % mod;
+		int tmp = y[i] * a % mod * invfac[i - 1] % mod * invfac[m + 2 - i] % mod;
+		tmp = ( tmp * ( ( ( m + 2 - i ) & 1 ? -1 : 1 ) ) + mod ) % mod;
+		res = ( res + tmp ) % mod;
+	}
+	return ( res + mod ) % mod;
+}*/
+
+signed main(){
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	scanf("%lld",&n);
+	for( int i = 1 ; i <= n ; i ++ ) scanf("%lld",&a[i]);
+	sort( a + 1 , a + n + 1 , greater<int>() );
+	invfac[0] = fac[0] = invfac[1] = fac[1] = T[n + 1] = inv[1] = 1;
+	for( int i = 2 ; i <= n * 2 ; i ++ ){
+		inv[i] = ( mod - mod / i ) * inv[mod % i] % mod;
+		fac[i] = fac[i - 1] * i % mod;
+		invfac[i] = invfac[i - 1] * inv[i] % mod;
+	}
+	for( int i = n ; i >= 1 ; i -- ) T[i] = T[i + 1] * a[i] % mod;
+	for( int i = 1 ; i <= n ; i ++ ){
+		int rest = ( fp( a[i] , i + 1 ) - fp( a[i + 1] , i ) * ( a[i + 1] + 1 ) % mod + mod ) % mod;
+		int subject = work( a[i] - 1 , i ) - work( a[i + 1] , i );
+		ans = ( ans + ( ( rest - subject + mod ) % mod ) * T[i + 1] % mod ) % mod;
+	}
+	ans = ans * fp( T[1] , mod - 2 ) % mod;
+	printf("%lld\n",ans);
+	fclose(stdin);
+	fclose(stdout);
+	return 0;
+}

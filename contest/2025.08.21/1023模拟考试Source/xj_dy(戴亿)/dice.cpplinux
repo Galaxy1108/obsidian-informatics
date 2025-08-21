@@ -1,0 +1,112 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define ull unsigned long long
+const double eps = 0.000001;
+inline ll read()
+{
+    ll x=0,f=1;
+    char ch = getchar();
+    while (ch > '9' || ch < '0')
+        {
+            if (ch == '-')
+                f = -1;
+            ch = getchar();
+        }
+    while (ch <= '9' && ch >= '0')
+        {
+            x = x * 10 + ch - 48;
+            ch = getchar();
+        }
+    return x*f;
+}
+inline void write(ll x)
+{
+    if (x < 0)
+        {
+            putchar('-');
+            x = -x;
+        }
+    if (x > 9)
+        write(x/10);
+    putchar(x%10+'0');
+}
+const ll mod = 1000000007;
+ll n,dice[1010];
+ll inv,tot;
+ll exgcd(ll a,ll b,ll &x,ll &y)
+{
+    if (b == 0)
+        {
+            x = 1;
+            y = 0;
+            return a;
+        }
+    ll d = exgcd(b,a%b,x,y);
+    ll temp = x;
+    x = y;
+    y = temp - (a/b)*y;
+    return d;
+}
+ll fastpow(ll a,ll b)
+{
+    ll ans = 1;
+    ll base = a;
+    while (b > 0)
+        {
+            if (b & 1)
+                {
+                    ans *= base;
+                    ans %= mod;
+                }
+            base *= base;
+            base %= mod;
+            b >>= 1;
+        }
+    return ans;
+}
+ll Get_inv(ll a)
+{
+    ll x,y;
+    exgcd(a,mod,x,y);
+    x = (x%mod+mod)%mod;
+    return x;
+}
+int main()
+{
+    //freopen("testdata.txt","r",stdin);
+    freopen("dice.in","r",stdin);
+    freopen("dice.out","w",stdout);
+    n = read();
+    for (int i=1;i<=n;++i)
+        dice[i] = read();
+    inv = 1;
+    for (int i=1;i<=n;++i)
+        inv = (inv*dice[i])%mod;
+    inv = Get_inv(inv);
+    ll k = 0;
+    tot = 0;
+    sort(dice+1,dice+n+1);
+    if (dice[n] <= 1000000)
+        {
+            ll sum1 = 1;
+            for (int i=1;i<=dice[n];++i)
+                {
+                    ll temptot = 1;
+                    while (dice[k+1] < i)
+                        {
+                            ++k;
+                            sum1 *= dice[k];
+                            sum1 %= mod;
+                        }
+                    temptot *= sum1;
+                    temptot *= ((fastpow(i,n-k)-fastpow(i-1,n-k))%mod+mod)%mod;
+                    temptot %= mod;
+                    temptot *= i;
+                    temptot %= mod;
+                    tot += temptot;
+                }
+            printf("%lld",(tot*inv%mod+mod)%mod);
+        }
+    return 0;
+}

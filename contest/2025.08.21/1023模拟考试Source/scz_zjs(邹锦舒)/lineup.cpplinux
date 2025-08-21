@@ -1,0 +1,26 @@
+#include<bits/stdc++.h>
+using namespace std;
+struct node{
+	int h,y;
+}a[60];
+bool cmp(node x,node z){
+	if(x.h==z.h) return x.y<z.y;
+	return x.h<z.h;
+}
+int main(){
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	int n;
+	scanf("%d",&n);
+	for(int i=1;i<=n;i++){
+		scanf("%d",&a[i].h);
+		a[i].y=i;
+	}
+	sort(a,a+n+1,cmp);
+	int ans=0;
+	for(int i=1;i<=n;i++){
+		ans+=abs(a[i].y-i);
+	}
+	printf("%d",ans);
+	return 0;
+}

@@ -1,0 +1,113 @@
+#include<list>
+#include<ctime>
+#include<random>
+#include<cstdio>
+#include<cstring>
+#include<algorithm>
+#define nxt(x,as)\
+    if(a[x]!=c[x]){\
+        int y=x;\
+        swap(a[i],a[x]);\
+        dfs(sum+(abs(x-i)<<1),as);\
+        swap(a[i],a[y]);\
+    }
+using namespace std;
+using uni=unsigned;
+using ll=long long;
+using db=double;
+const int N=51,FSIZE=1<<12;
+int n,a[N],b[N],c[N],d[N],ans=0x7fffffff,to[N],p[N],pre[9][20000000];
+list<int> t[N];
+mt19937 rnd(time(0));
+char BuF[FSIZE],*InF=BuF;
+template<typename T>void read(T &x){
+    for(;48>*InF||*InF>57;++InF);
+    for(x=0;47<*InF&&*InF<58;x=x*10+(*InF++^48));
+}
+int calc(){
+    for(int i=1;i<=n;++i) t[i].clear();
+    for(int i=1;i<=n;++i)
+        if(a[i]!=c[i])
+            t[c[i]].push_back(i);
+    int re=0;
+    for(int i=1;i<=n;++i)
+        if(a[i]!=c[i]){
+            re+=abs((to[i]=t[a[i]].front())-i);
+            t[a[i]].pop_front();
+        }else to[i]=i;
+    return(re);
+}
+void dfs(int sum,int &ans){
+    int need=calc();
+    if(sum+need>=ans) return;
+    if(!need){
+        ans=sum;
+//            if(ans<0){
+//                int z=1;
+//            }
+        return;
+    }
+//    int r=0,cnt=0;
+    for(int i=1;i<=n;++i){
+//        if(a[i]!=c[i])
+//            d[++r]=c[i];
+        p[i]=i;
+    }
+//    if(r<8){
+//        for(int i=1;i<=n;++i)
+//            if(a[i]!=c[i])
+//                cnt=cnt*r+lower_bound(d+1,d+r+1,a[i])-d-1;
+//        if(pre[r][cnt]){
+//            ans=min(ans,sum+pre[r][cnt]);
+//            if(ans<0){
+//                int z=1;
+//            }
+//            return;
+//        }
+//        if(r==4&&cnt==77){
+//            int z=1;
+//        }
+//        pre[r][cnt]=0x7fffffff;
+//        shuffle(p+1,p+n+1,rnd);
+//        for(int x=1;x<=n;++x){
+//            int i=p[x];
+//            if((to[i]<i&&a[to[i]]>a[i])||(to[i]>i&&a[to[i]]<a[i]))
+//                nxt(to[i],pre[r][cnt]);
+//            for(int j=n;j>i;--j)
+//                if(a[i]>a[j])
+//                    nxt(j,pre[r][cnt]);
+//        }
+//    }
+    shuffle(p+1,p+n+1,rnd);
+    for(int x=1;x<=n;++x){
+        int i=p[x];
+        if((to[i]<i&&a[to[i]]>a[i])||(to[i]>i&&a[to[i]]<a[i]))
+            nxt(to[i],ans);
+        for(int j=n;j>i;--j)
+            if(a[i]>a[j])
+                nxt(j,ans);
+    }
+}
+int main(){
+    freopen("lineup.in","r",stdin);
+    freopen("lineup.out","w",stdout);
+    fread(BuF,1,FSIZE,stdin);
+    read(n);
+    // n=50;
+    for(int i=1;i<=n;++i){
+        read(a[i]);
+        // a[i]=rnd()%n+1;
+        b[i]=a[i];
+        c[i]=a[i];
+    }
+    sort(b+1,b+n+1);
+    int cnt=unique(b+1,b+n+1)-b;
+    for(int i=1;i<=n;++i)
+        c[i]=a[i]=lower_bound(b+1,b+cnt+1,a[i])-b;
+    sort(c+1,c+n+1);
+    dfs(0,ans);
+    printf("%d\n",ans);
+    fclose(stdin);
+    fclose(stdout);
+    return(0);
+}

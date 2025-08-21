@@ -1,0 +1,97 @@
+#include <bits/stdc++.h>
+
+inline void file () {
+	freopen("dice.in", "r", stdin);
+	freopen("dice.out", "w", stdout);
+}
+
+constexpr int Mod = 1e9 + 7;
+inline int add (int x, int y) { x += y; return x >= Mod ? x - Mod : x; }
+inline int sub (int x, int y) { x -= y; return x < 0 ? x + Mod : x; }
+inline int mul (int x, int y) { return 1ll * x * y % Mod; }
+inline void updAdd (int &x, int y) { x = add(x, y); }
+inline void updSub (int &x, int y) { x = sub(x, y); }
+inline void updMul (int &x, int y) { x = mul(x, y); }
+int exp (int x, int p) {
+	int r = 1;
+	for (; p; p >>= 1, updMul(x, x)) {
+		if (p & 1) {
+			updMul(r, x);
+		}
+	}
+	
+	return r;
+}
+inline int inverse (int x) {
+	return exp(x, Mod - 2);
+}
+
+constexpr int N = 5010;
+int sti[N][N];
+int inv[N];
+
+int n;
+int a[N];
+
+void prework () {
+	sti[0][0] = 1;
+	sti[1][1] = 1;
+	inv[1] = 1;
+	
+	for (int i = 2; i <= 5005; ++ i) {
+		sti[i][i] = 1;
+		for (int j = 1; j < i; ++ j) {
+			sti[i][j] = add(sti[i - 1][j - 1], mul(j, sti[i - 1][j]));
+		}
+		
+		inv[i] = sub(0, mul(inv[Mod % i], Mod / i));
+	}
+}
+
+int S (int n, int k) {
+	assert(k != 0);
+	
+	int ans = 0;
+	for (int j = 0, s = n + 1; j <= k; updMul(s, n - (j ++ ))) {
+		updAdd(ans, mul(sti[k][j], mul(s, inv[j + 1])));
+	}
+	
+	return ans;
+}
+
+int main () {
+	
+	file();
+	std::ios::sync_with_stdio(0);
+	std::cin.tie(nullptr);
+	
+	prework();
+	
+	std::cin >> n;
+	for (int i = 1; i <= n; ++ i) {
+		std::cin >> a[i];
+	}
+	
+	std::sort(a + 1, a + n + 1);
+	
+	int s = 1;
+	int sum = 0;
+	
+	for (int i = 1; i <= n; updMul(s, a[i ++ ])) {
+		int s1 = S(a[i], n - i + 1);
+		int s2 = S(a[i - 1], n - i + 1);
+		updAdd(sum, mul(s, sub(s1, s2)));
+	}
+	
+	int ans = 0;
+	updAdd(ans, mul(a[n] + 1, s));
+	updSub(ans, sum);
+	
+	for (int i = 1; i <= n; ++ i) {
+		updMul(ans, inverse(a[i]));
+	}
+	
+	std::cout << ans << '\n';
+	
+	return 0;
+}

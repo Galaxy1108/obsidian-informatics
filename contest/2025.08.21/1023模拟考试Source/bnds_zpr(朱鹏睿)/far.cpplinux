@@ -1,0 +1,58 @@
+#include <cstdio>
+#include <cstring>
+#define ll long long
+int n,m,f[21][1<<20];ll l[10011],r[10011];const int p=998244353;
+inline int qpow(int bs,int ex){int ans=1;while(ex){if(ex&1)ans=1ll*ans*bs%p;ex>>=1;bs=1ll*bs*bs%p;}return ans;}
+int main()
+{
+	freopen("far.in","r",stdin);freopen("far.out","w",stdout);
+	scanf("%d%d",&n,&m);for(int i=1;i<=n;++i)scanf("%lld%lld",l+i,r+i);
+	bool flg=1;for(int i=1;i<=n;++i)if(l[i]||r[i]!=(1ll<<m)-1)flg=0;
+	if(flg)
+	{
+		int tot=(1ll<<(m+1)/2)%p;
+		for(int i=1;i<=n;++i)printf("%lld\n",1ll*tot*qpow((1ll<<m)%p,i-1)%p);
+		return 0;
+	}
+	for(int i=1;i<=n;++i)for(int j=l[i];j<=r[i];++j)f[i][j]=1;
+	for(int I=1;I<=n;++I)
+	{
+		for(int len=2;len<=1<<m;len<<=1)
+		{
+			int lp=len>>1;
+			for(int i=0;i<1<<m;i+=len)
+			{
+				for(int _=i;_<i+lp;++_)
+				{
+					int t0=f[I][_],t1=f[I][_+lp];
+					f[I][_]=(t0+t1)%p;f[I][_+lp]=(t0-t1)%p;
+				}
+			}
+		}
+	}
+	for(int i=2;i<=n;++i)for(int j=0;j<1<<m;++j)f[i][j]=1ll*f[i][j]*f[i-1][j]%p;
+	for(int I=1;I<=n;++I)
+	{
+		for(int len=2;len<=1<<m;len<<=1)
+		{
+			int lp=len>>1;
+			for(int i=0;i<1<<m;i+=len)
+			{
+				for(int _=i;_<i+lp;++_)
+				{
+					int t0=f[I][_],t1=f[I][_+lp];
+					f[I][_]=(499122177ll*t0+499122177ll*t1)%p;f[I][_+lp]=(499122177ll*t0-499122177ll*t1)%p;
+				}
+			}
+		}
+		int ans=0;
+		for(int i=0;i<1<<m;++i)
+		{
+			bool flg=1;
+			for(int _=0;_<m/2;++_)if((i>>_&1)!=(i>>m-1-_&1))flg=0;
+			if(flg)(ans+=f[I][i])%=p;
+		}
+		printf("%d\n",(ans%p+p)%p);
+	}
+	fclose(stdin);fclose(stdout);return 0;
+}

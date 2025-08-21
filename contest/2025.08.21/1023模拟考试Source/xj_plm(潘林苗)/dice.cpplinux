@@ -1,0 +1,43 @@
+#include<bits/stdc++.h>
+#define ll long long
+#define ull unsigned long long
+using namespace std;
+const ll MAXN=5000+3,mod=1e9+7;
+ll qpow(ll x,ll y){
+    ll res=1;
+    while(y){
+        if(y&1) res=res*x%mod;
+        x=x*x%mod;
+        y>>=1;
+    }
+    return res;
+}
+ll n,a[MAXN],fm=1,ans,maxn;
+ll zhizhen=1,sum[MAXN];
+
+int main(){
+    freopen("dice.in","r",stdin);
+    freopen("dice.out","w",stdout);
+    ios::sync_with_stdio(false);
+    cin>>n;
+    sum[0]=1;
+    for(int i=1;i<=n;i++){
+        cin>>a[i];
+        fm=fm*qpow(a[i],mod-2)%mod;
+        maxn=max(a[i],maxn);
+    }
+    sort(a+1,a+n+1);
+    for(int i=1;i<=n;i++){
+        sum[i]=sum[i-1]*a[i]%mod;
+    }
+    for(ll i=1;i<maxn;i++){
+        while(a[zhizhen]<i) zhizhen++;
+        ans=(ans+(sum[n]-sum[zhizhen-1]*qpow(i,n-zhizhen+1)%mod))%mod;
+        
+    }
+    ans=ans*fm%mod+1;
+    while(ans<0) ans=ans%mod+mod;
+    ans%=mod;
+    cout<<ans<<endl;
+    return 0;
+}

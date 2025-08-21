@@ -1,0 +1,23 @@
+#include <iostream>
+#include <cstdio>
+#include <algorithm>
+using namespace std;
+int n,a[10005],_a[10005],book[10005],ans;
+int main(){
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	cin>>n;
+	for (int i=1;i<=n;i++)cin>>a[i],_a[i]=a[i];
+	sort(_a+1,_a+1+n);
+	for (int i=1;i<=n;i++){
+		for (int j=1;j<=n;j++)
+			if (book[j]==0&&_a[j]==a[i]){
+				if (j<i)ans+=i-j;
+				else ans+=j-i;
+				book[j]=1;
+				break;
+			}
+	}
+	cout<<ans<<endl;
+	return 0;
+}

@@ -1,0 +1,47 @@
+#include<bits/stdc++.h>
+using namespace std;
+template <class T>
+inline void read(T &x)
+{
+	x=0;
+	int f=1;char ch=getchar();
+	while (!isdigit(ch))
+	{
+		if (ch=='-')
+		{
+			f=-1;
+		}
+		ch=getchar();
+	}
+	while (isdigit(ch))
+	{
+		x=x*10+ch-'0';
+		ch=getchar();
+	}
+	x*=f;
+}
+int h1[110],h2[110],ans;
+bool vis[110];
+int main()
+{
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	int n;
+	read(n);
+	for (int i=1;i<=n;i++)
+	{
+		read(h1[i]);
+		h2[i]=h1[i];
+	}
+	sort(h1+1,h1+n+1);
+	for(int i=1;i<=n;i++)
+		for(int j=1;j<=n;j++)
+			if((h1[i]==h2[j])&&(!vis[j]))
+			{
+				ans+=abs(i-j);
+				vis[j]=true;
+				break;
+			}
+	cout<<ans;
+	return 0;
+}

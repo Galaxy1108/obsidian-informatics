@@ -1,0 +1,25 @@
+#include<bits/stdc++.h>
+#define itn int
+#define ll long long
+using namespace std;
+
+ll read(){
+	ll a=0,b=0;char c=getchar();
+	while(c<'0'||c>'9')b^=(c=='-'),c=getchar();
+	while(c>='0'&&c<='9')a=a*10-48+c,c=getchar();
+	return b?-a:a;
+}
+
+int n, h[105], ans, p[105];
+bool cmp(int a, int b){return h[a]==h[b]?a<b:h[a]<h[b];}
+
+int main(){
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	n=read();
+	for(int i=1;i<=n;i++)h[i]=read(),p[i]=i;
+	sort(p+1,p+1+n,cmp);
+	for(int i=1;i<=n;i++)ans+=abs(i-p[i]);
+	cout<<ans<<'\n';
+	return 0;
+}

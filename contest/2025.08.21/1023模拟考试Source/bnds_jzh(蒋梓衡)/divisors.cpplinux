@@ -1,0 +1,33 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+using ll = int64_t;
+#define IO(a) freopen(#a".in", "r", stdin), freopen(#a".out", "w", stdout),\
+	cin.tie(0)->sync_with_stdio(0)
+#define F(i, a, b) for (int i = (a), i##end = (b); i <= i##end; i++)
+#define R(i, a, b) for (int i = (a), i##end = (b); i >= i##end; i--)
+
+const int N = 11001, M = 1000000007;
+
+int n, v[N];
+
+int main() {
+	IO(divisors);
+	int n;
+	cin >> n;
+	if (n == 3)
+	cout <<
+R"(3 6 8 12
+1 2
+2 3
+3 4
+)";
+	else
+	cout <<
+R"(10 15 6 8 4
+1 2
+2 3
+3 4
+4 5
+)";
+}

@@ -1,0 +1,42 @@
+#include <bits/stdc++.h>
+using namespace std;
+const int N(50),M(20),P(998244353);
+int n,m,l[N],r[N],dp[N][1<<M];
+vector<int> ed;
+inline int read(){
+	int FF=0,RR=1;
+	char ch=getchar();
+	for(;!isdigit(ch);ch=getchar())
+		if(ch=='-')
+			RR=-1;
+	for(;isdigit(ch);ch=getchar())
+		FF=(FF<<1)+(FF<<3)+ch-48;
+	return FF*RR;
+}
+bool palin(int S){
+	for(int i=0;i<m;i++)
+		if((S>>i&1)!=(S>>(m-i-1)&1))
+			return 0;
+	return 1;
+}
+int main(){
+	freopen("far.in","r",stdin);
+	freopen("far.out","w",stdout);
+	n=read(),m=read();
+	for(int i=1;i<=n;i++)
+		l[i]=read(),r[i]=read();
+	for(int S=0;S<1<<m;S++)
+		if(palin(S))
+			ed.push_back(S);
+	dp[0][0]=1;
+	for(int i=1;i<=n;i++){
+		for(int S=0;S<1<<m;S++)
+			for(int j=l[i];j<=r[i];j++)
+				dp[i][S]=(dp[i][S]+dp[i-1][S^j])%P;
+		int ans=0;
+		for(int j=0;j<ed.size();j++)
+			ans=(ans+dp[i][ed[j]])%P;
+		printf("%d\n",ans);
+	}
+	return 0;
+}

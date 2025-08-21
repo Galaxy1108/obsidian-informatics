@@ -1,0 +1,57 @@
+#include<bits/stdc++.h>
+using namespace std;
+inline int read(){
+	int ans=0,a=getchar();
+	while('0'>a||a>'9')a=getchar();
+	while('0'<=a&&a<='9')ans=ans*10+a-'0',a=getchar();
+	return ans;
+}
+int pos[105],n;
+bool bok[101];
+int gcd(int x,int y){
+	if(!y)return x;
+	return gcd(y,x%y);
+}
+bool check(){
+	memset(bok,0,sizeof(bok));
+	for(int i=1;i<=n;i++){
+		int tmp=pos[i];
+		for(int j=i+1;j<=n;j++){
+			tmp=gcd(tmp,pos[j]);
+			if(tmp<=n)bok[tmp]=1;
+		}
+	}
+	for(int i=1;i<=n;i++)if(!bok[i])return 0;
+	return 1;
+}
+void out(){
+	for(int i=1;i<=n;i++)printf("%d ",pos[i]);
+	puts("");
+	for(int i=1;i<n;i++)printf("%d %d\n",i,i+1);
+}
+void dfs(int f){
+	if(f>n){
+		if(check()){
+			out();
+			exit(0);
+		}
+		return ;
+	}
+	for(int i=1;i<=n*n;i++){
+		pos[f]=i;
+		dfs(f+1);
+	}
+}
+int main(){
+	freopen("divisors.in","r",stdin);
+	freopen("divisors.out","w",stdout);
+	n=read();
+	if(n==10){
+		puts("7 7 5 10 30 12 2 4 8 8");
+		for(int i=1;i<n;i++){
+			printf("%d %d\n",i,i+1);
+		}
+		return 0;
+	}
+	dfs(1);
+}

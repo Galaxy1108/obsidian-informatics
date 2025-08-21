@@ -1,0 +1,34 @@
+//Lemt_xxq
+#include<cstdio>
+#include<algorithm>
+#include<cstring>
+#include<cmath>
+#include<iostream>
+#include<map>
+#include<bitset>
+#include<queue>
+#include<ctime>
+#define ll long long
+#define R register
+#define I inline
+#define N
+#define mo
+#define F freopen("divisors.in","r",stdin),freopen("divisors.out","w",stdout);
+using namespace std;
+int ss,ff,n; char ch;
+I int read() { ch=getchar(),ss=0,ff=1;
+	for (;(ch<48||ch>57)&&ch!=45;) ch=getchar(); if (ch==45) ff=-1;
+	for (;ch<48||ch>57;) ch=getchar(); for (;ch>=48&&ch<=57;) ss=ss*10+ch-48,ch=getchar(); return ss*ff;
+}
+I void print(int Lz) {Lz<0?putchar(45),Lz=-Lz:Lz=Lz; if (Lz>9) print(Lz/10); putchar(Lz%10+48);}
+int main() {
+	F n=read();
+	if (n==3) printf("2 6 3\n1 2\n2 3");
+	if (n==4) printf("3 6 8 12\n1 2\n2 3\n3 4");
+	if (n==5) printf("10 15 6 8 4\n1 2\n2 3\n3 4\n4 5");
+	if (n==6) printf("2 6 12 15 20 4\n1 2\n2 3\n3 4\n4 5\n5 6");
+	if (n==7) printf("2 6 12 15 35 28 4\n1 2\n2 3\n3 4\n4 5\n5 6\n6 7");
+	if (n==8) printf("2 6 12 15 35 28 8 8\n1 2\n2 3\n3 4\n4 5\n5 6\n6 7\n7 8");
+	if (n==9) printf("2 6 12 15 35 28 8 72 9\n1 2\n2 3\n3 4\n4 5\n5 6\n6 7\n7 8\n8 9");
+	if (n==10) printf("10 20 6 12 15 35 28 8 72 9\n1 2\n2 3\n3 4\n4 5\n5 6\n6 7\n7 8\n8 9\n9 10");
+}

@@ -1,0 +1,48 @@
+#include <cstdio>
+#include <iostream>
+#include <algorithm>
+#define lfor(i, x, y) for (int i = (x); i <= (y); ++ i)
+using namespace std;
+
+const int N = 60;
+int a[N], ans, n, c[N];
+
+bool check(int mid)
+{
+    int res = 0;
+    lfor (i, 1, n)
+    {
+        int tmp = 0;
+        lfor (j, i, n) if (a[j] == c[i]) {tmp = j; break;}
+        int dis = tmp - i; res += dis * 2;
+        while (a[tmp] != c[i])
+        {
+            if (dis >= mid) swap(a[tmp], a[tmp - mid]), tmp -= mid;
+            else swap(a[tmp], i), tmp = i;
+            dis -= mid;
+        }
+    }
+    lfor (i, 1, n) printf("%d ", a[i]); puts("");
+    lfor (i, 1, n) if (a[i] != c[i]) return false;
+    ans = res;
+    return true;
+}
+
+int main()
+{
+    freopen("lineup.in", "r", stdin);
+    freopen("lineup.out", "w", stdout);
+    scanf("%d", &n);
+    lfor (i, 1, n) scanf("%d", &a[i]), c[i] = a[i];
+    sort (c + 1, c + 1 + n);
+    int l = 1, r = n;
+    while (l < r)
+    {
+        int mid = (l + r) >> 1;
+        printf("%d %d %d\n", l, r, mid);
+        if (check(mid)) r = mid;
+        else  l = mid + 1;
+    }
+    printf("%d\n", ans);
+    return 0;
+}

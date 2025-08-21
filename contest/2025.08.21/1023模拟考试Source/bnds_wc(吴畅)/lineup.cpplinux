@@ -1,0 +1,29 @@
+#include <bits/stdc++.h>
+#define ru(i, l, r) for (int i = l; i <= r; i++)
+#define rd(i, r, l) for (int i = r; i >= l; i--)
+#define maxn 55
+using namespace std;
+inline int read() {
+	int x = 0; char ch = getchar();
+	while(!isdigit(ch)) ch = getchar();
+	while(isdigit(ch)) x = x * 10 + ch - '0', ch = getchar();
+	return x;
+}
+int n, h[maxn], tmp[maxn];
+int main() {
+	freopen("lineup.in", "r", stdin);
+	freopen("lineup.out", "w", stdout);
+	n = read();
+	ru(i, 1, n) h[i] = tmp[i] = read();
+	sort(tmp + 1, tmp + n + 1);
+	int ans = 0;
+	ru(i, 1, n) {
+		ru(j, 1, n) if(tmp[j] == h[i]) {
+			tmp[j] = 0;
+			ans += abs(i - j);
+			break;
+		}
+	}
+	printf("%d\n", ans);
+	return 0;
+}

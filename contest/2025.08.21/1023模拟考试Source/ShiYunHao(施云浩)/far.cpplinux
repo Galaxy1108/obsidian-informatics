@@ -1,0 +1,48 @@
+
+
+#include <bits/stdc++.h>
+#define int long long
+using namespace std;
+int n, m, k;
+int l[15], r[15];
+int cnt = 0;
+void dfs(int deep, int sum){
+	if(deep > k){
+		string s;
+		for(int i = 1; i <= m; i++){
+			if(sum & 1){
+				s += '1';
+			}
+			else{
+				s += '0';
+			}
+			sum >>= 1; 
+		}
+		int len = s.length();
+		for(int i = 0; i < len; i++){
+			if(s[i] != s[len - i - 1]){
+				return;
+			}
+		}
+		cnt++;
+		return;
+	}
+	for(int i = l[deep]; i <= r[deep]; i++){
+		dfs(deep + 1, sum ^ i);
+	}
+}
+signed main (){
+	freopen("far.in", "r", stdin);
+	freopen("far.out", "w", stdout);
+	cin >> n >> m;
+	for(int i = 1; i <= n; i++){
+		cin >> l[i] >> r[i];
+	}
+	for(int i = 1; i <= n; i++){
+		k = i;	
+		cnt = 0;
+		dfs(1, 0);
+		cout << cnt << endl;	
+	}
+	return 0;
+}

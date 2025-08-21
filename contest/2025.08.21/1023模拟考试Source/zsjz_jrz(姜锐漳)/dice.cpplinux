@@ -1,0 +1,60 @@
+#include<bits/stdc++.h>
+using namespace std;
+const int mod=1e9+7;
+int ksm(int x,int y){
+    int res=1;
+    while (y){
+        if (y&1) res=1ll*res*x%mod;
+        x=1ll*x*x%mod;
+        y>>=1;
+    }
+    return res;
+}
+int n,a[5005],y[5005],fac[5005],ifac[5005],mi[5005][5005],pre[5005],suf[5005];
+int calc(int k,int x){// sum_{i=1}^{x} i^k  ,  k>0
+    if (x<=k+2) return y[x];
+    // cerr<<"used"<<endl;
+    int Mul=1;
+    pre[0]=1;for (int i=1;i<=k+2;++i) pre[i]=1ll*pre[i-1]*(x-i)%mod;
+    suf[k+3]=1;for (int i=k+2;i>=1;--i) suf[i]=1ll*suf[i+1]*(x-i)%mod;
+    int res=0;
+    for (int i=1;i<=k+2;++i){
+        int tmp=1ll*pre[i-1]*suf[i+1]%mod;
+        int tmp1=1ll*ifac[i-1]*ifac[k+2-i]%mod;
+        if ((k+2-i)&1) tmp1=mod-tmp1;
+        res=(1ll*res+1ll*tmp*tmp1%mod*y[i]%mod)%mod;
+    }
+    return res;
+}
+int calc(int k,int l,int r){// sum_{i=l}^{r} i^k  ,  k>0
+    // assert(k>0);
+    if (r<=0) return 0;
+    for (int x=1;x<=k+2;++x) y[x]=(1ll*y[x-1]+1ll*mi[x][k])%mod;
+    if (l<=1) return 1ll*calc(k,r);
+    return 1ll*(1ll*calc(k,r)-1ll*calc(k,l-1)+1ll*mod)%mod;
+}
+int main(){
+    freopen("dice.in","r",stdin);
+    freopen("dice.out","w",stdout);
+    scanf("%d",&n);
+    for (int i=1;i<=n;++i) scanf("%d",&a[i]);
+    sort(a+1,a+1+n);
+    fac[0]=1;
+    for (int i=1;i<=n+2;++i){
+        mi[i][0]=1;fac[i]=1ll*fac[i-1]*i%mod;
+        for (int j=1;j<=n+2;++j) mi[i][j]=1ll*mi[i][j-1]*i%mod;
+    }
+    ifac[n+2]=ksm(fac[n+2],mod-2);
+    for (int i=n+1;i>=0;--i) ifac[i]=1ll*ifac[i+1]*(i+1)%mod;
+    int ans=0;
+    for (int i=1,j=1;i<=n;i=j){
+        while (a[j]==a[i]) ++j;
+        int tmp=0,mul=1,c=0;
+        for (int k=i;k<=n;++k) mul=1ll*mul*a[k]%mod,++c;
+        mul=ksm(mul,mod-2);
+        tmp=1ll*calc(c,a[i-1],a[i]-1)*mul%mod;
+        ans=(1ll*ans+1ll*(a[i]-a[i-1])-1ll*tmp+1ll*mod)%mod;
+    }
+    printf("%d\n",ans);
+    return 0;
+}

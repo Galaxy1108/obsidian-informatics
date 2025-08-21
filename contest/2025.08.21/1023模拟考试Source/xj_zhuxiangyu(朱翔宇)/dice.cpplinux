@@ -1,0 +1,99 @@
+// #pragma GCC optimize("O3")
+// #pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
+// #pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,tune=native")
+#include <bits/stdc++.h>
+using namespace std;
+
+#define PB emplace_back
+#define int long long
+#define ll long long
+#define vi vector<int>
+#define siz(a) ((int)((a).size()))
+#define rep(i, a, b) for (int i = (a); i <= (b); ++i)
+#define per(i, a, b) for (int i = (a); i >= (b); --i)
+
+const int N = 5000, mod = 1e9 + 7;
+int s[N + 5], a, p[N + 5];
+
+int qp(int n, int m = mod - 2) {
+	int res = 1;
+	for(; m; m >>= 1) {
+		if(m & 1) res = res * n % mod;
+		n = n * n % mod;
+	}
+	return res;
+}
+namespace sub {
+	inline int QP(int p, int n) {
+	  int ans = 1;
+	  while(n) {
+	    if(n & 1) ans = 1ll * ans * p % mod;
+	    p = 1ll * p * p % mod; n >>= 1;
+	  }
+	  return ans;
+	}
+	int n, m, pw[N + 5];
+	int pre[N + 5], suf[N + 5];
+	int fac[N + 5], ifac[N + 5];
+	int pri[N + 5], cnt; bool vis[N + 5];
+	void init() {
+	  fac[0] = 1;
+	  for(int i = 1; i <= N + 2; ++i) fac[i] = 1ll * fac[i - 1] * i % mod;
+	  ifac[N + 2] = qp(fac[N + 2], mod - 2);
+	  for(int i = N + 1; i >= 0; --i) ifac[i] = 1ll * ifac[i + 1] * (i + 1) % mod;
+	}
+	int ANS(int n, int m) {
+	  pw[1] = pre[0] = suf[m + 3] = 1;
+	  cnt = 0;
+	  rep(i, 1, m + 2) vis[i] = 0;
+	  for(int i = 2; i <= m + 2; ++i) {
+	    if(!vis[i]) {
+	      pri[++cnt] = i; pw[i] = QP(i, m);
+	    }
+	    for(int j = 1; j <= cnt && i * pri[j] <= m + 2; ++j) {
+	      vis[i * pri[j]] = true;
+	      pw[i * pri[j]] = 1ll * pw[i] * pw[pri[j]] % mod;
+	      if(i % pri[j] == 0) break;
+	    }
+	  }
+	  for(int i = 1; i <= m + 2; ++i) (pw[i] += pw[i - 1]) %= mod;
+	  for(int i = 1; i <= m + 2; ++i) pre[i] = 1ll * pre[i - 1] * (n - i) % mod;
+	  for(int i = m + 2; i >= 1; --i) suf[i] = 1ll * suf[i + 1] * (n - i) % mod;
+	  int ans = 0;
+	  for(int i = 1; i <= m + 2; ++i)
+	    (ans += (m - i & 1 ? -1ll : 1ll) * pw[i] * pre[i - 1] % mod * suf[i + 1] % mod * ifac[i - 1] % mod * ifac[m + 2 - i] % mod) %= mod;
+		return (ans + mod) % mod;
+	}
+}
+
+signed main() {
+	freopen("dice.in", "r", stdin);
+	freopen("dice.out", "w", stdout);
+	ios::sync_with_stdio(0);
+	cin.tie(0), cout.tie(0);
+	sub::init();
+	cin >> a;
+	rep(i, 1, a) cin >> s[i];
+	sort(s + 1, s + a + 1);
+	p[a] = s[a];
+	per(i, a - 1, 1) (p[i] = s[i] * p[i + 1]) %= mod;
+	int ans = 0;
+	rep(i, 1, a) {
+		int tmp = (sub::ANS(s[i] - 1, a - i + 1) - sub::ANS(s[i - 1], a - i + 1) + mod) % mod;
+		(tmp += qp(s[i - 1], a - i + 1) * (s[i - 1] + 1)) %= mod;
+		// cout << tmp << ' ' << (s[i] * qp(s[i], a - i + 1) % mod + mod - tmp) % mod << ' ' << p[i] << endl;
+		(ans += (s[i] * qp(s[i], a - i + 1) % mod + mod - tmp) * qp(p[i])) %= mod;
+		for(; s[i + 1] == s[i]; ++i);
+	}
+	cout << ans;
+	return 0;
+}
+/*
+(1 - 0) * 1
+(2 - 1) * 2
+(3 - 2) * 3
+(4 - 3) * 4
+4 * 4 - 3 - 2 - 1 - 0
+i : (i ^ n / {\prod a_k} - (i - 1) ^ n / {\prod a_k}) * i
+*/

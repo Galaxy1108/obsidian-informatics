@@ -1,0 +1,16 @@
+#include<cstdio>
+#include<algorithm>
+const int N=305;
+int n,a[N],anss,b[N],c[N];
+int Abs(int x){return x>0?x:-x;}
+int main()
+{
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	scanf("%d",&n);
+	for(int i=1;i<=n;++i) scanf("%d",&a[i]),c[i]=a[i];
+	std::sort(c+1,c+n+1);
+	for(int i=n;i;--i) b[c[i]]=i;
+	for(int i=1;i<=n;++i) anss+=Abs(i-b[a[i]]),b[a[i]]++;
+	printf("%d",anss);
+}

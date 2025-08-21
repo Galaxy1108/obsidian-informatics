@@ -1,0 +1,60 @@
+// #pragma GCC optimize("O3")
+// // #pragma GCC optimize("Ofast")
+// #pragma GCC optimize("unroll-loops")
+// #pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,tune=native")
+#include <bits/stdc++.h>
+using namespace std;
+
+#define PB emplace_back
+#define int long long
+#define ll long long
+#define vi vector<int>
+#define siz(a) ((int)((a).size()))
+#define rep(i, a, b) for (int i = (a); i <= (b); ++i)
+#define per(i, a, b) for (int i = (a); i >= (b); --i)
+
+const int N = 40, mod = 998244353;
+int a, b, l[N + 5], r[N + 5];
+
+namespace sub1 {
+	int f[1 << 20], g[1 << 20];
+	bool p[1 << 20];
+	void F(int *f, int o) {
+		for(int k = 1; k < (1 << b); k <<= 1)
+		for(int i = 0; i < (1 << b); i += k * 2)
+		rep(j, i, i + k - 1) {
+			(f[j] += f[j + k]) %= mod;
+			f[j + k] = (f[j] - f[j + k] * 2 % mod + mod) % mod;
+			(f[j] *= o) %= mod, (f[j + k] *= o) %= mod;
+		}
+	}
+	void ANS() {
+		rep(i, 0, (1 << b) - 1) {
+			p[i] = 1;
+			rep(j, 0, b - 1) if(((i >> j) & 1) != ((i >> (b - j - 1)) & 1)) p[i] = 0;
+		}
+		f[0] = 1;
+		rep(i, 1, a) {
+			F(f, 1);
+			rep(j, 0, (1 << b) - 1) g[j] = j >= l[i] && j <= r[i];
+			// rep(j, 0, (1 << b) - 1) cout << g[j] << endl;
+			F(g, 1);
+			rep(j, 0, (1 << b) - 1) (f[j] *= g[j]) %= mod;
+			F(f, (mod + 1) / 2);
+			int ans = 0;
+			rep(j, 0, (1 << b) - 1) (ans += f[j] * p[j]) %= mod;
+			cout << ans << '\n';
+		}
+	}
+}
+
+signed main() {
+	freopen("far.in", "r", stdin);
+	freopen("far.out", "w", stdout);
+	ios::sync_with_stdio(0);
+	cin.tie(0), cout.tie(0);
+	cin >> a >> b;
+	rep(i, 1, a) cin >> l[i] >> r[i];
+	if(b <= 20) sub1::ANS();
+	return 0;
+}

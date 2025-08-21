@@ -1,0 +1,26 @@
+#include<bits/stdc++.h>
+#define F(i,x,y) for(int i=(x);i<=(y);i++)
+using namespace std;
+int h[100];
+queue<int>qu[200];
+int main()
+{
+    freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	int n;
+	cin>>n;
+	F(i,1,n)
+	{
+		cin>>h[i];
+		qu[h[i]].push(i);
+	}
+	sort(h+1,h+1+n);
+	int ans=0;
+	F(i,1,n)
+	{
+		ans+=abs(i-qu[h[i]].front());
+		qu[h[i]].pop();
+	}
+	cout<<ans;
+	return 0;
+}

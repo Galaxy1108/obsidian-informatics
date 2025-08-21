@@ -1,0 +1,111 @@
+#include<cstdio>
+#include<cctype>
+#include<cstring>
+#include<algorithm>
+#include<unordered_map>
+#include<vector>
+using namespace std;
+inline char nc()
+{
+	static char buf[99999],*l,*r;
+	return l==r&&(r=(l=buf)+fread(buf,1,99999,stdin),l==r)?EOF:*l++;
+}
+template <class code>inline code read(const code &a)
+{
+    code x=0;short w=0;char ch=0;
+    while(!isdigit(ch)) {w|=ch=='-';ch=nc();}
+    while(isdigit(ch)) {x=(x<<3)+(x<<1)+(ch^48);ch=nc();}
+    return w?-x:x;
+}
+void print(int x){
+	if(x<0)putchar('-'),x=-x;
+	if(x>=10)print(x/10);
+	putchar(x%10+48);
+}
+const int mod=1e9+7;
+int a[5005],ls[5005],kn[5005],qz[5005],hz[5005],inv[5005],ycl[5005],pri[5005];
+bool sf[5005];
+int ksm(int x,int y){
+    int now=1;
+    while(y){
+        if(y&1)now=1ll*now*x%mod;
+        x=1ll*x*x%mod;
+        y>>=1;
+    }
+    return now;
+}
+int getz(int x,int k){
+    if(x<=0)return 0;
+    if(x<=k)return ycl[x];
+	qz[0]=x;
+	for(int i=1;i<=k;i++){
+		qz[i]=1ll*qz[i-1]*(x-i)%mod;
+	}
+	hz[k]=x-k;
+	for(int i=k-1;i>=0;i--){
+		hz[i]=1ll*hz[i+1]*(x-i)%mod;
+	}
+	int fx=0;
+	for(int i=0;i<=k;i++){
+		int ny=1;
+		if((k-i)&1)ny=-ny; 
+		if(i==0)fx=(fx+1ll*ycl[i]*hz[i+1]%mod*ny%mod*inv[k-i]%mod)%mod;
+		else if(i==k)fx=(fx+1ll*ycl[i]*qz[i-1]%mod*ny*inv[i]%mod*inv[k-i]%mod)%mod;
+		else fx=(fx+1ll*ycl[i]*qz[i-1]%mod*hz[i+1]%mod*ny*inv[i]%mod*inv[k-i]%mod)%mod;
+	}
+	fx=(fx+mod)%mod;
+	return fx;
+}
+int add(int x){
+    return x>=mod?x-mod:x;
+}
+void xs(int x){
+    memset(sf,0,sizeof(sf));
+    ycl[1]=1;
+    int cnt=0;
+    for(int i=2;i<=x+1;i++){
+        if(!sf[i])pri[++cnt]=i,ycl[i]=ksm(i,x);
+        for(int j=1;j<=cnt&&i*pri[j]<=x+1;j++){
+            sf[i*pri[j]]=1;
+            ycl[i*pri[j]]=1ll*ycl[i]*ycl[pri[j]]%mod;
+            if(i%pri[j]==0)break;
+        }
+    }
+    for(int i=2;i<=x+1;i++)ycl[i]=add(ycl[i-1]+ycl[i]);
+}
+int main()
+{	
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+    int n=read(n),cnt=0;
+    for(int i=1;i<=n;i++)a[i]=read(a[i]),ls[++cnt]=a[i];
+    int jc=1;
+    for(int i=1;i<=n+2;i++)jc=1ll*jc*i%mod;
+    inv[n+2]=ksm(jc,mod-2);
+    for(int i=n+1;i>=0;i--)inv[i]=1ll*inv[i+1]*(i+1)%mod;
+    ls[++cnt]=0;
+    sort(ls+1,ls+cnt+1);
+    cnt=unique(ls+1,ls+cnt+1)-ls-1;
+    int ans=0;
+    for(int i=1;i<cnt;i++){
+        int tot=0,p=ls[i+1]-ls[i],sj=1,su=0;
+        for(int j=1;j<=n;j++){
+            if(a[j]>ls[i])++tot;
+            else sj=1ll*sj*a[j]%mod;
+        }
+        xs(tot);
+        su=(su+ksm(ls[i]+p,tot+1))%mod;
+        su=(su+mod-ksm(ls[i],tot+1))%mod;
+        su=(su-getz(ls[i]+p-1,tot+1)+getz(ls[i]-1,tot+1))%mod;
+        // for(int j=0;j<p;j++)su=(su+mod-ksm(ls[i]+j,tot))%mod;
+        // su=(su+1ll*ls[i]*ksm(ls[i]+p,tot))%mod;
+        ans=(ans+1ll*su*sj)%mod;
+        // printf("%d\n",ans);
+    }
+    ans=(ans+mod)%mod;
+    int ql=1;
+    for(int i=1;i<=n;i++)ql=1ll*ql*a[i]%mod;
+    ans=1ll*ans*ksm(ql,mod-2)%mod;
+    printf("%d\n",ans);
+	return 0;
+}

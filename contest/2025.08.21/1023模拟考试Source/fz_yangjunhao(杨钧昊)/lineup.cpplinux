@@ -1,0 +1,40 @@
+#include<cstdio>
+#include<cctype>
+#include<cstring>
+#include<algorithm>
+#include<unordered_map>
+#include<vector>
+using namespace std;
+inline char nc()
+{
+	static char buf[99999],*l,*r;
+	return l==r&&(r=(l=buf)+fread(buf,1,99999,stdin),l==r)?EOF:*l++;
+}
+template <class code>inline code read(const code &a)
+{
+    code x=0;short w=0;char ch=0;
+    while(!isdigit(ch)) {w|=ch=='-';ch=nc();}
+    while(isdigit(ch)) {x=(x<<3)+(x<<1)+(ch^48);ch=nc();}
+    return w?-x:x;
+}
+void print(int x){
+	if(x<0)putchar('-'),x=-x;
+	if(x>=10)print(x/10);
+	putchar(x%10+48);
+}
+int n,a[5005],bj[5005];
+vector<int>w[5005];
+int main()
+{	
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+    n=read(n);
+    int ans=0;
+    for(int i=1;i<=n;i++)a[i]=read(a[i]),w[a[i]].emplace_back(i);
+    sort(a+1,a+n+1);
+    for(int i=1;i<=n;i++){
+        ans+=abs(w[a[i]][bj[a[i]]++]-i);
+    }
+    printf("%d\n",ans);
+	return 0;
+}

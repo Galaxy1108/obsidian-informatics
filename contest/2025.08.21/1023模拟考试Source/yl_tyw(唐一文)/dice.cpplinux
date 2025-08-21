@@ -1,0 +1,98 @@
+#include <bits/stdc++.h>
+#define db double
+#define il inline
+#define re register
+#define ll long long
+#define ui unsigned int
+#define fi first
+#define se second
+#define pii pair<int, int>
+#define MP(x, y) make_pair(x, y)
+#define eb emplace_back
+using namespace std;
+namespace IO {
+  #define iL (1 << 20)
+  #define flush() fwrite(Out, 1, iter - Out, stdout); iter = Out
+  #define gc() iS == iT ? iT = (iS = ibuf) + fread(ibuf, 1, iL, stdin), iS == iT ? EOF : *iS++ : *iS++
+  char Out[iL], *iter = Out;
+  template<class T> il void write(T x, char LC = '\n') {
+    int c[35], l = 0; if(x < 0) {*iter++ = '-'; x = -x;}
+    while(!l || x) {c[++l] = x % 10; x /= 10;}
+    while(l) *iter++ = c[l--] + '0';
+    *iter++ = LC; flush();
+  }
+  char ibuf[iL], *iS = ibuf + iL, *iT = ibuf + iL;
+  template<class T> il void read(T &x) {
+    char c = gc(); bool f = 0; x = 0;
+    while(!isdigit(c)) {f |= c == '-'; c = gc();}
+    while(isdigit(c)) {x = (x << 1) + (x << 3) + (c & 15); c = gc();}
+    if(f) x = -x;
+  }
+  il int read() {
+    int x = 0; char c = gc(); bool f = 0;
+    while(!isdigit(c)) {f |= c == '-'; c = gc();}
+    while(isdigit(c)) {x = (x << 1) + (x << 3) + (c & 15); c = gc();}
+    return f ? -x : x;
+  }
+}
+using namespace IO;
+#define N 5005
+#define MOD 1000000007
+il int QP(int p, int n) {
+  int ans = 1;
+  while(n) {
+    if(n & 1) ans = 1ll * ans * p % MOD;
+    p = 1ll * p * p % MOD; n >>= 1;
+  }
+  return ans;
+}
+namespace Lagrange {
+  int m, fac[N], ifac[N];
+  il void Init(int _m) {
+    m = _m; fac[0] = 1;
+    for(re int i = 1; i <= m + 2; ++i) fac[i] = 1ll * fac[i - 1] * i % MOD;
+    ifac[m + 2] = QP(fac[m + 2], MOD - 2);
+    for(re int i = m + 1; i >= 0; --i) ifac[i] = 1ll * ifac[i + 1] * (i + 1) % MOD;
+  }
+  int pri[N], pw[N], cnt; bool vis[N];
+  il void init(int _m) {
+    m = _m; cnt = 0; memset(vis, 0, sizeof(vis)); pw[1] = 1;
+    for(re int i = 2; i <= m + 2; ++i) {
+      if(!vis[i]) {pri[++cnt] = i; pw[i] = QP(i, m);}
+      for(re int j = 1; j <= cnt && i * pri[j] <= m + 2; ++j) {
+        vis[i * pri[j]] = true;
+        pw[i * pri[j]] = 1ll * pw[i] * pw[pri[j]] % MOD;
+        if(i % pri[j] == 0) break;
+      }
+    }
+    for(re int i = 1; i <= m + 2; ++i) (pw[i] += pw[i - 1]) %= MOD;
+  }
+  int pL[N], pR[N], sL[N], sR[N];
+  il int work(int L, int R) {
+    pL[0] = pR[0] = sL[m + 3] = sR[m + 3] = 1; ll ans = 0;
+    for(re int i = 1; i <= m + 2; ++i) {pL[i] = 1ll * pL[i - 1] * (L - i) % MOD; pR[i] = 1ll * pR[i - 1] * (R - i) % MOD;}
+    for(re int i = m + 2; i >= 1; --i) {sL[i] = 1ll * sL[i + 1] * (L - i) % MOD; sR[i] = 1ll * sR[i + 1] * (R - i) % MOD;}
+    for(re int i = 1; i <= m + 2; ++i)
+      ans += (m - i & 1 ? -1ll : 1ll) * pw[i] * ifac[i - 1] % MOD * ifac[m + 2 - i] % MOD * (1ll * pR[i - 1] % MOD * sR[i + 1] % MOD + MOD - 1ll * pL[i - 1] % MOD * sL[i + 1] % MOD) % MOD;
+    return (ans % MOD + MOD) % MOD;
+  }
+}
+int n, m;
+int main() {
+  freopen("dice.in", "r", stdin);
+  freopen("dice.out", "w", stdout);
+  read(n); map<int, int> mp;
+  int Ans = 0, inv = 1, cnt = n, lst = 0;
+  for(re int i = 1; i <= n; ++i) {
+    int x; read(x); m = max(m, x); ++mp[x]; inv = 1ll * inv * QP(x, MOD - 2) % MOD;
+  }
+  mp[m - 1] += mp[m]; mp.erase(m);
+  Lagrange::Init(n);
+  for(auto t : mp) {
+    Lagrange::init(cnt);
+    (Ans += 1ll * inv * Lagrange::work(lst, t.fi) % MOD) %= MOD;
+    lst = t.fi; cnt -= t.se; inv = 1ll * inv * QP(t.fi, t.se) % MOD;
+  }
+  write((m + MOD - Ans) % MOD);
+  return 0;
+}

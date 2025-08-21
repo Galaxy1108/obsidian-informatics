@@ -1,0 +1,28 @@
+#include<cstring>
+#include<iostream>
+#include<cstdio>
+#include<algorithm>
+using namespace std;
+int n,to[55],h[55],a[55],ans;
+bool bz[55];
+int ab(int x){
+	if(x<0) return -x;
+	else return x;
+}
+int main(){
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	scanf("%d",&n);
+	for(register int i=1;i<=n;i++) scanf("%d",&h[i]),a[i]=h[i];
+	sort(h+1,h+n+1);
+	for(register int i=1;i<=n;i++)
+	 for(register int j=1;j<=n;j++){
+	 	if(a[i]==h[j]&&!bz[j]){
+	 	   bz[j]=1,to[i]=j;	
+	 	   break;
+		}
+	 }
+	for(register int i=1;i<=n;i++) ans=ans+ab(to[i]-i);
+	printf("%d\n",ans);
+	return 0;
+}

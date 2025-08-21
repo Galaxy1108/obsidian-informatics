@@ -1,0 +1,55 @@
+#include<iostream>
+#include<algorithm>
+#define FOR(i,x,y) for(int i(x);i<=y;++i)
+#define mod 1000000007
+#define mn 5010
+#define ll long long
+using namespace std;
+int n;
+int a[mn];
+ll inv[mn];
+ll res[1000010];
+ll ans;
+ll exgcd(ll a,ll b,ll &x,ll &y)
+{
+	if(!b)
+	{
+		x=1,y=0;
+		return a;
+	}
+	ll r=exgcd(b,a%b,x,y),t=y;
+	y=(x-(a/b)*y)%mod,x=t;
+	return r;
+}
+inline ll fpow(ll x,int k)
+{
+	ll res(1);
+	while(k)
+	{
+		if(k&1)res=(res*x)%mod;
+		x=(x*x)%mod;
+		k>>=1;
+	}
+	return res%mod;
+}
+inline bool cmp(ll x,ll y)
+{
+	return x>y;
+}
+int main()
+{
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	cin>>n;
+	FOR(i,1,n)cin>>a[i];
+	ll x=0,y=0;
+	sort(a+1,a+n+1,cmp);
+	FOR(i,1,n)exgcd((ll)a[i],mod,x,y),inv[i]=(x+mod)%mod;
+	inv[0]=1;
+	FOR(i,1,n)inv[i]=(inv[i]*inv[i-1])%mod;
+	FOR(i,1,n)for(ll w=a[i+1];w<=a[i];w++)res[w]=fpow((ll)w,i)*(inv[i])%mod;
+	for(ll w=a[1];w>=1;w--)
+	ans=(ans+(res[w]-res[w-1])*w%mod+mod)%mod;
+	cout<<ans;
+	return 0;
+}

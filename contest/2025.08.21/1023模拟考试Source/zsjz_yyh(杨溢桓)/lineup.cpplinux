@@ -1,0 +1,75 @@
+#include<bits/stdc++.h>
+#define I inline
+#define R register
+#define LL long long
+#define fo(i, a, b) for(R int i = a; i <= b; ++i)
+#define fd(i, a, b) for(R int i = a; i >= b; --i)
+#define fz(i, x) for(R int i = head[x]; i; i = nxt[i])
+using namespace std;
+const int N = 100010, P = 1000000007, inf = 0x3f3f3f3f;
+struct kp{ int x, id; }a[N];
+int ans, n, b[N], inv[110], id[N];
+LL rt;
+map<LL, int> ma;
+I int read(){
+	int res = 0, flag = 0; char ch = getchar();
+	for(; !isdigit(ch); ch = getchar()) if(ch == '-') flag = 1;
+	for(; isdigit(ch); ch = getchar()) res = (res << 1) + (res << 3) + (ch ^ 48);
+	if(flag) res = ~res + 1; return res;
+}
+I bool cmp(kp x, kp y){ return (x.x == y.x ? x.id < y.id : x.x < y.x); }
+I bool pd(){
+	fo(i, 1, n) if(b[i] != a[i].id) return 0;
+	return 1;
+}
+I void dfs(LL x, int y){
+	if(y >= ma[x] && (ma[x] || (x == rt && y != 0))) return;
+//	printf("%lld %d\n",x,y);
+	ma[x] = y;
+	if(y >= ans) return;
+	if(pd()){ ans = y; return; }
+	fo(i, 1, n)
+		if(b[i] != a[i].id)
+			fo(j, i + 1, n)
+				if(b[j] != a[j].id) swap(b[i], b[j]), dfs(x + (b[j] - b[i]) * inv[n - i] + (b[i] - b[j]) * inv[n - j], y + 2 * abs(i - j)), swap(b[i], b[j]);
+}
+int main(){
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	n = read();
+	fo(i, 1, n) a[i].x = read(), a[i].id = i - 1, b[i] = i - 1;
+	sort(a + 1, a + 1 + n, cmp);
+	fo(i, 1, n) id[a[i].id] = i;
+	if(n <= 8){ 
+		inv[0] = 1, rt = 0;
+		fo(i, 1, n) inv[i] = inv[i - 1] * 10ll, rt += inv[i - 1] * (i - 1);
+		ans = inf, dfs(rt, 0), printf("%d\n",ans); 
+		return 0; 
+	}else{
+		fo(i, 1, n){
+			if(b[i] == a[i].id) continue;
+			int r = a[i].id + 1;
+			fd(j, r, i - 1) if(id[b[j]] >= a[i].id) swap(b[j], b[i]), ans += 2 * abs(i - j);
+		}
+		printf("%d\n",ans);
+	}
+}
+/**
+*¡¡¡¡©³©·¡¡¡¡¡¡©³©·+ +
+*¡¡©³©¿©ß©¥©¥©¥©¿©ß©· + +
+*¡¡©§¡¡¡¡¡¡¡¡¡¡¡¡¡¡©§
+*¡¡©§¡¡¡¡¡¡©¥¡¡¡¡¡¡©§ ++ + + +
+*  ¨€¨€¨€¨€©¥¨€¨€¨€¨€+
+*  ¨¨€¨€¨¡¡¨¨€¨€¨ +
+*¡¡©§¡¡¡¡¡¡©ß¡¡¡¡¡¡©§
+*¡¡©§¡¡¡¡¡¡¡¡¡¡¡¡¡¡©§ + +
+*¡¡©»©¥©·¡¡¡¡¡¡©³©¥©¿
+*¡¡¡¡¡¡©§¡¡¡¡¡¡©§ + + + + Code is far away from ¡¡
+*¡¡¡¡¡¡©§¡¡¡¡¡¡©§ + bug with the animal protecting
+*¡¡¡¡¡¡©§¡¡ ¡¡ ©»©¥©¥©¥©· ÉñÊÞ±£ÓÓ,´úÂëÎÞbug¡¡
+*¡¡¡¡¡¡©§              ©Ç©·
+*¡¡¡¡  ©§              ©³©¿
+*¡¡    ©»©·©·©³©¥©×©·©³©¿ + + + +
+*¡¡¡¡¡¡¡¡©§©Ï©Ï¡¡©§©Ï©Ï
+*¡¡¡¡¡¡¡¡©»©ß©¿¡¡©»©ß©¿+ + + +
+*/

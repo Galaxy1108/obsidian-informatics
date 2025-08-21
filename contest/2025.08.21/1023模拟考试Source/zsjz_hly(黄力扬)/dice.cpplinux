@@ -1,0 +1,40 @@
+//Lemt_xxq
+#include<cstdio>
+#include<algorithm>
+#include<cstring>
+#include<cmath>
+#include<iostream>
+#include<map>
+#include<bitset>
+#include<queue>
+#include<ctime>
+#define ll long long
+#define R register
+#define I inline
+#define N 5005
+#define mo 1000000007
+#define F freopen("dice.in","r",stdin),freopen("dice.out","w",stdout);
+using namespace std;
+ll ss,ff,n,a[N],mx,c[N][N],sum[N],now,res,ans; char ch;
+I ll read() { ch=getchar(),ss=0,ff=1;
+	for (;(ch<48||ch>57)&&ch!=45;) ch=getchar(); if (ch==45) ff=-1;
+	for (;ch<48||ch>57;) ch=getchar(); for (;ch>=48&&ch<=57;) ss=ss*10+ch-48,ch=getchar(); return ss*ff;
+}
+I void print(ll Lz) {Lz<0?putchar(45),Lz=-Lz:Lz=Lz; if (Lz>9) print(Lz/10); putchar(Lz%10+48);}
+ll fast(ll x,ll y) {ll p=1; while (y) {if (y%2) p=p*x%mo; y/=2,x=(x*x)%mo;} return p;}
+int main() {
+	F n=read(); for (R ll i=1;i<=n;i++) a[i]=read(),mx=max(mx,a[i]);
+	for (R ll i=0;i<=n;i++) {
+		c[i][0]=c[i][i]=1;
+		for (R ll j=1;j<i;j++) (c[i][j]=c[i-1][j-1]+c[i-1][j])%=mo;
+	}
+	R ll tail=0; sort(a+1,a+1+n);
+	sum[0]=1; for (R ll i=1;i<=n;i++) (sum[i]=sum[i-1]*a[i])%=mo;
+	for (R ll i=1;i<=mx;i++) {
+		if (i==1) {ans++; continue;}
+		while (a[tail+1]<i&&tail+1<=n) tail++; R ll e=n-tail; now=1,res=0;
+		for (R ll j=e;j>=1;j--) (res+=c[e][j]*now%mo)%=mo,(now*=(i-1))%=mo;
+		(res*=sum[tail])%=mo,(ans+=res*i%mo)%=mo;
+	} 
+	print(fast(sum[n],mo-2)*ans%mo);
+}

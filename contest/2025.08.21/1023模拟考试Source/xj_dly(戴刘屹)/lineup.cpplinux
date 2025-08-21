@@ -1,0 +1,40 @@
+#include <bits/stdc++.h>
+using namespace std;
+int n,a[51],ans=0;
+struct node{
+	int po[51],num;
+}h[210];
+struct pd{
+	int v,p;
+};
+int main(){
+	freopen("lineuo.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	cin>>n;
+	for(int i=120;i<=200;++i)h[i].num=0;
+	for(int i=1;i<=n;++i){
+		cin>>a[i];
+		h[a[i]].po[++h[a[i]].num]=i;
+	}
+//	for(int i=1;i<=n;++i){
+//		cout<<"i="<<i<<": "<<h[a[i]].num<<endl;
+//		for(int j=1;j<=h[a[i]].num;++j){
+//			cout<<h[a[i]].po[j]<<" "<<endl;
+//		}
+//	}
+	sort(a+1,a+1+n);
+	for(int i=1;i<=n;++i){
+		pd _min;
+		_min.v=114514;
+		for(int j=1;j<=h[a[i]].num;j++){
+			if(abs(h[a[i]].po[j]-i)<_min.v){
+				_min.v=abs(h[a[i]].po[j]-i);
+				_min.p=j;
+			}
+		}
+		h[a[i]].po[_min.p]=114514;
+		ans+=_min.v;
+	}
+	cout<<ans<<endl;
+	return 0;
+}

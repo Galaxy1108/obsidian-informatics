@@ -1,0 +1,39 @@
+#include<bits/stdc++.h>
+using namespace std;
+int read(){
+	int x=0,f=1;
+	char ch=getchar();
+	while(!isdigit(ch)){if(ch=='-')f=-1;ch=getchar();}
+	while(isdigit(ch)){x=x*10+ch-'0';ch=getchar();}
+	return x*f;
+}
+vector<int> h[210];
+int main(){
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	int n = read();
+	for(int i=1;i<=n;i++){
+		int x = read();
+		h[x].push_back(i);
+	}
+	
+	int pos = 0,ans = 0;
+	for(int i = 120;i <= 200; i++){
+		for(int j=0;j<h[i].size();j++){
+			pos++;
+			ans = ans+abs(h[i][j]-pos);
+		}
+		
+	}
+	
+	printf("%d\n",ans);
+	/*
+	1   2   3   4   5   6   7   8   9   10
+	
+	181 153 148 166 153 171 190 166 153 120
+	
+	10  3   2   5   9   4   8   6   1   7
+	120 148 153 153 153 166 166 171 181 190
+	*/
+	return 0;
+} 

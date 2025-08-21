@@ -1,0 +1,44 @@
+#include<cstdio>
+#include<algorithm>
+#define ll long long
+const int N=5005,mo=1e9+7;
+int n;
+ll jc[N],jcinv[N],B[N],pre=1,inv[N],a[N],anss;
+ll ksm(ll x,int y){ll s=1;for(;y;y>>=1,x=x*x%mo)if(y&1)s=s*x%mo;return s;}
+ll C(int x,int y){return jc[x]*jcinv[y]%mo*jcinv[x-y]%mo;}
+ll calc(ll n,ll m)
+{
+	ll sum=0;
+	for(int i=m,w=n;i>=0;--i,w=1ll*w*n%mo) sum=(sum+C(m+1,i)*B[i]%mo*w)%mo;
+	return sum*inv[m+1]%mo;
+}
+int main()
+{
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	scanf("%d",&n);
+	B[0]=1;
+	for(int i=1;i<=n+1;++i) inv[i]=ksm(i,mo-2);
+	for(int i=jc[0]=1;i<=n+1;++i) jc[i]=jc[i-1]*i%mo;
+	jcinv[n+1]=ksm(jc[n+1],mo-2);for(int i=n+1;i;--i) jcinv[i-1]=jcinv[i]*i%mo;
+	for(int i=1;i<=n;++i)
+	{
+		B[i]=1;
+		for(int j=0;j<i;++j) B[i]=((B[i]-B[j]*C(i+1,j)%mo*inv[i+1])%mo+mo)%mo;
+//		printf("%d:%d\n",i,B[i]);
+	}
+	for(int i=1;i<=n;++i) scanf("%lld",&a[i]);
+	std::sort(a+1,a+n+1);
+//	printf("----- %lld %lld  %lld %lld\n",calc(2,2),calc(0,2),calc(3,1),calc(2,1));
+	//2 3
+	for(int i=1;i<=n;++i)
+	{
+		if(a[i]==a[i-1]){pre=pre*a[i]%mo;continue;}
+		ll ans2=(ksm(a[i],n-i+1)-ksm(a[i-1],n-i+1)+mo)*(a[i]+1)%mo;
+		ans2=(ans2-(calc(a[i],n-i+1)-calc(a[i-1],n-i+1)-ksm(a[i-1],n-i+1)*(a[i]-a[i-1])%mo)+mo)%mo;
+//		printf("%lld\n",ans2);
+		anss=(anss+ans2*pre)%mo;
+		pre=pre*a[i]%mo;
+	}
+	printf("%lld",anss*ksm(pre,mo-2)%mo);
+}

@@ -1,0 +1,101 @@
+
+
+#include <iostream>
+#include <fstream>
+#define ll long long
+#define ny(k) exgcd(k, mod, tx, ty);
+
+const ll mod = 1e9+7;
+const int MAXN = 5e3+9;
+using namespace std;
+
+int N, flg = 1;
+ll def[MAXN], tx, ty, ans, cas, pos[MAXN];
+
+inline void Read () {
+	ifstream fin ("dice.in");
+	
+	// cin >> N;
+	fin >> N;
+	for (int i = 1; i < N+1; i++) {
+		// cin >> def[i];
+		fin >> def[i];
+	}
+	for (int i = 2; i < N+1; i++) {
+		if (def[i] != def[i-1]) {
+			flg = 0;
+			break;
+		}
+	}
+	
+	fin.close();
+}
+
+ll Max (ll one, ll two) {
+	if (one > two) return one;
+	return two;
+}
+
+void exgcd (const ll a, const ll b, ll &x, ll &y) {
+	if (b == 0) {
+		x = 1ll;
+		y = 0ll;
+		return;
+	}
+	exgcd(b, a%b, y, x);
+	y -= a/b*x;
+}
+
+void dfs (ll maxn, int ind) {
+	if (ind > N) {
+		ans += maxn;
+		pos[maxn]++;
+		cas++;
+		return;
+	}
+	for (int i = 1; i < def[ind]+1; i++) {
+		dfs(Max(maxn, i), ind+1);
+	}
+}
+
+inline void Display () {
+	for (int i = 1; i < def[1]+1; i++) {
+		cout << pos[i] << ' ';
+	}
+	cout << endl;
+}
+
+ll ksm (ll num, ll pw) {
+	if (!pw) return 1ll;
+	if (pw == 1) return num%mod;
+	ll h = ksm(num, pw>>1);
+	if (pw%2) return (h*num%mod)*h%mod;
+	return h*h%mod;
+}
+
+int main () {
+	Read();
+	// flg = 0;
+	ofstream fout ("dice.out");
+	if (!flg) {
+		dfs(-1, 1);
+		ny(cas);
+		// Display();
+		tx = (tx+mod)%mod;
+		// cout << cas << ' ' << ans << endl;
+		// cout << tx*ans%mod << endl;
+		fout << tx*ans%mod << endl;
+	}
+	else {
+		ny(def[1]);
+		tx = (tx+mod)%mod;
+		cas = ksm(tx, N);
+		ans = ksm(def[1], N+1);
+		for (int i = 1; i < def[1]; i++) ans = (ans-ksm(i, N)+mod)%mod;
+		// cout << ans*cas%mod << endl;
+		fout << ans*cas%mod << endl;
+	}
+	fout.close();
+	
+	return 0;
+}

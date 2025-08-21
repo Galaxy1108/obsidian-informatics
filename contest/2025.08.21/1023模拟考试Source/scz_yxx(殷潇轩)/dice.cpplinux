@@ -1,0 +1,63 @@
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+ll read(){
+	ll xx = 0, f = 1; char ch = getchar();
+	while(ch < '0' || ch > '9'){
+        if(ch == '-')f = -1;
+        else f = 1;
+		ch = getchar();
+	}
+	while(ch >= '0' && ch <= '9'){
+		xx = xx * 10 + ch - '0'; ch = getchar();
+	}
+	return xx * f;
+}
+const ll P = 1e9 + 7;
+ll qp(ll x, ll k){
+	ll base = x, ans = 1;
+	while(k){
+		if (k & 1){
+			ans *= base; ans %= P;
+		}
+		base *= base;
+		base %= P;
+		k >>= 1;
+	}
+	return ans;
+}
+ll n, a[5005], tot = 1, ans;
+int main(){
+	freopen("dice.in", "r", stdin);
+	freopen("dice.out", "w", stdout);
+	n = read();
+	bool fl = true;
+	for (int i = 1; i <= n; ++i){
+		a[i] = read();
+		if (i > 1 && a[i] != a[i - 1])fl = false;
+		tot *= a[i];
+		tot %= P;
+	}
+/*	if (fl == true){
+		ans = qp(a[1], n)* n % P;
+//		for (int i = n - 1; i >= 1; --i){
+//			ans -= 
+//		}
+		ans = ans * qp(tot, P - 2) % P;
+		printf("%lld\n", ans);
+		return 0;
+	}*/
+	sort(a + 1, a + n + 1);
+	int l = 1; ll base = 1, add;
+	for (ll i = 1; i <= a[n]; ++i){
+		while(i > a[l]){
+			base*=a[l]; base %= P; ++l;
+		}
+		add = qp(i, n - l + 1) - qp(i - 1, n - l + 1);
+		add *= i; add %= P; add *= base; add %= P;
+		ans += add; ans %= P;
+	}
+	ans = ans * qp(tot, P - 2) % P;
+	printf("%lld\n", ans);
+	return 0;
+}

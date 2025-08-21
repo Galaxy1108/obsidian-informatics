@@ -1,0 +1,72 @@
+#include <cstdio>
+#include <iostream>
+#include <algorithm>
+#define LL long long
+using namespace std;
+template <typename T>
+inline void read(T &x) {
+	x = 0; int f = 0; char ch = getchar();
+	for(; !isdigit(ch); ch = getchar()) if(ch == '-') f = 1;
+	for(; isdigit(ch); ch = getchar()) x = (x << 3) + (x << 1) + (ch ^ 48);
+	if(f) x = ~x + 1;
+}
+const int P = 1e9 + 7;
+inline int fpow(LL x, int pnt) {
+	int res = 1;
+	for(; pnt; pnt >>= 1, x = x * x % P) if(pnt & 1) res = res * x % P;
+	return res;
+}
+const int N = 5005;
+const int inv2 = fpow(2, P - 2);
+int ans, s[N + 10][N + 10], t[N + 10][N + 10], a[N + 10], n;
+LL c[N + 10], d[N + 10], e[N + 10], M, y[N + 10], invn[N + 10], pw[2][N + 10], mo[N + 10], inv[N + 10], suf[N + 10], sinv[N + 10];
+inline void prework(int x, int N) {
+	M = 1;
+	for(int i = 1; i <= N; ++i) c[i] = x - i + P, M = M * c[i] % P;
+	d[0] = 1;for(int i = 1; i <= N; ++i) d[i] = d[i - 1] * c[i] % P;
+	e[N] = fpow(d[N], P - 2);
+	for(int i = N - 1; i >= 1; --i) e[i] = e[i + 1] * c[i + 1] % P;
+	for(int i = 1; i <= N; ++i) c[i] = e[i] * d[i - 1] % P;
+	for(int i = 1; i <= N; ++i) {
+		mo[i] = sinv[i - 1] * sinv[N - i] % P;
+		if((N - i & 1) && mo[i]) mo[i] = P - mo[i]; 
+	}
+}
+inline int f(int x, int id) {
+	int len = id + 2, res = 0;
+	for(int i = 1; i <= len; ++i) y[i] = t[i][id] - s[i][id + 1] + P;
+	if(x <= len) return y[x];
+	for(int i = 1; i <= len; ++i) 
+		res = (res + y[i] * mo[i] % P * M % P * c[i]) % P;
+	return res;
+}
+int main() {
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	read(n);
+	for(int i = 1; i <= n; ++i) read(a[i]);
+	sort(a + 1, a + n + 1);
+	for(int i = 1; i <= n; ++i) inv[i] = fpow(a[i], P - 2);
+	suf[n + 1] = 1;
+	for(int i = n; i >= 1; --i) suf[i] = (suf[i + 1] * inv[i]) % P;
+	for(int i = 1; i <= N; ++i) {
+		pw[0][0] = pw[1][0] = 1; 
+		for(int j = 1; j <= N; ++j)
+			pw[1][j] = pw[1][j - 1] * i % P, pw[0][j] = pw[0][j - 1] * (i - 1) % P;
+		for(int j = 1; j <= N; ++j)
+			s[i][j] = (s[i - 1][j] + pw[1][j]) % P;
+		for(int j = 0; j <= N; ++j)
+			t[i][j] = (t[i - 1][j] + 1ll * pw[0][j] * i) % P;
+	} 
+	for(int i = 1; i <= N; ++i) invn[i] = fpow(i, P - 2);
+	sinv[0] = 1; for(int i = 1; i <= N; ++i) sinv[i] = sinv[i - 1] * invn[i] % P;
+	LL tf, lf;
+	for(int i = 1; i <= n; ++i) {
+		prework(a[i], n - i + 3);
+		tf = f(a[i], n - i + 1),
+		prework(a[i - 1], n - i + 3);
+		lf = f(a[i - 1], n - i + 1);
+		ans = (ans + P - 1ll * suf[i] * (tf - lf) % P) % P;
+	}
+	printf("%d\n",ans);
+}

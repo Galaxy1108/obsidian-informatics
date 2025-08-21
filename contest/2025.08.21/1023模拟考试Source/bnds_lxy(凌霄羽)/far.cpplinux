@@ -1,0 +1,82 @@
+#include<iostream>
+#include<cstdio>
+using namespace std;
+inline int read()
+{
+	int x=0,f=1;char ch=getchar();
+	while(ch<'0'||ch>'9')
+	{
+		if(ch=='-')  f=-1;
+		ch=getchar();
+	}
+	while(ch>='0'&&ch<='9')
+	{
+		x=x*10+ch-'0';
+		ch=getchar();
+	}
+	return x*f;
+}
+int n,m,siz;
+int l[105],r[105],ans;
+string ni(string s)
+{
+	string res="";
+	int i;
+	for(i=0;i<s.size();i++)
+	  res=s[i]+res;
+	return res;
+}
+bool pan(int k)
+{
+	string s="";
+	int i;
+	for(i=1;i<=m&&k;i++)
+	{
+		s=char((k%2)+'0')+s;
+		k/=2; 
+	}
+	while(s.size()<m)  s='0'+s;
+	if(s.size()%2==1)
+	{
+		if(s.substr(0,s.size()/2)==ni(s.substr(s.size()/2+1)))  return true;
+		else  return false;
+	}
+	else
+	{
+		if(s.substr(0,s.size()/2)==ni(s.substr(s.size()/2)))  return true;
+		else  return false;
+	}
+	
+}
+void dfs(int x,int k)
+{
+	if(x>siz)
+	{
+		if(pan(k))  ans++;
+		return ;
+	}
+	int i;
+	for(i=l[x];i<=r[x];i++)
+	{
+		dfs(x+1,k xor i);
+	}
+}
+int main()
+{
+	freopen("far.in","r",stdin);
+	freopen("far.out","w",stdout);
+	int i,j;n=read();m=read();
+	for(i=1;i<=n;i++)
+	{
+		l[i]=read();r[i]=read();
+	}
+	for(siz=1;siz<=n;siz++)
+	{
+		ans=0;dfs(1,0);
+		cout<<ans<<endl;
+	}
+	return 0;
+}
+/*
+
+*/

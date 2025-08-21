@@ -1,0 +1,118 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+#define fo(i,a,b) for(int i=a;i<=b;++i)
+#define ll long long
+
+const int mo = 998244353;
+
+int n, m;
+ll l[45], r[45], a[65][45];
+ll b[65][45], c[65][45];
+ll h[1100005], cnt;
+ll nh[1100005], cnt2;
+ll two[45];
+int ans = 0;
+int son[10000005][2];
+int siz[10000005];
+int tl = 1;
+int se[105], len;
+
+void ins() {
+	int now = 1;
+	fo(i, 1, len) {
+		int x = se[i];
+		++siz[now];
+		if(!son[now][x]) {
+			son[now][x] = ++tl;
+			siz[tl] = son[tl][0] = son[tl][1] = 0;
+		}
+		now = son[now][x];
+	}
+	++siz[now];
+	return;
+}
+
+int qry() {
+	int now = 1;
+	fo(i, 1, len) {
+		int x = se[i];
+		if(!son[now][x]) {
+			return 0;
+		}
+		now = son[now][x];
+	}
+	return siz[now];
+}
+
+int huiw(int x) {
+	return two[(x + 1) / 2] % mo;
+}
+
+void prep(int w, ll s) {
+	int r = (m + 1) / 2, l = m - 1 - r;
+	len = 0;
+	while(l >= w) {
+		se[++len] = ((s >> r) & 1) != ((s >> l) & 1);
+		++r, --l;
+	}
+	return;
+}
+
+void dfs(int x, int w, ll s) {
+	if(s < b[w + 1][x] || s > c[w + 1][x]) return;
+	if(s > b[w + 1][x] && s < c[w + 1][x]) {
+//		printf("%lld %d good\n", s, w);
+		if(w >= (m + 1) / 2) {
+			(ans += (ll)cnt * huiw(w - (m - w)) % mo) %= mo;
+		} else {
+			prep(w + 1, s);
+			(ans += qry()) %= mo;
+		}
+		return;
+	}
+	if(w == -1) {
+//		printf("%lld\n", s);
+		fo(i, 1, cnt) {
+			nh[++cnt2] = h[i] ^ s;
+		}
+		prep(0, s);
+		(ans += qry()) %= mo;
+		return;
+	}
+	dfs(x, w - 1, s);
+	dfs(x, w - 1, s | two[w]);
+	return;
+}
+
+int main() {
+	freopen("far.in", "r", stdin);
+	freopen("far.out", "w", stdout);
+	two[0] = 1;
+	fo(i, 1, 40) two[i] = two[i - 1] * 2;
+	scanf("%d %d", &n, &m);
+	fo(i, 1, n) {
+		scanf("%lld %lld", &l[i], &r[i]);
+		fo(j, 0, m) {
+			b[j][i] = (l[i] >> j) << j;
+			c[j][i] = (r[i] >> j) << j;
+		}
+	}
+	h[cnt = 1] = 0;
+	prep(0, 0);
+	ins();
+	fo(i, 1, n) {
+		cnt2 = 0;
+		dfs(i, m - 1, 0);
+		cnt = cnt2;
+		tl = 1, siz[1] = son[1][0] = son[1][1] = 0;
+		fo(j, 1, cnt) {
+			h[j] = nh[j];
+			prep(0, h[j]);
+			ins();
+		}
+		printf("%d\n", ans);
+//		return 0;
+	}
+	return 0;
+}

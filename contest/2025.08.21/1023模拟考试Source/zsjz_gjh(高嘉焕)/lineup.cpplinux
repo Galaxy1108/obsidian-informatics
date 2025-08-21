@@ -1,0 +1,30 @@
+#include<bits/stdc++.h>
+#define fo(i,a,b) for(int i=a;i<=b;++i)
+#define fd(i,a,b) for(int i=a;i>=b;--i)
+using namespace std;
+const int N=60;
+int n,a[N],ans,b[N],Max;
+bool flag;
+bool cmp(int x,int y){return a[x]<a[y];}
+int main(){
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	srand(time(NULL));
+	scanf("%d",&n);
+	fo(i,1,n)scanf("%d",&a[i]),b[i]=i;
+	sort(b+1,b+n+1,cmp);
+	flag=1;
+	fo(i,1,n)if(a[b[i+1]]==a[b[i]]){
+		int c1=0,c2=0,s1=0,s2=0;
+		int r=i;
+		for(;a[b[r+1]]==a[b[r]];++r)if(b[r]<i)++c1,s1+=b[r];else ++c2,s2+=b[r];
+		if(b[r]<i)++c1,s1+=b[r];
+		else ++c2,s2+=b[r];
+		ans+=(i+i+c1-1)*c1/2-s1;
+		ans+=s2-(r+r-c2+1)*c2/2;
+		i=r;
+	}else ans+=abs(i-b[i]);
+	printf("%d\n",ans);
+
+	return 0;
+}

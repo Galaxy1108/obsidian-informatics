@@ -1,0 +1,31 @@
+#include <bits/stdc++.h>
+using namespace std;
+int n, b[100], a[100], ans;
+bool vis[100];
+signed main()
+{
+	freopen("lineup.in", "r", stdin);
+	freopen("lineup.out", "w", stdout);
+	scanf("%d", &n);
+	for(int i = 1; i <= n; i++)
+	{
+		scanf("%d", &b[i]);
+		a[i] = b[i];
+	}
+	sort(a + 1, a + n + 1);
+	for(int i = 1; i <= n; i++)
+	{
+		for(int j = 1; j <= n; j++)
+		{
+			if(vis[j]) continue;
+			if(a[j] == b[i])
+			{
+				vis[j] = 1;
+				ans += abs(i - j);
+				break;
+			}
+		}
+	}
+	cout << ans;
+	return 0;
+}

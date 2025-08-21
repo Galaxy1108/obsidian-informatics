@@ -1,0 +1,58 @@
+#include <bits/stdc++.h>
+#define mo 1000000007
+#define maxN 5010
+#define LL long long
+using namespace std;
+LL prod[maxN], a[maxN];
+LL read ()
+{
+	LL x = 0, Fu = 1;
+	char c = getchar();
+	while(c < '0' || c > '9')
+	{
+		if(c == '-') Fu = -1;
+		c = getchar();
+	}
+	while(c >= '0' && c <= '9')
+	{
+		x = x * 10 + (c - '0');
+		c = getchar();
+	}
+	return x * Fu;
+}
+LL Min (LL x, LL y) { return x < y ? x : y; }
+LL Max (LL x, LL y) { return x > y ? x : y; }
+LL Pow (LL x, LL y)
+{
+	if(!y) return 1;
+	LL res = Pow(x, y >> 1);
+	if(!(y & 1)) return res * res % mo;
+	else return res * res % mo * x % mo;
+}
+LL sum (LL l, LL r, LL k)
+{
+	LL res = 0;
+	for(LL i = l;i <= r; i++)
+		res = (res + (Pow(i, k) - Pow(i - 1, k) + mo) * i) % mo;
+	return res;
+}
+int main ()
+{
+	freopen("dice.in", "r", stdin);
+	freopen("dice.out", "w", stdout);
+	LL n = read();
+	for(LL i = 1;i <= n; i++) a[i] = read();
+	sort(a + 1, a + n + 1);
+	prod[0] = 1;
+	for(LL i = 1;i <= n; i++)
+		prod[i] = prod[i - 1] * a[i] % mo;
+	LL Ans = 0;
+	for(LL i = 1;i <= n; i++)
+	{
+		LL l = a[i - 1] + 1, r = a[i];
+		if(l > r) continue;
+		Ans = (Ans + prod[i - 1] * sum(l, r, n - i + 1)) % mo;
+	}
+	printf("%lld", Ans * Pow(prod[n], mo - 2) % mo);
+	return 0;
+}

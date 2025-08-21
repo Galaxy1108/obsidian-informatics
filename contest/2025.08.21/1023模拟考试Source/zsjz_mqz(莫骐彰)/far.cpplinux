@@ -1,0 +1,130 @@
+#include<iostream>
+#include<cstdio>
+using namespace std;
+#define fo(i,a,b) for(int i=a;i<=b;++i)
+#define fod(i,a,b) for(int i=a;i>=b;--i)
+#define p 998244353
+#define LL long long
+int ksm(int x,int y){
+	if(!x)return 1;
+	if(x==1)return y;
+	LL u=ksm(x/2,y);
+	u=u*u%p;
+	if(x&1)u=u*y%p;
+	return u;
+}
+int n,m;
+LL L[51],R[51],er[61];
+LL ans=0;
+int f[51][32768];
+int fz(int x){
+	int u=0;
+	fo(i,0,m/2-1){
+		u=u*2;
+		if(er[i]&x)++u;
+	}
+	return u;
+}
+int main(){
+	freopen("far.in","r",stdin);
+	freopen("far.out","w",stdout);
+	scanf("%d%d",&n,&m);
+	ans=1;
+	fo(i,1,n){
+		scanf("%lld%lld",&L[i],&R[i]);
+	}
+	if(m==1){
+		fo(i,1,n){
+			ans=(LL)(R[i]-L[i]+1)%p*ans%p;
+		}
+		printf("%lld",ans);
+		return 0;
+	}
+	er[0]=1;
+	fo(i,1,m)er[i]=er[i-1]*2;
+	if(n==1){
+		ans=0;
+		LL sum=0;
+		LL h=(L[1]/er[m/2]+1)*er[m/2];
+		if(h>R[1]){
+			if(R[1]-L[1]+1<er[m/2]){
+				sum=R[1]-L[1]+1;
+				int u=fz(L[1]/er[m-m/2]);
+				if(u<=(R[1]%er[m/2])&&u>=(L[1]%er[m/2]))++ans;
+			}
+		}
+		else{
+			if(L[1]%er[m/2]>0){
+				sum+=er[m/2]-L[1]%er[m/2];
+				int u=fz(L[1]/er[m-m/2]);
+				if(u>=(L[1]%er[m/2]))++ans;
+			}
+			if((R[1]+1)%er[m/2]>0){
+				sum+=(R[1]+1)%er[m/2];
+				int u=fz(R[1]/er[m-m/2]);
+				if(u<=(R[1]%er[m/2]))++ans;
+			}
+		}
+		ans+=(R[1]-L[1]+1-sum)/er[m/2];
+		printf("%lld",ans);
+		return 0;
+	}
+	LL u=1;
+	f[0][0]=1;
+	fo(i,1,n){
+		ans=(LL)(R[i]-L[i]+1)%p*ans%p;
+		LL sum=0;
+		LL h=(L[i]/er[m/2]+1)*er[m/2];
+		if(h>R[i]){
+			if(R[i]-L[i]+1<er[m/2]){
+				sum=R[i]-L[i]+1;
+				if(m/2<=15&&u){
+					int u=fz(L[i]/er[m-m/2]);
+					fo(j,0,er[m/2]-1){
+						if(f[i-1][j]){
+							fo(k,(L[i]&(er[m/2]-1)),(R[i]&(er[m/2]-1))){
+								f[i][(j^k^u)]=(f[i][(j^k^u)]+f[i-1][j])%p;							
+							}
+						}
+					}
+				}
+			}
+		}
+		else{
+			if(L[i]%er[m/2]>0){
+				sum+=er[m/2]-L[i]%er[m/2];
+				if(m/2<=15&&u){
+					int u=fz(L[i]/er[m-m/2]);
+					fo(j,0,er[m/2]-1){
+						if(f[i-1][j]){
+							fo(k,(L[i]&(er[m/2]-1)),er[m/2]-1){
+								f[i][(j^k^u)]=(f[i][(j^k^u)]+f[i-1][j])%p;							
+							}
+						}
+					}
+				}
+			}
+			if((R[i]+1)%er[m/2]>0){
+				sum+=(R[i]+1)%er[m/2];
+				if(m/2<=15&&u){
+					int u=fz(R[i]/er[m-m/2]);
+					fo(j,0,er[m/2]-1){
+						if(f[i-1][j]){
+							fo(k,0,(R[i]&(er[m/2]-1))){
+								f[i][(j^k^u)]=(f[i][(j^k^u)]+f[i-1][j])%p;							
+							}
+						}
+					}
+				}
+			}
+		}
+		sum%=p;
+		u=u*sum%p;
+		LL ans2=(ans-u)%p*ksm(p-2,er[m/2])%p;
+		if(m/2<=15)ans2+=f[i][0];
+		ans2%=p;
+		if(ans2<0)ans2+=p;
+		printf("%lld\n",ans2);
+	}
+	return 0;
+}

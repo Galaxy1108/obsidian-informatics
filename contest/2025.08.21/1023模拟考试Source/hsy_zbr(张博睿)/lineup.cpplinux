@@ -1,0 +1,55 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+inline int qread()
+{
+	int x=0,f=1;
+	char c=getchar();
+	while(!isdigit(c))
+	{
+		if(c=='-')f=-1;
+		c=getchar();
+	}
+	while(isdigit(c))
+	{
+		x=x*10+(c^48);
+		c=getchar();
+	}
+	return x*f;
+}
+#define re register
+
+const int N=55;
+int n;
+int a[N];
+
+
+
+signed main()
+{
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	n=qread();
+	for(re int i=1;i<=n;i++)
+		a[i]=qread();
+	
+	int ans=0;
+	for(re int i=1;i<=n;i++)
+	{
+		for(re int j=1;j<=n-1;j++)
+		{
+			if(a[j+1]<a[j])
+			{
+				swap(a[i],a[j]);
+				ans+=2;
+			}
+		}
+	}
+//	for(re int i=1;i<=n;i++)cout<<a[i]<<" ";
+//	cout<<endl;
+	cout<<ans<<endl;
+	
+	return 0; 
+}
+/*
+*/

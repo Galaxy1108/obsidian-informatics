@@ -1,0 +1,34 @@
+#include <algorithm>
+#include <iostream>
+#include <cstring>
+#include <cstdio>
+#include <vector>
+
+#define File(a) freopen(a".in", "r", stdin), freopen(a".out", "w", stdout)
+
+using std::pair;
+using std::make_pair;
+
+#define pii pair<int, int>
+#define mp make_pair
+
+using ll = long long;
+const int inf = 1e9;
+const ll infll = 0ll + 1e18;
+
+int n;
+
+signed main(void) {
+  File("divisors");
+  std::cin >> n;
+  if (n <= 100) {
+    printf("1 ");
+    for (int i = 2; i <= n; i ++)
+      printf("%d ", i * (i - 1));
+    printf("\n");
+    for (int i = 1; i < n; i ++)
+      printf("%d %d\n", i, i + 1);
+    printf("\n");
+  }
+  return 0;
+}

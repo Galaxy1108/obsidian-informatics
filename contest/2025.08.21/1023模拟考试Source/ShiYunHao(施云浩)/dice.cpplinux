@@ -1,0 +1,55 @@
+
+
+#include <bits/stdc++.h>
+#define int long long
+using namespace std;
+
+void syh(){
+	freopen("dice.in", "r", stdin);
+	freopen("dice.out", "w", stdout);
+}
+const int mod = 1e9 + 7;
+int ksm(int u, int v){
+	int mul = 1;
+	while(v){
+		if(v & 1) mul = u * mul % mod;
+		u = u * u % mod;
+		v >>= 1;
+	}
+	return mul;
+}
+int inv(int x){
+	return ksm(x, mod - 2);
+}
+
+int n;
+int a[5050], b[5050];
+signed main (){
+	syh();
+	cin >> n;
+	int Max = 0;
+	for(int i = 1; i <= n; i++){
+		cin >> a[i];
+		Max = max(Max, a[i]);
+	}
+	int sum = 0;
+	for(int i = 1; i <= Max; i++){
+		int mul = 1;
+		for(int j = 1; j <= n; j++){
+			if(a[j] < i){
+				mul *= a[j];
+			} 
+			else{
+				mul *= i;
+			}
+		}
+		b[i] = mul - sum;
+		sum += b[i];
+	}
+	int p = 0;
+	for(int i = 1; i <= Max; i++){
+		p += i * b[i]; 
+	}
+	cout << p * inv(sum) % mod << endl;
+	return 0;                                                                                                                                                                                                                                                                                                                                                                                                                                     
+}

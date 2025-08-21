@@ -1,0 +1,23 @@
+#pragma GCC optimize(3)
+#pragma GCC target("avx,sse2,sse3,sse4,mmx")
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("inline")
+#include<bits/stdc++.h>
+using namespace std;
+long long a,b,d[300001],an,cn[300001],u[300001],t[1001][1001];
+inline int read(){int sum=0,nega=1;char ch=getchar();while(ch>'9'||ch<'0'){if(ch=='-') nega=-1;ch=getchar();}while(ch<='9'&&ch>='0') sum=sum*10+ch-'0',ch=getchar();return sum*nega;}
+int main()
+{
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	scanf("%lld",&a);
+	for(int i=1;i<=a;i++) scanf("%lld",&d[i]),u[i]=d[i],t[d[i]][++cn[d[i]]]=i;
+	sort(u+1,u+a+1);for(int i=1;i<=a;i++) cn[d[i]]=0;
+	for(int i=1;i<=a;i++)
+	{
+		++cn[u[i]];
+		an+=abs(t[u[i]][cn[u[i]]]-i);
+	}
+	printf("%lld",an);
+	return 0;
+}

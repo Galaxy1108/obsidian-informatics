@@ -1,0 +1,85 @@
+#include <bits/stdc++.h>
+using namespace std;
+const int N=5e3+5,mo=1e9+7;
+int n;
+int a[N];
+long long mi(long long x,long long y)
+{
+	long long res=1;
+	for(;y;y>>=1,x=x*x%mo)
+	{
+		if(y&1) res=res*x%mo;
+	}
+	return res;
+}
+long long pl[N],pr[N],fac[N];
+long long cal(int x,int y)
+{
+	int i;
+	long long j=0,k,l;
+	long long res=0;
+	if(x<=y+2)
+	{
+        for(i=1;i<=x;i++) res=(res+mi(i,y)%mo)%mo;
+        return res;
+    }
+    pl[0]=pr[y+3]=fac[0]=1;
+    for(i=1;i<=y+2;i++)
+        pl[i]=pl[i-1]*(x-i)%mo;
+    for(i=y+2;i>=1;i--)
+        pr[i]=pr[i+1]*(x-i)%mo;
+    for(i=1;i<=y+2;i++)
+        fac[i]=fac[i-1]*i%mo;
+    for(i=1;i<=y+2;i++)
+	{
+        j=(j+mi(i,y))%mo;
+        k=1ll*pl[i-1]*pr[i+1]%mo;
+        l=fac[i-1]*((y-i)&1?-1:1)*fac[y+2-i]%mo;
+        res=(res+1ll*j*k%mo*mi(l,mo-2)%mo)%mo;
+    }
+    return res; 
+}
+long long dp[505][505]={0};
+int maxx=0;
+int main()
+{
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	scanf("%d",&n);
+	int i,j,k;
+	bool f=1;
+	scanf("%d",&a[1]);
+	maxx=a[1];
+	for(i=2;i<=n;i++)
+	{
+		scanf("%d",&a[i]);
+		maxx=max(maxx,a[i]);
+		if(a[i]!=a[i-1]) f=0;
+	}
+	if(f)
+	{
+		long long ans=cal(a[1]-1,n),temp;
+		ans=ans*mi(mi(a[1],mo-2),n)%mo;
+		ans=(a[1]-ans+mo)%mo;
+		printf("%lld\n",ans);
+		return 0;
+	}
+	dp[0][0]=1;
+	long long temp,dao;
+	for(i=1;i<=n;i++)
+	{
+		dao=mi(a[i],mo-2)%mo;
+		for(j=1;j<=a[i];j++)
+		{
+			temp=0;
+			for(k=0;k<=j;k++) temp=(temp+dp[i-1][k])%mo;
+			dp[i][j]=(dp[i][j]+temp*dao%mo)%mo;
+			for(;k<=maxx;k++) dp[i][k]=(dp[i][k]+dp[i-1][k]*dao%mo)%mo;
+		}
+		for(j=a[i]+1;j<=maxx;j++) dp[i][j]=dp[i-1][j];
+	}
+	long long ans=0;
+	for(i=1;i<=maxx;i++) ans=(ans+1l*i*dp[n][i]%mo)%mo;
+	printf("%lld\n",ans);
+	return 0;
+}

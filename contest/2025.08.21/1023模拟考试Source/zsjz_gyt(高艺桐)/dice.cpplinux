@@ -1,0 +1,47 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define N 5002
+#define fo(i, l, r) for (int i = (l), ed = (r); i <= ed; i ++)
+
+const int P = 1e9 + 7;
+int n, a[N];
+ll ans, res = 1, s[N][N], ifac[N], inv[N];
+
+int fpow(int x, int y){
+	int s = 1;
+	for (; y; y >>= 1, x = 1ll * x * x % P)
+		if (y & 1) s = 1ll * s * x % P;
+	return s;
+}
+
+int sum(int x, int y){
+	int tot = 0;
+	ll now = 1;
+	fo (i, 0, y){
+		now = now * (x - i + 1) % P;
+		tot = (tot + s[y][i] * inv[i + 1] % P * now) % P;
+	}
+	return tot;
+}
+
+int main(){
+	freopen("dice.in", "r", stdin);
+	freopen("dice.out", "w", stdout);
+	scanf("%d", &n);
+	fo (i, 1, n) scanf("%d", &a[i]);
+	inv[0] = inv[1] = 1;
+	fo (i, 2, n + 1) inv[i] = inv[P % i] * (P - P / i) % P;
+	s[1][1] = 1;
+	fo (i, 2, n)
+		fo (j, 1, i) s[i][j] = (s[i - 1][j] * j + s[i - 1][j - 1]) % P;
+	sort(a + 1, a + n + 1);
+	fo (i, 1, n){
+		if (a[i] ^ a[i + 1]){
+			ll k = (1ll * fpow(a[i], n - i + 2) - sum(a[i] - 1, n - i + 1) + sum(a[i - 1], n - i + 1) - 1ll * (a[i - 1] + 1) * fpow(a[i - 1], n - i + 1) % P + P * 2) % P;
+			ans = (ans + k * res) % P;
+		}
+		res = res * a[i] % P;
+	}
+	printf("%lld", ans * fpow(res, P - 2) % P);
+}

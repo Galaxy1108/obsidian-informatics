@@ -1,0 +1,63 @@
+#include<cstdio>
+#include<algorithm>
+#define fo(i,x,y) for(int i = x;i <= y;++i)
+#define fd(i,x,y) for(int i = x;i >= y;--i)
+#define _is 1048576
+#define gc() ib[++bi]
+#define p 1000000007
+using namespace std;
+char ib[_is];int bi = -1;
+int rd()
+{
+	int x = 0;char ch = gc();
+	while(ch < 48 || ch > 57) ch = gc();
+	while(ch >= 48 && ch <= 57) x = x * 10 + ch - 48,ch = gc();return x;
+}
+int n,a[5010],fac[5010],ifac[5010],B[5010],iv[5010];
+int ksm(int x,int y)
+{
+	int res = 1;
+	for(;y;y >>= 1,x = 1ll * x * x % p) if(y & 1) res = 1ll * res * x % p;
+	return res;
+}
+int S(int n,int m)
+{
+	int res = 0,N = n;
+	fd(i,m,0) res = (res + 1ll * B[i] * N % p * ifac[i] % p * ifac[m - i + 1]) % p,N = 1ll * N * n % p;
+	return 1ll * res * fac[m] % p;
+}
+int F(int n,int m)
+{
+	int res = ksm(n,m + 1) - S(n,m);
+	if(res < 0) res += p;
+	return res;
+}
+int main()
+{
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	fread(ib,1,_is,stdin);
+	n = rd();
+	fo(i,1,n) a[i] = rd();
+	sort(a + 1,a + n + 1);
+	fac[0] = 1;
+	fo(i,1,n + 1) fac[i] = 1ll * fac[i - 1] * i % p;
+	ifac[n + 1] = ksm(fac[n + 1],p - 2);
+	fd(i,n,0) ifac[i] = 1ll * ifac[i + 1] * (i + 1) % p;
+	fo(i,1,n + 1) iv[i] = 1ll * ifac[i] * fac[i - 1] % p;
+	B[0] = 1;
+	fo(i,1,n)
+	{
+		fo(j,0,i - 1) B[i] = (B[i] + 1ll * B[j] * fac[i + 1] % p * ifac[j] % p * ifac[i - j + 1]) % p;
+		B[i] = 1ll * B[i] * (p - iv[i + 1]) % p;
+	}
+	int l = 0,m = 1,ans = 0;
+	while(l < n)
+	{
+		ans = (ans + 1ll * m * (F(a[l + 1],n - l) - F(a[l],n - l) + p)) % p,m = 1ll * m * a[++l] % p;
+		while(a[l + 1] == a[l]) m = 1ll * m * a[++l] % p;
+	}
+	fo(i,1,n) ans = 1ll * ans * ksm(a[i],p - 2) % p;
+	printf("%d\n",ans);
+	return 0;
+}

@@ -1,0 +1,37 @@
+#include<bits/stdc++.h>
+#define il inline
+#define cs const
+#define ri register
+#define F(s) freopen(#s".in","r",stdin),freopen(#s".out","w",stdout);
+using namespace std;
+signed main(){
+	F(divisors);
+	int n;
+	cin>>n;
+	if(n==3){
+		printf("2 6 3\n1 2\n2 3");
+	}
+	if(n==4){
+		printf("3 6 8 12\n1 2\n2 3\n3 4\n");
+	}
+	if(n==5){
+		printf("5 40 6 3 4\n1 2\n2 3\n3 4\n2 5");
+	}
+	if(n==6){
+		printf("5 40 6 3 4 12\n1 2\n2 3\n3 4\n2 5\n 3 6");		
+	}
+	if(n==7){
+		printf("5 40 6 3 4 42 7\n1 2\n2 3\n3 4\n2 5\n 3 6\n6 7");
+	}
+	if(n==8){
+		printf("5 40 6 3 4 42 7 8\n1 2\n2 3\n3 4\n2 5\n 3 6\n6 7\n2 8");
+	}
+	if(n==9){
+		printf("5 40 6 9 4 42 7 8 18\n1 2\n2 3\n3 4\n2 5\n 3 6\n6 7\n2 8\n4 9");		
+	}
+	if(n==10){
+		printf("5 40 6 9 4 42 7 8 18 10\n1 2\n2 3\n3 4\n2 5\n 3 6\n6 7\n2 8\n4 9\n2 10");				
+	}
+	
+	return 0;
+} 

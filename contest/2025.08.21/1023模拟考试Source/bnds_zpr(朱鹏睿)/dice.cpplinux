@@ -1,0 +1,40 @@
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+using namespace std;
+int n,a[100011],y[5011][5011],fac[5011],ifac[5011];const int p=1e9+7,K=p-1;
+inline int qpow(int bs,int ex){int ans=1;while(ex){if(ex&1)ans=1ll*ans*bs%p;ex>>=1;bs=1ll*bs*bs%p;}return ans;}
+int pre[5011],suf[5011];
+int f(int x,int n)
+{
+	long long ans=0;
+	pre[0]=1;suf[n+3]=1;
+	for(int i=1;i<=n+2;++i)pre[i]=1ll*pre[i-1]*(x-i)%p;
+	for(int i=n+2;i;--i)suf[i]=1ll*suf[i+1]*(x-i)%p;
+	for(int i=1;i<=n+2;++i)
+	{
+		ans+=1ll*y[n][i]*pre[i-1]%p*suf[i+1]%p*ifac[i-1]%p*ifac[n+2-i]%p*(n+2-i&1?p-1:1)%p;
+	}
+	return (ans%p+p)%p;
+}
+int main()
+{
+	freopen("dice.in","r",stdin);freopen("dice.out","w",stdout);
+	scanf("%d",&n);for(int i=1;i<=n;++i)scanf("%d",a+i);sort(a+1,a+1+n);a[n+1]=K;
+	for(int i=1;i<=n+2;++i){y[0][i]=1;for(int j=1;j<=n;++j)y[j][i]=1ll*y[j-1][i]*i%p;}
+	for(int j=0;j<=n;++j)for(int i=1;i<=n+2;++i)(y[j][i]+=y[j][i-1])%=p;
+	fac[0]=1;for(int i=1;i<=5010;++i)fac[i]=1ll*fac[i-1]*i%p;ifac[5010]=qpow(fac[5010],p-2);for(int i=5009;~i;--i)ifac[i]=1ll*ifac[i+1]*(i+1)%p;
+	int ans=0;
+	for(int _=1;_<=n+1;++_)if(a[_]!=a[_-1])
+	{
+		int coe=1,pw=0;
+		for(int i=1;i<=n;++i)
+		{
+			if(a[_]<=a[i])++pw;else coe=1ll*coe*a[i]%p;
+		}
+		(ans+=1ll*coe*(f(a[_],pw)-f(a[_-1],pw))%p)%=p;
+	}
+	for(int i=1;i<=n;++i)ans=1ll*ans*qpow(a[i],p-2)%p;
+	printf("%lld\n",((long long)K+1+p-ans)%p);
+	fclose(stdin);fclose(stdout);return 0;
+}

@@ -1,0 +1,41 @@
+#include<iostream>
+#include<cstdio>
+#include<cstdlib>
+#include<cstring>
+#include<cmath>
+#include<algorithm>
+using namespace std;
+int read()
+{
+	char x=getchar();int v=0,bj=1;
+	while((x!='-')&&(x<'0'||x>'9'))x=getchar();
+	if(x=='-')
+	{
+		bj=-1;
+		x=getchar();
+	}
+	while(!(x<'0'||x>'9'))v=(v<<1)+(v<<3)+x-'0',x=getchar();
+	return v*bj;
+}
+const int N=55;
+struct kp
+{
+	int v,i; 
+}a[N];
+bool cmp(kp a,kp b)
+{
+	return a.v<b.v;
+}
+int main() 
+{
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	int n=read(),ans=0;
+	for(int i=1;i<=n;i++)a[i].v=read(),a[i].i=i;
+	sort(a+1,a+n+1,cmp);
+	for(int i=1;i<=n;i++)
+	{
+		ans+=abs(i-a[i].i);
+	}
+	printf("%d",ans);
+}

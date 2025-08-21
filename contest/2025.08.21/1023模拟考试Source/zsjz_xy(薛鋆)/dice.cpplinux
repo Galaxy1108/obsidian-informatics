@@ -1,0 +1,40 @@
+#include <cstdio>
+#include <algorithm>
+#define min(x,y) ((x)<(y)?(x):(y))
+#define max(x,y) ((x)>(y)?(x):(y))
+using namespace std;
+#define MOD 1000000007
+long long ans;
+long long a[5005],mx,n,inv=1;
+long long f[5005],p=1,s=1;
+long long ksm(long long x,long long k)
+{
+	long long sum=1;
+	for (;k;k>>=1,x=x*x%MOD)
+		if (k&1) sum=sum*x%MOD;
+	return sum;
+}
+int main()
+{
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	scanf("%lld",&n);
+	for (int i=1;i<=n;++i) scanf("%lld",a+i);
+	sort(a+1,a+n+1);
+	for (int i=1;i<=n;++i)
+		inv=inv*ksm(a[i],MOD-2)%MOD;
+	mx=a[n];
+	for (long long i=1;i<mx;++i)
+	{
+		for (;a[p]<=i&&p<=n;)
+			s=s*a[p++]%MOD;
+		f[i]=s*ksm(i,n-p+1)%MOD;
+		ans+=MOD-f[i],ans%=MOD;
+	}
+	for (;a[p]<=mx&&p<=n;)
+		s=s*a[p++]%MOD;
+	f[mx]=s*ksm(mx,n-p+1)%MOD;
+	ans+=f[mx]*mx%MOD,ans%=MOD;
+	printf("%lld",ans*inv%MOD);
+	fclose(stdin),fclose(stdout);
+}

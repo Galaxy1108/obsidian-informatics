@@ -1,0 +1,62 @@
+#include<bits/stdc++.h>
+#define I inline
+#define R register
+#define LL long long
+#define fo(i, a, b) for(R int i = a; i <= b; ++i)
+#define fd(i, a, b) for(R int i = a; i >= b; --i)
+#define fz(i, x) for(R int i = head[x]; i; i = nxt[i])
+using namespace std;
+const int N = 110, P = 998244353, inf = 0x3f3f3f3f;
+int n, m, l[N], r[N], f[22][1048576], a[N];
+I int read(){
+	int res = 0, flag = 0; char ch = getchar();
+	for(; !isdigit(ch); ch = getchar()) if(ch == '-') flag = 1;
+	for(; isdigit(ch); ch = getchar()) res = (res << 1) + (res << 3) + (ch ^ 48);
+	if(flag) res = ~res + 1; return res;
+}
+I void write(int X){
+    if(X < 0) {X = ~(X - 1), putchar('-');}
+    if(X > 9) write(X / 10);
+    putchar(X % 10 + '0');
+}
+I bool pd(int x){
+	fo(i, 1, m) a[i] = 0; int l = 0;
+	for(; x; x >>= 1) a[++l] = (x & 1);
+	fo(i, 1, m / 2) if(a[i] != a[m - i + 1]) return 0;
+	return 1;
+}
+int main(){
+	freopen("far.in","r",stdin);
+	freopen("far.out","w",stdout);
+	n = read(), m = read();
+	fo(i, 1, n) l[i] = read(), r[i] = read();
+	f[0][0] = 1;
+	fo(i, 1, n)
+		fo(k, 0, (1 << m) - 1)
+			if(f[i - 1][k])
+				fo(j, l[i], r[i]) (f[i][k ^ j] += f[i - 1][k]) %= P;
+	fo(j, 1, n){
+		int ans = 0;
+		fo(i, 0, (1 << m) - 1) if(pd(i)) (ans += f[j][i]) %= P;
+		printf("%d\n",ans);
+	}
+}
+/**
+*¡¡¡¡©³©·¡¡¡¡¡¡©³©·+ +
+*¡¡©³©¿©ß©¥©¥©¥©¿©ß©· + +
+*¡¡©§¡¡¡¡¡¡¡¡¡¡¡¡¡¡©§
+*¡¡©§¡¡¡¡¡¡©¥¡¡¡¡¡¡©§ ++ + + +
+*  ¨€¨€¨€¨€©¥¨€¨€¨€¨€+
+*  ¨¨€¨€¨¡¡¨¨€¨€¨ +
+*¡¡©§¡¡¡¡¡¡©ß¡¡¡¡¡¡©§
+*¡¡©§¡¡¡¡¡¡¡¡¡¡¡¡¡¡©§ + +
+*¡¡©»©¥©·¡¡¡¡¡¡©³©¥©¿
+*¡¡¡¡¡¡©§¡¡¡¡¡¡©§ + + + + Code is far away from ¡¡
+*¡¡¡¡¡¡©§¡¡¡¡¡¡©§ + bug with the animal protecting
+*¡¡¡¡¡¡©§¡¡ ¡¡ ©»©¥©¥©¥©· ÉñÊÞ±£ÓÓ,´úÂëÎÞbug¡¡
+*¡¡¡¡¡¡©§              ©Ç©·
+*¡¡¡¡  ©§              ©³©¿
+*¡¡    ©»©·©·©³©¥©×©·©³©¿ + + + +
+*¡¡¡¡¡¡¡¡©§©Ï©Ï¡¡©§©Ï©Ï
+*¡¡¡¡¡¡¡¡©»©ß©¿¡¡©»©ß©¿+ + + +
+*/

@@ -1,0 +1,59 @@
+#include<iostream>
+#include<fstream>
+#include<algorithm>
+using namespace std;
+struct node {
+	int v, id;
+	bool operator<(const node o) const
+	{
+		return ((v != o.v)? (v < o.v): (id < o.id));
+	}
+}a[55];
+int v[55], m[55];
+inline int abs(int x) { return x < 0? -x: x; }
+int main()
+{
+	ifstream cin("lineup.in");
+	ofstream cout("lineup.out");
+	ios::sync_with_stdio(false);
+	int n;
+	cin >> n;
+	for(int i = 1; i <= n; i++) cin >> a[i].v, a[i].id = i, v[i] = a[i].v;
+	sort(a+1, a+n+1);
+	for(int i = 1; i <= n; i++) m[a[i].id] = i-a[i].id;
+	int ans = 0;
+	while(1)
+	{
+		int max_ = 0, id = 0;
+		for(int i = 1; i <= n; i++) if(abs(m[i]) > max_) max_ = abs(m[i]), id = i;
+		if(m[id] > 0)
+		{
+			for(int j = id; j <= n; j++) if(m[j] < 0)
+			{
+				swap(v[id], v[j]);
+				swap(m[id], m[j]);
+				m[j] -= j-id;
+				m[id] += j-id;
+				ans += j-id;
+				cout << id << j << endl;
+				break;
+			}
+		}
+		else if(m[id] < 0)
+		{
+			for(int j = id; j > 0; j--) if(m[j] > 0)
+			{
+				swap(v[id], v[j]);
+				swap(m[id], m[j]);
+				m[j] -= j-id;
+				m[id] += j-id;
+				ans += id-j;
+				cout << id << j << endl;
+				break;
+			}
+		}
+		else break;
+	}
+	cout << ans << endl;
+	return 0;
+}

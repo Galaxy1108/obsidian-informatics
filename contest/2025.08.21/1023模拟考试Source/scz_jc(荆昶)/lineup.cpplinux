@@ -1,0 +1,15 @@
+#include<bits/stdc++.h>
+#define int long long
+using namespace std;
+int n,ans,a[55],id[55];
+bool cmp(int x,int y){return a[x]==a[y]?x<y:a[x]<a[y];}
+signed main(){
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	scanf("%lld",&n);
+	for(int i=1;i<=n;i++)scanf("%lld",&a[i]),id[i]=i;
+	sort(id+1,id+n+1,cmp);
+	for(int i=1;i<=n;i++)ans+=abs(i-id[i]);
+	printf("%lld",ans);
+	return 0;
+}

@@ -1,0 +1,45 @@
+#include <cstdio>
+#include <algorithm>
+#define g getchar()
+#define ll long long
+#define r register int
+#define rl register ll
+const int mod(1e9 + 7);
+int n, a[5001];
+ll ans, nw(1), n2;
+inline int read()
+{
+	r a(0), b(g);
+	for (; b < 48 || b > 57; b = g);
+	for (; b > 47 && b < 58; b = g)
+		(a *= 10) += b ^ 48;
+	return a;
+}
+inline bool cmp(r a, r b)
+{
+	return a > b;
+}
+inline ll qp(rl x, r k)
+{
+	rl res(1);
+	for (; k; k >>= 1, (x *= x) %= mod)
+		if (k & 1)
+			(res *= x) %= mod;
+	return res;
+}
+int main()
+{
+	freopen("dice.in", "r", stdin);
+	freopen("dice.out", "w", stdout);
+	n = read();
+	for (r i(1); i <= n; ++i)
+		a[i] = read();
+	std :: sort(a + 1, a + n + 1, cmp);
+	for (r i(a[1]), j(0); i; --i)
+	{
+		(nw *= qp(n2, j)) %= mod;
+		for (; j < n && a[j + 1] == i; ++j);
+		(ans += nw * (1 - qp(n2 = qp(i, mod - 2) * (i - 1) % mod, j) + mod) % mod * i) %= mod;
+	}
+	printf("%lld", ans);
+}

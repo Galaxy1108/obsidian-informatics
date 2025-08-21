@@ -1,0 +1,65 @@
+#include <bits/stdc++.h>
+using namespace std;
+const int N = 55;
+int n,h[N];
+pair<int,int> a[N];
+int p[N];
+inline int Domax(const vector<int> &circ,int poi)
+{
+	int res = 0;
+	for(int i = 0;i < circ.size() - 1;i++) res = max(res,abs(circ[i] - poi) + abs(circ[i + 1] - poi));
+	res = max(res,abs(circ.back() - poi) + abs(circ[0] - poi));
+	return res;
+}
+inline int Dosum(const vector<int> &circ,int poi)
+{
+	int res = 0;
+	for(int i = 0;i < circ.size() - 1;i++)
+		res = res + abs(circ[i] - poi) + abs(circ[i + 1] - poi);
+	res = res + abs(circ.back() - poi) + abs(circ[0] - poi);
+	return res;
+}
+inline int Work(const vector<int> &circ)
+{
+	int minn = 1e9,k = 0,res = 0;
+	for(int it = 1;it <= n;++it)
+	{
+		printf("%d %d %d\n",Domax(circ,it),Dosum(circ,it),it);
+		if(Domax(circ,it) < minn) minn = Domax(circ,it),res = Dosum(circ,it);
+		else if(Domax(circ,it) == minn) res = min(res,Dosum(circ,it));
+	}
+		
+	return res;
+}
+bool vst[N];
+vector<int> circ;
+void dfs(int x)
+{
+	if(vst[x]) return;
+	vst[x] = true;
+	circ.push_back(x);
+	dfs(p[x]);
+}
+int main()
+{
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	scanf("%d",&n);
+	for(int i = 1;i <= n;i++) scanf("%d",&h[i]);
+	for(int i = 1;i <= n;i++) a[i] = make_pair(h[i],i);
+	sort(a + 1,a + n + 1);
+	for(int i = 1;i <= n;i++) p[a[i].second] = i;
+	// for(int i = 1;i <= n;i++) printf("p[%d]=%d\n",i,p[i]);
+	int res = 0;
+	// for(int i = 1;i <= n;i++)
+	// 	if(!vst[i])
+	// 	{
+	// 		circ.clear();
+	// 		dfs(i);
+	// 		res += Work(circ);
+	// 	}
+	for(int i = 1;i <= n;i++)
+	res += abs(i - p[i]);
+	cout << res << endl;
+	return 0;
+}

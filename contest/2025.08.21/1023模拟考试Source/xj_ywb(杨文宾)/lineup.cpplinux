@@ -1,0 +1,87 @@
+/*******************************
+| Author:  nomonick
+| Problem: lineup
+| Contest: 1023模拟考试
+| URL:     https://sy.hhwdd.com/new/ViewGProblem.page?gpid=Djol1
+| When:    2022-10-23 09:26:08
+| 
+| Memory:  256 MB
+| Time:    1000 ms
+*******************************/
+#include <map>
+#include <set>
+#include <queue>
+#include <ctime>
+#include <stack>
+#include <cmath>
+#include <deque>
+#include <cstdio>
+#include <vector>
+#include <string>
+#include <bitset>
+#include <cstring> 
+#include <iterator>
+#include <iostream>
+#include <algorithm>
+#include <functional>
+using namespace std;
+
+#define int long long 
+#define lowbit(x) (x&(-x))
+const int SIZE = (int)10 + 50;
+const int SQRT = (int)1e10;
+const int NUM = (int)3e2 + 10;
+const int inf = (int)1e18 + 50;
+const int MAXN = (int)5e6 + 50;
+const int inv = 3973;
+const int mod = 998244353;
+const int dirtx[] = {1,2,2,1,-1,-2,-2,-1};
+const int dirty[] = {2,1,-1,-2,2,1,-1,-2};
+const int dayth[] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
+const int power_2[] = {1,2,4,8,16,32,64,128,256,512,1024,2048,4096};
+const int Sample[4][5] = {{},{0,1,3,10,11},{0,2,7,8,9},{0,4,5,6,12}};
+const double eps = 1e-6;
+
+inline int read()
+{
+	int x = 0,f = 1;
+	char ch = getchar();
+	while (ch < '0' || ch > '9')
+	{
+		if (ch == '-') f = -1;
+		ch = getchar();
+	}
+	while (ch >= '0' && ch <= '9')
+	{
+		x = (x << 1) + (x << 3) + (ch ^ 48);
+		ch = getchar();
+	}
+	return f * x;
+}
+
+inline void write(int x)
+{
+	if (x < 0) x = -x, putchar('-');
+	if (x <= 9) putchar(x + '0');
+	if (x > 9) write(x/10),putchar((x % 10) + '0');
+}
+
+int n,ans;
+int num[SIZE],tmp[SIZE];
+bool vis[SIZE];
+int dp[SIZE][SIZE];
+
+signed main()
+{
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	n = read(); memset(dp,0x3f,sizeof(dp));
+	for (int i = 1; i <= n; ++i) num[i] = read();
+	for (int i = 1; i <= n; ++i) tmp[i] = num[i];
+	sort(tmp+1,tmp+1+n);
+	for (int i = 1; i <= n; ++i)
+		for (int j = 1; j <= n; ++j)
+			if (!vis[j] and num[i] == tmp[j]) {vis[j] = true; ans += abs(j-i); break;}
+	write(ans); puts("");
+	return 0;
+}

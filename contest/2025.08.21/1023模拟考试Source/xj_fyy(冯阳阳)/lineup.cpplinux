@@ -1,0 +1,23 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define N 55
+int read(){
+	int w=0,f=1;
+	char c=' ';
+	while(c<'0'||c>'9')c=getchar(),f=c=='-'?-1:f;
+	while(c>='0'&&c<='9')w=w*10+c-48,c=getchar();
+	return w*f;
+}
+int n,a[N],p[N],ans;
+signed main(){
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	n=read();
+	for(int i=1;i<=n;i++)
+		a[i]=read()*N+i,p[i]=i;
+	sort(p+1,p+n+1,[&](int x,int y){return a[x]<a[y];});
+	for(int i=1;i<=n;i++)
+		ans+=abs(p[i]-i);
+	printf("%d\n",ans);
+	return 0;
+}

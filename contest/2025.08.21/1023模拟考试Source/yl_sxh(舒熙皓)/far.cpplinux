@@ -1,0 +1,98 @@
+#include<bits/stdc++.h>
+#define ll long long
+#define For(i,a,b) for(int i=(a);i<=(b);++i)
+#define Rof(i,a,b) for(int i=(a);i>=(b);--i)
+using namespace std;
+const int Maxn=60,Mod=998244353;
+
+inline ll read()
+{
+    ll x=0,f=1;
+    char ch=getchar();
+    while(ch<'0' || ch>'9')
+    {
+        if(ch=='-') f=-1;
+        ch=getchar();
+    }
+    while(ch>='0' && ch<='9')
+    {
+        x=x*10+ch-'0';
+        ch=getchar();
+    }
+    return x*f;
+}
+inline int Pow(int x,int y)
+{
+    int res=1;
+    while(y)
+    {
+        if(y&1) res=1ll*res*x%Mod;
+        x=1ll*x*x%Mod,y>>=1;
+    }
+    return res;
+}
+
+int n,m; ll lim,L[Maxn+5],R[Maxn+5];
+
+namespace T1
+{
+    int f[12][1030];
+    inline void Run()
+    {
+        f[0][0]=1;
+        For(i,1,n)
+        {
+            For(j,0,lim) if(f[i-1][j])
+                For(k,L[i],R[i]) f[i][j^k]=(f[i][j^k]+f[i-1][j])%Mod;
+        }
+        For(i,1,n)
+        {
+            int ans=0;
+            For(j,0,lim)
+            {
+                int flag=0;
+                For(k,0,m-1) if(((j>>k)&1)!=((j>>m-1-k)&1)) {flag=1; break;}
+                if(!flag) ans=(ans+f[i][j])%Mod;
+            }
+            printf("%d\n",ans);
+        }
+    }
+}
+namespace T2
+{
+    int fac[Maxn+5],inv[Maxn+5];
+    inline int C(int a,int b) {return 1ll*fac[a]*inv[a-b]%Mod*inv[b]%Mod;}
+    inline void Run()
+    {
+        fac[0]=inv[0]=1;
+        For(i,1,Maxn) fac[i]=1ll*fac[i-1]*i%Mod;
+        inv[Maxn]=Pow(fac[Maxn],Mod-2);
+        Rof(i,Maxn-1,1) inv[i]=1ll*inv[i+1]*(i+1)%Mod;
+        For(k,1,n)
+        {
+            int ans=1;
+            For(i,1,(m+1)/2)
+            {
+                int res=Pow(2,k);
+                if(m%2==0 || i!=(m+1)/2)
+                    res=1ll*res*Pow(2,k-1)%Mod;
+                ans=1ll*ans*res%Mod;
+            }
+            printf("%d\n",ans);
+        }
+    }
+}
+
+int main()
+{
+    freopen("far.in","r",stdin);
+    freopen("far.out","w",stdout);
+
+    n=read(),m=read(),lim=(1ll<<m)-1;
+    For(i,1,n) L[i]=read(),R[i]=read();
+    if(n<=10 && m<=10) {T1::Run(); return 0;}
+    int chk1=1;
+    For(i,1,n) chk1&=(L[i]==0 && R[i]==lim);
+    if(chk1) {T2::Run(); return 0;}
+    return 0;
+}

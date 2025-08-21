@@ -1,0 +1,40 @@
+#include <bits/stdc++.h>
+
+inline void file () {
+	freopen("lineup.in", "r", stdin);
+	freopen("lineup.out", "w", stdout);
+}
+
+constexpr int N = 55;
+int n, m;
+int a[N];
+int p[N];
+
+int main () {
+	
+	file();
+	std::ios::sync_with_stdio(0);
+	std::cin.tie(nullptr);
+	
+	std::cin >> n;
+	for (int i = 1; i <= n; ++ i) {
+		std::cin >> a[i];
+	}
+	
+	for (int h = 120; h <= 200; ++ h) {
+		for (int i = 1; i <= n; ++ i) {
+			if (a[i] == h) {
+				p[++ m] = i;
+			}
+		}
+	}
+	
+	int ans = 0;
+	for (int i = 1; i <= n; ++ i) {
+		ans += std::abs(i - p[i]);
+	}
+	
+	std::cout << ans << '\n';
+	
+	return 0;
+}

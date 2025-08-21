@@ -1,0 +1,61 @@
+#if IN_LOCAL
+import local;
+#endif // IN_LOCAL
+#include<random>
+#include<chrono>
+#include<iostream>
+#include<algorithm>
+using namespace std;
+using namespace chrono;
+#if !IN_LOCAL
+#include<fstream>
+ifstream fin("divisors.in", ifstream::binary);
+ofstream fout("divisors.out", ofstream::binary);
+#define cin fin
+#define cout fout
+#endif // !IN_LOCAL
+inline constexpr unsigned GCD(const unsigned a, const unsigned b) { return b ? GCD(b, a % b) : a; }
+inline constexpr unsigned LCM(const unsigned a, const unsigned b) { return a / GCD(a, b) * b; }
+mt19937 rng(static_cast<unsigned>(system_clock::now().time_since_epoch().count()));
+unsigned p[2552], w[2552];
+int main()
+{
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	unsigned n;
+	cin >> n;
+	p[0] = p[n] = 1;
+	for (unsigned i = 1; i < n; p[i] = i + 1, ++i);
+	while (1)
+	{
+		shuffle(p + 1, p + n, rng);
+		bool flag = 1;
+		for (unsigned i = 1; i <= n; ++i)
+		{
+			if ((w[i] = LCM(p[i - 1], p[i])) > 11000)
+			{
+				flag = 0;
+				break;
+			}
+		}
+		if (flag)
+		{
+			for (unsigned i = 1; i < n; ++i)
+			{
+				if (GCD(w[i], w[i + 1]) != p[i])
+				{
+					flag = 0;
+					break;
+				}
+			}
+			if (flag)
+			{
+				for (unsigned i = 1; i <= n; cout << w[i++] << ' ');
+				for (unsigned i = 1; i < n; cout << '\n' << i << ' ' << (i + 1), ++i);
+				break;
+			}
+		}
+	}
+	return 0;
+}

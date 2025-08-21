@@ -1,0 +1,84 @@
+#include<bits/stdc++.h>
+#define Lyr_ids rubbish
+#define rg register
+#define lll __int128
+using namespace std;
+typedef long long ll;
+namespace IN
+{
+	char buf[(1<<20)+1],*iS,*iT;
+		#if ONLINE_JUDGE
+		#define gh() (iS==iT?iT=(iS=buf)+fread(buf,1,(1<<20)+1,stdin),(iS==iT?EOF:*iS++):*iS++)
+ 		#else
+		#define gh() getchar()
+		#endif
+	#define rg register
+	template<typename T>
+	inline void read(T &x)
+	{
+		rg char ch=gh();
+		x=0;
+		rg bool t=0;
+		while(!isdigit(ch))
+			t|=ch=='-',ch=gh();
+		while(isdigit(ch))
+			x=(x<<3)+(x<<1)+(ch^48),ch=gh();
+		x=t?-x:x;
+	}
+}
+using namespace IN;
+int n,ans;
+const int maxn=55;
+struct Stu{
+	int h,l,r;
+}a[maxn];
+int cpy[maxn];
+void bubble()
+{
+	for(int i=1;i<n;++i)
+	{
+		for(int j=1;j<=n-i;++j)
+		{
+			if(j>=a[j].l)
+				continue;
+			for(int k=j+1;k<=n-i+1;++k)
+			{
+				if(a[k].l<=k&&k<=a[k].r)
+					continue;
+				if(a[j].h>a[k].h&&j>=a[k].r)
+				{
+					swap(a[j],a[k]);
+					ans+=2*(k-j);
+					goto v1;
+				}
+			}
+			v1:;
+		}
+	}
+}
+int main()
+{
+	//ios::sync_with_stdio(false);
+	//ios::cin.tie(nullptr);
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	read(n);
+	for(int i=1;i<=n;++i)
+	{
+		read(a[i].h);
+		cpy[i]=a[i].h;
+	}
+	sort(cpy+1,cpy+n+1);
+	for(int i=1;i<=n;++i)
+	{
+		a[i].l=lower_bound(cpy+1,cpy+n+1,a[i].h)-cpy;
+		a[i].r=upper_bound(cpy+1,cpy+n+1,a[i].h)-cpy-1;
+	}
+//	for(int i=1;i<=n;++i)
+//		printf("<%d %d>\n",a[i].l,a[i].r);
+	bubble();
+//	for(int i=1;i<=n;++i)
+//		printf("%d i:%d l:%d r:%d\n",a[i].h,i,a[i].l,a[i].r);
+	printf("%d\n",ans);
+	return 0;
+}

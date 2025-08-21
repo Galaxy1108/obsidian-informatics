@@ -1,0 +1,64 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define F(i,a,b) for(int i=a;i<=b;i++)
+#define Fd(i,a,b) for(int i=a;i>=b;i--)
+#define mo 1000000007
+#define N 5010
+
+int n,B[N],a[N],fac[N],ifac[N],inv[N],ans;
+
+int mod(int x){return x>=mo?x-mo:x;}
+
+int mi(int x,int y){
+	if(!y)return 1;
+	if(y==1)return x;
+	return y&1?1ll*x*mi(1ll*x*x%mo,y/2)%mo:mi(1ll*x*x%mo,y/2);
+}
+
+int C(int x,int y){return 1ll*fac[x]*ifac[y]%mo*ifac[x-y]%mo;}
+
+int S1(int x,int k){
+	int res=mi(x,k+1);
+	int tmp=x+1,sum=0;
+	F(i,0,k){
+		sum=mod(sum+1ll*ifac[i+1]%mo*B[k-i]%mo*tmp%mo);
+		tmp=1ll*tmp*(x+1)%mo;
+	}
+	sum=1ll*fac[k]*sum%mo;
+	return mod(res-sum+mo);
+}
+
+int S2(int x,int k){return mi(x,k);}
+
+int main(){
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	scanf("%d",&n);
+	F(i,1,n)scanf("%d",&a[i]);
+	fac[0]=1;
+	F(i,1,N-10)fac[i]=1ll*fac[i-1]*i%mo;
+	ifac[N-10]=mi(fac[N-10],mo-2);
+	Fd(i,N-11,0)ifac[i]=1ll*ifac[i+1]*(i+1)%mo,inv[i+1]=1ll*fac[i]*ifac[i+1]%mo;
+	B[0]=1;
+	F(i,1,N-10){
+		F(j,0,i-1)B[i]=mod(B[i]+1ll*B[j]*ifac[i-j+1]%mo);
+		B[i]=mod(mo-B[i]);
+	}
+	sort(a+1,a+n+1);
+	int le=1,ri=0,pr=1;
+	F(i,1,n){
+		int pos=i;
+		while(a[pos+1]==a[pos]&&pos+1<=n)pos++;
+		int k=n-i+1;
+		ri=a[pos];
+		int w1=mod(S1(ri,k)-S1(le-1,k)+mo),w2=mod(S2(ri,k)-S2(le-1,k)+mo);
+		ans=mod(ans+1ll*mod(w1+w2)*pr%mo);
+		F(j,i,pos)pr=1ll*pr*a[j]%mo;
+		le=a[pos]+1;
+		i=pos;
+	}
+	int iv=1;
+	F(i,1,n)iv=1ll*iv*mi(a[i],mo-2)%mo;
+	printf("%d",1ll*ans*iv%mo);
+	return 0;
+}

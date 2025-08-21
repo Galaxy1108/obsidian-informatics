@@ -1,0 +1,35 @@
+#include <cstdio>
+#include <cstring>
+#include <cctype>
+#include <vector>
+#include <algorithm>
+#include <cmath>
+using namespace std;
+inline int read (void) {
+    int x = 0, f = 1, ch = getchar();
+    while(!isdigit(ch)) { if(ch == '-') f = -f; ch = getchar(); }
+    while(isdigit(ch)) { x = x * 10 + ch - '0'; ch = getchar(); }
+    return x * f;
+}
+const int N=1e5+5;
+int n,a[N],s,b[N];
+int main (void) {
+    freopen("lineup.in", "r", stdin);
+    freopen("lineup.out", "w", stdout);
+    n=read();
+    for (int i=1;i<=n;i++) a[i]=b[i]=read();
+    sort(b+1,b+n+1);
+    for (int i=1;i<=n;i++){
+        // printf("%d\n",b[i]);
+        for (int j=1;j<=n;j++){
+            if(a[i]==b[j]) {
+                s+=abs(i-j);
+                // printf("%d %d\n",a[j],j);
+                b[j]=-1;
+                break;
+            }
+        }
+    }
+    printf("%d\n",s);
+    return 0;
+}

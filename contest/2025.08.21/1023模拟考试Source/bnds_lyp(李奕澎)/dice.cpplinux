@@ -1,0 +1,78 @@
+#include <cstdio>
+#include <algorithm>
+using namespace std;
+const long long mod = 1e9 + 7;
+int n,k;
+long long a[5005],mul[5005],ans = 0;
+inline int read()
+{
+	int x = 0;
+	char ch = getchar();
+	while (ch < '0' || ch > '9')
+		ch = getchar();
+	while (ch >= '0' && ch <= '9')
+	{
+		x = (x << 3) + (x << 1) + (ch ^ 48);
+		ch = getchar();
+	}
+	return x;
+}
+inline long long readll()
+{
+	long long x = 0;
+	char ch = getchar();
+	while (ch < '0' || ch > '9')
+		ch = getchar();
+	while (ch >= '0' && ch <= '9')
+	{
+		x = (x << 3) + (x << 1) + (ch ^ 48);
+		ch = getchar();
+	}
+	return x;
+}
+inline void write(long long x)
+{
+	if (x > 9)
+		write(x / 10);
+	putchar(x % 10 + '0');
+	return;
+}
+inline long long ksm(long long x,long long y)
+{
+	if (y == 0)
+		return 1;
+	else
+	{
+		long long res = ksm(x,y >> 1);
+		res = res * res % mod;
+		if (y & 1)
+			res = res * x % mod;
+		return res;
+	}
+}
+int main()
+{
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	n = read();
+	for (int i = 1;i <= n;i++)
+		a[i] = readll();
+	sort(a + 1,a + n + 1);
+	mul[0] = 1;
+	for (int i = 1;i <= n;i++)
+		mul[i] = mul[i - 1] * a[i] % mod;
+	for (int i = 1;i <= n;i++)
+	{
+		int p = n - i + 1;
+		long long l = a[i - 1] + 1,r = a[i],tmp = (ksm(r,p + 1) - l * ksm(l - 1,p) % mod) % mod;
+		for (long long k = l;k <= r - 1;k++)
+			tmp = (tmp - ksm(k,p)) % mod;
+		ans = (ans + tmp * mul[i - 1] % mod) % mod;
+		while (i + 1 <= n && a[i + 1] == a[i])
+			i++;
+	}
+	ans = (ans + mod) % mod;
+	ans = ans * ksm(mul[n],mod - 2) % mod;
+	write(ans);
+	return 0;
+}

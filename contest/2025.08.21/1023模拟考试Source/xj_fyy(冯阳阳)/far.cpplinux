@@ -1,0 +1,41 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define N 22
+#define int long long
+int read(){
+	int w=0,f=1;
+	char c=' ';
+	while(c<'0'||c>'9')c=getchar(),f=c=='-'?-1:f;
+	while(c>='0'&&c<='9')w=w*10+c-48,c=getchar();
+	return w*f;
+}
+const int mod=998244353;
+int n,m,k,l[N],r[N],f[N][1<<20],ans;
+int check(int s){
+	for(int i=0,j=m-1;i<j;i++,j--)
+		if((s>>i&1)!=(s>>j&1))return 0;
+	return 1;
+}
+void inc(int&x,int y){
+	x+=y,x=x>=mod?x-mod:x;
+}
+int dfs(int u,int s){
+	if(f[u][s]!=-1)return f[u][s];
+	if(u==k+1)return f[u][s]=check(s);
+	f[u][s]=0;
+	for(int i=l[u];i<=r[u];i++)
+		inc(f[u][s],dfs(u+1,s^i));
+	return f[u][s];
+}
+signed main(){
+	freopen("far.in","r",stdin);
+	freopen("far.out","w",stdout);
+	n=read(),m=read();
+	for(int i=1;i<=n;i++)
+		l[i]=read(),r[i]=read();
+	for(k=1;k<=n;k++){
+		memset(f,-1,sizeof(f));
+		printf("%lld\n",dfs(1,0));
+	}
+	return 0;
+}

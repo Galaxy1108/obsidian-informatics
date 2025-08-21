@@ -1,0 +1,61 @@
+#include<cstdio>
+const int N=2505;
+int n,bz[N],o,f[N][N],h[N],len[N],g[N][N],u[N],v[N],tot,cnt,t[N],pd[N];
+int gcd(int a,int b){return b?gcd(b,a%b):a;}
+int lcm(int a,int b){return a*b/gcd(a,b);}
+void add(int a,int b){u[++tot]=a;v[tot]=b;}
+int find(int x){return x==h[x]?x:h[x]=find(h[x]);}
+int main()
+{
+	freopen("divisors.in","r",stdin);
+	freopen("divisors.out","w",stdout);
+	scanf("%d",&n);
+	if(n<=10)
+	{
+		int G=1;
+		for(int i=2;i<=n;++i) G=lcm(G,i);
+		printf("%d ",G);
+		for(int i=2;i<=n;++i) printf("%d ",i);
+		printf("\n");
+		for(int i=2;i<=n;++i) printf("1 %d\n",i);
+		return 0;
+	}
+	for(int i=1;i<=n;++i) t[i]=h[i]=i;
+	for(int i=2;i<=n;++i)
+	{
+		if(bz[i]) continue;
+		int x=i;o++;
+		while(x<=n&&!bz[x]) bz[x]=1,f[o][++len[o]]=x,x=x*2;
+	}
+	for(int i=1;i<=o;++i)
+	{
+		for(int j=1;j<len[i];++j) g[f[i][j]][f[i][j+1]]=1;
+//		for(int j=1;j<=len[i];++j) printf("%d ",f[i][j]);
+//		printf("\n");
+	}
+	for(int i=2;i+i+i<=n;++i) g[i+i][i+i+i]=1,pd[i]=1;
+//	for(int i=1;i<=n;++i)
+//	{
+//		for(int j=1;j<=n;++j) printf("%d ",!pd[i]&&!pd[j]&&g[i][j]);
+//		printf("\n");
+//	}
+	for(int i=1;i<=n;++i)
+		for(int j=i+1;j<=n;++j) if(g[i][j]&&!pd[i]&&!pd[j]) add(i,j);
+	t[++cnt]=f[1][len[1]];add(cnt,f[1][len[1]]);
+	for(int i=2;i<=o;)
+	{
+//		if(len[i]==1)
+		if(i==o||lcm(f[i][len[i]],f[i+1][len[i+1]])>11000) t[++cnt]=f[o][len[o]],add(cnt,f[o][len[o]]),++i;
+		else t[++cnt]=lcm(f[i][len[i]],f[i+1][len[i+1]]),add(cnt,f[i][len[i]]),add(cnt,f[i+1][len[i+1]]),i+=2;
+	}
+//	printf("   %d\n",cnt);
+	while(cnt*3<=n)
+	{
+		cnt++;
+		if(cnt*3<=n) add(cnt,1);
+	}
+	for(int i=1;i<=n;++i) printf("%d ",t[i]);
+	printf("\n");
+	for(int i=1;i<=tot;++i) printf("%d %d\n",u[i],v[i]),h[find(u[i])]=find(v[i]);
+	for(int i=1;i<=n;++i) for(int j=i+1;j<=n;++j) if(find(i)!=find(j)) h[find(i)]=find(j),printf("%d %d\n",i,j);
+}

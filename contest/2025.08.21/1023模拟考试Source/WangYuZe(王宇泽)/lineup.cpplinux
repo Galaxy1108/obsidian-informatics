@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <algorithm>
+#include <cstring>
+#include <iostream>
+using namespace std;
+
+#define fi first
+#define se second
+
+const int NR = 50 + 10;
+
+int n;
+int ans = 0;
+pair<int,int> a[NR];
+
+int main()
+{
+#ifdef WYZ
+	freopen("1.in", "r", stdin);
+	freopen("1.out", "w", stdout);
+#else
+	freopen("lineup.in", "r", stdin);
+	freopen("lineup.out", "w", stdout);
+#endif
+	ios::sync_with_stdio(0);
+	
+	cin >> n;
+	for (int i = 1; i <= n; i++) {
+		int x; cin >> x;
+		a[i] = {x, i};
+	}
+	
+	sort(a + 1, a + n + 1);
+	
+	for (int i = 1; i <= n; i++) ans += (int)abs(i - a[i].se);
+	cout << ans << '\n';
+	
+	return 0;
+}

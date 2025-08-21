@@ -1,0 +1,37 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define p 1000000007
+int n,a[5010];
+long long f[510][510];
+long long ksm(long long x,long long y)
+{
+	long long anss=1;
+	while(y)
+	{
+		if(y&1) anss=anss*x%p;
+		x=x*x%p;y=y>>1;
+	}
+	return anss;
+}
+int main()
+{
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	scanf("%d",&n);
+	long long i,j,k;
+	for(i=1;i<=n;i++) scanf("%d",&a[i]);
+	sort(a+1,a+1+n);
+	long long ans=0,x=1;f[0][1]=1;
+	for(i=1;i<=n;i++)
+	{
+		x*=a[i];x%=p;
+		for(j=1;j<=a[i];j++)
+		{
+			for(k=1;k<=j;k++) f[i][j]+=f[i-1][k],f[i][j]%=p;
+			for(k=j+1;k<=a[i];k++) f[i][k]+=f[i-1][k],f[i][k]%=p;
+		}
+	}
+	for(i=1;i<=a[n];i++) ans+=f[n][i]*i,ans%=p;
+	printf("%lld",ans*ksm(x,p-2)%p);
+	return 0;
+}

@@ -1,0 +1,38 @@
+#include <cstdio>
+#include <algorithm>
+using namespace std;
+int n,ans = 0;
+struct node
+{
+	int id,data;
+};
+node num[55];
+inline bool cmp(node x,node y)
+{
+	if (x.data != y.data)
+		return x.data < y.data;
+	else
+		return x.id < y.id;
+}
+inline int absi(int x)
+{
+	if (x >= 0)
+		return x;
+	else
+		return -x;
+}
+int main()
+{
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	scanf("%d",&n);
+	for (int i = 1;i <= n;i++)
+		scanf("%d",&num[i].data);
+	for (int i = 1;i <= n;i++)
+		num[i].id = i;
+	sort(num + 1,num + n + 1,cmp);
+	for (int i = 1;i <= n;i++)
+		ans += absi(num[i].id - i);
+	printf("%d\n",ans);
+	return 0;
+}

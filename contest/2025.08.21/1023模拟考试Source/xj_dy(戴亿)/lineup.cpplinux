@@ -1,0 +1,63 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define ull unsigned long long
+const double eps = 0.000001;
+inline int read()
+{
+    int x=0,f=1;
+    char ch = getchar();
+    while (ch > '9' || ch < '0')
+        {
+            if (ch == '-')
+                f = -1;
+            ch = getchar();
+        }
+    while (ch <= '9' && ch >= '0')
+        {
+            x = x * 10 + ch - 48;
+            ch = getchar();
+        }
+    return x*f;
+}
+inline void write(int x)
+{
+    if (x < 0)
+        {
+            putchar('-');
+            x = -x;
+        }
+    if (x > 9)
+        write(x/10);
+    putchar(x%10+'0');
+}
+struct stu
+{
+    int h,id;
+};
+stu Index[2010];
+int n,ans;
+bool cmp(stu a,stu b)
+{
+    if (a.h == b.h)
+        return a.id < b.id;
+    else
+        return a.h < b.h;
+}
+int main()
+{
+    //freopen("testdata.txt","r",stdin);
+    freopen("linein.in","r",stdin);
+    freopen("linein.out","w",stdout);
+    n = read();
+    for (int i=1;i<=n;++i)
+        {
+            Index[i].h = read();
+            Index[i].id = i;
+        }
+    sort(Index+1,Index+n+1,cmp);
+    for (int i=1;i<=n;++i)
+        ans += abs(Index[i].id-i);
+    printf("%d",ans);
+    return 0;
+}

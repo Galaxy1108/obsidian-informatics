@@ -1,0 +1,39 @@
+#include <cstdio>
+#include <iostream>
+#include <algorithm>
+#define ll long long
+using namespace std;
+const ll P = 1e9 + 7;
+const int N = 5005;
+int n;
+ll ans, a[N], s[N];
+template <typename T> inline void read(T &ss) {
+	ss = 0;
+	char ch = getchar();
+	for (; !isdigit(ch); ch = getchar());
+	for (; isdigit(ch); ch = getchar()) ss = (ss << 1) + (ss << 3) + (ch ^ 48);
+}
+ll ksm(ll a, ll b) {
+	ll res = 1;
+	for (; b; b >>= 1, a = a * a % P)
+		if (b & 1) res = res * a % P;
+	return res;
+}
+int main() {
+	freopen("dice.in", "r", stdin);
+	freopen("dice.out", "w", stdout);
+	read(n);
+	for (int i = 1; i <= n; ++i) read(a[i]);
+	sort(a + 1, a + 1 + n);
+	s[0] = 1;
+	for (int i = 1; i <= n; ++i) s[i] = s[i - 1] * a[i] % P;
+	for (int i = 0; i < n; ++i) {
+		if (a[i] == a[i + 1]) continue;
+		int k = n - i;
+		ll x = a[i] + 1, y = a[i + 1];
+		for (ll t = x; t <= y; ++t)
+			ans = (ans + t * (ksm(t, k) - ksm(t - 1, k) + P) % P * s[i] % P) % P;
+	}
+	printf("%lld\n", ans * ksm(s[n], P - 2) % P);
+	return 0;
+}

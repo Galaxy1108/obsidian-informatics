@@ -1,0 +1,61 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+using ll = int64_t;
+#define IO(a) freopen(#a".in", "r", stdin), freopen(#a".out", "w", stdout),\
+	cin.tie(0)->sync_with_stdio(0)
+#define F(i, a, b) for (int i = (a), i##end = (b); i <= i##end; i++)
+#define R(i, a, b) for (int i = (a), i##end = (b); i >= i##end; i--)
+
+const int N = 5100, M = 1000000007;
+int n, a[N];
+
+int power(int x, int y) {
+	int ans = 1;
+	for (; y; y >>= 1, x = 1ll * x * x % M) if (y & 1)
+		ans = 1ll * ans * x % M;
+	return ans;
+}
+
+int m, fac[N], ifac[N], f[N][N];
+
+int y[N];
+int calc(int n, int x) {
+	if (x <= 0) return 0;
+	ll ans = 0;
+	F(i, 0, n + 1)
+		y[i] = 1ll * f[i][n] * ifac[i] % M * ifac[n-i+1] % M * ((n-i) & 1 ? 1 : M - 1) % M;
+	int pw = 1;
+	F(i, 0, n + 1) y[i] = 1ll * y[i] * pw % M, pw = 1ll * pw * (x - i) % M;
+	pw = 1;
+	R(i, n + 1, 0) ans += 1ll * y[i] * pw % M, pw = 1ll * pw * (x - i) % M;
+	return ans % M;
+}
+
+int main() {
+	IO(dice);
+	cin >> n;
+	F(i, 1, n) cin >> a[i];
+	fac[0] = 1;
+	F(i, 1, n + 1) fac[i] = 1ll * fac[i - 1] * i % M;
+	ifac[n + 1] = power(fac[n + 1], M - 2);
+	R(i, n + 1, 1) ifac[i - 1] = 1ll * ifac[i] * i % M;
+	F(i, 1, n + 1) assert(1ll * ifac[i] * fac[i] % M == 1);
+
+	sort(a + 1, a + n + 1);
+	ll ans = 0;
+	int inv = 1;
+	F(i, 1, n) inv = 1ll * inv * a[i] % M;
+	inv = power(inv, M - 2) % M;
+
+	F(i, 1, n + 1) f[i][0] = 1;
+	F(i, 1, n + 1) F(j, 1, n) f[i][j] = 1ll * f[i][j - 1] * i % M;
+	F(i, 1, n + 1) F(j, 0, n) f[i][j] = (f[i][j] + f[i - 1][j]) % M;
+
+	F(i, 1, n) {
+		ans += 1ll * inv * calc(n - i + 1, a[i] - 1) % M;
+		ans -= 1ll * inv * calc(n - i + 1, a[i - 1] - 1) % M;
+		inv = 1ll * inv * a[i] % M;
+	}
+	cout << (a[n] + M - ans % M) % M;
+}

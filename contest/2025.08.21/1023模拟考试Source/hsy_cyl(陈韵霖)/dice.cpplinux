@@ -1,0 +1,48 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define re register
+#define ll long long
+#define il inline
+#define file(a) freopen(#a".in","r",stdin);freopen(#a".out","w",stdout);
+inline int read(){
+    int x=0,y=1;char e=getchar();
+    while(e<'0'||e>'9') {
+        if(e=='-') y=-1;
+        e=getchar();
+    }
+    while(e>='0'&&e<='9') {x=x*10+e-'0';e=getchar();}
+    return x*y;
+}
+const ll M=1e9+7;
+int n;
+ll a[5005];
+ll fast_m(ll ai,int bi){
+    ll as=1;
+    while(bi){
+        if(bi&1) as=as*ai%M;
+        ai=ai*ai%M;
+        bi>>=1;
+    }
+    return as;
+}
+ll b[5005];
+ll ans;
+int main(){
+    file(dice);
+    n=read();
+    for(int i=1;i<=n;++i){
+        a[i]=read();
+    }
+    sort(a+1,a+n+1);
+    b[0]=1;
+    for(int i=1;i<=n;++i) b[i]=b[i-1]*a[i]%M;
+    int to=1;
+    for(int i=1;i<a[n];++i){
+        while(a[to]<=i)++to;
+        ans=(ans+fast_m(i,n-to+1)*b[to-1])%M;
+    }
+    ans=((a[n]*b[n]-ans)%M+M)%M;
+    ans=(ans*fast_m(b[n],M-2))%M;
+    printf("%lld",ans);
+    return 0;
+}

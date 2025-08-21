@@ -1,0 +1,130 @@
+#include <bits/stdc++.h>
+using i64 = long long;
+
+inline void file () {
+	freopen("divisors.in", "r", stdin);
+	freopen("divisors.out", "w", stdout);
+}
+
+std::mt19937 Rand(19260817);
+
+/*
+clock_t Start;
+inline double Time () {
+	return (double)(clock() - Start) / CLOCKS_PER_SEC;
+}
+*/
+
+constexpr int N = 205;
+constexpr int M = 6 * N;
+constexpr double dT = 0.9997;
+int n, m;
+
+int gcd[M][M];
+i64 d[M];
+int p[M];
+bool vis[N];
+
+int calc () {
+	static int hmx = -1;
+	
+	memset(vis + 1, 0, n);
+	for (int i = 1; i < n; ++ i) {
+		for (int j = i + 1, g = p[i]; j <= n && g != 1; ++ j) {
+			g = gcd[g][p[j]];
+			if (g <= n) {
+				vis[g] = 1;
+			}
+		}
+	}
+	
+	int ans = std::count(vis + 1, vis + n + 1, 1);
+	
+	if (ans > hmx) {
+		hmx = ans;
+//		Start = clock();
+		std::cerr << "New history : " << hmx << '\n';
+	}
+	
+	if (ans == n) {
+		for (int i = 1; i <= n; ++ i) {
+			std::cout << p[i] << " \n"[i == n];
+		}
+		for (int i = 1; i < n; ++ i) {
+			std::cout << i << ' ' << i + 1 << '\n';
+		}
+		exit(0);
+	}
+	
+	return ans;
+}
+
+int main () {
+	
+	file();
+	std::ios::sync_with_stdio(0);
+	std::cin.tie(nullptr);
+	
+	std::cin >> n;
+	
+	m = 5 * n;
+	
+	for (int x = 1; x <= m; ++ x) {
+		gcd[x][0] = gcd[0][x] = gcd[x][x] = x;
+		for (int y = 1; y < x; ++ y) {
+			gcd[x][y] = gcd[y][x] = gcd[y][x % y];
+		}
+	}
+	
+	for (int i = n / 3 + 1; i <= n; ++ i) {
+		for (int j = i; j <= m; j += i) {
+			d[j] += i * i;
+		}
+	}
+	
+	std::iota(p + 1, p + m + 1, 1);
+	
+/*
+	std::cerr << "p[] = ";
+	for (int i = 1; i <= m; ++ i) {
+		std::cerr << p[i] << " \n"[i == m];
+	}
+*/
+	
+//	calc();
+//	return 0;
+	
+	std::sort(p + 1, p + m + 1, [&](int x, int y) {
+		return d[x] > d[y];
+	});
+	
+//	std::reverse(p + 1, p + n + 1);
+	
+	int cur = calc();
+	for (long double T = 1e6; ; T *= dT) {
+		int x = Rand() % m + 1, y = Rand() % m + 1;
+		while (x == y) {
+			y = Rand() % m + 1;
+		}
+		
+		if (x > n && y > n) {
+			x = Rand() % n + 1;
+		}
+		
+		std::swap(p[x], p[y]);
+		int tmp = calc();
+		
+		if (tmp >= cur) {
+			cur = tmp;
+		} else {
+			double pro = exp((tmp - cur) / T);
+			if (Rand() < (1ll << 32) * pro) {
+				cur = tmp;
+			} else {
+				std::swap(p[x], p[y]);
+			}
+		}
+	}
+	
+	return 0;
+}

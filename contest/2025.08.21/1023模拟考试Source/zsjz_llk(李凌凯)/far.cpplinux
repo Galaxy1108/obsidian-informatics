@@ -1,0 +1,103 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define F(i,a,b) for(int i=a;i<=b;i++)
+#define Fd(i,a,b) for(int i=a;i>=b;i--)
+#define mo 998244353
+#define LL long long
+#define N 22
+#define M 65
+
+int n,m,cnt,ans,tl[N],tr[N],vl[N],vr[N];
+LL l[N],r[N],s;
+int gl[N][2],gr[N][2],mi[M];
+
+int mod(int x){return x>=mo?x-mo:x;}
+
+int count(int x){return x?(x&1)+count(x>>1):0;}
+
+int main(){
+	freopen("far.in","r",stdin);
+	freopen("far.out","w",stdout);
+	scanf("%d%d",&n,&m);
+	mi[0]=1;
+	F(i,1,60)mi[i]=mod(mi[i-1]+mi[i-1]);
+	F(i,1,n)scanf("%lld%lld",&l[i],&r[i]);
+	if(n>20){
+		ans=1;
+		F(i,1,n){
+			printf("%d\n",1ll*ans*mi[(m+1)/2]%mo);
+			ans=1ll*ans*mi[m]%mo;
+		}
+	}else{
+		F(wh,1,n){
+			ans=0;
+			gl[0][0]=gr[wh+1][0]=1;
+			int lst=0;
+			F(S,0,(1<<wh)-1){
+				bool flag=1;
+				F(i,1,wh)if(!l[i]&&!((1ll<<i-1)&S))flag=0;
+				if(!flag)continue;
+				LL w=0;
+				F(i,1,wh)(1<<i-1)&S?w^=r[i]:w^=l[i]-1;
+				int lst=-1;
+				Fd(i,m-1,0){
+					F(j,1,wh){
+						tl[j]=(l[j]-1&(1ll<<i))?1:0;
+						tr[j]=(r[j]&(1ll<<i))?1:0;
+						vl[j]=((l[j]-1&((1ll<<i)-1))+1)%mo;
+						vr[j]=((r[j]&((1ll<<i)-1))+1)%mo;
+					}
+					F(j,1,wh) F(k,0,1){
+						if((1<<j-1)&S)gl[j][k]=1ll*gl[j-1][k^tr[j]]*vr[j]%mo;
+						else gl[j][k]=1ll*gl[j-1][k^tl[j]]*vl[j]%mo;
+					}
+					Fd(j,wh,1) F(k,0,1){
+						if((1<<j-1)&S){
+							gr[j][k]=1ll*gr[j+1][k^tr[j]]*vr[j]%mo;
+							if(tr[j]==1)gr[j][k]=mod(gr[j][k]+1ll*gr[j+1][k]*mi[i]%mo);
+						}else{
+							gr[j][k]=1ll*gr[j+1][k^tl[j]]*vl[j]%mo;
+							if(tl[j]==1)gr[j][k]=mod(gr[j][k]+1ll*gr[j+1][k]*mi[i]%mo);
+						}
+					}
+					int n1=(w&(1ll<<i)?1:0);
+					int n2=(w&(1ll<<m-i-1)?1:0);
+					int tmp=0;
+					F(j,1,wh){
+						if((1<<j-1)&S){
+							if(tr[j]==1){
+								F(x,0,1){
+									if(i<m/2){
+										tmp=mod(tmp+1ll*gl[j-1][x]*gr[j+1][n2^x]%mo);
+									}else{
+										tmp=mod(tmp+1ll*gl[j-1][x]*mod(gr[j+1][0]+gr[j+1][1])%mo*mi[i-m/2]%mo);
+									}
+								}
+							}
+						}else{
+							if(tl[j]==1){
+								F(x,0,1){
+									if(i<m/2){
+										tmp=mod(tmp+1ll*gl[j-1][x]*gr[j+1][n2^x]%mo);
+									}else{
+										tmp=mod(tmp+1ll*gl[j-1][x]*mod(gr[j+1][0]+gr[j+1][1])%mo*mi[i-m/2]%mo);
+									}
+								}
+							}
+						}
+					}
+					if(wh-count(S)&1)ans=mod(ans-tmp+mo);
+					else ans=mod(ans+tmp);
+					if(i<(m+1)/2&&n1!=n2)break;
+					lst=i;
+				}
+				if(lst==0){
+					if(wh-count(S)&1)ans=mod(ans-1+mo);
+					else ans=mod(ans+1);
+				}
+			}
+			printf("%d\n",ans);
+		}
+	}
+	return 0;
+}

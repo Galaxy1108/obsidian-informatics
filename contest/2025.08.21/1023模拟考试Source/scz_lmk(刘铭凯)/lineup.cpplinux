@@ -1,0 +1,83 @@
+#include <bits/stdc++.h>
+using namespace std ;
+
+#define pii pair<int, int>
+#define mp make_pair
+#define pb push_back
+#define fir(i, n, m) for(int i=n;i<=m;i++)
+#define fur(i, n, m) for(int i=n;i>=m;i--)
+int n,  a[55] ;
+
+struct node {
+	int height, tl ;
+	struct WZ {
+		int first, tru ;
+	} wz ;
+} ; node h[55][55] ;
+
+inline int cmp(node x, node y) {
+	return x.height < y.height ;
+}
+
+int main() {
+	
+	freopen("lineup.in", "r", stdin) ;
+	freopen("lineup.out", "w", stdout) ;
+	
+	scanf("%d", &n) ;
+	for (int i = 1; i <= n; ++ i)
+		scanf("%d", &a[i]) ;
+	
+	for (int k = 1; k <= n; ++ k)
+	for (int i = 1; i <= n; ++ i) {
+		h[k][i].wz.first = i ;
+		h[k][i].height = a[i] ;
+	}
+	
+	for (int k = 1; k <= n; ++ k)
+	sort(h[k] + 1, h[k] + n + 1, cmp) ;
+	for (int k = 1; k <= n; ++ k)
+	for (int i = 1; i <= n; ++ i)
+		h[k][i].wz.tru = i ;
+	
+	/*
+	for (int i = 1; i <= n; ++ i) {
+		cout << h[5][i].height << ' ' << h[5][i].wz.first << ' ' << h[5][i].wz.tru ;
+		cout << endl ; 
+	}   cout << endl ;
+	*/
+	
+	for (int k = 1; k <= n; ++ k) {
+		for (int i = k + 1; i <= n; ++ i)
+			if (h[k][i].wz.first != h[k][i].wz.tru) {
+				h[k][i].tl += abs(h[k][i].wz.first - h[k][h[k][i].wz.first].wz.first) ;
+				h[k][h[k][i].wz.first].tl += abs(h[k][i].wz.first - h[k][h[k][i].wz.first].wz.first) ;
+				swap(h[k][i].wz.first, h[k][h[k][i].wz.first].wz.first) ;
+			}
+		for (int i = 1; i <= k; ++ i)
+			if (h[k][i].wz.first != h[k][i].wz.tru) {
+				h[k][i].tl += abs(h[k][i].wz.first - h[k][h[k][i].wz.first].wz.first) ;
+				h[k][h[k][i].wz.first].tl += abs(h[k][i].wz.first - h[k][h[k][i].wz.first].wz.first) ;
+				swap(h[k][i].wz.first, h[k][h[k][i].wz.first].wz.first) ;
+			}
+	}
+	
+	/*
+	for (int i = 1; i <= n; ++ i) {
+		cout << h[5][i].height << ' ' << h[5][i].wz.first << ' ' << h[5][i].wz.tru ;
+		cout << ' ' << h[5][i].tl << endl ; 
+	}   cout << endl ;
+	*/
+	
+	int ans_final = INT_MAX ;
+	for (int k = 1; k <= n; ++ k) {
+		int ans = false ;
+		for (int i = 1; i <= n; ++ i)
+			ans += h[k][i].tl ;
+		ans_final = min(ans_final, ans) ;
+	}
+	
+	printf("%d", ans_final) ;
+	return 0 ;
+	
+}

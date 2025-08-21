@@ -1,0 +1,83 @@
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long LL;
+template <typename T> inline void read(T &FF) {
+    int RR = 1; FF = 0; char CH = getchar();
+    for(; !isdigit(CH); CH = getchar()) if(CH == '-') RR = -RR;
+    for(; isdigit(CH); CH = getchar()) FF = FF * 10 + CH - 48;
+    FF *= RR;
+}
+inline void file(string str) {
+    freopen((str + ".in").c_str(), "r", stdin);
+    freopen((str + ".out").c_str(), "w", stdout);
+}
+const LL mod = 1e9 + 7;
+const int N = 5e3 + 10;
+
+LL fac[N], num[N][N];
+
+LL Qpow(LL x, LL k) {
+    if(k <= 1) return k ? x : 1;
+    LL h = Qpow(x, k / 2); h = h * h % mod;
+    return k & 1 ? h * x % mod : h;
+}
+
+LL Pre[N], Suf[N];
+
+LL solve(const int x, const int k) {
+	LL res = 0;
+    if(x <= k + 2) {
+		for(int i = 1; i <= x; i++)
+			res += num[i][k];
+		return res % mod;
+	}
+    Suf[k + 3] = 1; Pre[0] = 1;
+    for(int i = 1; i <= k + 2; ++i) Pre[i] = Pre[i - 1] * (x - i) % mod;
+    for(int i = k + 2; i >= 1; --i) Suf[i] = Suf[i + 1] * (x - i) % mod;
+	LL s = 0;
+    for(int i = 1; i <= k + 2; ++i) {
+		s = (s + num[i][k]) % mod;
+		res += ((((k + 2) - i) & 1) ? -1LL : 1LL) * (Pre[i - 1] * Suf[i + 1] % mod * fac[i - 1] % mod * fac[(k + 2) - i] % mod) % mod * s % mod;
+	}
+	return res % mod;
+}
+
+
+int n, ai[N]; LL inv[N];
+
+LL calc(int l, int r, int k) {
+	return (solve(r, k) - solve(l - 1, k)) % mod;
+	/*
+    LL res = 0;
+    for(int i = l; i <= r; i++)
+        res += Qpow(i, k);
+    return res % mod;*/
+}
+
+int main() {
+    file("dice");
+    read(n);
+    for(int i = 1; i <= n; i++) read(ai[i]);
+    fac[0] = 1;
+    for(int i = 1; i <= n + 2; i++) fac[i] = fac[i - 1] * i % mod;
+	for(int i = 1; i <= n + 2; i++) fac[i] = Qpow(fac[i], mod - 2);
+	for(int i = 1; i <= n + 2; i++) {
+        num[i][0] = 1;
+        for(int j = 1; j <= n + 2; j++)
+            num[i][j] = num[i][j - 1] * i % mod;
+    }
+    sort(ai + 1, ai + n + 1);
+    inv[n + 1] = 1;
+    for(int i = n; i >= 1; i--)
+        inv[i] = Qpow(ai[i], mod - 2), inv[i] = inv[i] * inv[i + 1] % mod;
+    LL ans = 0;
+    for(int i = 1; i <= n; i++) {
+        if(ai[i] == ai[i - 1]) continue;
+        int l = ai[i - 1] + 1, r = ai[i], k = n - i + 1;
+        LL res = Qpow(r, k + 1) - Qpow(l - 1, k) * l % mod - calc(l, r - 1, k);
+        res = res % mod * inv[i] % mod;
+        ans += res;
+    }
+    cout << (ans % mod + mod) % mod << endl;
+    return 0;
+}

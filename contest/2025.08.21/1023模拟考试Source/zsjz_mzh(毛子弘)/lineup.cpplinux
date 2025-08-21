@@ -1,0 +1,69 @@
+#include <cstdio>
+#include <algorithm>
+using namespace std;
+int n,ans = 100000000;
+int a[55],l[55],r[55];
+bool vis[55];
+void dfs(int sum) {
+	bool flag = 0;
+	for(int i = 1;i < n;++i)
+		if(a[i] > a[i + 1])
+			{flag = 1;break;}
+	if(!flag) {
+		if(ans > sum)ans = sum;
+		return;
+	}
+	for(int i = 1;i <= n;++i) {
+		if(l[i] <= i && i <= r[i])continue;
+		for(int j = r[i];j >= l[i];--j) {
+			if(a[j] == a[i])continue;
+			swap(a[j] , a[i]);
+			swap(l[i] , l[j]);
+			swap(r[i] , r[j]);
+			dfs(sum + abs(i - j)); 
+			swap(a[j] , a[i]);
+			swap(l[i] , l[j]);
+			swap(r[i] , r[j]);
+		}
+	}
+}
+int main() {
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	scanf("%d",&n);
+	bool bz = 0;
+	for(int i = 1;i <= n;++i) {
+		scanf("%d",&a[i]);
+		if(i < n && a[i] > a[i + 1])bz = 1;
+	}
+	if(!bz) {puts("0");return 0;}
+	if(n <= 8) {
+		for(int i = 1;i <= n;++i) {
+			l[i] = 1;
+			for(int j = 1;j <= n;++j)
+				if(a[i] > a[j])++l[i] , ++r[i];
+				else if(a[i] == a[j])++r[i];
+		}
+		dfs(0);
+		printf("%d",ans * 2);
+		return 0;
+	} else {
+		ans = 0;
+		int num = n;
+		while(num--) {
+			int mn = 10000 , u = 0 , v = 0;
+			for(int i = 1;i <= n;++i) {
+				if(vis[i])continue;
+				int w = 0;
+				for(int j = 1;j <= n;++j)
+					if(a[i] >= a[j])++w;
+				if(abs(i - w) < mn)mn = abs(i - w) , u = i , v = w;
+			}
+			vis[v] = 1;
+			swap(a[u] , a[v]);
+			ans += mn;
+		}
+		printf("%d",ans * 2);
+	}
+	return 0;
+}

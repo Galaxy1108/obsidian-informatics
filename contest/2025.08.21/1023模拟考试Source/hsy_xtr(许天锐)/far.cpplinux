@@ -1,0 +1,47 @@
+#include<bits/stdc++.h>
+using namespace std;
+int n,m;
+int l[45],r[45],a[45];
+int ans=0;
+int s[45];
+int checkpalin(int x){
+	int cnt=0;
+	for(int i=1;i<=m;i++)s[i]=0;
+		while(x){
+		s[++cnt]=x%2;
+		x>>=1;
+	}
+	for(int i=1;i<=m/2;i++)if(s[i]!=s[m-i+1])return 0;
+	return 1;
+	
+}
+bool check(int x){
+	int res=0;
+	for(int i=1;i<=x;i++){
+		res^=a[i];
+	}
+	if(checkpalin(res))return 1;
+	else return 0;
+}
+void dfs(int x,int lim){
+	if(x==lim+1){
+		if(check(lim))ans++;
+		return;
+	}
+	for(int i=l[x];i<=r[x];i++){
+		a[x]=i;
+		dfs(x+1,lim);
+	}
+}
+int main(){
+	freopen("far.in","r",stdin);
+	freopen("far.out","w",stdout);
+	cin>>n>>m;
+	for(int i=1;i<=n;i++)cin>>l[i]>>r[i];
+	for(int i=1;i<=n;i++){
+		ans=0;
+		dfs(1,i);
+		cout<<ans<<endl;
+	}
+	return 0;
+}

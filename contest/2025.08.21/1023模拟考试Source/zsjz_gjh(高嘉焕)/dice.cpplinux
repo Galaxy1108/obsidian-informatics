@@ -1,0 +1,68 @@
+#include<bits/stdc++.h>
+#define fo(i,a,b) for(int i=a;i<=b;++i)
+#define fd(i,a,b) for(int i=a;i>=b;--i)
+using namespace std;
+typedef long long ll;
+const int N=5010, mod=1e9+7;
+int n,a[N],ans,f[N][N],fac[N],ifac[N],fac1[N],pre[N];
+inline int add(int a,int b){return a+b>=mod?a+b-mod:a+b;}
+inline int dec(int a,int b){return a>=b?a-b:a-b+mod;}
+int power(ll x,int n){
+	ll a=1;
+	while(n){
+		if(n&1)a=a*x%mod;
+		x=x*x%mod;
+		n>>=1;
+	}
+	return a;
+}
+void init(int n){
+	fac[0]=1;
+	fo(i,1,n+1)fac[i]=(ll)fac[i-1] * i % mod;
+	ifac[n+1]=power(fac[n+1] , mod-2);
+	fd(i,n+1,1)ifac[i-1]=(ll)ifac[i] * i % mod;
+	fo(i,1,n+1){
+		int v=1;
+		fo(j,1,n)f[j][i]=v=(ll)v*i%mod;
+	}
+	fo(i,1,n)
+		fo(j,1,i+1)f[i][j]=add(f[i][j],f[i][j-1]);
+	fo(i,1,n)
+		fo(j,1,i+1){
+			f[i][j]=(ll)f[i][j] * ifac[j] % mod * ifac[i+1-j] % mod;
+			if((i^j^1)&1)f[i][j]=dec(0,f[i][j]);
+		}
+}
+int calc(int c,int x){
+	fac[0]=x;
+	fo(i,1,c+1)fac[i]=(ll)fac[i-1] * dec(x,i) % mod;
+	fac1[c+2]=1;
+	fd(i,c+1,0)fac1[i]=(ll)fac1[i+1] * dec(x,i) % mod;
+	int v=0;
+	fo(i,0,c+1)
+		if(i)v=add(v , (ll)f[c][i] * fac[i-1] % mod * fac1[i+1] % mod);
+		else v=add(v , (ll)f[c][i] * fac[i+1] % mod);
+	return v;
+}
+int main(){
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	scanf("%d",&n);
+	init(n);
+	pre[0]=1;
+	fo(i,1,n)scanf("%d",&a[i]);
+	sort(a+1,a+n+1);
+	fo(i,1,n)pre[i]=(ll)pre[i-1] * a[i] % mod;
+	fo(i,1,n)if(a[i]!=a[i-1]){
+		int val=0;
+		val=power(a[i],n-i+2);
+		int v=calc(n-i+1,a[i]-1),v1=calc(n-i+1,a[i-1]);
+		val=dec(val , dec(v,v1));
+		if(i>1)val=dec(val , (ll)(a[i-1]+1) * power(a[i-1],n-i+1) % mod);
+		ans=add(ans , (ll)val*pre[i-1] % mod);
+	}
+	ans=(ll)ans * power(pre[n],mod-2) % mod;
+	printf("%d\n",ans);
+
+	return 0;
+}

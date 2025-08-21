@@ -1,0 +1,67 @@
+#include<bits/stdc++.h>
+
+using namespace std;
+
+typedef long long ll;
+
+const int MAXN=505;
+const int mod=(1e9+7);
+
+inline int read(int t=0,bool f=1,char c=0){
+	while(!isdigit(c=getchar())) f=c^45;
+	while(isdigit(c)) t=(t<<1)+(t<<3)+(c^48),c=getchar();
+	return f?t:-t;
+}
+
+ll a[MAXN];
+
+ll qpow(int x,int b){
+	ll res=1;
+	ll a=x;
+	while(b){
+		if(b&1) res=res*a%mod;
+		a=a*a%mod;
+		b>>=1;
+	}
+	return res;
+}
+
+ll f[MAXN][MAXN];
+
+int main(){
+
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+
+	int n;
+	cin>>n;
+	ll maxx=0;
+	for(int i=1;i<=n;++i){
+		a[i]=read();
+		maxx=max(maxx,a[i]);
+	}
+
+	f[0][0]=1;
+	for(int i=1;i<=n;++i){
+		ll sum=0;
+		for(ll j=1;j<=a[i];++j){
+			sum+=f[i-1][j-1];
+			sum%=mod;
+			ll mul=qpow(a[i],mod-2)%mod;
+			f[i][j]+=sum*mul%mod+f[i-1][j]*mul%mod*j%mod;
+			f[i][j]%=mod;
+		}
+		for(int j=a[i]+1;j<=maxx;++j)
+			f[i][j]=f[i-1][j];
+	}
+	ll ans=0;
+	for(ll i=1;i<=maxx;++i){
+		ans=(ans+f[n][i]*i%mod)%mod;
+	}
+	cout<<ans<<endl;
+
+
+
+	return 0;
+}
+

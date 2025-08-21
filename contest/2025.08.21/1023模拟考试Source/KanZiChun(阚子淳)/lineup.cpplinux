@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#include <vector>
+#include <algorithm>
+
+#define LOG(FMT...) fprintf(stderr, FMT)
+
+#define eb emplace_back
+
+using namespace std;
+
+typedef long long LL;
+
+constexpr int N = 55;
+
+int n, a[N], b[N], res;
+bool ws[N];
+
+int main() {
+	freopen("lineup.in", "r", stdin);
+	freopen("lineup.out", "w", stdout);
+	scanf("%d", &n);
+	for (int i = 0; i < n; ++i) {
+		scanf("%d", a + i);
+	}
+	memcpy(b, a, n << 2);
+	sort(b, b + n);
+	for (int i = 0; i < n; ++i) {
+		for (int j = 0; j < n; ++j) {
+			if (b[j] == a[i] && !ws[j]) {
+				ws[j] = true;
+				res += abs(i - j);
+				break;
+			}
+		}
+	}
+	printf("%d\n", res);
+	return 0;
+}

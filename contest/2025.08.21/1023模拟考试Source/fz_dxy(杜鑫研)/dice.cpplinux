@@ -1,0 +1,66 @@
+#include<iostream>
+#include<cstdio>
+#include<algorithm>
+#include<cmath>
+#include<cstring>
+#include<cstdlib>
+using namespace std;
+#define re int
+inline int read(){
+	int x=0,ff=1;char c=getchar();
+	while(c<'0'||c>'9'){if(c=='-')ff=-1;c=getchar();}
+	while(c>='0'&&c<='9'){x=(x<<1)+(x<<3)+(c^'0');c=getchar();}
+	return x*ff;
+}
+const int mn=1e9+7;
+inline int ksm(int x,int y=mn-2){
+	int s=1;while(y){
+		if(y&1)s=1ll*s*x%mn;
+		x=1ll*x*x%mn;y>>=1;
+	}
+	return s;
+}
+int n,a[5005],p[5005],qwq[5005][5005];
+inline int md(int x){return x>=mn?x-mn:x;}
+int m,Y[5005],lt[5005],rt[5005],q[5005];
+inline int calc(int x){
+	//cout<<x<<" "<<m<<" "<<Y[x]<<endl;
+	if(x<=m)return Y[x];
+	lt[0]=rt[m+1]=1;int ss=0;
+	for(re i=1;i<=m;i++)lt[i]=1ll*lt[i-1]*(x-i)%mn;
+	for(re i=m;i>0;i--)rt[i]=1ll*rt[i+1]*(x-i)%mn;
+	for(re i=1;i<=m;i++){
+		int u=1ll*lt[i-1]*rt[i+1]%mn;
+		u=1ll*u*q[i-1]%mn*q[m-i]%mn;
+		if((m-i)&1)u=md(mn-u);
+		//cout<<u<<" "<<Y[i]<<endl;
+		ss=md(ss+1ll*u*Y[i]%mn);
+	}
+	return ss;
+}
+int main(){
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	n=read();for(re i=1;i<=n;i++)a[i]=read();
+	sort(a+1,a+n+1);qwq[0][0]=1;q[0]=1;
+	for(re i=1;i<=n;i++)p[i]=ksm(a[i]);
+	for(re i=1;i<=n+3;i++)q[i]=1ll*q[i-1]*ksm(i)%mn;
+	for(re i=1;i<=n+3;i++){
+		qwq[i][0]=1;
+		for(re j=1;j<=n+3;j++)qwq[i][j]=1ll*qwq[i][j-1]*i%mn;
+	}
+	int la=0,ss=0,x,k;
+	for(re i=1;i<=n;i++){
+		if(la==a[i])continue;
+		x=1;k=n-i+1;
+		for(re j=i;j<=n;j++)x=1ll*x*p[j]%mn;
+		m=n-i+1+3;
+		for(re j=1;j<=m;j++){
+			Y[j]=md(Y[j-1]+1ll*j*md(qwq[j][k]-qwq[j-1][k]+mn)%mn);
+		}
+		ss=md(ss+1ll*md(calc(a[i])-calc(la)+mn)*x%mn);
+		la=a[i];
+	}
+	cout<<ss<<endl;
+	return 0;
+}

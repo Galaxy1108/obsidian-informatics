@@ -1,0 +1,37 @@
+#include<cstdio>
+#include<algorithm>
+using namespace std;
+int n, f, ans;
+struct stu{
+	int h, rk;
+}a[51];
+bool cmp(stu x, stu y){
+	return x.h < y.h;
+}
+int main(){
+	freopen("lineup.in", "r", stdin);
+	freopen("lineup.out", "w", stdout);
+	scanf("%d", &n);
+	for(int i = 1; i <= n; i++){
+		scanf("%d", &a[i].h);
+		a[i].rk = i;
+	}
+	stable_sort(a + 1, a + n + 1, cmp);
+	do{
+		f = 0;
+		for(int i = 1; i <= n; i++){
+			if(a[i].rk > i){
+				for(int j = i + 1; j <= n; j++){
+					if(a[i].rk >= j && a[j].rk <= i){
+						ans += j - i;
+						swap(a[i], a[j]);
+						f = 1;
+						break;
+					}
+				}
+			}
+		}
+	}while(f);
+	printf("%d", ans * 2);
+	return 0;
+}

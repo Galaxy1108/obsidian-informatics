@@ -1,0 +1,37 @@
+#include<bits/stdc++.h>
+using namespace std;
+inline int qread()
+{
+	register int a=0,f=1;register char ch=getchar();
+	while(ch>'9'||ch<'0'){if(ch=='-')f=-1;ch=getchar();}
+	while(ch>='0'&&ch<='9'){(a*=10)+=(ch^48);ch=getchar();}
+	return a*f;
+}
+int n,m,l[100010],r[10010],ans,s;
+inline bool check()
+{
+	int pa=m-1,pb=0;
+	while(pa>pb){if(!(s&(1<<pa))!=(!(s&(1<<pb))))return 0;pa--,pb++;}
+	return 1;
+}
+void dfs(register int h)
+{
+	if(!h){ans+=check();return ;}
+	for(register int i=l[h];i<=r[h];++i){s^=i;dfs(h-1);s^=i;}
+	return ;
+}
+inline void solve(register int k)
+{
+	ans=s=0;dfs(k);
+	printf("%d\n",ans);
+	return ;
+}
+int main()
+{
+	freopen("far.in","r",stdin);
+	freopen("far.out","w",stdout);
+	n=qread(),m=qread();
+	for(register int i=1;i<=n;++i)l[i]=qread(),r[i]=qread();
+	for(register int i=1;i<=n;++i)solve(i);
+	return 0;
+}

@@ -1,0 +1,24 @@
+#include<bits/stdc++.h>
+using namespace std;
+int n,a[51],b[51],vis[51];
+int main(){
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	cin>>n;
+	for(int i=1;i<=n;i++){
+		cin>>a[i];
+		b[i]=a[i];
+	}
+	sort(b+1,b+n+1);
+	int ans=0;
+	for(int i=n;i>=1;i--){
+		for(int j=i;j>=1;j--){
+			if(a[j]==b[i]){
+				swap(a[i],a[j]),ans+=2*abs(i-j);
+				break;
+			}
+		}
+	}
+	cout<<ans<<endl;
+	return 0;
+}

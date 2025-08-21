@@ -1,0 +1,24 @@
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long ll;typedef unsigned long long ull;
+template <typename T>inline void read(T &x){bool f=0;x=0;char ch=getchar();while ((ch<'0'||ch>'9')&&ch!='-') ch=getchar();if(ch=='-')ch=getchar(),f=1;while (ch>='0' && ch<='9'){x=(x<<1)+(x<<3)+(ch^48);ch=getchar();}x=f?-x:x;}
+int n,ans;
+int a[55],c[55];
+bool vis[55];
+signed main(){
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	read(n);
+	for(int i=1;i<=n;i++){
+		read(a[i]);c[i]=a[i];
+	}
+	sort(c+1,c+1+n);
+	for(int i=1,xt;i<=n;i++){
+		xt=lower_bound(c+1,c+1+n,a[i])-c;
+//		printf("%lld\n",xt);
+		while(vis[xt])++xt;
+		ans+=abs(xt-i);vis[xt]=1;
+	}
+	printf("%d\n",ans);
+    return 0;
+}

@@ -1,0 +1,60 @@
+#include<bits/stdc++.h>
+#define LL long long
+using namespace std;
+int read(){
+	int x=0,f=1;
+	char ch=getchar();
+	while(!isdigit(ch)){if(ch=='-')f=-1;ch=getchar();}
+	while(isdigit(ch)){x=x*10+ch-'0';ch=getchar();}
+	return x*f;
+}
+const int N = 5010;
+const int MOD = 1e9+7;
+int a[N],n,ma;
+LL cnt,x,y;
+void exgcd(LL a,LL b,LL &x,LL &y){
+	if(b==0){x=1,y=0;return;}
+	exgcd(b,a%b,x,y);
+	int z=x;x=y,y=z-y*(a/b);
+}
+void dfs(int pos,int v){
+	if(pos >= n){cnt+=v;cnt%=MOD;return;}
+	if(v == ma){
+		LL res = v;
+		for(int i=pos+1;i<=n;i++){
+			res*=a[i];
+			res%=MOD;
+		}
+		cnt+=res;
+		cnt%=MOD;
+		return;
+	}
+	
+	pos++;
+	
+	for(int i=1;i<=a[pos];i++){
+		dfs(pos,max(v,i));
+	}
+	return;
+}
+int main(){
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	n = read();
+	
+	LL res = 1;
+	for(int i = 1;i<=n;i++){
+		a[i]=read();
+		res*=a[i];
+		res%=MOD;
+		ma=max(ma,a[i]);
+	}
+	
+	dfs(0,0);
+	exgcd(res,MOD,x,y);
+	cnt *= x;
+	cnt %= MOD;
+	printf("%ld\n",cnt);
+
+	return 0;
+}

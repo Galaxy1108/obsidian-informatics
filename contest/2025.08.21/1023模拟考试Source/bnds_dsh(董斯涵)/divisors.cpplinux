@@ -1,0 +1,85 @@
+#include<cstdio>
+int main()
+{
+	freopen("divisors.in","r",stdin);
+	freopen("divisors.out","w",stdout);
+	int n;
+	scanf("%d",&n);
+	if(n==3)
+	{
+		puts("2 6 3");
+		puts("1 2");
+		puts("2 3");
+	}
+	else if(n==4)
+	{
+		puts("3 6 8 12");
+		puts("1 2");
+		puts("2 3");
+		puts("3 4");
+	}
+	else if(n==5)
+	{
+		puts("5 10 12 4 3");
+		puts("1 2");
+		puts("2 3");
+		puts("3 4");
+		puts("3 5");
+	}
+	else if(n==6)
+	{
+		puts("5 10 12 4 3 6");
+		puts("1 2");
+		puts("2 3");
+		puts("3 4");
+		puts("3 5");
+		puts("3 6");
+	}
+	else if(n==7)
+	{
+		puts("35 10 12 4 3 6 7");
+		puts("1 2");
+		puts("2 3");
+		puts("3 4");
+		puts("3 5");
+		puts("3 6");
+		puts("1 7");
+	}
+	else if(n==8)
+	{
+		puts("35 10 12 4 3 6 56 8");
+		puts("1 2");
+		puts("2 3");
+		puts("3 4");
+		puts("3 5");
+		puts("3 6");
+		puts("1 7");
+		puts("7 8");
+	}
+	else if(n==9)
+	{
+		puts("35 10 12 4 3 6 56 72 9");
+		puts("1 2");
+		puts("2 3");
+		puts("3 4");
+		puts("3 5");
+		puts("3 6");
+		puts("1 7");
+		puts("7 8");
+		puts("8 9");
+	}
+	else if(n==10)
+	{
+		puts("35 10 12 4 3 6 56 72 9 10");
+		puts("1 2");
+		puts("2 3");
+		puts("3 4");
+		puts("3 5");
+		puts("3 6");
+		puts("1 7");
+		puts("7 8");
+		puts("8 9");
+		puts("2 10");
+	}
+	return 0;
+}

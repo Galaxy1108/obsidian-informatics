@@ -1,0 +1,81 @@
+#pragma GCC optimize(2)
+#include<cstdio>
+#include<algorithm>
+using namespace std;
+const int N=5010,mod=1e9+7;
+int a[N],b[N],fac[N],inv[N],pre[N],suf[N],f[N],g[N],pri[N],num;
+bool vis[N];
+int redd(){
+	int xx=0,fl=1;char ch=getchar();
+	while((ch<'0'||ch>'9')&&ch!='-')ch=getchar();
+	if(ch=='-'){ch=getchar();fl=-1;}
+	for(;ch>='0'&&ch<='9';ch=getchar())
+		xx=(xx<<3)+(xx<<1)+ch-'0';
+	return xx*fl;
+}
+int ksm(int x,int y){
+	int res=1;
+	while(y){
+		if(y&1)res=1ll*res*x%mod;
+		x=1ll*x*x%mod;
+		y>>=1;
+	}
+	return res;
+}
+int query(int n,int k){
+	int m,now,ans=0;
+	m=k+3;num=0;
+	g[1]=1;
+	for(int i=2;i<=m;i++){
+		if(!vis[i]){
+			pri[++num]=i;
+			g[i]=ksm(i,k);
+		}
+		for(int j=1;j<=num&&i*pri[j]<=m;j++){
+			vis[i*pri[j]]=1;
+			g[i*pri[j]]=1ll*g[i]*g[pri[j]]%mod;
+			if(i%pri[j]==0)break;
+		}
+	}
+	for(int i=1;i<=m;i++)
+		f[i]=(f[i-1]+1ll*i*((g[i]-g[i-1]+mod)%mod)%mod)%mod;
+	if(n<=m)return f[n];
+	pre[0]=1;
+	for(int i=1;i<=m;i++)pre[i]=1ll*pre[i-1]*(n-i)%mod;
+	suf[m+1]=1;
+	for(int i=m;i>=1;i--)suf[i]=1ll*suf[i+1]*(n-i)%mod;
+	for(int i=1;i<=m;i++){
+		if((m-i)&1)now=(mod-f[i])%mod;
+		else now=f[i];
+		now=1ll*now*pre[i-1]%mod*suf[i+1]%mod;
+		now=1ll*now*inv[i-1]%mod*inv[m-i]%mod;
+		ans=(ans+now)%mod;
+	}
+	return ans;
+}
+int ask(int x,int y,int k){
+	return (query(y,k)-query(x-1,k)+mod)%mod;
+}
+int main(){
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	int n,m,now,res,ans=0;
+	n=redd();
+	for(int i=1;i<=n;i++)a[i]=b[i]=redd();
+	sort(b+1,b+n+1);
+	m=unique(b+1,b+n+1)-b-1;
+	fac[0]=1;
+	for(int i=1;i<=n+5;i++)fac[i]=1ll*fac[i-1]*i%mod;
+	inv[n+5]=ksm(fac[n+5],mod-2);
+	for(int i=n+4;i>=0;i--)inv[i]=1ll*inv[i+1]*(i+1)%mod;
+	for(int i=1;i<=m;i++){
+		now=0;res=1;
+		for(int j=1;j<=n;j++)
+			if(a[j]>=b[i])now++;
+			else res=1ll*res*a[j];
+		ans=(ans+1ll*res*ask(b[i-1]+1,b[i],now)%mod)%mod;
+	}
+	for(int i=1;i<=n;i++)ans=1ll*ans*ksm(a[i],mod-2)%mod;
+	printf("%d\n",ans);
+	return 0;
+}

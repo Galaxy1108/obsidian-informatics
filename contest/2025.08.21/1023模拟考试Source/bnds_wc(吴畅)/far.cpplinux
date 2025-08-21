@@ -1,0 +1,127 @@
+#include <bits/stdc++.h>
+#define ru(i, l, r) for (int i = l; i <= r; i++)
+#define rd(i, r, l) for (int i = r; i >= l; i--)
+#define ll long long
+#define fi first
+#define se second
+#define maxn 65
+#define maxm 65
+using namespace std;
+const int mo = 998244353;
+inline int read() {
+	int x = 0; char ch = getchar();
+	while(!isdigit(ch)) ch = getchar();
+	while(isdigit(ch)) x = x * 10 + ch - '0', ch = getchar();
+	return x;
+}
+int n, m;
+ll l[maxn], r[maxn];
+int lv[maxn][maxm], rv[maxn][maxm];
+int slv[maxn][maxm], srv[maxn][maxm];
+int f[maxn][maxm][2], slas[maxm][2];
+unordered_map<int, int> F[2][maxm], S[2][maxm];
+inline void upd(int &x, int y) {
+	x += y; if(x >= mo) x -= mo;
+}
+void work(int L, int beg, int tp) {
+	ru(i, 0, (1 << L) - 1) {
+		//printf("!! %d   ", tp);
+		//ru(j, 0, L - 1) printf("%d ", ((i >> j) & 1)); printf("\n");
+		ru(j, 0, m - 1) ru(k, 0, 1) f[L][j][k] = 0;
+		f[L][0][0] = 1;
+		ll sum = 0;
+		ru(j, 0, L - 1) {
+			if((i >> j) & 1) sum ^= l[beg + j];
+			else sum ^= r[beg + j];
+		}
+		int tt = 0;
+		rd(j, L - 1, 0) {
+			if(i == 0) tt = 1;
+			else tt |= (((i ^ (i - 1)) >> j) & 1);
+			if(!tt) continue;
+			ru(k, 0, m - 1) ru(a, 0, 1) slas[k][a] = f[j + 1][k][a], f[j][k][a] = 0;
+			ru(a, 0, 1) ru(k, 1, m - 1) upd(slas[k][a], slas[k - 1][a]);
+			if((i >> j) & 1) {
+				ru(k, 0, m - 1) ru(a, 0, 1) {
+					if(k) upd(f[j][k][a], (ll)f[j + 1][k][a] * slv[beg + j][k - 1] % mo);
+					upd(f[j][k][a ^ 1], (ll)f[j + 1][k][a] * lv[beg + j][k] % mo);
+					if(k) upd(f[j][k][1], (ll)lv[beg + j][k] * slas[k - 1][a] % mo);
+				}
+				ru(k, 0, m - 1) ru(a, 0, 1) upd(f[j][k][a], f[j + 1][k][a]);
+			}
+			else {
+				ru(k, 0, m - 1) ru(a, 0, 1) {
+					if(k) upd(f[j][k][a], (ll)f[j + 1][k][a] * srv[beg + j][k - 1] % mo);
+					upd(f[j][k][a ^ 1], (ll)f[j + 1][k][a] * rv[beg + j][k] % mo);
+					if(k) upd(f[j][k][1], (ll)rv[beg + j][k] * slas[k - 1][a] % mo);
+				}
+				if(l[beg + j] == r[beg + j]) continue;
+				ru(k, 0, m - 1) ru(a, 0, 1) upd(f[j][k][a], f[j + 1][k][a]);
+			}
+		}
+		int st = 0;
+		ru(j, 0, m / 2 - 1) {
+			int x = ((sum >> j) & 1) ^ ((sum >> (m - 1 - j)) & 1);
+			st ^= ((ll)x << j);
+		}
+		int tot = 0;
+		ru(j, 0, m - 1) {
+			upd(S[tp][j][st], tot);
+			ru(a, 0, 1) {
+				int nxtst = st;
+				if(j < m / 2) nxtst ^= (a << j);
+				upd(F[tp][j][nxtst], f[0][j][a]);
+				upd(S[tp][j][nxtst], f[0][j][a]);
+				upd(tot, f[0][j][a]);
+			}
+			if(j < m / 2) st ^= (st & (1 << j));
+		}
+	}
+}
+int solve() {
+	ru(i, 0, 1) ru(j, 0, m) F[i][j].clear(), S[i][j].clear();
+	int x = n / 2, y = n - x;
+	work(x, 0, 0), work(y, x, 1);
+	int ans = 0;
+	//ru(i, 0, m) {
+	//	printf("%d\n", i);
+	//	
+	//}
+	ru(i, 0, m - 1) {
+		int tmp = 1;
+		ru(j, 1, i) tmp = (ll)tmp * ((mo + 1) / 2) % mo;
+		ru(j, m / 2, i - 1) tmp = (ll)tmp * 2 % mo;
+		for (auto v: F[0][i]) {
+			upd(ans, (ll)v.se * (S[1][i][v.fi] + mo - F[1][i][v.fi]) % mo * tmp % mo);
+		}
+		for (auto v: S[0][i]) {
+			upd(ans, (ll)v.se * F[1][i][v.fi] % mo * tmp % mo);
+			//if(n == 3) printf("%d  %d %d %d %d %d\n", i, v.fi, v.se, S[0][i][v.fi], F[1][i][v.fi], S[1][i][v.fi]);
+		}
+	}
+	return ans;
+}
+int ans[maxn];
+int main() {
+	freopen("far.in", "r", stdin);
+	freopen("far.out", "w", stdout);
+	n = read(), m = read();
+	ru(i, 0, n - 1) {
+		scanf("%lld%lld", &l[i], &r[i]);
+		rd(j, m - 1, 0) if((l[i] >> (j + 1)) ^ (r[i] >> (j + 1))) {
+			if(!((l[i] >> j) & 1)) lv[i][j] = (1ll << j) % mo;
+			if((r[i] >> j) & 1) rv[i][j] = (1ll << j) % mo;
+		}
+	}
+	ru(i, 0, n - 1) {
+		ru(j, 0, m - 1) slv[i][j] = lv[i][j], srv[i][j] = rv[i][j];
+		ru(j, 1, m - 1) upd(slv[i][j], slv[i][j - 1]), upd(srv[i][j], srv[i][j - 1]);
+	}
+	int N = n;
+	while(n) {
+		ans[n] = solve();
+		n--;
+	}
+	ru(i, 1, N) printf("%d\n", ans[i]);
+	return 0;
+}

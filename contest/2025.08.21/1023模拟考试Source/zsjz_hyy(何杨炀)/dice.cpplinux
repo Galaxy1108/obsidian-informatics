@@ -1,0 +1,43 @@
+#include<cstdio>
+#include<algorithm>
+#define LL long long
+using namespace std;
+const int P = 1e9 + 7, N = 5050;
+int n; LL a[N], x[N], y[N];
+
+LL fpow(LL x, LL y) {
+	LL res = 1;
+	for (; x; x >>= 1, y = y * y % P)
+		if (x & 1) res = res * y % P;
+	return res;
+}
+int main()
+{
+	freopen("dice.in", "r", stdin);
+	freopen("dice.out", "w", stdout);
+	scanf("%d",&n);
+	for (int i = 1; i <= n; i++) scanf("%lld",&a[i]);
+	sort(a + 1, a + 1 + n); LL ans = a[n] + 1LL, sum = 1LL;
+	for (int i = 1; i <= n; i++) ans = ans * a[i] % P, sum = sum * a[i] % P;
+	sum = fpow(P - 2, sum);
+	if (a[n] == a[1]) {
+		for (int i = 1; i <= n + 2; i++)
+			x[i] = i, y[i] = (y[i - 1] + fpow(n, i)) % P;
+		LL tmp = 0;
+		for (int i = 1; i <= n + 2; i++) {
+			LL res = 1, div = 1;
+			for (int j = 1; j <= n + 2; j++)
+				if (i != j) res = res * (a[n] - x[j] + P) % P, div = div * (x[i] - x[j]) % P; 
+			(tmp += res * fpow(P - 2, div) % P * y[i] % P) %= P;
+		}
+		printf("%lld\n", (ans + P - tmp) % P * sum % P);
+		return 0;
+	}
+	LL S = 1, tmp = 0;
+	for (int i = 1; i <= n; i++) {
+		for (int j = a[i - 1] + 1; j <= a[i]; j++)
+			(tmp += fpow(n - i + 1, j) * S % P) %= P;
+		S = S * a[i] % P;
+	}
+	printf("%lld\n", (ans + P - tmp) % P * sum % P);
+}

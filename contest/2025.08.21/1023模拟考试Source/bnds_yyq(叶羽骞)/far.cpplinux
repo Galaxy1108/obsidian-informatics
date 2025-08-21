@@ -1,0 +1,48 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+//x的后m位即x对(1<<m-1)取模
+//回文串 
+
+#define int long long
+#define MAXN 45
+
+int n,m,l[MAXN] = {0},r[MAXN] = {0},lowb[MAXN] = {0},ans = 0;
+
+void dfs( int x , int now , int aim ){
+	if( x == aim + 1 ){
+		memset( lowb , 0 , sizeof( int ) * ( m + 2 ) );
+		for( int i = 1 ; i <= m ; i ++ ){
+			lowb[i] = now % 2;
+			now /= 2;
+		}
+		int flag = 0;
+		for( int i = 1 ; i <= m ; i ++ ){
+			if( lowb[i] != lowb[m - i + 1] ){
+				flag = 1;
+				break;
+			}
+		}
+		if( !flag ) ans ++;
+		return;
+	}
+	for( int i = l[x] ; i <= r[x] ; i ++ )
+		dfs( x + 1 , now ^ i , aim );
+}
+
+int solve( int x ){
+	ans = 0;
+	dfs(1,0,x);
+	return ans;
+}
+
+signed main(){
+	freopen("far.in","r",stdin);
+	freopen("far.out","w",stdout);
+	scanf("%lld%lld",&n,&m);
+	for( int i = 1 ; i <= n ; i ++ ) scanf("%lld%lld",&l[i],&r[i]);
+	for( int i = 1 ; i <= n ; i ++ ) printf("%lld\n",solve( i ));
+	fclose(stdin);
+	fclose(stdout);
+	return 0;
+}

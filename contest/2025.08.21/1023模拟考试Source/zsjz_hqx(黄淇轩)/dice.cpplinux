@@ -1,0 +1,76 @@
+#include<cstdio>
+#include<vector>
+#include<cstring>
+#include<algorithm>
+using namespace std;
+using uni=unsigned;
+using ll=long long;
+using db=double;
+const int N=5010,FSIZE=1<<26,mo=1000000007;
+int n,a[N],ans,pre[N],nxt[N],fac[N],inv[N],f[N],cnt,pr[N];
+bool no[N];
+char BuF[FSIZE],*InF=BuF;
+template<typename T>void read(T &x){
+    for(;48>*InF||*InF>57;++InF);
+    for(x=0;47<*InF&&*InF<58;x=x*10+(*InF++^48));
+}
+ll power(ll base,int m){
+    ll re=1;
+    for(;m;m>>=1,base=base*base%mo)
+        if(m&1) re=re*base%mo;
+    return(re);
+}
+ll lang(int n,int x){
+    if(x<=n+1) return(f[x]);
+    ll re=0;
+    for(int i=pre[0]=nxt[n+2]=1;i<=n;++i) pre[i]=(ll)pre[i-1]*(x-i)%mo;
+    for(int i=n+1;i;--i) nxt[i]=(ll)nxt[i+1]*(x-i)%mo;
+    for(int i=1;i<=n+1;++i){
+        ll d=(ll)inv[i-1]*inv[n+1-i]%mo*((((n-i)&1)<<1)-1),
+            u=(ll)pre[i-1]*nxt[i+1]%mo;
+        if(d<0) d+=mo;
+        re=(re+d*u%mo*f[i]%mo)%mo;
+    }
+    return(re);
+}
+int main(){
+    freopen("dice.in","r",stdin);
+    freopen("dice.out","w",stdout);
+    fread(BuF,1,FSIZE,stdin);
+    read(n);
+    for(int i=2;i<=n+1;++i){
+        if(!no[i]) pr[cnt++]=i;
+        for(int j=0;j<cnt&&(ll)i*pr[j]<=n+1;++j){
+            no[i*pr[j]]=1;
+            if(!(i%pr[j])) break;
+        }
+    }
+    for(int i=1;i<=n;++i) read(a[i]);
+    for(int i=fac[0]=1;i<=n+2;++i) fac[i]=(ll)fac[i-1]*i%mo;
+    inv[n+2]=power(fac[n+2],mo-2);
+    for(int i=n+2;i;--i) inv[i-1]=(ll)inv[i]*i%mo;
+    sort(a+1,a+n+1);
+    int all=1;
+    for(int i=0;i<n;all=(ll)all*a[++i]%mo)
+        if(a[i]<a[i+1]){
+            ans+=(power(a[i+1],n-i)*a[i+1]-power(a[i],n-i)*(a[i]+1))*all%mo;
+            if(ans>=mo) ans-=mo;
+            if(ans<0) ans+=mo;
+            f[1]=1;
+            for(int j=2;j<=n-i+2;++j){
+                if(!no[j]) f[j]=power(j,n-i);
+                for(int k=0;k<cnt&&j*pr[k]<=n-i+2;++k){
+                    f[j*pr[k]]=(ll)f[j]*f[pr[k]]%mo;
+                    if(!(j%pr[k])) break;
+                }
+            }
+            for(int j=2;j<=n-i+2;++j)f[j]=(f[j-1]+f[j])%mo;
+            ans-=(lang(n-i+1,a[i+1]-1)-lang(n-i+1,a[i]))*all%mo;
+            if(ans<0) ans+=mo;
+            if(ans>=mo) ans-=mo;
+        }
+    printf("%lld\n",ans*power(all,mo-2)%mo);
+    fclose(stdin);
+    fclose(stdout);
+    return(0);
+}

@@ -1,0 +1,31 @@
+#include<bits/stdc++.h>
+using namespace std;
+inline int read(){
+	int ans=0,a=getchar();
+	while('0'>a||a>'9')a=getchar();
+	while('0'<=a&&a<='9')ans=ans*10+a-'0',a=getchar();
+	return ans;
+}
+struct node{
+	int num,id;
+}pos[100005];
+int n;
+inline bool cmp(node x,node y){
+	if(x.num==y.num)return x.id<y.id;
+	return x.num<y.num;
+}
+int main(){
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	n=read();
+	for(int i=1;i<=n;i++){
+		pos[i].num=read(),pos[i].id=i;
+	}
+	sort(pos+1,pos+n+1,cmp);
+	int ans=0;
+	for(int i=1;i<=n;i++){
+		ans+=abs(pos[i].id-i);
+	}
+	cout<<ans<<endl;
+	return 0;
+}

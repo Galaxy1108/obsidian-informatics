@@ -1,0 +1,46 @@
+#include<cstdio>
+#include<algorithm>
+using namespace std;
+const int mo=1e9+7;
+int n,a[5010],ans,sum;
+
+int ksm(int x,int y,int mo)
+{
+    int ret=1;
+    for (;y;y>>=1)
+    {
+        if (y&1) ret=1ll*ret*x%mo;
+        x=1ll*x*x%mo;
+    }
+    return ret;
+}
+
+#define gc() (fp==fq&&(fq=(fp=fr)+fread(fr,1,1<<20,stdin))==fp?EOF:*fp++)
+char fr[1<<21],*fp=fr,*fq=fr;
+inline void read(int &res)
+{
+    res=0;char ch=gc();
+    while(ch<'0'||ch>'9') ch=gc();
+    while('0'<=ch&&ch<='9') res=(res<<1)+(res<<3)+(ch^48),ch=gc();
+}
+
+signed main()
+{
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	read(n);
+	for (int i=1;i<=n;i++)
+		read(a[i]);
+	sort(a+1,a+n+1);
+	sum=1;
+	for (int i=1,j=1;i<=a[n];i++)
+	{
+		while (i>a[j]) sum=1ll*sum*a[j]%mo,j++;
+		ans=(ans+1ll*i*((ksm(i,n-j+1,mo)-ksm(i-1,n-j+1,mo)+mo)%mo)%mo*sum%mo);
+	}
+	sum=1;
+	for (int i=1;i<=n;i++)
+		sum=1ll*sum*a[i]%mo;
+	printf("%lld\n",1ll*ans*ksm(sum,mo-2,mo)%mo);
+	return 0;
+}

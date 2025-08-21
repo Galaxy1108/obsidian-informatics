@@ -1,0 +1,97 @@
+#include<iostream>
+#include<cstdio>
+#define ll long long
+using namespace std;
+const int mod=1000000007,N=5010;
+struct Edge{
+	int to,nxt,v;//to:面数,v:这个面数的骰子数量 
+	ll p;//p:to^v
+}e[N];
+int head,cnt,maxa,n;
+ll ans,sum=1;
+void add(int to){
+	e[++cnt].to=to;
+	e[cnt].nxt=head;
+	head=cnt;
+	e[cnt].v=1;
+	e[cnt].p=to;
+	return;
+}
+ll qwq(ll x,int k){
+	if(x==0) return 0;
+	if(k==0) return 1;
+	if(k==1) return (ll)x%mod;
+	if(k==2) return (ll)x*x%mod;
+	return qwq(x*x%mod,k/2)%mod*qwq(x%mod,k%2)%mod;
+}
+int main(){
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	scanf("%d",&n);
+	bool find;
+	int a;
+	for(int i=1;i<=n;i++){
+		scanf("%d",&a);
+		maxa=max(maxa,a);
+		find=false;
+		for(int j=head;j;j=e[j].nxt){
+			int to=e[j].to;
+			if(to==a){
+				find=true;
+				e[j].p*=to;
+				e[j].p%=mod;
+				e[j].v++;
+				break;
+			}
+		}
+		if(!find){
+			add(a);
+		}
+	}
+	int lst=0;
+	for(int i=head;i;i=e[i].nxt){//排序 
+		for(int j=e[i].nxt;j;j=e[j].nxt){
+			if(e[j].to<e[i].to){
+				e[i].nxt=e[j].nxt;
+				if(lst) e[lst].nxt=j;
+				else head=j;
+				e[j].nxt=i;
+				i=j;
+			}
+		}
+		lst=i;
+	}
+	int to=e[head].to,v=e[head].v,t=0;
+	ll p=e[head].p;
+	for(int i=1,j=head;i<=maxa;i++){
+		if(to==i){
+			//test\
+			printf("i=%d,j=%d,to=%d,p=%lld,v=%d,ans=%lld,sum=%lld,t=%d\n",i,j,to,p,v,ans,sum,t);
+			t+=e[j].v;
+			ans+=i*sum%mod*(qwq(i,n-t)*p%mod+mod-qwq(i-1,n-t+v)%mod)%mod;//投出i的期望
+			sum*=p;//总共的可能性 (分母下面)
+			j=e[j].nxt;
+			to=e[j].to,p=e[j].p,v=e[j].v;
+			//test\
+			printf("ans=%lld,sum=%lld\n\n",ans,sum);
+		}else{
+			//printf("i=%d,ans=%lld,sum=%lld\n",i,ans,sum);
+			ans+=i*sum%mod*(qwq(i,n-t)%mod+mod-qwq(i-1,n-t)%mod)%mod;
+			//printf("ans=%lld,sum=%lld\n\n",ans,sum);
+		}
+		ans%=mod,sum%=mod;
+	}
+	//test\
+	printf("ans=%lld,sum=%lld\n",ans,sum);
+	//test
+	ll b=ans*qwq(sum,mod-2)%mod;
+	printf("%lld",b%mod);
+	return 0;
+}
+/*
+最大值为x的骰子有s[x]个 
+p[x]=x^s[x]
+投出最大值为x的情况
+减去一个能达到x的骰子,其余的min(x,i)^s[i]的乘积 
+
+*/

@@ -1,0 +1,80 @@
+#include<bits/stdc++.h>
+#define ll long long    
+#define ull unsigned long long
+#define db double
+#define ldb long double
+#define pb push_back
+#define mp make_pair
+#define pii pair<int, int>
+#define FR first
+#define SE second
+using namespace std;
+inline int read() {
+    int x = 0; bool op = 0;
+    char c = getchar();
+    while(!isdigit(c))op |= (c == '-'), c = getchar();
+    while(isdigit(c))x = (x << 1) + (x << 3) + (c ^ 48), c = getchar();
+    return op ? -x : x;
+}
+const int N = 5e3 + 10;
+const int P = 1e9 + 7;
+void add(int &a, int b) {a = (a + b) % P;}
+void sub(int &a, int b) {a = (a - b + P) % P;}
+int ksm(int x, int k) {
+    int res = 1;
+    for(int pw = x; k; (k & 1) ? res = 1ll * res * pw % P : 0, pw = 1ll * pw * pw % P, k >>= 1);
+    return res;
+}
+int n;
+int a[N], val[N], pw[N][N];
+void init(int x) {
+    for(int i = 1; i <= x + 2; i++) {
+        val[i] = val[i - 1]; add(val[i], pw[i][x]);
+    }
+    return ;
+}
+int pre[N], suf[N], fac[N], ifac[N], inv[N];
+int calc(int x, int y) {
+    int res = 0;
+    pre[0] = suf[y + 3] = 1;
+    for(int i = 1; i <= y + 2; i++)pre[i] = 1ll * pre[i - 1] * (x - i) % P;
+    for(int i = y + 2; i; i--)suf[i] = 1ll * suf[i + 1] * (x - i) % P;
+    for(int i = 1; i <= y + 2; i++) {
+        int coef = 1ll * ifac[i - 1] * ifac[y + 2 - i] % P * pre[i - 1] % P * suf[i + 1] % P;
+        coef = (coef + P) % P;
+        if((y + 2 - i) & 1)sub(res, 1ll * coef * val[i] % P);
+        else add(res, 1ll * coef * val[i] % P);
+    }
+    return res;
+}
+int main() { 
+    freopen("dice.in", "r", stdin);
+    freopen("dice.out", "w", stdout);
+    n = read();
+    for(int i = 1; i <= n; i++)a[i] = read();
+    sort(a + 1, a + 1 + n);
+    int ans = 1;
+    ifac[0] = fac[0] = 1;
+    for(int i = 1; i < N; i++)fac[i] = 1ll * fac[i - 1] * i % P;
+    ifac[N - 1] = ksm(fac[N - 1], P - 2);
+    for(int i = N - 2; i; i--)ifac[i] = 1ll * ifac[i + 1] * (i + 1) % P;
+    for(int i = 1; i <= n + 5; i++) {
+        pw[i][0] = 1;
+        for(int j = 1; j <= n + 5; j++) {
+            pw[i][j] = 1ll * pw[i][j - 1] * i % P;
+        }
+    }
+    for(int i = 1; i <= n; i++)inv[i] = ksm(a[i], P - 2);
+    for(int i = 1; i <= n; i++) {
+        add(ans, a[i] - a[i - 1]);
+        int coef = 1;
+        for(int j = i; j <= n; j++) {
+            coef = 1ll * coef * inv[j] % P;
+        }
+        init(n - i + 1);
+        sub(ans, 1ll * coef * calc(a[i], n - i + 1) % P); 
+        add(ans, 1ll * coef * calc(a[i - 1], n - i + 1) % P);
+    }
+    printf("%d\n", ans);
+    return 0;
+}

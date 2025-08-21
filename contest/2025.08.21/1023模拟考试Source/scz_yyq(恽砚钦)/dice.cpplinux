@@ -1,0 +1,51 @@
+#include<bits/stdc++.h>
+#define lowbit(x) x&(-x)
+#define int long long
+using namespace std;
+const int p=1000000007;
+inline int read(){
+	int f=1,x=0;char ch=getchar();
+	while(ch>'9'||ch<'0'){if(ch=='-')f=-1;ch=getchar();}
+	while(ch>='0'&&ch<='9'){x=(x<<1)+(x<<3)+(ch^48);ch=getchar();}
+	return x*f;
+}
+inline void write(int x){
+	char ch;stack<int>y;
+	if(x==0){putchar('0');return;}
+	if(x<0){putchar('-');x=-x;}
+	while(x!=0){y.push(x%10);x/=10;}
+	while(!y.empty()){ch=(y.top()^48);putchar(ch);y.pop();}
+	return;
+}
+int ksm(int x,int y){
+	if(y==0)return x;
+	int ly=lowbit(y);
+	if(y!=ly){return (ksm(x,ly)*ksm(x,y-ly))%p;}
+	while(y!=1){
+		x*=x;x%=p;
+		y/=2;
+	}
+	return x;
+}
+signed main(){
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	int n=read(),a[5005],f[5],ans=0,cnt=0;
+	for(int i=1;i<=n;i++)a[i]=read();
+	a[0]=0;a[n+1]=0;
+	sort(a+1,a+n+1);
+	f[0]=1;//f[0]:<a[i] f[1]:<=a[i]
+	for(int i=n;i>=0;i--){
+		cnt++;
+		if(a[i]<a[i+1]){
+			for(int j=a[i+1];j>a[i];j--){
+				f[1]=f[0];
+				f[0]=((f[1]*ksm(j-1,cnt-1))%p*ksm(ksm(j,cnt-1),p-2))%p;
+				ans+=((f[1]-f[0]+p)*j)%p;
+				ans%=p;
+			}
+		}
+	}
+	write(ans);putchar('\n');
+	return 0;
+}

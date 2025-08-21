@@ -1,0 +1,45 @@
+#include<bits/stdc++.h>
+using namespace std;
+const int mod=1e9+7;
+inline int qread()
+{
+	register int a=0,f=1;register char ch=getchar();
+	while(ch>'9'||ch<'0'){if(ch=='-')f=-1;ch=getchar();}
+	while(ch>='0'&&ch<='9'){(a*=10)+=(ch^48);ch=getchar();}
+	return a*f;
+}
+int n,a[100010],p;
+long long sum[100010],ans,an[100010];
+inline long long qpow(register long long x,register int y)
+{
+	if(y==0)return 1;
+	long long cx=1;
+	while(y)
+	{
+		(y&1)?(cx*=x)%=mod:1;
+		(x*=x)%=mod;
+		y>>=1;
+	}
+	return cx;
+}
+int main()
+{
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	n=qread();
+	for(register int i=1;i<=n;++i)a[i]=qread();
+	sort(a+1,a+1+n);
+	sum[n+1]=1;
+	for(register int i=n;i;--i)sum[i]=sum[i+1]*a[i];
+	for(int i=a[n];i;--i)
+	{
+		p=lower_bound(a+1,a+1+n,i)-a;
+		an[i]=qpow(i,n-p+1)*qpow(sum[p],mod-2)%mod;
+	}
+	for(register int i=a[n];i;--i)
+	{
+		(ans+=(an[i]-an[i-1]+mod)%mod*i)%=mod;
+	}
+	printf("%lld",ans);
+	return 0;
+}

@@ -1,0 +1,44 @@
+#include<cstdio>
+#define ll long long
+using namespace std;
+const ll mod=998244353;
+const int F=3e6+1000;
+int n,m,full;
+ll f[F+10],g[F+10];
+bool vis[F+10];
+ll calc()
+{
+	ll ans=0;
+	for(int s=0;s<full;s++)
+		if(vis[s])
+			ans+=f[s],ans%=mod;
+	return ans;
+}
+int main()
+{
+	freopen("far.in","r",stdin);
+	freopen("far.out","w",stdout);
+	scanf("%d %d",&n,&m);
+	full=(1<<m);
+	for(int s=0;s<full;s++)
+	{
+		vis[s]=true;
+		for(int j=0;j<m;j++)
+			if(!(s&(1<<j))!=!(s&(1<<m-j-1)))
+				vis[s]=false;
+		// if(vis[s]) printf("%d\n",s);
+	}
+	// m++,full=(1<<m)-1;
+	f[0]=1;
+	for(int i=1,l,r;i<=n;i++)
+	{
+		scanf("%d %d",&l,&r);
+		for(int j=0;j<full;j++) g[j]=0;
+		for(int s=0;s<full;s++)
+			for(int j=l;j<=r;j++)
+				g[s^j]+=f[s],g[s^j]%=mod;
+		for(int j=0;j<full;j++) f[j]=g[j];
+		printf("%lld\n",calc());
+	}
+	return 0;
+}

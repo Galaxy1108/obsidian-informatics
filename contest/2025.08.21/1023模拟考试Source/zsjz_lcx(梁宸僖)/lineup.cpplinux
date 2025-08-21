@@ -1,0 +1,25 @@
+#include<cstdio>
+#include<cmath>
+#include<algorithm>
+#include<vector>
+using namespace std;
+int n,a[51],b[51],ans;
+vector<int> v[210];
+int main()
+{
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	scanf("%d",&n);
+	for (int i=1;i<=n;i++)
+		scanf("%d",&a[i]),b[i]=a[i];
+	sort(b+1,b+n+1);
+	for (int i=n;i>=1;i--)
+		v[b[i]].push_back(i);
+	for (int i=1;i<=n;i++)
+	{
+		ans+=abs(i-v[a[i]].back());
+		v[a[i]].pop_back();	
+	} 
+	printf("%d\n",ans);
+	return 0;
+}

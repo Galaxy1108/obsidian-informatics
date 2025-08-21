@@ -1,0 +1,25 @@
+//回家？我没有家可以回，我没有退路。
+#include<bits/stdc++.h>
+using namespace std;
+inline int read(){
+   int s=0,w=1;
+   char ch=getchar();
+   while(ch<'0'||ch>'9'){if(ch=='-')w=-1;ch=getchar();}
+   while(ch>='0'&&ch<='9') s=s*10+ch-'0',ch=getchar();
+   return s*w;
+}
+int a[53],p[53];
+signed main()
+{
+#ifndef local
+	freopen("lineup.in","r",stdin),
+	freopen("lineup.out","w",stdout);
+#endif
+	int n=read(),ans=0;
+	for(int i=1; i<=n; ++i) a[i]=read(),p[i]=i;
+	sort(p+1,p+n+1,[&](int x,int y)
+		{return a[x]<a[y]||(a[x]==a[y]&&x<y);});
+	for(int i=1; i<=n; ++i) ans+=abs(p[i]-i);
+	printf("%d\n",ans);
+	return 0;
+}

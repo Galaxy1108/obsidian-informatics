@@ -1,0 +1,34 @@
+#include<cstdio>
+const int N=25,MOD=998244353;
+int f[N][1<<10],n,m;
+long long l[N],r[N];
+inline void Add(int &x,int y){if((x+=y)>=MOD) x-=MOD;}
+int main()
+{
+	freopen("far.in","r",stdin);
+	freopen("far.out","w",stdout);
+	scanf("%d%d",&n,&m);
+	for(int i=1;i<=n;++i) scanf("%lld%lld",&l[i],&r[i]);
+	if(m>10)
+	{
+		long long cur=1,tmp=(1<<((m+1)>>1))%MOD;
+		for(int i=1;i<=n;++i) cur=cur*tmp%MOD,printf("%lld\n",cur);
+		return 0;
+	}
+	f[0][0]=1;
+	for(int i=1;i<=n;++i)
+		for(int j=0;j<(1<<m);++j)
+			for(int k=l[i];k<=r[i];++k) Add(f[i][j],f[i-1][j^k]);
+	for(int i=1;i<=n;++i)
+	{
+		int ans=0;
+		for(int j=0;j<(1<<m);++j)
+		{
+			bool flag=true;
+			for(int k=0;k<m;++k) if(((j>>k)^(j>>(m-1-k)))&1) flag=false;
+			if(flag) Add(ans,f[i][j]);
+		}
+		printf("%d\n",ans);
+	}
+	return 0;
+}

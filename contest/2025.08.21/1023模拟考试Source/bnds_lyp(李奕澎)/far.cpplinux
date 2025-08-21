@@ -1,0 +1,83 @@
+#include <cstdio>
+using namespace std;
+const long long mod = 998244353;
+int n,m;
+long long l[45],r[45],ans,a[65];
+inline int read()
+{
+	int x = 0;
+	char ch = getchar();
+	while (ch < '0' || ch > '9')
+		ch = getchar();
+	while (ch >= '0' && ch <= '9')
+	{
+		x = (x << 3) + (x << 1) + (ch ^ 48);
+		ch = getchar();
+	}
+	return x;
+}
+inline long long readll()
+{
+	long long x = 0;
+	char ch = getchar();
+	while (ch < '0' || ch > '9')
+		ch = getchar();
+	while (ch >= '0' && ch <= '9')
+	{
+		x = (x << 3) + (x << 1) + (ch ^ 48);
+		ch = getchar();
+	}
+	return x;
+}
+inline void write(long long x)
+{
+	if (x > 9)
+		write(x / 10);
+	putchar(x % 10 + '0');
+	return;
+}
+inline void dfs(int x,long long y,int k)
+{
+	if (x <= k)
+	{
+		for (long long i = l[x];i <= r[x];i++)
+			dfs(x + 1,y ^ i,k);
+	}
+	else
+	{
+		int cnt = 0;
+		for (int i = 1;i <= m;i++)
+			a[i] = 0;
+		while (y)
+		{
+			cnt++;
+			a[cnt] = y & 1;
+			y >>= 1;
+		}
+		for (int i = m >> 1;i >= 1;i--)
+			if (a[i] != a[m - i + 1])
+				return;
+		ans = (ans + 1) % mod;
+	}
+	return;
+}
+int main()
+{
+	freopen("far.in","r",stdin);
+	freopen("far.out","w",stdout);
+	n = read();
+	m = read();
+	for (int i = 1;i <= n;i++)
+	{
+		l[i] = readll();
+		r[i] = readll();
+	}
+	for (int i = 1;i <= n;i++)
+	{
+		ans = 0;
+		dfs(1,0,i);
+		write(ans);
+		putchar('\n');
+	}
+	return 0;
+}

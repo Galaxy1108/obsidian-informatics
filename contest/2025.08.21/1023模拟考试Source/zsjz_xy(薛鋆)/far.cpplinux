@@ -1,0 +1,45 @@
+#include <cstdio>
+#include <bitset>
+#define N 50
+#define MOD 998244353
+#define min(x,y) ((x)<(y)?(x):(y))
+using namespace std;
+long long n,m,l[N],r[N],mx;
+long long f[70000000];
+long long q[70000000];
+bool type=1;
+int main()
+{
+	// freopen("far.in","r",stdin);/;
+	scanf("%lld%lld",&n,&m);
+	mx=1ll<<m;
+	for (int i=1;i<=n;++i)
+		scanf("%lld%lld",l+i,r+i),
+		type&=(l[i]==0&&r[i]==mx-1);
+	if (type==1)
+	{
+		long long t=1ll<<(m/2);t%=MOD;
+		mx%=MOD;
+		for (int i=1;i<=n;++i)
+			printf("%lld\n",t),t*=mx,t%=MOD;
+	} else for (int k=1;k<=n;++k) {
+		long long ans=0;
+		for (int i=l[k];i<=r[k];++i)
+			if (k==1) f[i]=1;
+			else for (long long s=0;s<(1<<m);++s)
+			f[s]+=q[s^i],f[s]%=MOD;
+		for (long long s=0;s<(1<<m);++s)
+		{
+			q[s]=f[s];
+			if (!f[s]) continue;
+			bool ok=1;
+			for (int i=0;i<m/2;++i)
+				if ( ((s>>i)&1)^((s>>(m-i-1))&1) )
+					{ ok=0;break; }
+			if (ok) ans+=f[s],ans%=MOD;
+			f[s]=0;
+		}
+		printf("%lld\n",ans);
+	}
+	fclose(stdin),fclose(stdout);
+}

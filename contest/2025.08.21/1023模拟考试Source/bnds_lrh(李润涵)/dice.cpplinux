@@ -1,0 +1,46 @@
+#include<iostream>
+#include<cstdio>
+#include<algorithm>
+using namespace std;
+const long long mod=1000000007;
+int n, a[1000005], pre[1000005], cnt;
+long long ny[1000005], lgc, qya=1, ans;
+long long ksm(int x, int y)
+{
+	if(!y)
+		return 1;
+	if(y==1)
+		return 1ll*x;
+	long long k=ksm(x, y>>1);
+	return 1ll*k*k%mod*ksm(x, y&1)%mod;
+}
+int main()
+{
+	freopen("dice.in", "r", stdin);
+	freopen("dice.out", "w", stdout);
+	scanf("%d", &n);
+	for(int i=0; i<n; i++)
+	{
+		scanf("%d", &a[i]);	
+		pre[a[i]]++;	
+	}
+	sort(a, a+n);
+	for(int i=0; i<n; i++)
+		ny[i]=ksm(a[i], (int)mod-2);
+	for(int i=1; i<a[n-1]; i++)
+	{
+		for(int j=cnt; j<cnt+pre[i-1]; j++)
+			qya=qya*a[j]%mod;
+		cnt+=pre[i-1];
+		ans=(ans+qya*ksm(i, n-cnt))%mod;
+	}
+	for(int i=cnt; i<n; i++)
+		qya=qya*a[i]%mod;
+	ans=(mod-ans)%mod;
+	ans=(ans+qya*a[n-1])%mod;
+	for(int i=0; i<n; i++)
+		ans=ans*ny[i]%mod;
+	printf("%lld", ans);
+	fclose(stdin);
+	fclose(stdout);
+}

@@ -1,0 +1,19 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define N 202
+#define fo(i, l, r) for (int i = (l), ed = (r); i <= ed; i ++)
+#define fd(i, l, r) for (int i = (l), ed = (r); i >= ed; i --)
+
+int n, a[N], b[N], s[N], ans;
+
+int main(){
+	freopen("lineup.in", "r", stdin);
+	freopen("lineup.out", "w", stdout);
+	scanf("%d", &n);
+	fo (i, 1, n) scanf("%d", &a[i]), b[i] = a[i];
+	sort(b + 1, b + n + 1);
+	fo (i, 1, n) s[b[i]] ++;
+	fo (i, 1, 200) s[i] += s[i - 1];
+	fd (i, n, 1) ans += abs(i - (s[a[i]] --));
+	printf("%d", ans);
+}

@@ -1,0 +1,44 @@
+#include<bits/stdc++.h>
+#define RG register
+#define LL long long
+#define U(x, y, z) for(RG int x = y; x <= z; ++x)
+#define D(x, y, z) for(RG int x = y; x >= z; --x)
+#define update(x, y) (x = x + y >= mod ? x + y - mod : x + y)
+using namespace std;
+void read(){}
+template<typename _Tp, typename... _Tps>
+void read(_Tp &x, _Tps &...Ar) {
+	x = 0; char ch = getchar(); bool flg = 0;
+	for (; !isdigit(ch); ch = getchar()) flg |= (ch == '-');
+	for (; isdigit(ch); ch = getchar()) x = (x << 1) + (x << 3) + (ch ^ 48);
+	if (flg) x = -x;
+	read(Ar...);	
+}
+inline char Getchar(){ char ch; for (ch = getchar(); !isalpha(ch); ch = getchar()); return ch;}
+template <typename T> inline void write(T n){ char ch[60]; bool f = 1; int cnt = 0; if (n < 0) f = 0, n = -n; do{ch[++cnt] = char(n % 10 + 48); n /= 10; }while(n); if (f == 0) putchar('-'); for (; cnt; cnt--) putchar(ch[cnt]);}
+template <typename T> inline void writeln(T n){write(n); putchar('\n');}
+template <typename T> inline void writesp(T n){write(n); putchar(' ');}
+template <typename T> inline void chkmin(T &x, T y){x = x < y ? x : y;}
+template <typename T> inline void chkmax(T &x, T y){x = x > y ? x : y;}
+template <typename T> inline T Min(T x, T y){return x < y ? x : y;}
+template <typename T> inline T Max(T x, T y){return x > y ? x : y;}
+inline void readstr(string &s) { s = ""; static char c = getchar(); while (isspace(c)) c = getchar(); while (!isspace(c)) s = s + c, c = getchar();}
+inline void FO(string s){freopen((s + ".in").c_str(), "r", stdin); freopen((s + ".out").c_str(), "w", stdout);}
+
+const int N = 60;
+int a[N], n, id[N];
+
+int main(){
+	//FO("");
+	read(n);
+	U(i, 1, n) read(a[i]);
+	U(i, 1, n) id[i] = i;
+	int ans = 0;
+	sort(id + 1, id + n + 1, [&](int x, int y){return ((a[x] != a[y]) ? a[x] < a[y] : x < y);});
+	U(i, 1, n) {
+		// cerr << id[i] << " " << i << "\n";
+		ans += abs(id[i] - i);
+	}
+	writeln(ans);
+	return 0;
+}

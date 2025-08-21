@@ -1,0 +1,103 @@
+#include<bits/stdc++.h>
+using namespace std;
+struct modint{
+    #define mod 998244353
+    int x;modint(int o=0) {x=o;}
+    modint &operator = (int o) {return x=o,*this;}
+    modint &operator += (modint o) {return x=x+o.x>=mod?x+o.x-mod:x+o.x,*this;}
+    modint &operator *= (modint o) {return x=1ll*x*o.x%mod,*this;}
+    modint &operator -= (modint o) {return x=x-o.x<0?x-o.x+mod:x-o.x,*this;}
+    modint &operator ^= (int b) {
+        modint a=*this,c=1;for(;b;b>>=1,a=a*a) if(b&1) c*=a;return x=c.x,*this;
+    }bool operator ! () {return !x;}
+    friend modint operator + (modint a,modint b) {return a+=b;}
+    friend modint operator * (modint a,modint b) {return a*=b;}
+    friend modint operator - (modint a,modint b) {return a-=b;}
+    friend modint operator ^ (modint a,int k) {return a^k;}
+    friend inline istream&
+    operator>>(istream& _is,modint& _b){return _is>>_b.x;}
+    friend inline ostream&
+    operator<<(ostream& _os,const modint& _b){return _os<<_b.x;}
+};
+namespace DF{
+    #define fi first
+    #define se second
+    #define mk make_pair
+    #define pc putchar
+    #define emp emplace_back
+    #define all(x) x.begin(),x.end()
+    #define FOR(i,j,k) for(int i=j;i<=k;++i)
+    #define ROF(i,j,k) for(int i=j;i>=k;--i)
+    template<typename x,typename y> 
+    ostream& operator<<(ostream& _os,const pair<x,y> &pp) {
+        return _os<<'{'<<pp.fi<<','<<pp.se<<'}';
+    }
+    template<typename A> 
+    ostream& operator<<(ostream& _os,const vector<A> &vc) {
+        _os<<'{';for(A &x:vc) _os<<x<<',';return _os<<'}';
+    }
+    template<typename T>
+    inline void print(T *f,int n) {
+        cout<<'{';FOR(i,1,n) cout<<f[i]<<',';cout<<'}'<<endl;
+    }
+}using namespace DF;
+namespace IO{
+	template<typename T>
+    void rd(T &x) {
+        bool f=0;unsigned int ch=getchar();
+        for(;(ch^48)>9||(ch^48)<0;ch=getchar())if(ch=='-')f=1;
+        for(x=0;(ch^48)<10&&(ch^48)>=0;ch=getchar())x=(x<<3)+(x<<1)+(ch^48);
+        if(f) x=-x;
+    }
+    void pr(int x) {
+        if(x>=10) pr(x/10);
+        pc(x%10+'0');
+    }
+}using namespace IO;bool Mbe;
+//-------------------------------------------//
+
+const int N=41;
+int n,m,l[N],r[N],c[N],ans[N];
+int chk(int x) {
+	FOR(i,0,m/2-1) {
+		int j=m-1-i,a=(x>>i)&1,b=(x>>j)&1;
+		if(a!=b) return 0;
+	}return 1;
+}
+void calc() {
+	int tmp=0;
+	FOR(i,1,n) {
+		tmp^=c[i];
+		if(chk(tmp)) ++ans[i];
+	}
+}
+void dfs(int u) {
+	if(u==n) return calc(),void();
+	FOR(i,l[u+1],r[u+1]) {
+		c[u+1]=i;dfs(u+1);
+	}
+}
+
+//-------------------------------------------//
+bool Med;
+signed main() {
+#ifdef LOCAL
+    freopen("1.in","r",stdin);
+#else
+	freopen("far.in","r",stdin);
+	freopen("far.out","w",stdout);
+#endif
+	rd(n),rd(m);FOR(i,1,n) rd(l[i]),rd(r[i]);
+	dfs(0);modint tmp=1;
+	ROF(i,n,1) {
+		tmp*=(r[i]-l[i]+1);
+		modint tmpp=tmp;tmpp^=(mod-2);
+		ans[i-1]=1ll*ans[i-1]*tmpp.x%mod;
+	}
+	FOR(i,1,n) cout<<ans[i]<<endl;
+#ifdef LOCAL    
+    fprintf(stderr,"\n%.4lfMB\n",(&Med-&Mbe)/1048576.0);
+    fprintf(stderr,"%.4lfs\n",1.0*clock()/CLOCKS_PER_SEC);
+#endif
+  return 0;
+}

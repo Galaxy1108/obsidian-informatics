@@ -1,0 +1,30 @@
+#include <bits/stdc++.h>
+using namespace std;
+const int N = 110;
+int n, ans;
+int a[N], b[N];
+int main() {
+    freopen("lineup.in", "r", stdin);
+    freopen("lineup.out", "w", stdout);
+    scanf("%d", &n);
+    for (int i = 1; i <= n; ++i) {
+        scanf("%d", &a[i]);
+        a[i] = a[i] * n + i;
+        b[i] = a[i];
+    }
+    sort(b + 1, b + n + 1);
+    for (int i = 1; i <= n; ++i) {
+        int pos = i;
+        for (int j = i + 1; j <= n; ++j)
+            if (a[j] < a[pos])
+                pos = j;
+        for (int j = pos - 1; j >= i; --j)
+            if (a[j] >= b[pos]) {
+                swap(a[j], a[pos]);
+                ans += (pos - j) * 2;
+                pos = j;
+            }
+    }
+    printf("%d\n", ans);
+    return 0;
+}

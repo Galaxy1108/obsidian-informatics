@@ -1,0 +1,60 @@
+#include<cstdio>
+#include<algorithm>
+using namespace std;
+#define mo 1000000007
+const int N=5e3+5;
+int n,f[N][N],a[N],b[N],inv[N],ans;
+int fpow(int x,int y=mo-2)
+{
+	int res=1;
+	for(;y;y>>=1,x=1ll*x*x%mo)if(y&1)res=1ll*res*x%mo;
+	return res;
+}
+int sum(int x,int y)
+{
+	x++;
+	int s=1,res=0;
+	for(int i=0;i<=y;i++)
+	{
+		s=1ll*s*(x-i)%mo;
+		if(s<0)s+=mo;
+		res=(res+1ll*s*f[y][i]%mo*inv[i+1]%mo)%mo;
+	}
+	return res;
+}
+int sum(int x,int y,int z)
+{
+	return (sum(x,z)-sum(y-1,z)+mo)%mo;
+}
+int main()
+{
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	scanf("%d",&n);
+	f[1][1]=1;
+	for(int i=2;i<=n;i++)
+		for(int j=1;j<=i;j++)
+			f[i][j]=(f[i-1][j-1]+1ll*f[i-1][j]*j%mo)%mo;
+	for(int i=1;i<=n;i++)scanf("%d",&a[i]);
+	sort(a+1,a+1+n);
+	for(int i=1;i<=n;i++)b[i]=fpow(a[i]);
+	for(int i=1;i<=n+1;i++)inv[i]=fpow(i);
+	for(int la=0,i=1;i<=n;i++)
+	{
+		int s=1;
+		for(int j=i;j<=n;j++)s=1ll*s*a[i]%mo*b[j]%mo;
+		ans=(ans+1ll*s*a[i]%mo)%mo;
+		s=1;
+		for(int j=i;j<=n;j++)s=1ll*s*b[j]%mo;
+		ans=(ans-1ll*sum(a[i]-1,la+1,n-i+1)*s%mo+mo)%mo;
+		s=1;
+		for(int j=i;j<=n;j++)s=1ll*s*la%mo*b[j]%mo;
+		ans=(ans-1ll*(la+1)*s%mo+mo)%mo;
+		la=a[i];
+		int j=i;
+		while(j<=n&&a[j]==a[i])j++;
+		i=j-1;
+	}
+	printf("%d",ans);
+	return 0;
+}

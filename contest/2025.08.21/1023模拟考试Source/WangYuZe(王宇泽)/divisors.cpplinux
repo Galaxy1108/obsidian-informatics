@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <algorithm>
+#include <cstring>
+#include <iostream>
+using namespace std;
+
+int n;
+
+int gcd(int a, int b) {
+	if (!b) return a;
+	return gcd(b, a % b);
+}
+
+int main()
+{
+#ifdef WYZ
+	freopen("1.in", "r", stdin);
+	freopen("1.out", "w", stdout);
+#else
+	freopen("divisors.in", "r", stdin);
+	freopen("divisors.out", "w", stdout);
+#endif
+	ios::sync_with_stdio(0);
+	
+	cin >> n;
+	if (n <= 10) {
+		int g = 1;
+		for (int i = 1; i <= n; i++) g = g / gcd(i, g) * i;
+		cout << g << ' ';
+		for (int i = 2; i <= n; i++) cout << i << ' ';
+		cout << '\n';
+		for (int i = 2; i <= n; i++) cout << 1 << ' ' << i << '\n';
+		return 0;
+	}
+	
+	return 0;
+}

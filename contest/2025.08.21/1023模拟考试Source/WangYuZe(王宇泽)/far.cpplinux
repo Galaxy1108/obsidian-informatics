@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <algorithm>
+#include <cstring>
+#include <iostream>
+using namespace std;
+
+typedef long long LL;
+
+const int P = 998244353;
+
+inline void add(int &a, const int &b) { a = (a + b >= P ? a + b - P : a + b); }
+
+const int NR = 40 + 10;
+
+int n, m;
+LL L[NR], R[NR];
+int f[NR][1 << 15];
+int rev[1 << 15];
+bool pd1 = 1;
+
+int qp(int a, int b) {
+	int ret = 1;
+	while (b) {
+		if (b & 1) ret = 1ll * ret * a % P;
+		a = 1ll * a * a % P;
+		b >>= 1;
+	}
+	return ret;
+}
+
+LL rrev(LL x, int D) {
+	LL ret = 0;
+	for (int i = 0; i < D; i++) ret += (1ll << (D - i - 1)) * bool(x & (1ll << i));
+	return ret;
+}
+
+LL calc(LL lim) {
+	int ret = 0;
+	for (int i = 0; i < (m + 1) / 2; i++)
+		if (lim & (1ll << (m - i - 1))) add(ret, (1ll << ((m + 1) / 2 - i - 1)) % P);
+	LL t = ((lim >> (m / 2)) << (m / 2)) + rrev(lim >> ((m + 1) / 2), m / 2);
+	if (t < lim) ret++;
+	return ret;
+}
+
+int main()
+{
+#ifdef WYZ
+	freopen("1.in", "r", stdin);
+	freopen("1.out", "w", stdout);
+#else
+	freopen("far.in", "r", stdin);
+	freopen("far.out", "w", stdout);
+#endif
+	ios::sync_with_stdio(0);
+	
+	cin >> n >> m;
+	for (int i = 1; i <= n; i++) {
+		cin >> L[i] >> R[i];
+		if (L[i] != 0 || R[i] != (1ll << m) - 1) pd1 = 0;
+	}
+	
+	if (pd1) {
+		for (int i = 1; i <= n; i++) cout << qp(2, (i - 1) * m + (m + 1) / 2) << '\n';
+		return 0;
+	}
+	if (n == 1) {
+		cout << (calc(R[1] + 1) + P - calc(L[1])) % P << '\n';
+		return 0;
+	}
+	
+	for (int i = 0; i < (1 << m); i++) rev[i] = (rev[i >> 1] >> 1) | ((i & 1) << (m - 1));
+	f[0][0] = 1;
+	for (int i = 1; i <= n; i++) {
+		for (int j = 0; j < (1 << m); j++) {
+			if (!f[i - 1][j]) continue;
+			for (int k = L[i]; k <= R[i]; k++) add(f[i][j ^ k], f[i - 1][j]);
+		}
+		int res = 0;
+		for (int j = 0; j < (1 << m); j++) if (j == rev[j]) add(res, f[i][j]);
+		cout << res << '\n';
+	}
+	
+	return 0;
+}

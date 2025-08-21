@@ -1,0 +1,111 @@
+#include<bits/stdc++.h>
+#define int long long 
+using namespace std;
+inline int read(){
+	int ans=0,a=getchar();
+	while('0'>a||a>'9')a=getchar();
+	while('0'<=a&&a<='9')ans=ans*10+a-'0',a=getchar();
+	return ans;
+}
+const int mod=1e9+7;
+inline bool cmp(int x,int y){
+	return x>y;
+}
+int pos[5005],n;
+int ans,sum,sf[5005],suf[5005],a[5005],tot,num[5005],siz[5005],fac[5005],inv[5005],pre[5005];
+inline int pw(int x,int y){
+	int ans=1,tmp=x;
+	while(y){
+		if(y&1)ans=ans*tmp%mod;
+		tmp=tmp*tmp%mod;
+		y>>=1;
+	}
+	return ans;
+}
+int f[5005];
+inline int F(int x,int y){
+	f[0]=0;
+	for(int i=1;i<=y+2;i++){
+		f[i]=(f[i-1]+pw(i,y))%mod;
+	}
+	if(x<=y+2)return f[x];
+	pre[0]=1;
+	for(long long i=1;i<=y+2;i++)pre[i]=(pre[i-1]*((x-i)%mod+mod))%mod;
+	suf[y+3]=1;
+	for(long long i=y+2;i>=0;i--){
+		suf[i]=suf[i+1]*((x-i)%mod+mod)%mod;
+	}
+	fac[0]=1;
+	for(long long i=1; i<=y+2; i++){
+		fac[i]=(fac[i-1]*i)%mod;
+	}
+	fac[y+2]=pw(fac[y+2],mod-2);
+	for(long long i=y+1;i>=0;i--){
+		fac[i]=(fac[i+1]*(i+1))%mod;
+	}
+	long long ans=0;
+	for(long long i=1;i<=y+2;i++){
+		long long res=f[i];
+		res=res*(pre[i-1]*suf[i+1]%mod)%mod;
+		res=res*(fac[i-1]*fac[y+2-i]*(y+2-i&1?-1:1)%mod)%mod;
+		res=(res+mod)%mod;
+		ans=(ans+res)%mod;
+	}
+	return (ans+mod)%mod;
+}
+inline int G(int x,int y){
+	f[0]=0;
+	for(int i=1;i<=y+4;i++)f[i]=(f[i-1]+i*pw(i-1,y)%mod)%mod;
+	if(x<=y+4)return f[x];
+	pre[0]=1;
+	for(long long i=1;i<=y+4;i++)pre[i]=(pre[i-1]*((x-i)%mod+mod)) %mod;
+	suf[y+5]=1;
+	for(long long i=y+4;i>=0;i--){
+		suf[i]=suf[i+1]*((x-i)%mod+mod)%mod;
+	}
+	fac[0]=1;
+	for(long long i=1; i<=y+4; i++){
+		fac[i]=(fac[i-1]*i)%mod;
+	}
+	fac[y+4]=pw(fac[y+4],mod-2);
+	for(long long i=y+3;i>=0;i--){
+		fac[i]=(fac[i+1]*(i+1))%mod;
+	}
+	long long ans=0;
+	for(long long i=1;i<=y+4;i++){
+		long long res=f[i];
+		res=res*(pre[i-1]*suf[i+1]%mod)%mod;
+		res=res*(fac[i-1]*fac[y+4-i]*(y+4-i&1?-1:1)%mod)%mod;
+		res=(res+mod)%mod;
+		ans=(ans+res)%mod;
+	}
+	return (ans+mod)%mod;
+}
+signed main(){
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	n=read();
+	ans=1;
+	fac[0]=1;
+	for(int i=1;i<=n;i++)pos[i]=read(),ans=ans*pos[i]%mod,fac[i]=fac[i-1]*i%mod;
+	sort(pos+1,pos+n+1,cmp);
+	for(int i=1;i<=n;i++){
+		if(pos[i]!=pos[i-1]){
+			siz[tot]=siz[tot-1]+num[tot];
+			a[++tot]=pos[i];
+		}
+		num[tot]++;
+	}
+	siz[tot]=siz[tot-1]+num[tot];
+	sf[n+1]=1;
+	inv[n]=pw(fac[n],mod-2);
+	for(int i=n-1;i>=0;i--)inv[i]=inv[i+1]*(i+1)%mod;
+	for(int i=n;i>=1;i--){
+		sf[i]=sf[i+1]*pos[i]%mod;
+	}
+	for(int i=tot;i>=1;i--){
+		int L=a[i+1]+1,R=a[i],l=siz[i];
+		sum=(sum+(F(R,l+1)-F(L-1,l+1)-G(R,l)+G(L-1,l))%mod*sf[l+1]%mod)%mod;
+	}
+	cout<<(sum+mod)*pw(ans,mod-2)%mod<<endl;
+}

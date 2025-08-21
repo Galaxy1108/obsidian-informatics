@@ -1,0 +1,97 @@
+#if IN_LOCAL
+import local;
+#endif // IN_LOCAL
+#include<iostream>
+#include<algorithm>
+using namespace std;
+#if !IN_LOCAL
+#include<fstream>
+ifstream fin("dice.in", ifstream::binary);
+ofstream fout("dice.out", ofstream::binary);
+#define cin fin
+#define cout fout
+#endif // !IN_LOCAL
+#define SC(a, b) static_cast<a>(b)
+using ull = unsigned long long;
+constexpr const unsigned mod = 1000000007, modM2 = mod - 2;
+constexpr const ull modmod = SC(ull, mod) * mod;
+inline constexpr void UpdateInc(unsigned& pos, const unsigned val) { if ((pos += val) >= mod) { pos -= mod; } return; }
+inline constexpr unsigned Power(unsigned a, unsigned b)
+{
+	unsigned ans = 1;
+	for (; b; a = SC(ull, a) * a % mod, b /= 2)
+	{
+		if (b % 2)
+		{
+			ans = ans * SC(ull, a) % mod;
+		}
+	}
+	return ans;
+}
+struct Preprocess
+{
+	unsigned fac[5005], inv_fac[5005];
+	constexpr Preprocess() :fac{ 1 }, inv_fac{}
+	{
+		for (unsigned i = 1; i <= 5000; fac[i] = SC(ull, fac[i - 1]) * i % mod, ++i);
+		inv_fac[5000] = Power(fac[5000], modM2);
+		for (unsigned i = 5000; i; inv_fac[i - 1] = SC(ull, inv_fac[i]) * i % mod, --i);
+	}
+};
+constexpr const Preprocess preprocess;
+constexpr const auto& fac = preprocess.fac, & inv_fac = preprocess.inv_fac;
+unsigned a[5005], table[5005][5005], temp[5005];
+constexpr unsigned& temp_0 = temp[0];
+inline unsigned F(const unsigned a, const unsigned b)
+{
+	const auto& table_b = table[b];
+	if (a <= b)
+	{
+		return table_b[a];
+	}
+	temp_0 = a;
+	const unsigned bP1 = b + 1;
+	for (unsigned i = 1; i <= bP1; temp[i] = SC(ull, temp[i - 1]) * SC(ull, a - i) % mod, ++i);
+	unsigned ans = 0, t = 1;
+	for (unsigned i = bP1; i; t = t * SC(ull, a - (i--)) % mod)
+	{
+		if ((bP1 - i) % 2)
+		{
+			ans = (ans + modmod - t * SC(ull, temp[i - 1]) % mod * inv_fac[i] % mod * SC(ull, inv_fac[bP1 - i]) % mod * table_b[i]) % mod;
+		}
+		else
+		{
+			ans = (ans + t * SC(ull, temp[i - 1]) % mod * inv_fac[i] % mod * SC(ull, inv_fac[bP1 - i]) % mod * table_b[i]) % mod;
+		}
+	}
+	return ans;
+}
+int main()
+{
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	unsigned n;
+	cin >> n;
+	for (unsigned i = 1; i <= n; ++i)
+	{
+		table[i - 1][i] = Power(i, i - 1);
+		for (unsigned j = i; j <= n; table[j][i] = SC(ull, table[j - 1][i]) * i % mod, ++j);
+	}
+	for (unsigned i = 1; i <= n; ++i)
+	{
+		auto& table_i = table[i];
+		for (unsigned j = 1, ori_j; j <= i; ori_j = (j++), UpdateInc(table_i[j], table_i[ori_j]));
+	}
+	for (unsigned i = 1; i <= n; cin >> a[i++]);
+	sort(a + 1, a + n + 1);
+	unsigned ans = 0, all = 1;
+	for (unsigned i = 1; i <= n;)
+	{
+		const unsigned v = a[i], t = i - 1, nMt = n - t;
+		ans = (ans + (SC(ull, Power(v, nMt + 1)) + modmod - SC(ull, F(v - 1, nMt)) + F(a[t], nMt) - SC(ull, Power(a[t], nMt)) * SC(ull, a[t] + 1)) % mod * all) % mod;
+		for (; a[i] == v; all = all * SC(ull, a[i++]) % mod);
+	}
+	cout << SC(unsigned, ans * SC(ull, Power(all, modM2)) % mod);
+	return 0;
+}

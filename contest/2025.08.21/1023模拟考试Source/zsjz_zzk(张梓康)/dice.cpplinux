@@ -1,0 +1,49 @@
+#include<cstdio>
+#include<algorithm>
+using namespace std;
+typedef long long ll;
+ll n,a[5001],d=1000000007,s,m,f=1;
+ll min(ll x,ll y)
+{
+	if(x<y)
+	  return x;
+	return y;
+}
+ll quickpow(ll b,ll p)
+{
+	ll w=1;
+	while(p!=0)
+	{
+		if(p%2==1)
+		  w=w*b%d;
+		b=b*b%d;
+		p=p>>1;
+	}
+	return w;
+}
+int main()
+{
+	freopen("die.in","r",stdin);
+	freopen("die.out","w",stdout);
+	ll i,j,k;
+	scanf("%lld",&n);
+	for(i=1;i<=n;++i)
+	  scanf("%lld",a+i);
+	sort(a+1,a+n+1);
+	for(i=1;i<=n;++i)
+	{
+		f=f*a[i]%d;
+		for(j=1;j<=a[i];++j)
+		{
+			s=1;
+			for(k=1;k<=i-1;++k)
+			  s=s*min(a[k],j-1)%d;
+			for(k=i+1;k<=n;++k)
+			  s=s*j%d;
+			m=(m+s*j%d)%d;
+		}
+	}
+	m=m*quickpow(f,d-2)%d;
+	printf("%lld",m);
+	return 0;
+}

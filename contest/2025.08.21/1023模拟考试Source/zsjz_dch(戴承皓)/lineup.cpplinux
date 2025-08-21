@@ -1,0 +1,78 @@
+#include <cstdio>
+#include <iostream>
+#include <algorithm>
+#include <unordered_map>
+#define LL long long
+using namespace std;
+template <typename T>
+inline void read(T &x) {
+	x = 0; int f = 0; char ch = getchar();
+	for(; !isdigit(ch); ch = getchar()) if(ch == '-') f = 1;
+	for(; isdigit(ch); ch = getchar()) x = (x << 3) + (x << 1) + (ch ^ 48);
+	if(f) x = ~x + 1;
+}
+int n;
+struct data {
+	int a, id;
+}b[200];
+int a[200], d, c[200] ,vis[200], ans;
+namespace bf {
+	int r[1000], mx, mna = 1000;
+	int Hash() {
+		int res = 0;
+		for(int i = 1; i <= n; ++i) res = res * 8 + a[i];
+		return res; 
+	} 
+	unordered_map<int , int> vis, vis1;
+	inline void out() {for(int i = 1; i <= n; ++i) printf("%d ",a[i]); puts("");}
+	int S;
+	void dfs(int k, int now) {
+		if((Hash() == S && now) || (vis[Hash()] && now >= vis[Hash()]) || (vis1[Hash()] && vis1[Hash()] < mx)) return ;
+		vis[Hash()] = now; 
+		vis1[Hash()] = mx;
+		for(int i = 1; i <= n; ++i) {
+			for(int j = i + 1; j <= n; ++j) {
+				swap(a[i], a[j]);
+				int tmp = mx;
+				r[i] += j - i, r[j] += j - i;
+				mx = max(max(mx, r[i]), r[j]);
+				dfs(k + 1, now + 2 * (j - i));
+				r[i] -= j - i, r[j] -= j - i;
+				mx = tmp;
+				swap(a[i], a[j]);
+			}
+		}
+	}	
+	void solve() {
+		mna = 1;
+		S = Hash();
+		dfs(1, 0);
+		sort(a + 1, a + n + 1);
+		printf("%d\n",vis[Hash()]);
+	}
+} 
+inline bool cmp(data x, data y) {return x.a == y.a ? x.id < y.id : x.a < y.a;}
+int main() {
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	read(n);
+	for(int i = 1; i <= n; ++i) read(a[i]), b[i].a = a[i], b[i].id = i;
+	sort(b + 1, b + n + 1, cmp);
+	for(int i = 1; i <= n; ++i) {
+		if(b[i].a == b[i - 1].a) ++d;
+		a[b[i].id] += d;
+	}
+	for(int i = 1; i <= n; ++i) c[i] = a[i];
+	sort(c + 1, c + n + 1);
+	for(int i = 1; i <= n; ++i) a[i] = lower_bound(c + 1, c + n + 1, a[i]) - c;
+	if(n <= 6) {bf::solve(); return 0;}
+	for(int i = 1; i <= n; ++i) {
+		if(vis[i]) continue;
+		int p = i; vis[i] = 1;
+		int mx = abs(a[p] - p), len = abs(a[p] - p);
+		p = a[i];
+		while(p != i) vis[p] = 1, len += abs(a[p] - p), mx = max(mx, abs(a[p] - p)), p = a[p];
+		ans += 2 * (len - mx);
+	}
+	printf("%d\n",ans);
+}

@@ -1,0 +1,43 @@
+#include<bits/stdc++.h>
+using namespace std;
+template <typename T>void read(T &a)
+{
+	a=0;T f=1;char ch=getchar();
+	for(;!isdigit(ch);ch=getchar()) if(ch=='-') f=-f;
+	for(;isdigit(ch);ch=getchar()) a=a*10+ch-'0';
+	a*=f;
+}
+template <typename T> void write(T  x)
+{
+	if(x>9) write(x/10);
+	putchar(x%10+'0');
+}
+template <typename T>void writeln(T  x)
+{
+	if(x<0) putchar('-'),x=-x;
+	write(x);
+	puts("");
+}
+int n;
+struct node{
+	int h,pos;
+}a[100];
+bool cmp(node x,node y)
+{
+	if(x.h==y.h) return x.pos<y.pos;
+	return x.h<y.h;
+}
+int main()
+{
+	read(n);
+	for(int i=1;i<=n;i++)
+	{
+		read(a[i].h);
+		a[i].pos=i;
+	}
+	sort(a+1,a+1+n,cmp);
+	int ans=0;
+	for(int i=1;i<=n;i++) ans+=abs(a[i].pos-i);
+	writeln(ans);
+	return 0;
+}

@@ -1,0 +1,67 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+typedef long long ll;
+
+const ll N = 5111, MOD = 1e9 + 7;
+
+ll n, a[N], maxa;
+ll tot, cnt, muti[N];
+
+ll qpow(ll bas, ll exp) {
+	ll res = 1;
+	while(exp) {
+		if(exp % 2) {
+			res *= bas;
+			res %= MOD;
+		}
+		bas *= bas;
+		bas %= MOD;
+		exp >>= 1;
+	}
+	return res;
+}
+
+ll exgcd(ll a, ll &x, ll b, ll &y) {
+	if(!b) {
+		x = 1, y = 0;
+		return a;
+	}
+	ll d = exgcd(b, y, a % b, x);
+	y -= (a / b) * x;
+	return d;
+}
+
+ll inv(ll a) {
+	ll x, y;
+	exgcd(a, x, MOD, y);
+	return ((x % MOD) + MOD) % MOD;
+}
+
+int main() {
+	freopen("dice.in", "r", stdin);
+	freopen("dice.out", "w", stdout);
+	scanf("%lld", &n);
+	for(ll i = 1; i <= n; i++) {
+		scanf("%lld", &a[i]);
+		maxa = max(maxa, a[i]);
+	}
+	stable_sort(a + 1, a + n + 1);
+	muti[0] = 1;
+	for(ll i = 1; i <= n; i++) {
+		muti[i] = muti[i - 1] * (long long)a[i];
+		muti[i] %= MOD;
+	}
+	ll zz = 1;
+	for(ll i = 1; i <= maxa; i++) {
+		while(a[zz] < i && zz <= n) {
+			zz++;
+		}
+		ll calc = (muti[zz - 1] * ((qpow(i, n - zz + 1) - qpow(i - 1, n - zz + 1)) % MOD + MOD) % MOD);
+		cnt += calc;
+		tot += calc * i % MOD;
+		cnt %= MOD, tot %= MOD;
+	}
+	printf("%lld\n", tot * inv(cnt) % MOD);
+	return 0;
+}

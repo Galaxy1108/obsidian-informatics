@@ -1,0 +1,68 @@
+#include<bits/stdc++.h>
+using namespace std;
+int read(){
+	char c=getchar();
+	while(c<'0'||c>'9')c=getchar();
+	int x=0;
+	while(c>='0'&&c<='9'){
+		x=x*10+c-'0';
+		c=getchar();
+	}
+	return x;
+}
+int n,ans;
+struct line{
+	int a;
+	int idx;
+}b[100],a[100];
+bool cmp(line x,line y){
+	if(x.a==y.a){
+		return x.idx<y.idx;
+	}
+	return x.a<y.a;
+}
+queue<int>q;
+int main(){
+    freopen("lineup.in","r",stdin);
+    freopen("lineup.out","w",stdout);
+	n=read();
+	for(int i=1;i<=n;i++){
+		a[i].a=read();
+		b[i].a=a[i].a;
+		b[i].idx=i;
+	}
+	sort(b+1,b+n+1,cmp);
+	for(int i=1;i<=n;i++){
+		a[b[i].idx].idx=i;
+		if(b[i].idx!=i){
+			q.push(i);
+		}
+	}
+	while(!q.empty()){
+		int i=q.front();
+		q.pop();
+//		q.push(1);
+		if(i==b[i].idx)continue;
+		int j=b[i].idx;
+		int k=a[i].idx;
+//		int qq=b[k].idx;
+//		cout<<i<<' '<<j<<' '<<k<<' '<<'\n';
+//		cout<<a[i].a<<' '<<a[j].a<<'\n';
+		if((i<j&&k>=j)||(i>j&&k<=j)){
+			swap(b[i].idx,b[k].idx);
+			swap(a[j],a[i]);
+			ans+=abs(j-i)*2;
+		}
+//		for(int i=1;i<=n;i++){
+//			cout<<a[i].a<<' ';
+//		}
+//		cout<<'\n';
+//		return 0;
+//		q.push(1);
+		if(b[i].idx!=i){
+			q.push(i);
+		}
+	}
+	printf("%d",ans);
+	return 0;
+}

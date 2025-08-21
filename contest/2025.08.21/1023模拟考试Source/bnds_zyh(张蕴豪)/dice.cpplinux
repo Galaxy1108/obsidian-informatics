@@ -1,0 +1,76 @@
+#include <cstdio>
+#include <iostream>
+#include <algorithm>
+#define macro_expand(x) #x
+#define print_macro(x) printf("%s\n",macro_expand(x))
+#define FOR(i,l,r) for(int i=(l),i##ADJK=(r);i<=i##ADJK;++i)
+#define ROF(i,r,l) for(int i=(r),i##ADJK=(l);i>=i##ADJK;--i)
+using namespace std;
+typedef long long LL;
+const int MN=5e3+10,Mod=1e9+7;
+int add(int &x,const int &y){return ((x+=y)>=Mod)?(x-=Mod):x;}
+int dec(int &x,const int &y){return ((x-=y)<0)?(x+=Mod):x;}
+int ad(int x,int y){return ((x+y)>=Mod)?(x+y-Mod):(x+y);}
+int ml(int x,int y){return (LL)x*y%Mod;}
+int dc(int x,int y){return ((x-y)<0)?(x-y+Mod):(x-y);}
+int ksm(int x,int y){
+	int ret=1;
+	for(;y;y>>=1,x=ml(x,x))if(y&1)ret=ml(ret,x);
+	return ret;
+}
+int N,A[MN],li[MN],tot,buc[MN];
+int p1[MN],p2[MN];
+int pws[MN][MN],pw[MN][MN];
+void init(){
+	p1[0]=1;FOR(i,1,N+2)p1[i]=ml(p1[i-1],i);
+	p2[0]=1;FOR(i,1,N+2)p2[i]=ml(p2[i-1],dc(0,i));
+	FOR(i,0,N+2)p1[i]=ksm(p1[i],Mod-2),p2[i]=ksm(p2[i],Mod-2);
+	FOR(i,1,N+2){
+		pw[i][0]=1;
+		FOR(j,1,N)pw[i][j]=ml(pw[i][j-1],i);
+	}
+	FOR(i,1,N+2)FOR(j,1,N)pws[i][j]=ad(pws[i-1][j],pw[i][j]);
+}
+int cal(int x,int p){ // p<=N
+	if(x==0)return 0;
+	if(p==0)return x;
+	if(x<=p+1)return pws[x][p];
+	static int pre[MN],suf[MN];
+	int n=p+1;
+	pre[0]=1,suf[n+2]=1;
+	FOR(i,1,n+1)pre[i]=ml(pre[i-1],dc(x,i));
+	ROF(i,n+1,1)suf[i]=ml(suf[i+1],dc(x,i));
+	int ret=0;
+	FOR(i,1,n+1){
+		add(ret,ml(pws[i][p],ml(ml(pre[i-1],suf[i+1]),ml(p1[i-1],p2[n+1-i]))));
+		// cerr<<pws[i][p]<<" "<<pre[i-1]<<" "<<suf[i+1]<<" "<<p1[i-1]<<" "<<p2[n+1-i]<<endl;
+	}
+	return ret;
+}
+int calc(int l,int r,int p){
+	l=max(l,1);
+	if(l>r)return 0;
+	return dc(cal(r,p),cal(l-1,p));
+}
+int main(){
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+// 记得测一下存在两个数一样的情况
+	scanf("%d",&N);
+	init();
+	FOR(i,1,N)scanf("%d",&A[i]),li[++tot]=A[i];
+	sort(li+1,li+tot+1),tot=unique(li+1,li+tot+1)-li-1;
+	FOR(i,1,N)A[i]=lower_bound(li+1,li+tot+1,A[i])-li,++buc[A[i]];
+	int ans=li[tot],pro=1;
+	FOR(i,1,N)pro=ml(pro,ksm(li[A[i]],Mod-2));
+	int rest=N;
+	FOR(i,1,tot){
+		// A[i-1]~A[i]-1
+		dec(ans,ml(pro,calc(li[i-1],li[i]-1,rest)));
+		pro=ml(pro,ksm(li[i],buc[i])),rest-=buc[i];
+	}
+	printf("%d\n",ans);
+	fclose(stdin);
+	fclose(stdout);
+	return 0;
+}

@@ -1,0 +1,90 @@
+#include<bits/stdc++.h>
+#define ll long long
+using namespace std;
+inline int Max(int x, int y){return x > y ? x : y;}
+inline int Min(int x, int y){return x < y ? x : y;}
+inline ll rd(){
+    ll x = 0;bool f = true;char c = getchar();
+    while(c < '0' || c > '9'){if(c == '-')f=false;c = getchar();}
+    while(c <= '9' && c >= '0'){x = (x << 1) + (x << 3) + (c ^ 48);c = getchar();}
+    return f ? x : -x;
+}
+const int N = 60;
+int n;
+int a[N], tmp[N], cnt[N];
+
+char change(int x){
+    if(x<=25)return x + 'a' - 1;
+    else return x - 26 + 'A';
+}
+int change(char x){
+    if(x >= 'a')return x - 'a' + 1;
+    else return x - 'A' + 26;
+}
+class Hash_Table{
+    private:
+    static const int N = 1e6 + 10;
+    static const int M = 1e5 + 7;
+    struct Node{
+        int nextt;
+        string val;
+    }data[N];int head[N], cnt;
+    public:
+    bool insert(){
+        string val = "";
+        for(int i = 1; i <= n; ++i)
+            val += change(a[i]);
+        ll key = 0;
+        for(int i = 0; i < n; ++i)
+            key = ((key << 3) + change(val[i])) % M;
+        for(int i = head[key]; i; i = data[i].nextt)
+            if(data[i].val == val)return false;
+        data[++cnt].nextt = head[key];
+        data[cnt].val = val;
+        head[key] = cnt;
+        return true;
+    }
+}H;
+
+int ans;
+
+// void dfs(int sum){
+//     for(int i = 1; i <= n; ++i){
+//         if(tmp[i] == tmp[a[i]])continue;
+//         for(int j = i + 1; j <= n; ++j){
+//             if(tmp[j] == tmp[a[j]])continue;
+//             swap(a[i], a[j]);
+//             if(H.insert()){
+//                 cnt[i]
+//             }
+
+//         }
+//     }
+// }
+bool vis[N];
+int main(){
+    freopen("lineup.in", "r", stdin);
+    freopen("lineup.out", "w", stdout);
+    // freopen("D://thruan/test.in", "r", stdin);
+    // freopen("D://thruan/test.out", "w", stdout);
+    n = rd();
+    for(int i = 1; i <= n; ++i)tmp[i] = a[i] = rd();
+    sort(tmp + 1, tmp + n + 1);
+    for(int i = 1; i <= n; ++i){
+        int l = 0, r = n;
+        while(l + 1 < r){
+            int mid = l + r >> 1;
+            if(tmp[mid] < a[i] || (a[i] == tmp[mid] && vis[mid]))l = mid;
+            else r = mid;
+        }
+        a[i] = r;
+        // tmp[r] = 0;
+        vis[r] = true;
+    }
+    // H.insert();
+    // dfs(0);
+    for(int i = 1; i <= n; ++i)
+        ans += abs(a[i] - i);
+    printf("%d", ans);
+    return 0;
+}

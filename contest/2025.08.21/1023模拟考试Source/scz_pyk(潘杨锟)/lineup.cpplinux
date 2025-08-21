@@ -1,0 +1,35 @@
+#include<bits/stdc++.h>
+using namespace std;
+int a[120],b[120],dz[120];
+int n,tot=0;
+//void dep(int p){
+//	
+//}
+int main(){
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	cin>>n;  
+	for(int i=1;i<=n;i++){
+		cin>>a[i];
+		b[i]=a[i];
+	}
+	sort(b+1,b+n+1);
+	for(int i=1;i<=n;i++){
+		for(int j=1;j<=n;j++){
+			if(b[i]==a[j]){
+				for(int k=1;k<=j;k++){
+					if(a[k]>a[j]){
+//						cout<<k<<" "<<j<<endl;
+						swap(a[k],a[j]);
+						tot+=2*(j-k);
+						break;
+					}
+				}
+				break;
+			}
+			
+		}
+	}
+	cout<<tot;
+	return 0;
+} 

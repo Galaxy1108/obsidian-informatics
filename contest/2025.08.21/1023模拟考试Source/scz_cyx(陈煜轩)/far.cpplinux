@@ -1,0 +1,72 @@
+#include<bits/stdc++.h>
+using namespace std;
+const int INF=1000000009;
+struct NODE{
+	int h,p,cnt;
+}a[55];
+int n;
+int ans[55];
+int ans_f=INF;
+int mini=INF;
+bool vis[55][55];
+void sear(int min_t,int k,int pos){
+	if(pos==n){
+		int temp=0;
+		for(int i=1;i<=n;i++){
+			temp+=a[i].cnt;
+			if(a[i].h!=ans[i])return;
+		}
+		if(min_t<=mini){
+			ans_f=min(temp,ans_f);
+			mini=min_t;
+			/*cout<<"ans";
+			for(int j=1;j<=n;j++){
+				cout<<a[j].cnt<<' ';
+			}
+			cout<<endl;*/
+		}
+		return;
+	}
+	for(int i=1;i<=n;i++){
+		sear(min_t,i,pos+1);
+		if(!vis[a[k].p][a[i].p]&&!vis[a[i].p][a[k].p]&&i!=k){
+			vis[a[k].p][a[i].p]=true;
+			vis[a[i].p][a[k].p]=true;
+			a[k].cnt+=abs(i-k);
+			a[i].cnt+=abs(i-k);
+			swap(a[k].h,a[i].h);
+			swap(a[k].p,a[i].p);
+			swap(a[k].cnt,a[i].cnt);
+			int t=max(min_t,a[i].cnt);
+			t=max(t,a[k].cnt);
+			/*cout<<t<<" ";
+			for(int j=1;j<=n;j++){
+				cout<<a[j].cnt<<' ';
+			}
+			cout<<endl;*/
+			sear(t,i,pos+1);
+			vis[a[k].p][a[i].p]=false;
+			vis[a[i].p][a[k].p]=false;
+			swap(a[k].h,a[i].h);
+			swap(a[k].p,a[i].p);
+			swap(a[k].cnt,a[i].cnt);
+			a[k].cnt-=abs(i-k);
+			a[i].cnt-=abs(i-k);
+		}
+		
+	}
+}
+int main(){
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	scanf("%d",&n);
+	for(int i=1;i<=n;i++){
+		scanf("%d",&a[i].h);
+		a[i].p=i;
+		ans[i]=a[i].h;
+	}
+	sort(ans+1,ans+1+n);
+	sear(0,1,1);
+	printf("%d",ans_f);
+	return 0;
+}

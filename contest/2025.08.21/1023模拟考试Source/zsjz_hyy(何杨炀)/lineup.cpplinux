@@ -1,0 +1,28 @@
+#include<cstdio>
+#include<cmath>
+using namespace std;
+int n;
+
+struct nd{int z, id;}a[500], A[500];
+void solve(int l, int r) {
+	if (l >= r) return;
+	int mid = l + r >> 1;
+	solve(l, mid), solve(mid + 1, r);
+	int i = l, j = mid + 1, cnt = l - 1;
+	while (i <= mid && j <= r)
+		if (a[i].z <= a[j].z) A[++cnt] = a[i], i++;
+		else A[++cnt] = a[j], j++;
+	while (i <= mid) A[++cnt] = a[i], i++;
+	while (j <= r) A[++cnt] = a[j], j++;
+	for (int k = l; k <= r; k++) a[k] = A[k];
+}
+int main()
+{
+	freopen("lineup.in", "r", stdin);
+	freopen("lineup.out", "w", stdout);
+	scanf("%d",&n);
+	for (int i = 1; i <= n; i++) scanf("%d",&a[i].z), a[i].id = i;
+	solve(1, n); int ans = 0;
+	for (int i = 1; i <= n; i++) ans += abs(a[i].id - i);
+	printf("%d\n", ans);
+}

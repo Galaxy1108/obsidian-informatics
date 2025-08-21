@@ -1,0 +1,158 @@
+//回家？我没有家可以回，我没有退路。
+#include<bits/stdc++.h>
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
+#pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,tune=native")
+using namespace std;
+#define ll long long
+inline ll read(){
+   ll s=0,w=1;
+   char ch=getchar();
+   while(ch<'0'||ch>'9'){if(ch=='-')w=-1;ch=getchar();}
+   while(ch>='0'&&ch<='9') s=s*10+ch-'0',ch=getchar();
+   return s*w;
+}
+const int p=998244353;
+int qp(int x,int y)
+{
+	int res=1;
+	for(int t=x; y; y>>=1,t=1ll*t*t%p)
+		if(y&1) res=1ll*res*t%p;
+	return res;
+}
+int F(ll x,int d)
+{
+	int re=0;
+	for(int i=0; i<d; ++i)
+		re=(re<<1)+((x>>i)&1);
+	return re;
+}
+int n,m,d,d0,N,inv;
+struct brute1
+{
+ll l[103],r[103],a[103];
+int inv_[103];
+int solve(int s,int n,int m)
+{
+	int res=0,ss=s;
+	for(int i=0; i<n; ++i) ss^=a[i];
+	for(int j=m-1; j>=0; --j)
+	{
+		int X=1,Y=0,Z=1;
+		for(int i=0; i<n; ++i)
+			if((a[i]>>j)&1)
+			{
+				a[i]^=(1ll<<j);
+				int tx=(1ll*Y*((a[i]+1)%p)
+						+1ll*X*((1ll<<j)%p))%p,
+					ty=(1ll*X*((a[i]+1)%p)
+						+1ll*Y*((1ll<<j)%p))%p;
+				X=tx,Y=ty,Z=1ll*Z*((a[i]+1)%p)%p;
+			}
+			else X=1ll*X*((a[i]+1)%p)%p,
+				Y=1ll*Y*((a[i]+1)%p)%p,
+				Z=1ll*Z*((a[i]+1)%p)%p;
+		if(((s^ss)>>j)&1) Y=(Y+p-Z)%p;
+		else X=(X+p-Z)%p;
+		res=(res+1ll*(((s>>j)&1)?Y:X)*inv_[j])%p;
+		if((ss>>j)&1) return res;
+	}
+	return (res+1)%p;
+}
+signed main()
+{
+	const int h=(p+1)>>1;
+	inv_[0]=1;
+	for(int i=1; i<=100; ++i) inv_[i]=1ll*inv_[i-1]*h%p;
+	int n_=n;
+	for(int i=0; i<n_; ++i)
+		l[i]=read()-1,r[i]=read();
+	for(int n=1; n<=n_; ++n)
+	{
+		int R=1<<n,ans=0;
+		for(int i=0; i<R; ++i)
+		{
+			bool flg=0;
+			int rev=0,s1=1,s0=1;
+			for(int j=0; j<n; ++j)
+			{
+				ll v;
+				if((i>>j)&1) v=l[j]; else v=r[j];
+				if(v==-1){flg=1;break;}
+				s1=1ll*(v+1)%p*s1%p,s0=1ll*((v&(N-1))+1)%p*s0%p,
+				rev^=F(v>>d0,d),a[j]=v&(N-1);
+			}
+			if(!flg)
+			{
+				int s=(1ll*(s1+p-s0)*inv+solve(rev,n,d))%p;
+				if(__builtin_popcount(i)&1) ans=(ans+p-s)%p;
+				else ans=(ans+s)%p;
+			}
+		}
+		printf("%d\n",ans);
+	}
+	return 0;
+}
+};
+struct brute2
+{
+int a[1<<21],t[1<<21];
+void FWT_XOR(int*F,int n)
+{
+	for(int w=2,j=1; w<=n; w<<=1,j<<=1)
+		for(int i=0; i<n; i+=w)
+			for(int k=0,A,B; k<j; ++k)
+				A=F[i+k],B=F[i+j+k],
+				((F[i+k]=A+B)>=p)&&(F[i+k]-=p),
+				((F[i+j+k]=A-B)<0)&&(F[i+j+k]+=p);
+}
+int F(ll x,int d)
+{
+	int re=0;
+	for(int i=0; i<d; ++i)
+		re=(re<<1)+((x>>i)&1);
+	return re;
+}
+signed main()
+{
+	for(int i=0; i<N; ++i) a[i]=1;
+	for(int i=1,rev; i<=n; ++i)
+	{
+		ll l=read()-1,r=read();
+		memset(t,0,N<<2);
+		for(int i=0; i<N; ++i) t[i]=(t[i]+(r>>d))%p;
+		rev=F(r>>d0,d);
+		for(int i=0; i<=(r&(N-1)); ++i) t[i^rev]=(t[i^rev]+1)%p;
+		if(l>=0)
+		{
+			for(int i=0; i<N; ++i) t[i]=(t[i]+p-(l>>d)%p)%p;
+			rev=F(l>>d0,d);
+			for(int i=0; i<=(l&(N-1)); ++i) t[i^rev]=(t[i^rev]+p-1)%p;
+		}
+		FWT_XOR(t,N);
+		for(int i=0; i<N; ++i) a[i]=1ll*a[i]*t[i]%p;
+		int s=0;
+		for(int i=0; i<N; ++i) s=(s+a[i])%p;
+		printf("%lld\n",1ll*s*inv%p);
+	}
+	return 0;
+}
+};
+signed main()
+{
+#ifndef local
+	freopen("far.in","r",stdin),
+	freopen("far.out","w",stdout);
+#endif
+	n=read(),m=read(),d=m>>1,d0=(m+1)>>1,N=1<<d,inv=qp(N,p-2);
+	if(m<=30)
+	{
+		brute2 T;
+		T.main();
+	}
+	else
+	{
+		brute1 T;
+		T.main();
+	}
+}

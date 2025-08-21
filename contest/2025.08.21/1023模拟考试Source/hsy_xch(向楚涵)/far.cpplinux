@@ -1,0 +1,29 @@
+#include<bits/stdc++.h>
+using namespace std;
+int n,m,l[45],r[45],k(1),a[45],cnt;
+bitset<65> b;
+void dfs(int x){
+	if(x==k+1){
+		int ans=0,f=1;
+		for(int i(1);i<=k;++i)ans^=a[i];
+		for(int i(1);i<=m;++i)b[i]=ans%2,ans>>=1;
+		for(int i(1);i<=m>>1;++i){
+			if(b[i]!=b[m-i+1]){
+				f=0;
+				break;
+			}
+		}
+		if(f)cnt++;
+		return;
+	}
+	for(int i(l[x]);i<=r[x];++i)a[x]=i,dfs(x+1);
+	return;
+}
+int main(){
+	freopen("far.in","r",stdin);
+	freopen("far.out","w",stdout);
+	scanf("%d%d",&n,&m);
+	for(int i(1);i<=n;++i)scanf("%d%d",l+i,r+i);
+	for(;k<=n;++k)cnt=0,dfs(1),printf("%d\n",cnt);
+	return 0;
+}

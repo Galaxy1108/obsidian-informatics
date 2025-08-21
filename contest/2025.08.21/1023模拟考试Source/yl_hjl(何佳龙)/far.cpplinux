@@ -1,0 +1,98 @@
+#include<bits/stdc++.h>
+#define db double
+#define int ll
+#define ll long long
+#define ull unsigned long long
+#define pb push_back
+#define MP make_pair
+#define pii pair<int, int>
+#define fi first
+#define se second
+#define ls(k) S[k].lc
+#define rs(k) S[k].rc
+#define CLK (double)clock()/(double)CLOCKS_PER_SEC*1000.0
+using namespace std;
+inline int read(){
+	register int x=0,f=1;
+	register char ch=getchar();
+	while(ch<'0'||ch>'9'){if(ch=='-')f=-1;ch=getchar();}
+	while(ch>='0'&&ch<='9'){x=x*10+ch-'0';ch=getchar();}
+	return x*f;
+}
+inline void write(register int x){
+	if(x<0){putchar('-');x=-x;}
+	if(x>9)write(x/10);
+	putchar(x%10+'0');
+}
+const int N=50;
+int n,m,ans[N],l[N],r[N],a[N];
+void print(int x){if(x)print(x/2);cout<<x%2;}
+void dfs(int x,int S){
+    if(x==n+2)return ;
+    S&=(1<<m)-1;
+    int ok=1;
+    for(int i=1;i<=m/2;i++)if(((S>>i-1)&1)!=((S>>m-i)&1)){ok=0;break;}
+    ans[x-1]+=ok;//cout<<x-1<<' '<<ok<<"\n";
+    for(int i=l[x];i<=r[x];i++)a[x]=i,dfs(x+1,S^i);
+}
+signed main(){   
+	freopen("far.in","r",stdin);
+ 	freopen("far.out","w",stdout);
+    n=read();m=read();
+    for(int i=1;i<=n;i++)l[i]=read(),r[i]=read();
+    dfs(1,0);
+    for(int i=1;i<=n;i++)cout<<ans[i]<<"\n";
+//  printf("\nTIME:%lf\n",(double)clock()/CLOCKS_PER_SEC);
+	return 0;
+}
+
+/*#include<bits/stdc++.h>
+#define db double
+#define int ll
+#define ll long long
+#define ull unsigned long long
+#define pb push_back
+#define MP make_pair
+#define pii pair<int, int>
+#define fi first
+#define se second
+#define ls(k) S[k].lc
+#define rs(k) S[k].rc
+#define CLK (double)clock()/(double)CLOCKS_PER_SEC*1000.0
+using namespace std;
+inline int read(){
+	register int x=0,f=1;
+	register char ch=getchar();
+	while(ch<'0'||ch>'9'){if(ch=='-')f=-1;ch=getchar();}
+	while(ch>='0'&&ch<='9'){x=x*10+ch-'0';ch=getchar();}
+	return x*f;
+}
+inline void write(register int x){
+	if(x<0){putchar('-');x=-x;}
+	if(x>9)write(x/10);
+	putchar(x%10+'0');
+}
+const int N=50;
+int n,m,ans[N],l[N],r[N],a[N];
+void print(int x){if(x)print(x/2);cout<<x%2;}
+void dfs(int x,int k){
+    if(x==k+1){
+        int S=0;for(int i=1;i<=k;i++)S^=a[i];//,cout<<a[i]<<' ';
+        S&=(1<<m)-1;////print(S);cout<<"\n";
+        int ok=1;
+        for(int i=1;i<=m/2;i++)if(((S>>i-1)&1)!=((S>>m-i)&1)){ok=0;break;}
+        ans[k]+=ok;//cout<<k<<' '<<ok<<"\n";
+        return ;
+    }
+    for(int i=l[x];i<=r[x];i++)a[x]=i,dfs(x+1,k);
+}
+signed main(){   
+	freopen("far.in","r",stdin);
+// 	freopen("far.out","w",stdout);
+    n=read();m=read();
+    for(int i=1;i<=n;i++)l[i]=read(),r[i]=read();
+    for(int i=1;i<=n;i++)dfs(1,i);
+    for(int i=1;i<=n;i++)cout<<ans[i]<<"\n";
+//  printf("\nTIME:%lf\n",(double)clock()/CLOCKS_PER_SEC);
+	return 0;
+}*/

@@ -1,0 +1,50 @@
+# include <bits/stdc++.h>
+using namespace std;
+# define int long long
+const int mod = 1e9 + 7;
+const int N = 5005;
+int n;
+int a[N];
+int dp[2][505],sum[505];
+int Max[N];
+int mult = 1;
+int qmul(int x,int p) 
+{
+	int ans = 1;
+	while(p) 
+	{
+		if(p & 1) ans = (ans * x) % mod;
+		x = (x * x) % mod,p>>=1;
+	}
+	return ans;
+}
+signed main(void)
+{
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	scanf("%lld",&n);
+	int maxa = 0;
+	for(int i = 1; i <= n; i++) scanf("%lld",&a[i]),Max[i] = max(Max[i - 1],a[i]),mult = (mult * a[i]) % mod;
+//	for(int i = 1; i <= Max[n]; i++) dp[0][i] = 1;
+dp[0][1] = 1;
+	for(int i = 1; i <= n; i++)
+	{
+		for(int j = 1; j <= Max[i]; j++)
+		{
+			dp[i % 2][j] = (dp[(i - 1) % 2][j] * min(j,a[i])) % mod;
+			if(j <= a[i])
+			{
+				for(int k = 1; k < j; k++) dp[i % 2][j] = (dp[i % 2][j] + dp[(i - 1) % 2][k]) % mod;
+			}
+//			printf("dp[%lld][%lld] = %lld\n",i,j,dp[i % 2][j]);
+		}
+	}
+	int Flor = qmul(mult,mod - 2);
+	int Count = 0;
+	for(int i = 1; i <= Max[n]; i++) 
+	{
+		Count = (Count + dp[n % 2][i] * i) % mod;
+	}
+	printf("%lld\n",(long long)(Count * Flor) % mod);
+	return 0;
+} 

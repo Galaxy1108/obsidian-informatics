@@ -1,0 +1,57 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+typedef long long LL;
+
+const int M = 5e3 + 10, mod = 1e9 + 7;
+
+int n, m;
+int a[M];
+LL c[M], sum[M], f[M];
+
+int read() {
+    int x = 0;
+    char c = getchar();
+    while (!isdigit(c)) c = getchar();
+    while (isdigit(c)) x = (x << 3) + (x << 1) + (c ^ 48), c = getchar();
+    return x;
+}
+
+LL fastpow(LL a, LL p = mod - 2) {
+    LL res = 1;
+    while (p) {
+        if (p & 1) res = res * a % mod;
+        a = a * a % mod;
+        p >>= 1;
+    } return res;
+}
+
+LL g(LL a, LL b) {
+    return a * fastpow(b) % mod;
+}
+
+int main() {
+
+    freopen("dice.in", "r", stdin);
+    freopen("dice.out", "w", stdout);
+
+    n = read();
+    for (int i = 1; i <= n; i++) m = max(m, a[i] = read()), c[i] = g(1, a[i]);
+
+    fill(f + 1, f + a[1] + 1, c[1]);
+
+    for (int i = 2; i <= n; i++) {
+        for (int j = 1; j <= a[i]; j++) sum[j] = sum[j - 1] + f[j];
+        for (int j = a[i]; j; j--) {
+            f[j] = f[j] * g(j, a[i]) % mod;
+            f[j] = (f[j] + sum[j - 1] * c[i]) % mod;
+        }
+    }
+
+    LL ans = 0;
+    for (int i = 1; i <= m; i++) ans = (ans + f[i] * i % mod) % mod;
+    printf("%lld\n", ans);
+
+    return 0;
+}

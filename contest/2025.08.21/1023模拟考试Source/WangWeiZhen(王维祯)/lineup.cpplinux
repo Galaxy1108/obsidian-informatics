@@ -1,0 +1,71 @@
+#include<iostream>
+#include<cstdlib>
+#include<cmath>
+using namespace std;
+int a[52],h[202],b[52],c[52],p[52],q[52];
+int main()
+{
+    freopen("lineup.in","r",stdin);
+    freopen("lineup.out","w",stdout);
+    srand(20221023);
+    int n;
+    cin>>n;
+    for(int i=1;i<=n;i++)
+        cin>>a[i];
+    for(int i=1;i<=n;i++)
+        h[a[i]]++;
+    for(int i=120;i<=200;i++)
+        h[i]+=h[i-1];
+    for(int i=1;i<=n;i++)
+        b[i]=++h[a[i]-1];
+    // for(int i=1;i<=n;i++)
+    //     cout<<b[i]<<' ';
+    for(int i=1;i<=n;i++)
+        p[i]=a[i],q[i]=b[i];
+    int minx=100000000,res=100000000;
+    for(int k=0;k<=200;k++)
+    {
+        int ans=0;
+        for(int i=1;i<=n;i++)
+            a[i]=p[i],b[i]=q[i],c[i]=0;
+        for(int i=1;;i++)
+        {
+            int maxi=1;
+            for(int j=1;j<=n;j++)
+                if(abs(maxi-b[maxi])<abs(j-b[j]))   maxi=j;
+            if(maxi==b[maxi])
+                break;
+            if(k && rand()%(i+1)==0)
+            {
+                for(int j=1;j<=n;j++)
+                    if(j!=b[j] && rand()%2)   maxi=j;
+            }
+            int maxj;
+            for(int j=1;j<=n;j++)
+                if(b[j]==maxi)  maxj=j;
+            if(abs(maxi-maxj)<abs(maxi-b[maxi]) && abs(maxi-b[maxi])>abs(maxj-b[maxi]))
+            {
+                swap(a[maxi],a[maxj]),swap(b[maxi],b[maxj]);
+                ans+=2*abs(maxi-maxj);
+                c[maxi]+=abs(maxi-maxj);
+                c[maxj]+=abs(maxi-maxj);
+            }
+            else
+            {
+                ans+=2*abs(maxi-b[maxi]);
+                c[maxi]+=abs(maxi-b[maxi]);
+                c[b[maxi]]+=abs(maxi-b[maxi]);
+                swap(a[maxi],a[b[maxi]]),swap(b[maxi],b[b[maxi]]);
+            }
+        }
+        int maxn=0;
+        for(int i=1;i<=n;i++)
+            maxn=max(c[i],maxn);
+        if(maxn<minx)
+            minx=maxn,res=ans;
+        else if(maxn==minx)
+            res=min(res,ans);
+    }
+    cout<<res;
+    return 0;
+}

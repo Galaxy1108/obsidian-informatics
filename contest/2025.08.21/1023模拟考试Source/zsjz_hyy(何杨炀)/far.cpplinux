@@ -1,0 +1,26 @@
+#include<cstdio>
+using namespace std;
+const int P = 998244353;
+int n, m, f[45][1 << 21], l[45], r[45];
+
+int main()
+{
+	freopen("far.in", "r", stdin), freopen("far.out", "w", stdout);
+	scanf("%d%d",&n,&m);
+	for (int i = 1; i <= n; i++) scanf("%d%d",&l[i], &r[i]);
+	f[0][0] = 1;
+	for (int i = 0; i < n; i++) {
+		for (int k = 0; k < (1 << m); k++)
+			if (f[i][k])
+				for (int j = l[i + 1]; j <= r[i + 1]; j++)
+					(f[i + 1][k ^ j] += f[i][k]) %= P;
+		int ans = 0;
+		for (int k = 0; k < (1 << m); k++) {
+			int flag = 0;
+			for (int j = 0; j < (m >> 1); j++)
+				if (((k >> j) & 1) ^ ((k >> m - j - 1) & 1)) flag = 1;
+			if (!flag) (ans += f[i + 1][k]) %= P;
+		}
+		printf("%d\n", ans);
+	}
+}

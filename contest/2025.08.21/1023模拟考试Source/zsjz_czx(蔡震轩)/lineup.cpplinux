@@ -1,0 +1,36 @@
+#include<bits/stdc++.h>
+using namespace std;
+const int N=205;
+int a[N],b[N],p[N],q[N],cnt[N],n,ansS=1e9,ans=1e9;
+map <long long,int> f;
+void dfs(int t)
+{
+	if (t>=ans) return;
+	long long S=0;
+	for (int i=1;i<=n;++i) S=max(S,(long long)b[i]);
+	if (S>ansS) return;
+	for (int i=1;i<n;++i) if (a[i]>a[i+1]) goto invalid;
+	return (void)(ansS=S,ans=t);
+	invalid:S=0;
+	for (int i=1;i<=n;++i) S=S*(n+1)+cnt[a[i]];
+	if (f[S] && t>=f[S]) return; else f[S]=t;
+	for (int i=1;i<=n;++i) for (int j=1;j<i;++j)
+		swap(a[i],a[j]),b[i]+=abs(i-j),b[j]+=abs(i-j),
+		dfs(t+abs(i-j)*2),
+		swap(a[i],a[j]),b[i]-=abs(i-j),b[j]-=abs(i-j);
+//	printf("%d\n",ans);
+}
+int main()
+{
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	scanf("%d",&n);
+	for (int i=1;i<=n;++i) scanf("%d",&a[i]);
+	iota(p+1,p+n+1,1);
+	sort(p+1,p+n+1,[] (int x,int y) {return a[x]<a[y];});
+	for (int i=1;i<=n;++i) q[p[i]]=i;
+	for (int i=1;i<=n;++i) ++cnt[a[i]];
+	for (int i=120;i<=200;++i) cnt[i]+=cnt[i-1];
+	dfs(1);
+	printf("%d",ans-1);
+}

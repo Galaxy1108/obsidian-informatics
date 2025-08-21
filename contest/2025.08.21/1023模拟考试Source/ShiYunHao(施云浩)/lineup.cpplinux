@@ -1,0 +1,35 @@
+
+
+#include <bits/stdc++.h>
+
+using namespace std;
+int n;
+int h[60], b[60];
+bool vis[60];
+void syh(){
+	freopen("lineup.in", "r", stdin);
+	freopen("lineup.out", "w", stdout);
+}
+int ans = 0;
+int main (){
+	syh();
+	cin >> n;
+	for(int i = 1; i <= n; i++){
+		cin >> h[i];
+		b[i] = h[i];
+	}
+	int ans = 0;
+	sort(b + 1, b + 1 + n);
+	for(int i = 1; i <= n; i++){
+		for(int k = 1; k <= n; k++){
+			if(b[k] == h[i] && !vis[k]){
+				vis[k] = true;
+				b[k] = i;
+				ans += abs(k - i);
+				break;
+			}
+		} 
+	}
+	cout << ans << endl;
+	return 0;
+}

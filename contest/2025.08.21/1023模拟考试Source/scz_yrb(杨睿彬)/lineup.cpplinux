@@ -1,0 +1,51 @@
+#include<bits/stdc++.h>
+#define LL long long
+#define uLL unsigned long long
+using namespace std;
+typedef pair<int,int> pr;
+template<typename T>void Read(T &npt)
+{
+	npt=0;
+	int f=0;
+	char ch;
+	ch=getchar();
+	while(!isdigit(ch)){if(ch=='-')f=1;ch=getchar();}
+	if(f)while(isdigit(ch)){npt=npt*10+(48-ch);ch=getchar();}
+	else while(isdigit(ch)){npt=npt*10+(ch-48);ch=getchar();}
+}
+inline void print(long long ot)
+{
+	if(ot<0){putchar('-');print(~(ot-1));}
+	else if(ot>9){print(ot/10);putchar(ot%10+48);}
+	else putchar(ot+48);
+}
+inline void println(long long ot)
+{
+	print(ot);
+    putchar('\n');
+}
+int a[105];
+vector<int>v[205];
+int main()
+{
+    int n;
+    Read(n);
+    for(int i=1;i<=n;++i)Read(a[i]);
+    for(int i=1;i<=n;++i)v[a[i]].push_back(i);
+    for(int i=120;i<=200;++i)sort(v[i].begin(),v[i].end());
+    int pos=1,ans=0;
+    for(int i=120;i<=200;++i)
+    {
+        for(int j=0;j<v[i].size();++j)
+        {
+            // cout<<"debug: "<<i<<' '<<j<<' '<<v[i][j]<<' '<<pos<<endl;
+            ans+=abs(v[i][j]-pos-j);
+            // cout<<ans<<endl;
+        }
+        pos+=v[i].size();
+    }
+    println(ans);
+	return 0;
+}
+
+

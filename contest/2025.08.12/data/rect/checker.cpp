@@ -17,8 +17,8 @@ int clc[510][510];
 int L[250010],R[250010],U[250010],D[250010],cnt[250010];
 int main(int argc, char *argv[])
 {
-	// registerTestlibCmd(argc, argv);
-	registerLemonChecker(argc, argv);
+	registerTestlibCmd(argc, argv);
+//	registerLemonChecker(argc, argv);
 	
 	memset(L,0x3f,sizeof(L));
 	memset(U,0x3f,sizeof(U));
@@ -51,6 +51,6 @@ int main(int argc, char *argv[])
 	}
 
 	if(ocnt<=acnt) quitf(_ok,"Accepted!!!");
-	else quitp(0.75*pow(acnt*1./ocnt,10)*5,"Partly Correct!!!");
+	else quitp(0.75*pow(acnt*1./ocnt,10),"Partly Correct!!!");
 	return 0;
 }

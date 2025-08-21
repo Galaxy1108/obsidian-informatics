@@ -1,0 +1,35 @@
+#include<bits/stdc++.h>
+using namespace std;
+long long a,b,dp[21][1100001],mod=998244353,q,w;
+int main()
+{
+	freopen("far.in","r",stdin);
+	freopen("far.out","w",stdout);
+	scanf("%lld%lld",&a,&b);
+	dp[0][0]=1;
+	for(int i=1;i<=a;i++)
+	{
+		scanf("%lld%lld",&q,&w);
+		for(int j=0;j<(1<<b);j++)
+		{
+			if(!dp[i-1][j]) continue;
+			for(int k=q;k<=w;k++)
+			{
+				dp[i][j^k]+=dp[i-1][j];
+				dp[i][j^k]%=998244353;
+			}
+		}
+		long long ann=0;
+		for(int j=0;j<(1<<b);j++)
+		{
+			bool fl=1;
+			for(int k=0;k<b/2;k++)
+			{
+				if((bool)(j&(1<<k))!=(bool)(j&(1<<(b-k-1)))) fl=0;
+			}
+			if(fl) ann+=dp[i][j],ann%=998244353;
+		}
+		printf("%lld\n",(ann%mod+mod)%mod);
+	}
+	return 0;
+}

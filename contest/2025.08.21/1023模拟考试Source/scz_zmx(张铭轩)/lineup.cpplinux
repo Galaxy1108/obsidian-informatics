@@ -1,0 +1,30 @@
+#include<bits/stdc++.h>
+#define rep(a,b,c) for (register int a=b;a<=c;a++)
+#define per(a,b,c) for (register int a=b;a>=c;a--)
+#define PII pair<int,int>
+#define fi first
+#define se second
+using namespace std;
+typedef long long ll;
+template <typename T> inline void read(T &x){
+	ll f = 1;x = 0;char ch = getchar();
+	while (!isdigit(ch)){if (ch == '-')f = -1;ch = getchar();}
+	while (isdigit(ch)){x = (x << 1)+(x << 3)+(ch ^ 48);ch = getchar();}
+	x *= f;
+}
+const int N=50;
+int n;
+PII a[N];
+signed main()
+{
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	
+	cin>>n;
+	rep(i,1,n)cin>>a[i].fi,a[i].se=i;
+	sort(a+1,a+n+1);
+	int ans=0;
+	rep(i,1,n)ans=(ans+abs(i-a[i].se));
+	cout<<ans<<endl;
+	return 0;
+}

@@ -1,0 +1,45 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+const int mod=1000000007;
+int a[5005],cnt[5005],s[5005];
+int qkp(int x,int k){
+	if(k==1) return x;
+	if(k==0) return 1;
+	int tmp=qkp(x,k>>1);
+	if(k&1) return ((tmp*tmp)%mod*x)%mod;
+	else return (tmp*tmp)%mod;
+}
+int ny(int x){
+	return qkp(x,mod-2);
+}
+signed main(){
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	int n;
+	cin>>n;
+	int mx=0;
+	for(int i=1;i<=n;i++){
+		scanf("%lld",&a[i]);
+		mx=max(mx,a[i]);
+	}
+	sort(a+1,a+1+n);
+	s[n]=a[n];
+	for(int i=n-1;i>=1;i--){
+		s[i]=(s[i+1]*a[i])%mod;
+	}
+	int ans=0;
+	for(int k=1;k<=mx;k++){
+		int l=1,r=n;
+		while(l<r){
+			int mid=l+r>>1;
+			if(a[mid]>=k) r=mid;
+			else l=mid+1;
+		}
+		int tmp=(qkp(k,n-l+1)-qkp(k-1,n-l+1)+mod)%mod;
+		ans+=(k*((tmp*ny(s[l]))%mod))%mod;
+		ans%=mod;
+	}
+	cout<<ans;
+	return 0;
+}

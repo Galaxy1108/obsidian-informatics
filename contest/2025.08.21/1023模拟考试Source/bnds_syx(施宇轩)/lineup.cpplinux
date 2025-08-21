@@ -1,0 +1,20 @@
+#include<bits/stdc++.h>
+using namespace std;
+const int N=55;
+int n,a[N],b[N],use[N],ans;
+int main()
+{
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	scanf("%d",&n);
+	for(int i=1;i<=n;i++) scanf("%d",&a[i]),b[i]=a[i];
+	sort(b+1,b+n+1);
+	for(int i=1;i<=n;i++)
+	{
+		int res=1;
+		while(b[res]!=a[i]||use[res]) res++;
+		use[res]=1;
+		ans+=abs(res-i);
+	}
+	printf("%d\n",ans);
+}

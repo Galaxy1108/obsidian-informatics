@@ -1,0 +1,31 @@
+// #pragma GCC optimize("O3")
+// // #pragma GCC optimize("Ofast")
+// #pragma GCC optimize("unroll-loops")
+// #pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,tune=native")
+#include <bits/stdc++.h>
+using namespace std;
+
+#define PB emplace_back
+#define int long long
+#define ll long long
+#define vi vector<int>
+#define siz(a) ((int)((a).size()))
+#define rep(i, a, b) for (int i = (a); i <= (b); ++i)
+#define per(i, a, b) for (int i = (a); i >= (b); --i)
+
+int a;
+
+signed main() {
+	freopen("divisors.in", "r", stdin);
+	freopen("divisors.out", "w", stdout);
+	ios::sync_with_stdio(0);
+	cin.tie(0), cout.tie(0);
+	cin >> a;
+	int w = 1;
+	rep(i, 1, a) w = w * i / __gcd(w, i);
+	cout << w << ' ';
+	rep(i, 2, a) cout << i << ' ';
+	cout << endl;
+	rep(i, 2, a) cout << i << " 1\n";
+	return 0;
+}

@@ -1,0 +1,31 @@
+#include<bits/stdc++.h>
+template <typename T>inline void read(T& t){
+	t=0; register char ch=getchar(); register int fflag=1;
+	while(!('0'<=ch&&ch<='9')){if(ch=='-') fflag=-1;ch=getchar();}
+	while(('0'<=ch&&ch<='9')){t=t*10+ch-'0'; ch=getchar();} t*=fflag;
+}
+template <typename T,typename... Args> inline void read(T& t, Args&... args){read(t);read(args...);}
+using namespace std;
+int n,ans;
+struct node{
+	int h,id;
+}a[55];
+bool cmp(node x,node y){
+	if(x.h==y.h)return x.id<y.id;
+	return x.h<y.h;
+}
+int main(){
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	read(n);
+	for(int i=1;i<=n;++i){
+		read(a[i].h);
+		a[i].id=i;
+	}
+	sort(a+1,a+n+1,cmp);
+	for(int i=1;i<=n;++i){
+		ans+=abs(i-a[i].id);
+	}
+	printf("%d\n",ans);
+	return 0;
+}

@@ -1,0 +1,67 @@
+#include <bits/stdc++.h>
+#define fo(i,a,b) for(int i=a;i<=b;++i)
+#define fd(i,a,b) for(int i=a;i>=b;--i)
+#define max(a,b) ((a)>(b)?(a):(b))
+#define min(a,b) ((a)<(b)?(a):(b))
+#define mo 1000000007
+using namespace std;
+inline int read()
+{
+	int X=0,w=0;char ch=0;
+	while(!isdigit(ch))w|=ch=='-',ch=getchar();
+	while(isdigit(ch))X=(X<<3)+(X<<1)+(ch^48),ch=getchar();
+	return w?-X:X;
+}
+#define ad(x,y) x+=y,x-=(x>=mo?mo:0)
+int jc[5005],inv[5005],jc1[5005],s[5005][5005],a[5005],nu[5005];
+int ksm(int x,int y)
+{
+	if(!y)return 1;
+	int z=ksm(x,y>>1);
+	return((y&1)?1ll*z*z%mo*x%mo:1ll*z*z%mo);
+}
+int cal(int x,int mi)
+{
+	int ret=0;
+	nu[0]=1;
+	fo(i,1,mi+1)nu[i]=1ll*nu[i-1]*(x+2-i)%mo;
+	fo(i,0,mi)ad(ret,1ll*s[mi][i]*nu[i+1]%mo*inv[i+1]%mo*jc[i]%mo);
+	return ret;
+}
+int main()
+{
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	int n=read();
+	jc[0]=1;
+	fo(i,1,n)a[i]=read();
+	fo(i,1,5001)jc[i]=1ll*jc[i-1]*i%mo;
+	inv[5001]=ksm(jc[5001],mo-2);
+	fd(i,5001,1)inv[i-1]=1ll*inv[i]*i%mo;
+	s[0][0]=1;
+	fo(i,1,5000)
+	{
+		fo(j,1,i)
+		{
+			s[i][j]=s[i-1][j-1]+1ll*j*s[i-1][j]%mo;
+			s[i][j]%=mo;
+		}
+	}
+	sort(a+1,a+n+1);
+	int ans=0;
+	fo(i,1,n)
+	if(a[i-1]!=a[i])
+	{
+		int ct=1;
+		fo(j,1,i-1)ct=1ll*ct*a[j]%mo;
+		int nu=ksm(a[i],n-i+2);
+		nu-=cal(a[i]-1,n-i+1);
+		nu+=cal(a[i-1],n-i+1);
+		nu=nu-1ll*ksm(a[i-1],n-i+1)*(a[i-1]+1)%mo;
+		nu=(nu%mo+mo)%mo;
+		ad(ans,1ll*ct*nu%mo);
+	}
+	fo(i,1,n)ans=1ll*ans*ksm(a[i],mo-2)%mo;
+	printf("%d",ans);
+	return 0;
+}

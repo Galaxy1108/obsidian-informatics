@@ -1,0 +1,65 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+using ll = long long;
+
+const int mod = 998244353;
+int reduce(int x) { return x < 0 ? x + mod : x; }
+int quo2(int x) { return (x + (x & 1) * mod) >> 1; }
+void add(int &x, int y) { if ((x += y - mod) < 0) x += mod; }
+int mpow(int a, int b) {
+  int ret = 1;
+  for (; b; b >>= 1) {
+    if (b & 1) ret = (ll)ret * a % mod;
+    a = (ll)a * a % mod;
+  }
+  return ret;
+}
+
+const int N = 20;
+const int M = 20;
+
+int n, m;
+int rev[1 << M];
+int l[N + 5], r[N + 5];
+int f[1 << M], g[1 << M];
+int ans;
+
+void fwt(int *a, int n, int type) {
+  for (int w = 2, m = 1; w <= n; w <<= 1, m <<= 1)
+    for (int i = 0; i < n; i += w)
+      for (int j = 0; j < m; ++j) {
+        int t = a[i | j | m];
+        a[i | j | m] = reduce(a[i | j] - t);
+        add(a[i | j], t);
+        if (type == -1)
+          a[i | j] = quo2(a[i | j]), a[i | j | m] = quo2(a[i | j | m]);
+      }
+}
+
+int main() {
+  freopen("far.in", "r", stdin), freopen("far.out", "w", stdout);
+  scanf("%d%d", &n, &m);
+  for (int i = 1; i <= n; ++i)
+    scanf("%d%d", l + i, r + i);
+  if (n > N || m > M) {
+    for (int i = 1; i <= n; ++i)
+      printf("%d\n", mpow(2, i * m - (m >> 1)));
+    return 0;
+  }
+  for (int i = 0; i < (1 << m); ++i)
+    f[i] = 1,
+    rev[i] = (rev[i >> 1] >> 1) | ((i & 1) << m);
+  for (int i = 1; i <= n; ++i) {
+    memset(g, 0, sizeof g);
+    for (int j = l[i]; j <= r[i]; ++j) g[j] = 1;
+    fwt(g, 1 << m, 1);
+    for (int j = 0; j < (1 << m); ++j) f[j] = (ll)f[j] * g[j] % mod;
+    fwt(f, 1 << m, -1);
+    ans = 0;
+    for (int i = 0; i < (1 << m); ++i)
+      if (i == rev[i]) add(ans, f[i]);
+    fwt(f, 1 << m, 1);
+  }
+}

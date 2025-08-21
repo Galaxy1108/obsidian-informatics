@@ -1,0 +1,18 @@
+#include <cstdio>
+#include <cmath>
+#include <algorithm>
+using namespace std;
+long long n, a[60], ans = 0;
+int main() {
+	freopen("lineup.in", "r", stdin);
+	freopen("lineup.out", "w", stdout);
+	scanf("%lld", &n);
+	for (long long i = 1; i <= n; i++) scanf("%lld", &a[i]);
+	for (long long i = 1; i <= n; i++) {
+		for (long long j = i + 1; j <= n; j++) {
+			if (a[j] < a[i]) ans += 2;
+		}
+	}
+	printf("%lld\n", ans);
+	return 0;
+}

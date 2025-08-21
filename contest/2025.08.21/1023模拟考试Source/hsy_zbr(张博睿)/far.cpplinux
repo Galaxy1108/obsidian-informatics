@@ -1,0 +1,97 @@
+#include<bits/stdc++.h>
+#include<vector>
+using namespace std;
+#define int long long
+inline int qread()
+{
+	int x=0,f=1;
+	char c=getchar();
+	while(!isdigit(c))
+	{
+		if(c=='-')f=-1;
+		c=getchar();
+	}
+	while(isdigit(c))
+	{
+		x=x*10+(c^48);
+		c=getchar();
+	}
+	return x*f;
+}
+#define re register
+
+
+const int N=44;
+const int M=66;
+int n,m;
+int l[N],r[N];
+int ans[N];
+int a[N];
+bool wk[M];
+inline int chk()
+{
+	for(re int i=0;i<=m;i++)wk[i]=0;
+	int x=0;
+	for(re int i=1;i<=n;i++)x^=a[i];
+	int cnt=0;
+	while(x)
+	{
+		wk[cnt++]=x%2;
+		x/=2;
+	}
+	for(re int i=0;i<m;i++)
+	{
+		if(wk[i]!=wk[m-i-1])return 0;
+	}
+	return 1;
+}
+inline void dfs(int stp)
+{
+//	cout<<stp<<" "<<tgt<<" "<<ans[tgt]<<endl;
+//	for(re int i=1;i<=n;i++)
+//	{
+//		cout<<a[i]<<" ";
+//	}
+//	cout<<endl;	
+	ans[stp-1]+=chk();
+	if(stp>n)
+	{
+		return ;
+	}
+	for(re int i=l[stp];i<=r[stp];i++)
+	{
+		a[stp]=i;
+		dfs(stp+1);
+		a[stp]=0;
+	}
+}
+signed main()
+{
+	freopen("far.in","r",stdin);
+	freopen("far.out","w",stdout);
+	n=qread();m=qread();
+	for(re int i=1;i<=n;i++)
+	{
+		l[i]=qread();
+		r[i]=qread();
+	}
+	dfs(1);
+	for(re int i=1;i<=n;i++)
+	{
+		cout<<ans[i]%998244353<<endl;
+	}	
+	return 0; 
+}
+/*
+10 9
+7 364
+75 449
+51 266
+83 406
+66 373
+309 489
+231 436
+241 504
+63 203
+324 504
+*/

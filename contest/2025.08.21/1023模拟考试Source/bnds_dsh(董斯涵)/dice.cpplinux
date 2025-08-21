@@ -1,0 +1,70 @@
+#include<cstdio>
+#include<algorithm>
+const int N=5010;
+const long long MOD=1e9+7;
+inline long long ksm(long long b,long long p)
+{
+	long long ans=1;
+	while(p)
+	{
+		if(p&1) ans=ans*b%MOD;
+		p>>=1,b=b*b%MOD;
+	}
+	return ans;
+}
+inline long long inv(long long x){return ksm(x,MOD-2);}
+int a[N],n;
+long long pre[N];
+long long s[N][N],B[N],fact[N],fact_inv[N];
+inline long long solve(int n,int m)
+{
+	//1^m+...+n^m
+	if(n<=0) return 0;
+	if(m==0) return n;
+	//x[i]=i,y[i]=s[i][m]
+	long long res=0;
+	for(int i=0;i<=m+1;++i) B[i]=n-i;
+	for(int i=m;i>=0;--i) B[i]=B[i+1]*B[i]%MOD;
+	long long cur=1;
+	for(int i=0;i<=m+1;++i)
+	{
+		long long p=cur,q=fact_inv[i]*fact_inv[m+1-i]%MOD;
+		if(i!=m+1) p=p*B[i+1]%MOD;
+		if((m+1-i)&1) q=-q;
+		cur=cur*(n-i)%MOD;
+		res=(res+s[i][m]*p%MOD*q%MOD+MOD)%MOD;
+	}
+	return res;
+}
+template<typename T> inline void Add(T &x,T y){if((x+=y)>=MOD) x-=MOD;}
+int main()
+{
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	scanf("%d",&n);
+	int mx=0;
+	for(int i=1;i<=n;++i) scanf("%d",&a[i]),mx=std::max(mx,a[i]);
+	std::sort(a+1,a+n+1);
+	pre[0]=1,fact[0]=1;
+	for(int i=1;i<=n;++i) pre[i]=pre[i-1]*a[i]%MOD;
+	for(int i=1;i<=n+2;++i) fact[i]=fact[i-1]*i%MOD;
+	for(int i=0;i<=n+2;++i) fact_inv[i]=inv(fact[i]);
+	for(int i=1;i<=n;++i)
+	{
+		s[i][0]=1;
+		for(int j=1;j<=n+1;++j) s[i][j]=s[i][j-1]*i%MOD;
+		//s[i][j]+=s[i-1][j]
+	}
+	for(int i=1;i<=n;++i) for(int j=0;j<=n+1;++j) Add(s[i][j],s[i-1][j]);
+	long long sum=0;
+	for(int i=1;i<=n;++i)
+	{
+		//[a[i-1],a[i]-1]
+		sum=(sum+(solve(a[i]-1,n-i+1)-solve(a[i-1]-1,n-i+1)+MOD)*pre[i-1])%MOD;
+//		int mx=i;
+//		while(mx<n&&a[mx+1]==a[i]) ++mx;
+//		i=mx+1;
+	}
+	printf("%lld\n",(mx*pre[n]-sum+MOD)%MOD*inv(pre[n])%MOD);
+	return 0;
+}

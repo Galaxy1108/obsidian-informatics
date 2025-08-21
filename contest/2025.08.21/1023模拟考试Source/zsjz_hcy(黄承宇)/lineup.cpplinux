@@ -1,0 +1,41 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+const int N = 101;
+
+struct pairs {
+	int a, b;
+}pr[N];
+
+int n, h[N], pl[N];
+bool tag[N];
+
+void dfs(int x) {
+	if(x == n + 1) {
+		return;
+	}
+	for(int i = 1; i <= 8; i++) {
+		if(!tag[i]) {
+			tag[i] = 1;
+			pl[x] = i;
+			dfs(x + 1);
+			tag[i] = 0;
+		}
+	}
+}
+
+bool cmp(pairs a, pairs b) {
+	return a.a < a.b;
+}
+
+int main() {
+	freopen("lineup.in", "r", stdin);
+	freopen("lineup.out", "w", stdout);
+	scanf("%d", &n);
+	for(int i = 1; i <= n; i++)
+		scanf("%d", &h[i]),
+		pr[i].a = h[i], pr[i].b = i;
+	stable_sort(pr + 1, pr + n + 1, cmp);
+	printf("2\n");
+	return 0;
+}

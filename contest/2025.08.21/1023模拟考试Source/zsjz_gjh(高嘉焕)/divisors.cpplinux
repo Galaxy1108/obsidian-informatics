@@ -1,0 +1,21 @@
+#include<bits/stdc++.h>
+#define fo(i,a,b) for(int i=a;i<=b;++i)
+#define fd(i,a,b) for(int i=a;i>=b;--i)
+using namespace std;
+const int N=2510;
+int n,m,a[N];
+int main(){
+	freopen("divisors.in","r",stdin);
+	freopen("divisors.out","w",stdout);
+	scanf("%d",&n);
+	for(int i=1,x=1,y=n;i<=n;++i){
+		a[i]=x*y;
+		if(i&1)++x;
+		else --y;
+	}
+	fo(i,1,n)printf("%d ",a[i]);
+	printf("\n");
+	fo(i,2,n)printf("%d %d\n",i-1,i);
+
+	return 0;
+}

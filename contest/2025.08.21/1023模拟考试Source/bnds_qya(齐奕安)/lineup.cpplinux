@@ -1,0 +1,29 @@
+#include <algorithm>
+#include <cstdio>
+using namespace std;
+int n,ans;
+struct node{
+	int h,p;
+	node(int h0=0,int p0=0){
+		h=h0,p=p0;
+	}
+	bool operator<(const node &x) const{
+		return h<x.h;
+	}
+} a[55];
+int main(){
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	scanf("%d",&n);
+	for (int i=1;i<=n;i++){
+		scanf("%d",&a[i].h);
+		a[i].p=i;
+	}
+	sort(a+1,a+1+n);
+	for (int i=1;i<=n;i++)
+		ans+=abs(a[i].p-i);
+	printf("%d",ans);
+	fclose(stdin);
+	fclose(stdout);
+	return 0;
+}

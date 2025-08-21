@@ -1,0 +1,33 @@
+#include<iostream>
+#include<cstdio>
+#include<algorithm>
+#include<cmath>
+#include<cstring>
+#include<cstdlib>
+using namespace std;
+#define re int
+inline int read(){
+	int x=0,ff=1;char c=getchar();
+	while(c<'0'||c>'9'){if(c=='-')ff=-1;c=getchar();}
+	while(c>='0'&&c<='9'){x=(x<<1)+(x<<3)+(c^'0');c=getchar();}
+	return x*ff;
+}
+int n,a[55],c[55],ans;
+bool b[55];
+int main(){
+	freopen("lineup.in","r",stdin);
+	freopen("lineup.out","w",stdout);
+	n=read();for(re i=1;i<=n;i++)a[i]=c[i]=read();
+	sort(c+1,c+n+1);
+	for(re i=1;i<=n;i++){
+		int x=0;
+		for(re j=1;j<=n;j++){
+			if(!b[j]&&c[i]==a[j]){
+				b[j]=1;x=j;break;
+			}
+		}
+		ans+=abs(x-i);
+	}
+	cout<<ans<<endl;
+	return 0;
+}

@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <algorithm>
+#include <cstring>
+#include <iostream>
+using namespace std;
+
+const int P = 1e9 + 7;
+
+inline void add(int &a, const int &b) { a = (a + b >= P ? a + b - P : a + b); }
+inline int aad(const int &a, const int &b) { return (a + b >= P ? a + b - P : a + b); }
+inline void mul(int &a, const int &b) { a = 1ll * a * b % P; }
+inline int mut(const int &a, const int &b) { return 1ll * a * b % P; }
+
+const int NR = 5000 + 10, LIM = 5005;
+
+int n, mx = 0;
+int ans = 0;
+int a[NR];
+int S2[NR][NR], inv[NR];
+
+int qp(int a, int b) {
+	int ret = 1;
+	while (b) {
+		if (b & 1) mul(ret, a);
+		mul(a, a); 
+		b >>= 1;
+	}
+	return ret;
+}
+
+int calc(int n, int k) {
+	int ret = 0;
+	for (int i = 0, mu = n + 1; i <= k; i++, mul(mu, n + 1 - i)) add(ret, mut(S2[k][i], mut(mu, inv[i + 1])));
+	return ret;
+}
+
+int main()
+{
+#ifdef WYZ
+	freopen("1.in", "r", stdin);
+	freopen("1.out", "w", stdout);
+#else
+	freopen("dice.in", "r", stdin);
+	freopen("dice.out", "w", stdout);
+#endif
+	ios::sync_with_stdio(0);
+	
+	S2[0][0] = 1;
+	for (int i = 1; i <= LIM; i++)
+		for (int j = 1; j <= i; j++) S2[i][j] = aad(S2[i - 1][j - 1], mut(S2[i - 1][j], j));
+	inv[1] = 1;
+	for (int i = 2; i <= LIM; i++) inv[i] = mut(P - P / i, inv[P % i]);
+		
+	cin >> n;
+	for (int i = 1; i <= n; i++) cin >> a[i];
+	sort(a + 1, a + n + 1), reverse(a + 1, a + n + 1);
+	
+	int mu = 1;
+	for (int i = 1; i <= n; i++) {
+		mul(mu, qp(a[i], P - 2));
+		add(ans, mut(mu, aad(calc(a[i] - 1, i), P - calc(a[i + 1] - 1, i))));
+	}
+	
+	cout << aad(a[1], P - ans) << '\n';
+	
+	return 0;
+}

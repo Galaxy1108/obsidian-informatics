@@ -1,0 +1,39 @@
+#include<bits/stdc++.h>
+#define int long long
+using namespace std;
+void read(int &x){
+	x=0;char c=getchar();
+	int w=0;
+	while(!isdigit(c)){
+		(c=='-')&&(w=1);
+		c=getchar();
+	}
+	while(isdigit(c)){
+		x=x*10+(c^48);
+		c=getchar();
+	}
+	w&&(x=-x);
+}
+const int mod=1e9+7;
+const int N=1e6+5;
+int tmp,n,a[N],suf[N],ans;
+int qpow(int x,int p=mod-2){
+	if(!p)return 1;
+	if(p&1)return x*qpow(x,p-1)%mod;
+	return tmp=qpow(x,p>>1),tmp*tmp%mod;
+}
+signed main(){
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	read(n);
+	for(int i=1;i<=n;i++)read(a[i]);
+	sort(a+1,a+1+n);
+	suf[n+1]=1;
+	for(int i=n;i;i--)suf[i]=suf[i+1]*a[i]%mod;
+	for(int i=1;i<=a[n];i++){
+		int p=lower_bound(a+1,a+1+n,i)-a;
+		ans=(ans+(qpow(i,n-p+1)+mod-qpow(i-1,n-p+1))%mod*qpow(suf[p])%mod*i%mod)%mod;
+	}
+	cout<<ans;
+	return 0;
+}

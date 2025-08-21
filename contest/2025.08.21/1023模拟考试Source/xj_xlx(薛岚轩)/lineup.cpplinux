@@ -1,0 +1,65 @@
+#include<bits/stdc++.h>
+#pragma GCC optimize(2)
+using namespace std;
+#define int long long 
+ 
+inline int read(){
+    int x=0,f=1;char ch=getchar();
+    while (ch<'0'||ch>'9'){if (ch=='-') f=-1;ch=getchar();}
+    while (ch>='0'&&ch<='9'){x=x*10+ch-48;ch=getchar();}
+    return x*f;
+}
+ 
+const int maxn=210;
+
+int n;
+
+int a[maxn],b[maxn];
+int ans;
+
+int aim[maxn];
+
+signed main(){
+    freopen("lineup.in","r",stdin);
+    freopen("lineup.out","w",stdout);
+    n=read();
+    for(int i=1;i<=n;i++){
+        a[i]=read();
+        b[i]=a[i];
+    }
+    sort(a+1,a+n+1);
+    memset(aim,0x3f3f3f3f,sizeof(aim));
+    for(int i=1;i<=n;i++){
+        aim[a[i]]=min(i,aim[a[i]]);
+    }
+    for(int i=1;i<=n;i++){
+        int idx;
+        for(int j=i;j<=n;j++){
+            if(b[j]==a[i]){
+                idx=j;break;
+            }
+        }
+        cerr<<i<<endl;
+        if(idx==i) continue;
+        int res=0;
+        while(idx>i){
+            res++;
+            int f=0;
+            for(int j=idx-1;j>=i;j--){
+                if(a[idx]<=b[j]&&aim[b[j]]>=idx){
+                    f=1;
+                    swap(b[j],b[idx]);
+                    ans+=2*(idx-j);
+                    idx=j;
+                    break;
+                }
+            }
+            if(!f){
+                ans+=2*(idx-i);
+                swap(idx,i);break;
+            }
+        }
+    }
+    printf("%lld",ans);
+    return 0;
+}

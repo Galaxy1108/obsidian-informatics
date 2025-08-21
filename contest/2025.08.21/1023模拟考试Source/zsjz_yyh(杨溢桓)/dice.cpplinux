@@ -1,0 +1,130 @@
+#pragma GCC optimize(3)
+#pragma GCC optimize("inline")
+#pragma GCC optimize("Ofast")
+#pragma GCC target("sse3","sse2","sse")
+#pragma GCC diagnostic error "-std=c++14"
+#pragma GCC diagnostic error "-fwhole-program"
+#pragma GCC diagnostic error "-fcse-skip-blocks"
+#pragma GCC diagnostic error "-funsafe-loop-optimizations"
+#pragma GCC optimize("fast-math","unroll-loops","no-stack-protector","inline")
+#include<bits/stdc++.h>
+#define I inline
+#define R register
+#define LL long long
+#define fo(i, a, b) for(R int i = a; i <= b; ++i)
+#define fd(i, a, b) for(R int i = a; i >= b; --i)
+#define fz(i, x) for(R int i = head[x]; i; i = nxt[i])
+using namespace std;
+const int N = 5010, P = 1000000007, inf = 0x3f3f3f3f;
+int n, cnt[N], c[N], d[N], C[N][N], ff[510][510];
+LL a[N], f[N], g[N], p1[N], p2[N], b[N];
+I int read(){
+	int res = 0, flag = 0; char ch = getchar();
+	for(; !isdigit(ch); ch = getchar()) if(ch == '-') flag = 1;
+	for(; isdigit(ch); ch = getchar()) res = (res << 1) + (res << 3) + (ch ^ 48);
+	if(flag) res = ~res + 1; return res;
+}
+I void write(int X){
+    if(X < 0) {X = ~(X - 1), putchar('-');}
+    if(X > 9) write(X / 10);
+    putchar(X % 10 + '0');
+}
+I LL fast(LL a,LL b){
+    LL res = 1; assert(b >= 0);
+    for(; b; b >>= 1, a = a * a % P) if((b & 1)) res = (res * a) % P;
+    return res;
+}
+I int mo(int x){  return (x >= P ? x - P : (x < 0 ? x + P : x)); }
+namespace poly{
+    I LL calcn(int d, LL *a, LL n) {
+        if(n <= d) return a[n];
+        p1[0] = p2[0] = 1;
+        fo(i, 0, d){
+            LL t = (n - i + P) % P;
+            p1[i + 1] = p1[i] * t % P;
+            t = (n - d + i + P) % P;
+            p2[i + 1] = p2[i] * t % P;
+        }
+        LL ans = 0;
+        fo(i, 0, d){
+            LL t = g[i] * g[d - i] % P * p1[i] % P * p2[d - i] % P * a[i] % P;
+            if((d - i) & 1) ans = (ans - t + P) % P;
+            else ans = (ans + t) % P;
+        }
+        return ans;
+    }
+    I void init(int M){
+        f[0] = f[1] = g[0] = g[1] = 1;
+        fo(i, 2, M + 4) f[i] = f[i - 1] * i % P;
+        g[M + 4] = fast(f[M + 4], P - 2);
+        fd(i, M + 3, 1) g[i] = g[i + 1] * (i + 1) % P;
+    }
+    I LL polysum(LL m,LL *a,LL n){
+        fo(i, 0, m) b[i] = a[i];
+        b[m + 1] = calcn(m, b, m + 1);
+        fo(i, 1, m + 1) b[i] = (b[i - 1] + b[i]) % P;
+        return calcn(m + 1, b, n - 1);
+    }
+}
+using namespace poly;
+I LL work(int num, int k){
+    if(!k) return num;
+	a[0] = 0;
+	fo(i, 1, k + 2) a[i] = fast(i,k);
+	return polysum(k + 2, a, num + 1);
+}
+int main(){
+	freopen("dice.in","r",stdin);
+	freopen("dice.out","w",stdout);
+	n = read(), init(5000);
+	fo(i, 1, n) c[i] = read();
+	sort(c + 1, c + 1 + n);
+	if(n <= 500 && c[n] <= 500){
+		fo(i, 1, c[1]) ff[1][i] = i;
+		fo(i, c[1] + 1, c[n]) ff[1][i] = c[1];
+		fo(i, 2, n)
+			fo(j, 1, c[n]) ff[i][j] = (LL)ff[i - 1][j] * min(c[i], j) % P;
+		LL ansx = 0, ans = 0;
+		fo(j, 1, c[n]) ansx = mo(ansx + ff[n][j] - ff[n][j - 1]), ans = mo(ans + mo(ff[n][j] - ff[n][j - 1]) * j % P);
+		printf("%lld\n",ans * fast(ansx, P - 2) % P);
+		return 0;
+	}
+	int num = 0; LL L = 1;
+	fo(i, 1, n){
+		if(c[i] != c[i - 1]) d[++num] = c[i];
+		cnt[num]++;
+	}
+	fo(i, 1, num) cnt[i] += cnt[i - 1];
+	fo(i, 1, n){
+		C[i][0] = C[i][i] = 1;
+		fo(j, 1, i - 1) C[i][j] = mo(C[i - 1][j] + C[i - 1][j - 1]);
+	}
+	LL ansx = 0, ans = 0;
+	fo(i, 1, num){
+		int x = 0, fl = 1, y = n - cnt[i - 1];
+		fo(j, 1, y) x = mo(x + C[y][j] * L % P * mo(work(d[i], y - j) - work(d[i - 1], y - j)) % P * fl), fl *= -1;
+		ansx = mo(ansx + x), x = 0, fl = 1;
+		fo(j, 1, y) x = mo(x + C[y][j] * L % P * mo(work(d[i], y - j + 1) - work(d[i - 1], y - j + 1)) % P * fl), fl *= -1;
+		ans = mo(ans + x), L = L * d[i] % P;
+	}
+	printf("%lld\n",ans * fast(ansx, P - 2) % P);
+}
+/**
+*¡¡¡¡©³©·¡¡¡¡¡¡©³©·+ +
+*¡¡©³©¿©ß©¥©¥©¥©¿©ß©· + +
+*¡¡©§¡¡¡¡¡¡¡¡¡¡¡¡¡¡©§
+*¡¡©§¡¡¡¡¡¡©¥¡¡¡¡¡¡©§ ++ + + +
+*  ¨€¨€¨€¨€©¥¨€¨€¨€¨€+
+*  ¨¨€¨€¨¡¡¨¨€¨€¨ +
+*¡¡©§¡¡¡¡¡¡©ß¡¡¡¡¡¡©§
+*¡¡©§¡¡¡¡¡¡¡¡¡¡¡¡¡¡©§ + +
+*¡¡©»©¥©·¡¡¡¡¡¡©³©¥©¿
+*¡¡¡¡¡¡©§¡¡¡¡¡¡©§ + + + + Code is far away from ¡¡
+*¡¡¡¡¡¡©§¡¡¡¡¡¡©§ + bug with the animal protecting
+*¡¡¡¡¡¡©§¡¡ ¡¡ ©»©¥©¥©¥©· ÉñÊÞ±£ÓÓ,´úÂëÎÞbug¡¡
+*¡¡¡¡¡¡©§              ©Ç©·
+*¡¡¡¡  ©§              ©³©¿
+*¡¡    ©»©·©·©³©¥©×©·©³©¿ + + + +
+*¡¡¡¡¡¡¡¡©§©Ï©Ï¡¡©§©Ï©Ï
+*¡¡¡¡¡¡¡¡©»©ß©¿¡¡©»©ß©¿+ + + +
+*/

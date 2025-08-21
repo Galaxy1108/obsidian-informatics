@@ -1,0 +1,44 @@
+#include<bits/stdc++.h>
+using namespace std;
+long long a,b,v[1000001],st[1000001],cn,d[1000001],id,o,h[1000001],ann;
+deque<long long> qu,qu1;
+long long gcd(long long qq,long long ww){return !ww?qq:gcd(ww,qq%ww);} 
+struct p{long long q,w,e;}l[1000001];
+struct pp{long long q,w;}an[1000001];
+void add(long long qq,long long ww,long long ee){l[++o].q=ww,l[o].w=h[qq],h[qq]=o,l[o].e=ee;}
+void dfs(long long qq,long long ww,long long ee)
+{
+	long long tt=d[qq]*ee/gcd(d[qq],ee),fl=1;
+	for(int i=h[qq];i;i=l[i].w) if(gcd(tt,d[l[i].q])!=l[i].e&&l[i].e!=0) fl=0;
+	if(fl&&tt<ann) ann=tt,id=qq;
+	for(int i=h[qq];i;i=l[i].w) if(l[i].q!=ww) dfs(l[i].q,qq,ee);
+}
+void dfs1(long long qq,long long ww,long long ee)
+{
+	if(ww!=0) v[ee]=1;
+	for(int i=h[qq];i;i=l[i].w) if(l[i].q!=ww) dfs1(l[i].q,qq,gcd(ee,d[l[i].q]));
+}
+int main()
+{
+	freopen("divisors.in","r",stdin);
+	freopen("divisors.out","w",stdout); 
+	scanf("%lld",&a);
+	d[1]=2,d[2]=6,d[3]=3;
+	add(1,2,2),add(2,1,2),add(2,3,3),add(3,2,3);an[++cn]=pp{1,2},an[++cn]=pp{2,3};v[1]=v[2]=v[3]=1;
+	bool fll=0;
+	for(int i=4;i<=a;i++)
+	{
+		id=0;ann=1e12;dfs(1,0,i);assert(id);
+		if(v[i]) add(i,id,0),add(id,i,0);
+		else add(i,id,i),add(id,i,i);
+		d[id]=d[id]*i/gcd(d[id],i);d[i]=i;an[++cn]=pp{id,i};
+		dfs1(i,0,d[i]);dfs1(id,0,d[id]);
+	}
+//	long long an1=0;
+//	for(int i=1;i<=a;i++) an1=max(an1,d[i]);
+//	cout<<an1;return 0;
+	for(int i=1;i<=a;i++) printf("%lld ",d[i]);
+	printf("\n");
+	for(int i=1;i<a;i++) printf("%lld %lld\n",an[i].q,an[i].w);
+	return 0;
+}

@@ -1,0 +1,38 @@
+#include<iostream>
+#include<cstdio>
+#include<algorithm>
+using namespace std;
+struct node
+{
+	int hi, pl;
+	friend bool operator < (node x, node y)
+	{
+		if(x.hi==y.hi)
+			return x.pl<y.pl;
+		return x.hi<y.hi;
+	}
+}h[55], h1[55];
+int n, x, ans;
+int main()
+{
+	freopen("lineup.in", "r", stdin);
+	freopen("lineup.out", "w", stdout);
+	scanf("%d", &n);
+	for(int i=0; i<n; i++)
+	{
+		scanf("%d", &h[i].hi);
+		h[i].pl=i;
+		h1[i]=h[i];
+	}
+	sort(h, h+n);
+	for(int i=0; i<n; i++)
+		for(int j=0; j<n; j++)
+			if(h[j].hi==h1[i].hi&&h[j].pl==h1[i].pl)
+			{
+				x=i-j;
+				ans+=x>=0?x:-x;
+			}
+	printf("%d\n", ans);
+	fclose(stdin);
+	fclose(stdout);
+}
