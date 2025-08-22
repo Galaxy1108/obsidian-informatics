@@ -1039,6 +1039,7 @@ cOS
 clly
 cCQp
 caS
+check
 tags
 to
 them
@@ -2707,6 +2708,7 @@ PyW
 PJgEb
 Pct
 Pjp
+Perishable
 obsidian
 of
 only
@@ -3006,6 +3008,7 @@ oeu
 onDtT
 oGQ
 oTn
+otu
 execute
 executed
 execution
@@ -3716,6 +3719,7 @@ pFb
 pss
 phh
 pmm
+polylog
 This
 The
 TypeScript
@@ -4077,6 +4081,7 @@ TYY
 TsA
 TKd
 THCy
+Test
 you
 your
 yet
@@ -4751,6 +4756,7 @@ sqF
 sZxI
 sample
 sums
+subtask
 in
 is
 interactive
@@ -9963,6 +9969,7 @@ MQd
 MEY
 Mphl
 MToep
+Malowanie
 Racket
 Ruby
 Rust
@@ -10288,6 +10295,7 @@ RRy
 Rae
 RRuX
 RgI
+Roads
 Scala
 Shell
 SQL
@@ -10625,6 +10633,8 @@ ShOv
 Stl
 SiT
 Skip
+Stern
+SBT
 Batch
 Bob
 By
@@ -10949,6 +10959,7 @@ BCx
 BTedF
 BlO
 BCCC
+Brocot
 Wolfram
 Write
 World
@@ -13596,6 +13607,7 @@ dmt
 dCk
 dro
 dee
+dijkstra
 New
 Nomad
 Node
@@ -14840,6 +14852,7 @@ VMs
 VdeEGW
 VypDa
 VEnM
+Vison
 Queries
 QiU
 QD

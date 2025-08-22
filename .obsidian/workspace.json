@@ -13,30 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "solution/2025.08.22.md",
+                "file": "doc/2025.08.22.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
               "title": "2025.08.22"
-            }
-          }
-        ]
-      },
-      {
-        "id": "d9a04de4aa759a61",
-        "type": "tabs",
-        "children": [
-          {
-            "id": "1f5ae2b1d830b135",
-            "type": "leaf",
-            "state": {
-              "type": "pdf",
-              "state": {
-                "file": "contest/2025.08.22/down/statement.pdf"
-              },
-              "icon": "lucide-file-text",
-              "title": "statement"
             }
           }
         ]
@@ -197,25 +179,26 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "1f5ae2b1d830b135",
+  "active": "98e3cd80cb2383a9",
   "lastOpenFiles": [
+    "contest/2025.08.22/sol.md",
+    "doc/2025.08.22.md",
+    "doc",
+    "contest/2025.07.19/source/齐冠宇7.18/square/square.cpp",
+    "contest/2025.07.19/source/齐冠宇7.18/lcm/lcm.cpp",
+    "contest/2025.07.19/source/齐冠宇7.18/gcd/gcd.cpp",
+    "contest/2025.07.19/source/齐冠宇7.18/combination/combination.cpp",
+    "contest/2025.07.19/source/齐冠宇7.18/square",
+    "contest/2025.07.19/source/齐冠宇7.18/lcm",
+    "contest/2025.07.19/source/齐冠宇7.18/gcd",
+    "contest/2025.07.19/source/齐冠宇7.18/combination",
+    "contest/2025.07.19/source/齐冠宇7.18",
     "solution/2025.08.22.md",
-    "contest/2025.08.22/down/statement.pdf",
-    "contest/2025.08.22/source/王子诚/a/a.cpp",
     "solution/2025.08.15.md",
     "solution/2025.08.14.md",
     "solution/2025.08.12.md",
     "solution/2025.08.11.md",
     "solution/2025.07.23.md",
-    "contest/2025.08.22/down/b/b3.out",
-    "contest/2025.08.22/down/b/b3.in",
-    "contest/2025.08.22/down/b/b2.out",
-    "contest/2025.08.22/down/b/b2.in",
-    "contest/2025.08.22/down/b/b1.out",
-    "contest/2025.08.22/down/b/b1.in",
-    "contest/2025.08.22/down/b",
-    "contest/2025.08.22/down/d/d3.out",
-    "contest/2025.08.22/sol.md",
     "contest/2025.07.19/solution.md",
     "未命名.md",
     "contest/2025.08.14/statement.md",
