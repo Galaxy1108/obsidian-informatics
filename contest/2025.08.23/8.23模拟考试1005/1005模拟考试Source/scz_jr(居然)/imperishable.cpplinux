@@ -1,0 +1,41 @@
+#include<bits/stdc++.h>
+#define LL long long
+using namespace std;
+inline int read() {
+	int s=0,f=1; char ch=getchar();
+	while (ch<48 || ch>57) {if (ch=='-') f=-1; ch=getchar();}
+	while (ch>=48 && ch<=57) {s=(s<<3)+(s<<1)+ch-48; ch=getchar();}
+	return s*f;
+}
+const int N=2e5+5,P=998244353;
+int Num,n,a[N],q,pw[N];
+void init() {
+	pw[0]=1;
+	for (int i=1;i<=n;++i)
+	pw[i]=(pw[i-1]<<1)%P;
+}
+void solve() {
+	LL sum=0,ans=0;
+	int Max=0;
+	for (int i=1;i<=n;++i) sum+=a[i];
+	for (int i=n;i>=1;--i) {
+		if (sum-a[i]>=max(Max,a[i]))
+		sum-=a[i],Max=max(Max,a[i]);
+		else ans=(ans+pw[i])%P;
+	}
+	printf("%d\n",ans);
+}
+int main() {
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	Num=read(),n=read();
+	init();
+	for (int i=1;i<=n;++i) a[i]=read();
+	solve();
+	q=read();
+	while (q--) {
+		a[read()]=read();
+		solve();
+	}
+	return 0;
+}

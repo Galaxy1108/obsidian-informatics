@@ -1,0 +1,51 @@
+#include <cstdio>
+#include <cstring>
+#include <cctype>
+#include <vector>
+#include <algorithm>
+using namespace std;
+inline int read (void) {
+    int x = 0, f = 1, ch = getchar();
+    while(!isdigit(ch)) { if(ch == '-') f = -f; ch = getchar(); }
+    while(isdigit(ch)) { x = x * 10 + ch - '0'; ch = getchar(); }
+    return x * f;
+}
+const int N=2e5+5,mod=998244353;
+int n,a[N],pw[N];
+void cal(){
+    long long s=0,ans=0;
+    int mx=0;
+    for (int i=1;i<=n;i++) s+=a[i];
+    int l=0;
+    for (int i=n;i>=1;i--){
+        if(s-a[i]<max(mx,a[i])){
+            l=i;break;
+        }
+        mx=max(mx,a[i]);
+        s-=a[i];
+    }
+    for (int i=l;i>=1;i--){
+        if(s-a[i]<max(mx,a[i]))
+            ans=(ans+pw[i])%mod;
+        else{
+            s-=a[i];mx=max(mx,a[i]);
+        }
+    }
+    printf("%lld\n",ans);
+}
+int main (void) {
+    freopen("imperishable.in", "r", stdin);
+    freopen("imperishable.out", "w", stdout);
+    n=read();n=read();
+    pw[0]=1;
+    for (int i=1;i<=n;i++) pw[i]=(pw[i-1]+pw[i-1])%mod;
+    for (int i=1;i<=n;i++) a[i]=read();
+    int t=read();
+    cal();
+    while(t--){
+        int x=read(),y=read();
+        a[x]=y;
+        cal();
+    }
+    return 0;
+}

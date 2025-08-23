@@ -1,0 +1,154 @@
+#include<bits/stdc++.h>
+using namespace std;
+namespace IO{
+    const int siz=1<<22;
+    char a[siz],b[siz],*ia=a+siz,*ea=a+siz,*ib=b,*eb=b+siz;
+    int p[105],l=0;
+    inline char gc(){if (ia==ea) fread(a,1,siz,stdin),ia=a;return *ia++;}
+    inline void flush(){fwrite(b,1,ib-b,stdout);ib=b;}
+    inline void pc(char c){if (ib==eb) flush();*ib++=c;}
+    inline int read(){
+        char t=gc();int x=0;
+        for (;t<'0' || t>'9';t=gc());
+        for (;'0'<=t && t<='9';t=gc()) x=x*10+t-'0';
+        return x;
+    }
+    inline void write(int x,char ed='\n'){
+        if (!x) pc('0');
+        for (;x;x/=10) p[++l]=x%10;
+        for (;l;--l) pc(p[l]+'0');pc(ed);
+    }
+    struct F{~F(){flush();}}f;
+}
+using IO::read;
+using IO::write;
+const int P=1.5e5+5,N=5e4+5;
+struct node{int x,y;}a[P];
+int type,n,m,k,Q;
+namespace sub0{
+    set<int> x[N],y[N];
+    void main(){
+        for (int i=1;i<=k;++i){
+            x[a[i].x].emplace(a[i].y);
+            y[a[i].y].emplace(a[i].x);
+        }
+        for (int w,px,py,q;Q;--Q){
+            w=read();
+            if (w==1){
+                px=read();py=read();
+                x[px].emplace(py);
+                y[py].emplace(px);
+            }
+            else{
+                px=read();py=read();q=read();
+                bool flag=(!py?0:1);//0 right  ;  1  down
+                while (q--){
+                    if (!flag){
+                        auto it=x[px].upper_bound(py);
+                        if (it==x[px].end()){
+                            py=m+1;
+                            break;
+                        }
+                        else{
+                            py=*it;
+                            flag^=1;
+                        }
+                    }
+                    else{
+                        auto it=y[py].upper_bound(px);
+                        if (it==y[py].end()){
+                            px=n+1;
+                            break;
+                        }
+                        else{
+                            px=*it;
+                            flag^=1;
+                        }
+                    }
+                }
+                write(px,' ');write(py);
+            }
+        }
+    }
+}
+namespace sub1{
+    vector<int> x[N],y[N];
+    int f[20][2*P];
+    bool cmpx(int x,int y){return a[x].y<a[y].y;}
+    bool cmpy(int x,int y){return a[x].x<a[y].x;}
+    void main(){
+        for (int i=1;i<=k;++i){
+            x[a[i].x].push_back(i);
+            y[a[i].y].push_back(i);
+        }
+        for (int i=1;i<=n;++i){
+            sort(x[i].begin(),x[i].end(),cmpx);
+            for (int j=0;j+1<x[i].size();++j)
+                f[0][x[i][j]*2+1]=x[i][j+1]*2;
+        }
+        for (int i=1;i<=m;++i){
+            sort(y[i].begin(),y[i].end(),cmpy);
+            for (int j=0;j+1<y[i].size();++j) f[0][y[i][j]*2]=y[i][j+1]*2+1;
+        }
+        for (int j=1;j<20;++j)
+            for (int i=2;i<=2*k+1;++i)
+                f[j][i]=f[j-1][f[j-1][i]];
+        for (int w,px,py,q;Q;--Q){
+            w=read();px=read();py=read();q=read();
+            if (!py){//right
+                if (!x[px].size()){
+                    write(px,' ');
+                    write(m+1);
+                    continue;
+                }
+                else{
+                    int id=x[px][0]*2;--q;
+                    for (int i=19;i>=0;--i)
+                        if (f[i][id] && q>=(1<<i)){
+                            id=f[i][id];
+                            q-=(1<<i);
+                        }
+                    px=a[id/2].x,py=a[id/2].y;
+                    if (q){
+                        if (id&1) py=m+1;
+                        else px=n+1;
+                    }
+                    write(px,' ');
+                    write(py);
+                }
+            }
+            else{//down
+                if (!y[py].size()){
+                    write(n+1,' ');
+                    write(py);
+                    continue;
+                }
+                else{
+                    int id=y[py][0]*2+1;--q;
+                    for (int i=19;i>=0;--i)
+                        if (f[i][id] && q>=(1<<i)){
+                            id=f[i][id];
+                            q-=(1<<i);
+                        }
+                    px=a[id/2].x,py=a[id/2].y;
+                    if (q){
+                        if (id&1) py=m+1;
+                        else px=n+1;
+                    }
+                    write(px,' ');
+                    write(py);
+                }
+            }
+        }
+    }
+}
+int main(){
+    freopen("corridor.in","r",stdin);
+    freopen("corridor.out","w",stdout);
+    type=read();n=read();m=read();k=read();
+    for (int i=1;i<=k;++i) a[i].x=read(),a[i].y=read();
+    Q=read();
+    if (!type) return sub0::main(),0;
+    if (type==1) return sub1::main(),0;
+    return sub0::main(),0;
+}

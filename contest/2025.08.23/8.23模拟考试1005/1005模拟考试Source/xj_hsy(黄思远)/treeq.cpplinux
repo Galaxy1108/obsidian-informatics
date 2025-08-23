@@ -1,0 +1,138 @@
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
+// #pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,tune=native")
+#include <bits/stdc++.h>
+// #define int long long
+// const long long Inf=2e18;
+static char buf[1000000],*p1=buf,*p2=buf;
+#define getchar() p1==p2&&(p2=(p1=buf)+fread(buf,1,1000000,stdin),p1==p2)?EOF:*p1++
+#define pii pair <int, int> 
+#define i64 long long
+using namespace std;
+inline int read(void) {
+	int x=0,sgn=1,ch=getchar();
+	while(ch<48||57<ch) {if(ch==45)sgn=0;ch=getchar();}
+	while(47<ch&&ch<58) {x=x*10+ch-48;   ch=getchar();}
+	return sgn? x:-x;
+}
+void write(int x) {
+    if(x<0) putchar('-'),x=-x;
+    if(x>9) write(x/10);
+    putchar(x%10+'0');
+}
+// int n, sz[MAXN]; // n：总结点数（请从外部传入），sz：树的大小，mss：最大子树大小
+// vector<int> ctr; // 重心
+// void dfs(int p, int fa = 0) // 找重心
+// {
+//     sz[p] = 1, mss[p] = 0;
+//     for (auto [to, w] : edges[p])
+//         if (to != fa)
+//         {
+//             dfs(to, p);
+//             sz[p] += sz[to];
+//         }
+//     if (mss[p] <= n / 2) ctr.push_back(p);
+// }
+int n,rot,ANS;
+i64 Max;
+int w[10000007],c[10000007],siz[10000007],d[10000007];
+vector <pii> E[10000007];
+vector <int> crAns;
+vector <int> Ans[10000007];
+int dep[10000007],val[10000007],MX[10000007];
+inline void clear(vector <int> &x) {
+    vector <int> Void;
+    swap(Void,x);
+}
+void dfs1(int x,int f) {
+    if(rot) return ;
+    siz[x]=1; bool t=1;
+    for(pii e : E[x]) {
+        if(e.first==f) continue;
+        dfs1(e.first,x);
+        t&=(siz[e.first]<<1)<=n;
+        siz[x]+=siz[e.first];
+    }
+    t&=((n-siz[x])<<1)<=n;
+    if(t) {
+        rot=x;
+        return ;
+    }
+}
+void dfs2(int x,int f) {
+    siz[x]=1; d[x]=d[f]+1;
+    for(pii e : E[x]) {
+        if(e.first==f) continue;
+        dfs2(e.first,x);
+        i64 v=1ll*siz[e.first]*w[e.second];
+        if(v>Max) {
+            clear(crAns); Max=v;
+            crAns.emplace_back(e.second);
+        } else if(v==Max) {
+            crAns.emplace_back(e.second);
+        }
+        siz[x]+=siz[e.first];
+    }
+}
+void dfs3(int x,int f,int top) {
+    ++val[top];
+    for(pii e : E[x]) {
+        if(e.first==f) continue;
+        i64 v=1ll*(n-siz[e.first])*w[e.second];
+        if(v>MX[top]) {
+            clear(Ans[top+1]);
+            Ans[top+1].emplace_back(e.second);
+            MX[top+1]=v;
+            val[top+1]=0;
+            dep[top+1]=d[e.first];
+            dfs3(e.first,x,top+1);
+        } else if(v==MX[top]) {
+            Ans[top+1]=Ans[top];
+            Ans[top+1].emplace_back(e.second);
+            MX[top+1]=v;
+            val[top+1]=0;
+            dep[top+1]=d[e.first];
+            dfs3(e.first,x,top+1);
+        } else {
+            dfs3(e.first,x,top);
+        }
+    }
+    if(d[x]==dep[top]) {
+        // cout<<x<<' '<<d[x]<<"    val:"<<val[top]<<endl;
+        for(int e : Ans[top]) {
+            c[e]+=val[top];
+            // cout<<c[e]<<' ';
+        }
+        // cout<<endl;
+    }
+}
+signed main() {
+    // freopen("localinput","r",stdin);
+    // freopen("localoutput","w",stdout);
+    // freopen("ex_treeq.in","r",stdin);
+    // freopen("treeq1.in","r",stdin);
+
+    freopen("treeq.in" ,"r",stdin );
+    freopen("treeq.out","w",stdout);
+    n=read();
+    for(int i=1,x,y; i< n; ++i) {
+        x=i+1; y=read(); w[i]=read();
+        E[x].emplace_back(y,i);
+        E[y].emplace_back(x,i);
+    }
+    // cerr<<"readin end\n";
+    dfs1(1,0);
+    // cerr<<"dfs1 end\n"<<"rot="<<rot<<endl;
+    dfs2(rot,0);
+    // cerr<<"dfs2 end\n";
+    // cerr<<"Maxval="<<Max<<endl;
+    Ans[1]=crAns; dep[1]=1; MX[1]=Max;
+    dfs3(rot,0,1);
+    // cerr<<"dfs3 end\n";
+    for(int i=1; i< n; ++i) {
+        ANS=ANS^c[i];
+    } 
+    // cout<<endl;
+    write(ANS); puts("");
+	return 0;
+}

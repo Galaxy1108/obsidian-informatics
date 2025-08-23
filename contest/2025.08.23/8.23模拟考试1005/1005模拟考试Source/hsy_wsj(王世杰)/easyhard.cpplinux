@@ -1,0 +1,42 @@
+#include<bits/stdc++.h>
+#define ll long long
+using namespace std;
+ll n,m,p;
+ll ans;
+//ll dp[3005][3005];
+int main()
+{
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	cin>>n>>m>>p;
+//	ans=0;
+//	for(int i=0;i<=n;i++)
+//	{
+//		dp[0][i]=1;
+//	}
+//	for(int j=1;j<=m;j++)
+//	{
+//		for(int k=1;k<n;k++)
+//		{
+//			dp[j][k]=dp[j-1][k-1]+2*dp[j-1][k]+dp[j-1][k+1];
+//			dp[j][k]%=p;
+//		}
+//		dp[j][0]=dp[j-1][0]+dp[j-1][1];
+//		dp[j][0]%=p;
+//		dp[j][n]=dp[j-1][n]+dp[j-1][n-1];
+//		dp[j][n]%=p;
+//	}
+//	for(int i=0;i<=n;i++)
+//	{
+//		ans+=dp[m][i];
+//		ans%=p;
+//	}
+//	cout<<ans<<endl;
+	ans=1;
+	for(int i=1;i<=n+m;i++)
+	{
+		ans=ans*2%p;
+	}
+	cout<<ans;
+	return 0;
+}

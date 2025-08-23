@@ -1,0 +1,12 @@
+#include<bits/stdc++.h>
+using namespace std;
+int n,m,mod;
+long long sum=1;
+int main(){
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	cin>>n>>m>>mod;
+	for(int i=1;i<=m+n;i++) sum=(sum<<1)%mod;
+	cout<<sum;
+	return 0;
+}

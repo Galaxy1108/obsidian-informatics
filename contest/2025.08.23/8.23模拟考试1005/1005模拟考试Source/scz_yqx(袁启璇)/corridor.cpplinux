@@ -1,0 +1,77 @@
+#include<bits/stdc++.h>
+#define LL long long
+using namespace std;
+int read(){
+	int x=0,f=1;
+	char ch=getchar();
+	while(!isdigit(ch)){if(ch=='-')f=-1;ch=getchar();}
+	while(isdigit(ch)){x=x*10-'0'+ch;ch=getchar();}
+	return x*f;
+}
+const int N = 5e4+10;
+vector<int> l[N];
+vector<int> h[N]; 
+int main(){
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	int type=read(),n=read(),m=read(),k=read();
+	while(k--){
+		int x=read(),y=read();
+		l[y].push_back(x);
+		h[x].push_back(y);//good
+	}
+	int Q=read();
+	while(Q--){
+		int opt=read();
+		if(opt==1){
+			int x=read(),y=read();
+			l[y].push_back(x);
+			h[x].push_back(y);
+		}else{
+			int x=read(),y=read(),q=read();
+			int div = (x==0) ? 0 : 1;//0 down;1 right
+			bool out = false;
+			while(q){
+				if(div){
+					bool flg=false;
+					int ans=m+1;
+					for(int i=0;i<h[x].size();i++){
+						if(h[x][i]>y&&h[x][i]<ans){
+							flg=true;
+							ans=h[x][i];
+						}
+					}
+					if(flg){
+						q--;
+						div^=1;
+						y=ans;
+					}else{
+						printf("%d %d\n",x,m+1);
+						out=1;
+						break; 
+					}
+				}else{
+					bool flg=false;
+					int ans=n+1;
+					for(int i=0;i<l[y].size();i++){
+						if(l[y][i]>x&&l[y][i]<ans){
+							flg=true;
+							ans=l[y][i];
+						}
+					}
+					if(flg){
+						q--;
+						div^=1;
+						x=ans;
+					}else{
+						printf("%d %d\n",n+1,y);
+						out=1;
+						break; 
+					}
+				}
+			}
+			if(!out)printf("%d %d\n",x,y);
+		}
+	}
+	return 0;
+}

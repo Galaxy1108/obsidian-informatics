@@ -1,0 +1,70 @@
+#include<cstdio>
+#define fo(i,x,y) for(int i = x;i <= y;++i)
+#define fd(i,x,y) for(int i = x;i >= y;--i)
+#define _is 1048576
+#define ll long long
+using namespace std;
+char ib[_is],*Ih,*It;
+inline char gc() {if(Ih == It) It = (Ih = ib) + fread(ib,1,_is,stdin);return Ih == It ? EOF : *Ih++;}
+int rd()
+{
+	int x = 0,sig = 0;char ch = gc();
+	while(ch < 48 || ch > 57) ch = gc();
+	while(ch >= 48 && ch <= 57) x = x * 10 + ch - 48,ch = gc();return x;
+}
+int n,e[10000010][2],lst[10000010],tot,w[10000010],x,y,f[10000010],sz[10000010];
+int tmi[40000010],tmx[40000010];ll v[10000010];
+void add(int x,int y) {e[++tot][0] = y,e[tot][1] = lst[x],lst[x] = tot;}
+void dg1(int x,int fa,int E)
+{
+	sz[E] = 1;
+	for(int i = lst[x];i;i = e[i][1]) if(e[i][0] ^ fa) dg1(e[i][0],x,i),sz[E] += sz[i];
+}
+#define max(a,b) (a > b ? a : b)
+void upd(int x)
+{
+	tmi[x] = (v[tmi[x << 1]] < v[tmi[x << 1 | 1]]) ? tmi[x << 1] : tmi[x << 1 | 1];
+	tmx[x] = (v[tmx[x << 1]] > v[tmx[x << 1 | 1]]) ? tmx[x << 1] : tmx[x << 1 | 1];
+}
+void B(int x,int l,int r)
+{
+	if(l == r) {tmi[x] = tmx[x] = l,v[l] = 1ll * w[l] * sz[l];return;}
+	if(l > r) return;
+	int mid = l + r >> 1;
+	B(x << 1,l,mid),B(x << 1 | 1,mid + 1,r),upd(x);
+}
+void M(int x,int l,int r,int X)
+{
+	if(l == r) {v[l] = 1ll * n * w[l] - v[l];return;}
+	int mid = l + r >> 1;
+	(X <= mid) ? M(x << 1,l,mid,X) : M(x << 1 | 1,mid + 1,r,X);
+	upd(x);
+}
+int cnt = 0;
+void Mf(int x,int l,int r,ll X)
+{
+	if(v[tmx[x]] < v[X]) return;
+	if(l > r) return;
+	if(v[tmi[x]] == v[X]) {++f[l],--f[r + 1],cnt += r - l + 1;return;}
+	int mid = l + r >> 1;
+	Mf(x << 1,l,mid,X),Mf(x << 1 | 1,mid + 1,r,X);
+}
+void dg2(int x,int fa)
+{
+	Mf(1,1,n - 1,tmx[1]);
+	for(int i = lst[x];i;i = e[i][1]) if(e[i][0] ^ fa) M(1,1,n - 1,i),dg2(e[i][0],x),M(1,1,n - 1,i);
+}
+int main()
+{
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	n = rd();
+	fo(i,2,n) x = rd(),w[i - 1] = rd(),add(x,i);
+	for(int i = lst[1];i;i = e[i][1]) dg1(e[i][0],1,i);
+	B(1,1,n - 1),dg2(1,0);
+	int F = 0;
+	fo(i,1,n) f[i] += f[i - 1],F ^= f[i];
+	printf("%d\n",F);
+	fprintf(stderr,"%d\n",cnt);
+	return 0;
+}

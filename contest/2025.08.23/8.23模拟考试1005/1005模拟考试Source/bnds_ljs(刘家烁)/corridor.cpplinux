@@ -1,0 +1,52 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+const int N = 50005;
+int Q, typ, n, m, k;
+set<int> col[N], row[N];
+
+void solve(int x, int y, bool dir, int q) {
+	if(!q || x == n + 1 || y == m + 1) {
+		printf("%d %d\n", x, y);
+		return;
+	}
+	set<int>& db = dir ? row[x] : col[y];
+	int tar = dir ? y : x;
+	for(set<int>::iterator it = db.begin(); it != db.end(); it++) {
+		if(*it > tar) {
+			solve(dir ? x : *it, dir ? *it : y, !dir, q - 1);
+			return;
+		}
+	}
+//	puts("error");
+}
+
+signed main() {
+//	freopen("corridor2.in", "r", stdin);
+//	freopen("corridor2.out", "w", stdout);
+	scanf("%d%d%d%d", &typ, &n, &m, &k);
+	for(int i = 1; i <= n; i++) row[i].insert(m + 1);
+	for(int i = 1; i <= m; i++) col[i].insert(n + 1);
+	for(int i = 1; i <= k; i++) {
+		int x, y;
+		scanf("%d%d", &x, &y);
+		col[y].insert(x);
+		row[x].insert(y);
+	}
+	scanf("%d", &Q);
+	while(Q--) {
+		int w, x, y, q;
+		scanf("%d%d%d", &w, &x, &y);
+		if(w == 1) {
+			col[y].insert(x);
+			row[x].insert(y);
+		}
+		else if(w == 2) {
+			scanf("%d", &q);
+			if(x == 0) solve(x, y, 0, q);
+			else solve(x, y, 1, q);
+		}
+	}
+	return 0;
+}

@@ -1,0 +1,149 @@
+#include <bits/stdc++.h>
+using namespace std;
+const int N=1e6+5;
+int n;
+struct bia{
+	int to,next,val,idx;
+}bian[N*2];
+int head[N],kk=0;
+void add(int x,int y,int z,int h)
+{
+	bian[++kk].to=y;
+	bian[kk].val=z;
+	bian[kk].idx=h;
+	bian[kk].next=head[x];
+	head[x]=kk;
+	return;
+}
+int siz[N]={0};
+void dfs(int x,int fa)
+{
+	siz[x]=1;
+	for(int i=head[x];i;i=bian[i].next)
+	{
+		if(bian[i].to==fa) continue;
+		dfs(bian[i].to,x);
+		siz[x]+=siz[bian[i].to];
+	}
+}
+int f[N]={0};
+long long ji[N]={0};
+void lala(int idx,long long val,int fa)
+{
+	if(ji[idx]<val) ji[idx]=val;
+	for(int i=head[idx];i;i=bian[i].next)
+	{
+		if(bian[i].to==fa) continue;
+		lala(bian[i].to,val,idx);
+	}
+}
+void dfss(int x,int fa)
+{
+	int i;
+	for(i=head[x];i;i=bian[i].next)
+	{
+		if(bian[i].to==fa) continue;
+	//	cout<<x<<" "<<bian[i].to<<" "<<siz[bian[i].to]*bian[i].val<<" "<<(n-siz[bian[i].to])*bian[i].val<<endl; 
+		lala(bian[i].to,1ll*(n-siz[bian[i].to])*bian[i].val,x);
+		lala(x,1ll*siz[bian[i].to]*bian[i].val,bian[i].to);
+		dfss(bian[i].to,x);
+	}
+}
+void find(int x,int val,int idx,int fa)
+{
+	if(ji[x]==val) f[idx]++;
+	for(int i=head[x];i;i=bian[i].next)
+	{
+		if(bian[i].to==fa) continue;
+		find(bian[i].to,val,idx,x);
+	}
+}
+void cao(int x,int fa)
+{
+	int i;
+	//cout<<x<<" "<<fa<<endl;
+	for(i=head[x];i;i=bian[i].next)
+	{
+		if(bian[i].to==fa) continue;
+	//	cout<<bian[i].to<<" "<<siz[bian[i].to]*bian[i].val<<" "<<(n-siz[bian[i].to])*bian[i].val<<endl; 
+		find(bian[i].to,1ll*(n-siz[bian[i].to])*bian[i].val,bian[i].idx,x);
+		find(x,1ll*siz[bian[i].to]*bian[i].val,bian[i].idx,bian[i].to);
+		cao(bian[i].to,x);
+	}
+}
+bool ff=1,fff=1,ffff=1;
+int maxx=0;
+int main()
+{
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	scanf("%d",&n);
+	int i,j,k,l;
+	for(i=1;i<n;i++) 
+	{
+		scanf("%d%d%d",&j,&k,&l);
+		maxx=max(maxx,l);
+		if(l!=1) ff=0;
+		if(j!=1) fff=0;
+		if(j!=k-1) ffff=0;
+		add(j,k,l,i);
+		add(k,j,l,i);
+	}
+	dfs(1,0);
+	if(ff)
+	{
+		for(i=1;i<=n;i++)
+		{
+			k=0;
+			for(j=head[i];j;j=bian[j].next)
+			{
+				if(siz[bian[j].to]>siz[i]) k=max(k,n-siz[i]);
+				else k=max(k,siz[i]-siz[bian[j].to]);
+			}
+			for(j=head[i];j;j=bian[j].next)
+			{
+				if(siz[bian[j].to]>siz[i]&&n-siz[i]==k) f[bian[j].idx]++;
+				else if(k==siz[i]-siz[bian[j].to]) f[bian[j].idx]++;
+			}
+		}
+		for(i=2;i<n;i++) f[1]^=f[i];
+		printf("%d\n",f[1]);
+		return 0;
+	}
+	if(fff)
+	{
+		k=1;
+		for(i=2;i<=n;i++)
+		{
+			if(1ll*(n-1)*bian[head[i]].val>=1ll*maxx) f[bian[head[i]].idx]++;
+			if(1ll*(n-1)*bian[head[i]].val<=1ll*maxx) ++k;
+		}
+		for(i=head[1];i;i=bian[i].next) if(bian[i].val==maxx) f[bian[i].idx]+=k;
+		for(i=2;i<n;i++) f[1]^=f[i];
+		printf("%d\n",f[1]);
+		return 0;
+	}
+	if(ffff)
+	{
+		long long ta,tb; 
+		for(i=1;i<=n;i++)
+		{
+			ta=tb=-1;
+			for(j=head[i];j;j=bian[j].next)
+			{
+				if(bian[j].to==i-1)	ta=1ll*bian[j].val*i-1,k=bian[j].idx;
+				if(bian[j].to==i+1) tb=1ll*bian[j].val*(n-i),l=bian[j].idx;
+			}
+			if(ta>=tb) f[k]++;
+			if(tb<=ta) f[l]++; 
+		}
+		for(i=2;i<n;i++) f[1]^=f[i];
+		printf("%d\n",f[1]);
+		return 0;
+	}
+	dfss(1,0);
+	cao(1,0);
+	for(i=2;i<n;i++) f[1]^=f[i];
+	printf("%d\n",f[1]);
+	return 0;
+}

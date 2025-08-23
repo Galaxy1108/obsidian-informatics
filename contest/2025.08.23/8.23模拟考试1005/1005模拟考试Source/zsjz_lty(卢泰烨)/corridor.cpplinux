@@ -1,0 +1,119 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+#define fo(i,a,b) for(int i=a;i<=b;++i)
+
+int type, n, m, k;
+
+set<int> dx[50005], dy[50005];
+int ind = 0;
+int nxt[500005];
+int px[500005], py[500005];
+map<int, int> id[50005];
+int fj;
+int f[500005][20];
+
+int fpry(int y, int x) {
+	auto it = dy[y].lower_bound(x);
+	--it;
+	return *it;
+}
+
+int fsuy(int y, int x) {
+	auto it = dy[y].upper_bound(x);
+	return *it;
+}
+
+int fprx(int x, int y) {
+	auto it = dx[x].lower_bound(y);
+	--it;
+	return *it;
+}
+
+int fsux(int x, int y) {
+	auto it = dx[x].upper_bound(y);
+	return *it;
+}
+
+void add(int x, int y) {
+	ind++;
+	px[ind] = px[ind + 1] = x;
+	py[ind] = py[ind + 1] = y;
+	int xa = fpry(y, x), xb = fsuy(y, x);
+	int ya = fprx(x, y), yb = fsux(x, y);
+	int n1 = id[xa][y], n2 = id[x][yb];
+	int n3 = id[x][ya], n4 = id[xb][y];
+	if(n1 > fj) ++n1;
+	if(n2 > fj) ++n2;
+	nxt[n1] = ind, nxt[ind] = n2;
+	nxt[n3] = ind + 1, nxt[ind + 1] = n4;
+	dx[x].insert(y), dy[y].insert(x);
+	id[x][y] = ind;
+	ind++;
+	return;
+}
+
+int main() {
+	freopen("corridor.in", "r", stdin);
+	freopen("corridor.out", "w", stdout);
+	scanf("%d %d %d %d", &type, &n, &m, &k);
+	fo(i, 1, n) {
+		px[ind + 1] = px[ind + 2] = i;
+		py[ind + 1] = 0, py[ind + 2] = m + 1;
+		++ind;
+		nxt[ind] = nxt[ind + 1] = ind + 1, ++ind;
+		dx[i].insert(0);
+		dx[i].insert(m + 1);
+	}
+	fo(i, 1, m) {
+		py[ind + 1] = py[ind + 2] = i;
+		px[ind + 1] = 0, px[ind + 2] = n + 1;
+		++ind;
+		nxt[ind] = nxt[ind + 1] = ind + 1, ++ind;
+		dy[i].insert(0);
+		dy[i].insert(n + 1);
+	}
+	fj = ind;
+	fo(i, 1, ind)
+		id[px[i]][py[i]] = i;
+	fo(i, 1, k) {
+		int x, y; scanf("%d %d", &x, &y);
+		add(x, y);
+	}
+	int Q;
+	scanf("%d", &Q);
+	if(type == 0 || type == 2 || type == 3) {
+		fo(i, 1, Q) {
+			int w, x, y, q;
+			scanf("%d %d %d", &w, &x, &y);
+			if(w == 1) {
+				add(x, y);
+			} else {
+				scanf("%d", &q);
+				int st = id[x][y];
+				while(nxt[st] != st && q) {
+					st = nxt[st];
+					q--;
+				}
+				printf("%d %d\n", px[st], py[st]);
+			}
+		}
+		return 0;
+	}
+	fo(i, 1, ind) f[i][0] = nxt[i];
+	fo(i, 1, 19)
+		fo(j, 1, ind)
+			f[j][i] = f[f[j][i - 1]][i - 1];
+	fo(i, 1, Q) {
+		int w, x, y, q;
+		scanf("%d %d %d %d", &w, &x, &y, &q);
+		int st = id[x][y];
+		for(int j = 19; j >= 0; --j)
+			if(q >= (1 << j)) {
+				q -= 1 << j;
+				st = f[st][j];
+			}
+		printf("%d %d\n", px[st], py[st]);
+	}
+	return 0;
+}

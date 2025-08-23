@@ -1,0 +1,48 @@
+#include <cstdio>
+#define sc scanf
+#define pr printf
+using namespace std;
+int task,n,ans,o[1005][1005],a[1005],q,t;
+void dfs(int i)
+{
+	if (i>n)
+	{
+		int s=0;
+		for (int j=1;j<=t;++j)
+		{
+			int c=0,cnt=0;
+			for (int k=1;k<=n;++k)
+				if (o[j][k]>cnt) cnt=o[j][k],c=k;
+			if (cnt) s+=(1<<c);
+		}
+		if (s<ans) ans=s;
+	} else
+	{
+		for (int j=1;j<=t+1;++j)
+			for (int k=1;k<=a[i];++k)
+			{
+				o[j][i]+=k,a[i]-=k;
+				int g=t;t+=(j>g),
+				dfs(i+(a[i]==0)),
+				t=g,o[j][i]-=k,a[i]+=k;
+			}
+	}
+}
+int main()
+{
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	sc("%d",&task);
+	sc("%d",&n);
+	for (int i=1;i<=n;++i)
+		sc("%d",a+i);
+	ans=0x3f3f3f3f;
+	dfs(1),pr("%d\n",ans);
+	sc("%d",&q);
+	for (int x,y;q--;)
+		sc("%d%d",&x,&y),
+		ans=0x3f3f3f3f,
+		a[x]=y,dfs(1),
+		pr("%d\n",ans);
+	fclose(stdin),fclose(stdout);
+}

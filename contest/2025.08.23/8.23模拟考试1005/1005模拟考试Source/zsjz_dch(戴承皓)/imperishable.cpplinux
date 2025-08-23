@@ -1,0 +1,39 @@
+#include <cstdio>
+#include <iostream>
+#define LL long long
+using namespace std;
+template <typename T>
+inline void read(T &x) {
+	x = 0; int f = 0; char ch = getchar();
+	for(; !isdigit(ch); ch = getchar()) if(ch == '-') f = 1;
+	for(; isdigit(ch); ch = getchar()) x = (x << 3) + (x << 1) + (ch ^ 48);
+	if(f) x = ~x + 1;
+}
+const int N = 5010;
+const int P = 998244353;
+int Num, n, a[N], q, sum[N], mx[N], v[N];
+void solve() {
+	int ans = 0, cur = 0;
+	for(int i = 1; i <= n; ++i) sum[i] = (sum[i - 1] + a[i]);
+	for(int i = n; i; --i) mx[i] = max(mx[i + 1], a[i]);
+	for(int i = n; i; --i) 
+		if(sum[i - 1] < mx[i] - cur && sum[i] >= mx[i + 1] - cur) 
+			(ans += v[i]) %= P, cur += a[i];
+	printf("%d\n",ans);
+}
+int main() {
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	read(Num);
+	read(n);
+	v[0] = 1;
+	for(int i = 1; i <= n; ++i) read(a[i]), v[i] = v[i - 1] * 2 % P;
+	solve();
+	read(q);
+	int x, y;
+	while(q--) {
+		read(x), read(y);
+		a[x] = y;
+		solve();
+	}
+}

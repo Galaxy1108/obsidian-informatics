@@ -1,0 +1,44 @@
+#include<bits/stdc++.h>
+using namespace std;
+long long a,b,mod,dp[2][181][181][181],an;
+int main()
+{
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	scanf("%lld%lld%lld",&a,&b,&mod);
+	dp[0][0][180][90]=1;
+	bool fl=1;
+	for(int k=1;k<=b*2;k++)
+	{
+		for(int i=0;i<=180;i++)
+		{
+			for(int j=i;j<=180;j++)
+			{
+				for(int l=max(0,90-k);l<=180&&l<=90+k;l++)
+				{
+					if(l>0&&dp[fl^1][i][j][l-1])
+					{
+						dp[fl^1][i][j][l-1]%=mod;
+						if(k&1) dp[fl][max(i,l-90+1)][min((long long)(j),a*2+l-90-1)][l]+=dp[fl^1][i][j][l-1];
+						else dp[fl][max(i,l-90)][min((long long)(j),a*2+l-90)][l]+=dp[fl^1][i][j][l-1];
+					}
+					if(l<180&&dp[fl^1][i][j][l+1])
+					{
+						dp[fl^1][i][j][l+1]%=mod;
+						if(k&1) dp[fl][max(i,l+1-90)][min((long long)(j),a*2+l-1-90)][l]+=dp[fl^1][i][j][l+1];
+						else dp[fl][max(i,l-90)][min((long long)(j),a*2+l-90)][l]+=dp[fl^1][i][j][l+1];
+					}
+				}for(int l=max(0,90-k);l<=180&&l<=90+k;l++) dp[fl^1][i][j][l]=0;
+			}
+		}fl^=1;
+	}
+	for(int i=0;i<=180;i++)
+	{
+		for(int j=i;j<=180;j++)
+		{
+			for(int l=0;l<=180;l++) an+=dp[fl^1][i][j][l],an%=mod;
+		}
+	}
+	printf("%lld",(an%mod+mod)%mod);
+	return 0;
+}

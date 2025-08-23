@@ -1,0 +1,66 @@
+#include<iostream>
+#include<cstdio>
+#include<set>
+#include<algorithm>
+using namespace std;
+#define fo(i,a,b) for(int i=a;i<=b;++i)
+#define fod(i,a,b) for(int i=a;i>=b;--i)
+#define p 998244353
+#define LL long long
+#define pa pair<int,int>
+const int Mxdt=100000; 
+inline char gc(){
+	static char buf[Mxdt],*p1=buf,*p2=buf;
+	return p1==p2&&(p2=(p1=buf)+fread(buf,1,Mxdt,stdin),p1==p2)?EOF:*p1++;
+}
+inline int read(){
+	int t=0,f=0;char v=gc();
+	while(v<'0')f|=(v=='-'),v=gc();
+	while(v>='0')t=(t<<3)+(t<<1)+v-48,v=gc();
+	return f?-t:t;
+}
+int n,q,a[200011],er[200011];
+set<pa>f;
+void solve(){
+	int w=(*f.begin()).second;
+	int fir=1,v=0;
+	while(v<a[w]){
+		v+=a[fir];
+		++fir;
+	}
+	--fir;
+	if(fir==w){
+		printf("%d\n",er[w]);
+		return ;
+	}
+	int ans=0;
+	fod(i,fir,1){
+		if(a[w]+a[i]<=v)v-=a[i];
+		else {
+			ans+=er[i];if(ans>=p)ans-=p;
+		}
+	}
+	printf("%d\n",ans);
+}
+int main(){
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	int num=read();
+	n=read();
+	fo(i,1,n){
+		a[i]=read();
+		f.insert({-a[i],i});
+	}
+	er[0]=1;
+	fo(i,1,n)er[i]=(LL)er[i-1]*2%p;
+	q=read();
+	solve();
+	fo(i,1,q){
+		int x=read(),y=read();
+		f.erase({-a[x],x});
+		a[x]=y;
+		f.insert({-a[x],x});
+		solve();
+	}
+	return 0;
+}

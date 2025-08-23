@@ -1,0 +1,16 @@
+#include<bits/stdc++.h>
+using namespace std;
+const int N=2e5+5;
+int a[N];
+int main()
+{
+	freopen("imperishable2.in","r",stdin);
+	freopen("imperishable2.out","w",stdout);
+	int num;
+	cin>>num;
+	int n;
+	cin>>n;
+	for(int i=1;i<=n;i++)scanf("%d",&a[i]);
+	if(n==1)cout<<1<<endl;
+	return 0;
+}

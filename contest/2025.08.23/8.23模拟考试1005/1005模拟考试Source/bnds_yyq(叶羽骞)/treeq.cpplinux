@@ -1,0 +1,74 @@
+//边i对于点j是优的，等价于点j在边i异侧的子树大小乘边i的权值最大
+//统计对于每一个点，哪条边是优的。
+#include<bits/stdc++.h>
+using namespace std;
+
+#define MAXN 10000005
+#define int long long
+struct edge{
+	int from,to,nxt,w,dep; 
+}e[MAXN << 1];
+
+int n,siz[MAXN] = {0},f[MAXN] = {0},dep[MAXN] = {0},head[MAXN] = {0},etot = 0;
+int ans[MAXN] = {0},E[MAXN] = {0};
+
+void add_edge( int u , int v , int w ){
+	e[++etot].from = u;
+	e[etot].to = v;
+	e[etot].w = w;
+	e[etot].nxt = head[u];
+	head[u] = etot;
+}
+
+void dfs( int x ){
+	siz[x] = 1;
+	dep[x] = dep[f[x]] + 1;
+	for( int i = head[x] ; i ; i = e[i].nxt ){
+		int y = e[i].to;
+		if( y != f[x] ){
+			dfs(y);
+			siz[x] += siz[y];
+		}
+	}
+}
+
+signed main(){
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	scanf("%lld",&n);
+	for( int i = 2 ; i <= n ; i ++ ){
+		int w;
+		scanf("%lld%lld",&f[i],&w);
+		add_edge( f[i] , i , w );
+	}
+	dfs(1);
+	for( int i = 1 ; i <= etot ; i ++ )
+		e[i].dep = min( dep[e[i].from] , dep[e[i].to] );
+	/*for( int i = 1 ; i <= etot ; i ++ ){
+		printf("%lld %lld\n",e[i].dep,e[i].to);
+	}*/
+	for( int i = 1 ; i <= n ; i ++ ){
+		int maxx = 0;
+		E[0] = 0;
+		for( int j = 1 ; j <= etot ; j ++ ){
+			int u;
+			if( dep[i] <= e[j].dep )
+				u = siz[e[j].to] * e[j].w;
+			else u = ( n - siz[e[j].to] ) * e[j].w; 
+			if( u == maxx ) E[++E[0]] = j;
+			if( u > maxx ){
+				maxx = u;
+				E[E[0] = 1] = j;
+			}
+		}
+		for( int i = 1 ; i <= E[0] ; i ++ )
+			ans[E[i]] ++;
+	}
+	int fans = 0;
+	for( int i = 1 ; i <= etot ; i ++ )
+		fans = fans ^ ans[i];
+	printf("%lld\n",fans);
+	fclose(stdin);
+	fclose(stdout);
+	return 0;
+}

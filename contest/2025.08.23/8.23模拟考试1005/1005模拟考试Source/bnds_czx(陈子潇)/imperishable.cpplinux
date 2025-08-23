@@ -1,0 +1,39 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+const ll mod = 998244353;
+
+ll typ;
+ll n, a[100], q;
+void solve(void) {
+	for(ll i = 1; i < (1 << n); i++) {
+		ll sum = 0, maxn = 0;
+		for(ll k = 1; k <= n; k++) {
+			if(((1 << (k - 1)) | i )== i) sum += a[k];
+			else maxn = max(maxn, a[k]);
+		}
+		if(sum >= maxn) {
+			printf("%d\n", 2 * (i % mod) % mod);
+			return;
+		}
+	}
+}
+
+int main() {
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	scanf("%d", &typ);
+	if(typ >= 12) { printf("This exam is too difficult!!!\n"); return 0; }
+	
+	scanf("%d", &n);
+	for(int i = 1; i <= n; i++) scanf("%d", &a[i]);
+	solve();
+	scanf("%d", &q);
+	while(q--) {
+		ll id, x;
+		scanf("%d%d", &id, &x);
+		a[id] = x;
+		solve();
+	}
+	return 0; 
+}

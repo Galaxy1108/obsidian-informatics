@@ -1,0 +1,15 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+int n,m,p,tmp;
+int qpow(int x,int q){
+	if(!q)return 1;
+	if(q&1)return x*qpow(x,q^1)%p;
+	return tmp=qpow(x,q>>1),tmp*tmp%p;
+}
+signed main(){
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	cin>>n>>m>>p;
+	cout<<qpow(2,2*m);
+} 

@@ -1,0 +1,122 @@
+#include <bits/stdc++.h>
+#define R(i, a, b) for (auto i = (a); i < (b); ++i)
+#define L(i, a, b) for (auto i = (b) - 1; i >= (a); --i)
+#define N(a) int((a).size())
+#define V(a) (a).begin(), (a).end()
+#define P make_pair
+#define spc << ' '
+#define ntr << '\n'
+#define X(a) cerr << #a << " = " << a
+#define T() cerr << "TIME = " << double(clock() - T0) / CLOCKS_PER_SEC
+using namespace std;
+using i64 = long long;
+clock_t T0 = clock();
+template<typename tp>
+ostream &operator<<(ostream &ost, const pair<tp, tp> &a) {
+	for (tp i = a.first; i != a.second; ++i) ost << setw(3) << *i;
+	return ost;
+}
+int case_id;
+mt19937 rng(3917);
+constexpr int xp = 400000 + 7;
+int p = 1, f[xp], ls[xp], rs[xp], fa[xp], sz[xp];
+void pushup(int u) {
+	sz[u] = sz[ls[u]] + sz[rs[u]] + 1;
+}
+int rk, root;
+void rank(int u) {
+	rk = 0;
+	for (; u; u = fa[(root = u)]) if (rs[fa[u]] == u) rk += sz[ls[fa[u]]] + 1;
+}
+int merge(int u, int v) {
+	if (!u or !v) return u + v;
+	if (int(rng() % (sz[u] + sz[v])) < sz[u]) {
+		fa[rs[u]] = 0;
+		rs[u] = merge(rs[u], v);
+		fa[rs[u]] = u;
+		pushup(u);
+		return u;
+	}
+	fa[ls[v]] = 0;
+	ls[v] = merge(u, ls[v]);
+	fa[ls[v]] = v;
+	pushup(v);
+	return v;
+}
+void split(int r, int k, int &u, int &v) {
+	if (!r) {
+		u = v = 0;
+		return;
+	}
+	if (k >= sz[ls[r]] + 1) {
+		u = r;
+		fa[rs[u]] = 0;
+		split(rs[u], k - sz[ls[r]] - 1, rs[u], v);
+		fa[rs[u]] = u; 
+		pushup(u);
+	} else {
+		v = r;
+		fa[ls[v]] = 0;
+		split(ls[v], k, u, ls[v]);
+		fa[ls[v]] = v;
+		pushup(v);
+	}
+}
+constexpr int xN = 50000 + 7, xK = 150000 + 7;
+int N, M, K, Q;
+int rtr[xn], rtc[xn];
+int X[xK], Y[xK];
+set<pair<int, int>> row[xN], col[xN];
+void add(int i) {
+	int u = p++, v = p++;
+	f[u] = f[v] = i;
+	int r = prev(row[X[i]].lower_bound(P(Y[i], i)))->second;
+	int c = prev(col[Y[i]].lower_bound(P(X[i], i)))->second;
+	rank(r);
+	int r0 = root, r1 = rk, ru, rv;
+	rank(c);
+	int c0 = root, c1 = rk, cu, cv;
+	split(r0, r1 + 1, ru, rv);
+	spilt(c0, c1 + 1, cu, cv);
+	r0 = merge(ru, merge(u, cv));
+	c0 = merge(cu, merge(v, rv));
+	row[X[i]].emplace_back(Y[i], i);
+	col[Y[i]].emplace_back(X[i], i);
+}
+void calc(int x, int y, int q) {
+	int u = x ? rtr[x] : rtc[y], v, w;
+	rank(u);
+	u = root;
+	if (q > sz[u]) {
+		split(u, sz[u] - 1, v, w);
+		cout << 
+	}
+}
+int main() {
+	cerr << fixed << setprecision(3);
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cin >> case_id >> N >> M >> K;
+	R(i, 0, N) {
+		int u = rtr[i] = p++;
+		row[i].emplace_back(-1, u);
+	}
+	R(i, 0, M) {
+		int u = rtc[i] = p++;
+		col[i].emplace_back(-1, u);
+	}
+	R(i, 0, K) {
+		cin >> X[i] >> Y[i], --X[i], --Y[i];
+		add(i);
+	}
+	cin >> Q;
+	R(i, 0, Q) {
+		int o, x, y, q;
+		cin >> o >> x >> y, --x, --y;
+		if (o == 1) {
+			X[K] = x;
+			Y[K] = y;
+			add(K), ++K;
+		} else calc(x, y, q);
+	}
+}

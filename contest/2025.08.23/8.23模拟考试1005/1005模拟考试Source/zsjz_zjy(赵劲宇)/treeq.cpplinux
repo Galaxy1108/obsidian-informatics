@@ -1,0 +1,102 @@
+#include<cstdio>
+#include<iostream>
+#include<algorithm>
+#include<cstring>
+#include<cmath>
+#define I_Love_Ycx_Forever signed main()
+#define fo(i,a,b) for(int i=a;i<=b;i++)
+#define fd(i,b,a) for(int i=b;i>=a;i--)
+#define int long long
+#define N 10000007
+using namespace std;
+int read(){
+	int a=0,f=1;
+	char ch=getchar();
+	while(ch<'0'||ch>'9'){if(ch=='-')f=-1;ch=getchar();}
+	while(ch>='0'&&ch<='9'){a=a*10+ch-48;ch=getchar();}
+	return a*f;
+}
+int n,w[N],cnt,head[N],a[5007][5007],c[5007][5007],b[N],f[N],ans;
+struct node{int to,nxt,w,id;}e[N<<1];
+void add(int u,int v,int w,int i){e[++cnt]=(node){v,head[u],w,i},head[u]=cnt;}
+int dg(int x,int fa,int now){
+	int sz=1;
+	for(int i=head[x];i;i=e[i].nxt){
+		int v=e[i].to;
+		if(v==fa) continue;
+		sz+=c[now][e[i].id]=dg(v,x,now);
+	}
+	return sz;
+}
+int sz[N];
+void dfs(int x,int fa,int lst){
+	sz[x]=1;
+	for(int i=head[x];i;i=e[i].nxt){
+		int v=e[i].to;
+		if(v==fa) continue;
+		dfs(v,x,e[i].id);
+		sz[x]+=sz[v];
+	}
+	int tot=1,mx=n-sz[x];
+	b[tot]=lst;
+	for(int i=head[x];i;i=e[i].nxt){
+		int id=e[i].id,v=e[i].to;
+		if(v==fa) continue;
+		if(sz[v]>mx) mx=sz[v],b[tot=1]=id;
+		else if(sz[v]==mx) b[++tot]=id;
+	}
+	fo(i,1,tot) f[b[i]]++;
+}
+I_Love_Ycx_Forever{
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	n=read();
+	int W=1,lian=1,juhua=1;
+	fo(i,2,n){
+		int v=read();w[i-1]=read();
+		if(w[i-1]!=1) W=0;
+		if(v!=i-1) lian=0;
+		if(v!=1) juhua=0;
+		add(i,v,w[i-1],i-1),add(v,i,w[i-1],i-1);
+	}
+	if(n<=5000){
+		fo(i,1,n) dg(i,0,i);
+		fo(i,1,n-1)
+			fo(j,1,n) a[i][j]=c[j][i]*w[i];
+		fo(j,1,n){
+			int mx=0,tot=0;
+			fo(i,1,n-1){
+				if(a[i][j]>mx) mx=a[i][j],b[tot=1]=i;
+				else if(a[i][j]==mx) b[++tot]=i;
+			}
+			fo(i,1,tot) f[b[i]]++;
+		}
+		fo(i,1,n-1) ans^=f[i];
+		printf("%lld",ans);
+	}else{
+		if(W){
+			dfs(1,0,0);
+			fo(i,1,n-1) ans^=f[i];
+			printf("%lld",ans);
+		}else if(lian){
+			
+		}else{
+			int tot=0,mx=0;
+			fo(i,1,n-1){
+				if(w[i]>mx) mx=w[i],b[tot=1]=i;
+				else if(w[i]==mx) b[++tot]=i; 
+			}
+			fo(i,1,tot) f[b[i]]++;
+			fo(i,1,n-1){
+				int now=w[i]*(n-1);
+				if(mx>=now){	
+					fo(j,1,tot) f[b[j]]++;
+					if(mx==now&&n>2) f[i]++;
+				}else f[i]++;
+			}
+			fo(i,1,n-1) ans^=f[i];
+			printf("%lld",ans);
+		}
+	}
+		
+}

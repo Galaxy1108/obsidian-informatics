@@ -1,0 +1,50 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define mp make_pair
+#define ll long long
+#define mod 998244353
+inline int read(){
+	int x=0;char ch=getchar();
+	while(!isdigit(ch))ch=getchar();
+	while(isdigit(ch))x=(x<<3)+(x<<1)+(ch^48),ch=getchar();
+	return x;
+}
+inline void write(int x){
+	if(x>9)write(x/10);
+	putchar(x%10|48);
+}
+inline void writeln(int x){
+	write(x),putchar('\n');
+}
+int a[200005],n,id,cm[200005];
+void work(){
+	ll sum=0;
+	int mx=0,ans=0;
+	for(int i=1;i<=n;++i)sum+=a[i];
+	for(int i=n;i>=1;--i){
+		if(sum-a[i]>=max(mx,a[i])){
+			mx=max(mx,a[i]);
+			sum-=a[i];
+		}
+		else ans=(ans+cm[i])%mod;
+	}
+	writeln(ans);
+}
+int main(){
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	id=read(),n=read();
+	cm[0]=1;
+	for(int i=1;i<=n;++i){
+		a[i]=read();
+		cm[i]=cm[i-1]*2ll%mod;
+	}
+	work();
+	int q=read();
+	while(q--){
+		int x=read(),y=read();
+		a[x]=y;
+		work();
+	}
+	return 0;
+}

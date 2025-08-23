@@ -1,0 +1,56 @@
+#include <bits/stdc++.h>
+using namespace std;
+const int mod = 998244353;
+#define int long long
+int POW(int x, int y) {
+	int ans = 1;
+	while(y) {
+		if(y & 1) ans = 1LL * ans * x % mod;
+		x = 1LL * x * x % mod;
+		y >>= 1;
+	}
+	return ans;
+}
+int n, a[202020], q, t;
+int cnt[202020];
+void work() {
+	int MAX = 0, tmpm = 2e9, sum = 0, ans = 0;
+	for(int i = 1; i <= n; i++) {
+		sum += a[i];
+		if(a[i] > MAX) MAX = a[i], tmpm = i;
+	}
+	int ANS = POW(2, tmpm);
+	sum -= MAX;
+	for(int i = n; i >= 1; i--) {
+		if(i == tmpm) continue;
+		int nsum = sum - a[i];
+		if(nsum >= MAX) {
+			sum -= a[i];
+			continue;
+		}else {
+			MAX -= a[i];
+			sum -= a[i];
+			ans = (ans + POW(2, i)) % mod;
+		}
+	}
+	if(MAX <= 0) ANS = min(ANS, ans);
+	cout << ANS << endl;
+}
+signed main() {
+	freopen("imperishable.in", "r", stdin);
+	freopen("imperishable.out", "w", stdout);
+	cin >> t;
+	cin >> n;
+	for(int i = 1; i <= n; i++) {
+		cin >> a[i];
+	}
+	cin >> q;
+	work();
+	while(q--) {
+		int x, y;
+		cin >> x >> y;
+		a[x] = y;
+		work();
+	}
+	return 0;	
+}

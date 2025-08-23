@@ -1,0 +1,53 @@
+#include <bits/stdc++.h>
+namespace IO {
+  #define iL (1 << 20)
+  char ibuf[iL], *iS = ibuf + iL, *iT = ibuf + iL;
+  #define gc() ((iS == iT) ? (iT = (iS = ibuf) + fread(ibuf, 1, iL, stdin), iS == iT ? EOF : *iS ++) : *iS ++)
+  template<class T> inline void read(T &x) {
+    x = 0;int f = 0;char ch = gc();
+    for (; !isdigit(ch); f |= ch == '-', ch = gc());
+    for (; isdigit(ch); x = (x << 1) + (x << 3) + (ch ^ 48), ch = gc());
+    x = (f == 1 ? ~ x + 1 : x);
+  }
+  char Out[iL], *iter = Out;
+  #define flush() fwrite(Out, 1, iter - Out, stdout), iter = Out
+  template<class T> inline void write(T x, char ch = '\n') {
+    T l, c[35];
+    if (x < 0) *iter ++ = '-', x = ~ x + 1;
+    for (l = 0; !l || x; c[l] = x % 10, l++, x /= 10);
+    for (; l; -- l, *iter ++ = c[l] + '0');*iter ++ = ch;
+    flush();
+  }
+}
+using namespace IO;
+#define N 100005
+#define ll long long
+#define DEBUG
+#define MOD 998244353
+using namespace std;
+ll NM, n, a[N], q, sum[N], pw[N];
+void calc() {
+  for (int i = 1; i <= n; i++) sum[i] = sum[i - 1] + a[i];
+  ll mx = 0; for (int i = 1; i <= n; i++) if (a[i] > a[mx]) mx = i;
+  if (sum[mx - 1] < a[mx]) { write(pw[mx]); return ; }
+  ll cur = sum[mx - 1], cans = (pw[mx] - 2ll + MOD) % MOD;
+  for (int i = mx - 1; i >= 1; i--) {
+    if (cur - a[i] >= a[mx]) { cur -= a[i]; cans = (cans - pw[i] + MOD) % MOD; }
+  }
+  write(cans);
+}
+int main() {
+// #ifndef ONLINE_JUDGE
+//   freopen("test.in", "r", stdin);
+//   freopen("test.out", "w", stdout);
+// #endif
+  freopen("imperishable.in", "r", stdin);
+  freopen("imperishable.out", "w", stdout);
+  read(NM), read(n); for (int i = 1; i <= n; i++) read(a[i]);
+  read(q); pw[0] = 1; for (int i = 1; i <= n; i++) pw[i] = pw[i - 1] * 2ll % MOD;
+  calc();
+  for (int _ = 1, x, y; _ <= q; _++) {
+    read(x), read(y); a[x] = y; calc();
+  }
+  return 0;
+}

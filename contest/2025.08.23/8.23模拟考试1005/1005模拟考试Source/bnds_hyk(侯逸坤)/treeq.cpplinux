@@ -1,0 +1,81 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define LL long long
+int n;
+struct edg{int v,w;};
+vector<edg>edge[10000005];
+LL eff[10000005];//以i为根的子树造成的影响
+int sz[10000005];
+LL a[10000005];
+unordered_map<LL,int>tot;
+unordered_map<LL,int>M;
+LL ans=0;
+void init(int x,int f){
+	sz[x]=1;
+	for(int i=0;i<edge[x].size();i++){
+		int v=edge[x][i].v;
+		if(v==f) continue;
+		init(v,x);
+		sz[x]+=sz[v];
+	}
+}
+void dfs1(int x,int f,int w){
+	LL ef=w*sz[x];
+	for(int i=0;i<edge[x].size();i++){
+		int v=edge[x][i].v,w=edge[x][i].w;
+		if(v==f) continue;
+		dfs1(v,x,w);
+		ef=max(ef,eff[v]);
+	}
+	eff[x]=ef;
+}
+void dfs(int x,int f,int w,LL o){
+	LL mx1=0,mx2=0;
+	for(int i=0;i<edge[x].size();i++){
+		int v=edge[x][i].v;
+		if(v==f) continue;
+		if(eff[v]>mx1){
+			mx2=mx1;
+			mx1=eff[v];
+		}
+		else if(eff[v]>mx2){
+			mx2=eff[v];
+		}
+	}
+	a[x]=max(a[x],max(o,mx1));
+	tot[a[x]]++;
+	for(int i=0;i<edge[x].size();i++){
+		int v=edge[x][i].v,W=edge[x][i].w;
+		if(v==f) continue;
+		if(eff[v]!=mx1) dfs(v,x,W,max(1ll*W*(n-sz[v]),max(o,mx1)));
+		else dfs(v,x,W,max(1ll*W*(n-sz[v]),max(o,mx2)));
+	}
+}
+void final_dfs(int x,int f,int w){
+	ans^=(M[w*sz[x]]+tot[w*(n-sz[x])]-M[w*(n-sz[x])]);
+	//cerr<<x<<" "<<f<<" "<<M[w*sz[x]]<<" "<<tot[w*(n-sz[x])]-M[w*(n-sz[x])]<<endl;
+	for(int i=0;i<edge[x].size();i++){
+		int v=edge[x][i].v,W=edge[x][i].w;
+		if(v==f) continue;
+		M[a[x]]++;
+		final_dfs(v,x,W);
+		M[a[x]]--;
+	}
+}
+int main(){
+	int v,w;
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	cin>>n;
+	for(int u=2;u<=n;u++){
+		scanf("%d%d",&v,&w);
+		edge[u].push_back((edg){v,w});
+		edge[v].push_back((edg){u,w});
+	}
+	init(1,0);
+	dfs1(1,0,0);
+	dfs(1,0,0,0);
+	final_dfs(1,0,0);
+	cout<<ans;
+	return 0;
+}

@@ -1,0 +1,45 @@
+#include<iostream>
+#include<cstdio>
+#include<string>
+#include<cstring>
+#include<vector>
+#include<algorithm>
+using namespace std;
+typedef long long ll;
+const int N=3005;
+int n,m,mod,ans;
+int f[N*2][N*2];
+inline void read(int &x) 
+{
+	int f=1;char c;
+	for(x=0,c=getchar();c<'0'||c>'9';c=getchar()) if(c=='-') f=-1;
+	for(;c>='0'&&c<='9';c=getchar()) x=(x<<1)+(x<<3)+(c^48); x*=f;
+} 
+inline void sout(int x)
+{
+	if(x<0) putchar('-'),x=-x;
+	if(x>9) sout(x/10);
+	putchar(x%10+'0');
+}
+inline int mn(int _x,int _y){return _x<_y?_x:_y;}
+inline int mx(int _x,int _y){return _x>_y?_x:_y;}
+inline int ab(int _x){return _x<0?-_x:_x;}
+
+int main()
+{
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	read(n);read(m);read(mod);
+	f[0][n]=1;
+	for(int i=0;i<2*m;i++)
+	{
+		for(int j=-n;j<=n;j++)
+		{
+			if(j!=-n) f[i+1][j+n-1]=(f[i+1][j+n-1]+f[i][j+n])%mod;
+			if(j!=n)  f[i+1][j+n+1]=(f[i+1][j+n+1]+f[i][j+n])%mod;
+		}
+	}
+	for(int j=-n;j<=n;j++) ans=(ans+f[2*m][j+n])%mod;
+	printf("%d\n",ans);
+	return 0;	
+}  

@@ -1,0 +1,203 @@
+#include<bits/stdc++.h>
+using namespace std;
+struct node{
+	int x,y;
+}a[150010];
+int bz[150010],cnt,type,n,m,k,Q,w[150010],q[150010];
+int qx[150010],qy[150010];
+int X,Y,now; 
+int ntx[150010],nty[150010],ntx0[50010],nty0[50010];
+int ltx[150010],lty[150010];
+int ans[150010][2];
+bool cmp(int I,int J)
+{
+	//int ii=bz[I],jj=bz[J];
+	if(a[I].x==a[J].x) return a[I].y<a[J].y;
+	return a[I].x<a[J].x;
+}
+bool cmp2(int I,int J)
+{
+//	int ii=bz[I],jj=bz[J];
+	if(a[I].y==a[J].y) return a[I].x<a[J].x;
+	return a[I].y<a[J].y;
+}
+
+int main(){
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	scanf("%d",&type);
+	scanf("%d%d%d",&n,&m,&k);
+	for(int i=1;i<=k;i++)
+	{
+		scanf("%d%d",&X,&Y);
+		a[++cnt].x=X;
+		a[cnt].y=Y;
+		bz[cnt]=cnt;
+		
+	}
+	scanf("%d",&Q);
+	for(int i=1;i<=Q;i++)
+	{
+		scanf("%d",&w[i]);
+		if(w[i]==1)
+		{
+			scanf("%d%d",&X,&Y);
+			a[++cnt].x=X;
+			a[cnt].y=Y;
+			q[i]=cnt;
+			bz[cnt]=cnt;
+		}
+		else
+		if(w[i]==2)
+		{
+			scanf("%d%d%d",&qx[i],&qy[i],&q[i]);
+		}
+	}
+	
+	sort(bz+1,bz+cnt+1,cmp);
+	for(int i=1;i<=cnt;i++)
+	{
+		if(a[bz[i]].x==a[bz[i-1]].x)
+		{
+			ntx[bz[i-1]]=bz[i];
+			ltx[bz[i]]=bz[i-1];
+		}
+		else
+		{
+			ntx0[a[bz[i]].x]=bz[i];
+		///	printf("x0 %d = %d\n",a[bz[i]].x,bz[i]);
+		}
+	//	printf("hh %d\n",a[bz[i]].x);
+	}
+	sort(bz+1,bz+cnt+1,cmp2);
+	for(int i=1;i<=cnt;i++)
+	{
+		if(a[bz[i]].y==a[bz[i-1]].y)
+		{
+			nty[bz[i-1]]=bz[i];
+			lty[bz[i]]=bz[i-1];
+		}
+		else
+		{
+			nty0[a[bz[i]].y]=bz[i];
+		//	printf("y0 %d = %d\n",a[bz[i]].y,bz[i]);
+		}
+	}
+
+	
+	for(int i=Q;i>=1;i--)
+	{
+		//scanf("%d",&w);
+		if(w[i]==1)
+		{
+			if(ntx0[a[q[i]].x]==q[i]) ntx0[a[q[i]].x]=ntx[q[i]];
+			ntx[ltx[q[i]]]=ntx[q[i]];
+			ltx[ntx[q[i]]]=ltx[q[i]];
+			
+			if(nty0[a[q[i]].y]==q[i]) nty0[a[q[i]].y]=nty[q[i]];
+			nty[lty[q[i]]]=nty[q[i]];
+			lty[nty[q[i]]]=lty[q[i]];
+			continue;
+		}
+		if(w[i]==2)
+		{
+		//	scanf("%d%d%d",&X,&Y,&q);
+			int i_,j_;
+			X=qx[i];Y=qy[i];
+			if(X==0)
+			{
+				int qq=0,j_=Y;
+				now=nty0[Y]; qq=1;
+				i_=a[now].x;
+			//	printf("now=%d\n",i_);
+				while(1)
+				{
+					if(now==0)
+					{
+					//	printf("%d %d\n",n+1,j_);
+						ans[i][0]=n+1;
+						ans[i][1]=j_;
+						break;
+					}
+					if(qq==q[i])
+					{
+					//	printf("%d %d\n",a[now].x,a[now].y);
+						ans[i][0]=a[now].x;
+						ans[i][1]=a[now].y;
+						break;
+					}
+					i_=a[now].x;
+					now=ntx[now];
+					qq++;
+					if(now==0)
+					{
+					//	printf("%d %d\n",i_,m+1);
+						ans[i][0]=i_;
+						ans[i][1]=m+1;
+						break;
+					}		
+					if(qq==q[i])
+					{
+					//	printf("%d %d\n",a[now].x,a[now].y);
+						ans[i][0]=a[now].x;
+						ans[i][1]=a[now].y;
+						break;
+					}
+					j_=a[now].y;
+					now=nty[now];
+					qq++;
+				}
+
+			}
+			else
+			{
+				int qq=0,i_=X;
+				now=ntx0[X]; qq=1;
+				j_=a[now].y;
+				while(1)
+				{
+					if(now==0)
+					{
+					//	printf("%d %d\n",i_,m+1);
+						ans[i][0]=i_;
+						ans[i][1]=m+1;
+						break;
+					}
+					if(qq==q[i])
+					{
+					//	printf("%d %d\n",a[now].x,a[now].y);
+						ans[i][0]=a[now].x;
+						ans[i][1]=a[now].y;
+						break;
+					}
+					j_=a[now].y;
+					now=nty[now];
+					qq++;
+					if(now==0)
+					{
+					//	printf("%d %d\n",n+1,j_);
+						ans[i][0]=n+1;
+						ans[i][1]=j_;
+						break;
+					}		
+					if(qq==q[i])
+					{
+					//	printf("%d %d\n",a[now].x,a[now].y);
+						ans[i][0]=a[now].x;
+						ans[i][1]=a[now].y;
+						break;
+					}
+					i_=a[now].x;
+					now=ntx[now];
+					qq++;
+				}
+			}	
+		}
+	}
+	for(int i=1;i<=Q;i++)
+	{
+		if(w[i]==2)
+		printf("%d %d\n",ans[i][0],ans[i][1]);
+	}
+	return 0;
+}

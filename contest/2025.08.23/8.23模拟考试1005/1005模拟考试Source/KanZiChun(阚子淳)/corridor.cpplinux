@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define LOG(FMT...) fprintf(stderr, FMT)
+
+const int N = 105;
+const int dx[4] = {0, 1, 0, -1}, dy[4] = {1, 0, -1, 0};
+
+int ty, n, m, k, Q;
+bool g[N][N];
+
+void query(int x, int y, int d, int q) {
+	while (true) {
+		x += dx[d], y += dy[d];
+		if (x > n) {
+			printf("%d %d\n", n + 1, y);
+			return;
+		}
+		if (y > m) {
+			printf("%d %d\n", x, m + 1);
+			return;
+		}
+		if (g[x][y]) {
+			d ^= 1;
+			--q;
+			if (!q) {
+				printf("%d %d\n", x, y);
+				return;
+			}
+		}
+	}
+}
+
+int main() {
+	freopen("corridor.in", "r", stdin);
+	freopen("corridor.out", "w", stdout);
+	scanf("%d%d%d%d", &ty, &n, &m, &Q);
+	int x, y, q;
+	while (Q--) {
+		scanf("%d%d", &x, &y);
+		g[x][y] = true;
+	}
+	scanf("%d", &Q);
+	while (Q--) {
+		scanf("%d%d%d", &ty, &x, &y);
+		if (ty == 1) {
+			g[x][y] = true;
+		} else {
+			scanf("%d", &q);
+			if (x == 0) {
+				query(1, y, 1, q);
+			} else {
+				query(x, 1, 0, q);
+			}
+		}
+	}
+	return 0;
+}

@@ -1,0 +1,42 @@
+#include <cstdio>
+#include <iostream>
+#define LL long long
+#define RE register 
+using namespace std;
+template <typename T>
+inline void read(T &x) {
+	x = 0; int f = 0; char ch = getchar();
+	for(; !isdigit(ch); ch = getchar()) if(ch == '-') f = 1;
+	for(; isdigit(ch); ch = getchar()) x = (x << 3) + (x << 1) + (ch ^ 48);
+	if(f) x = ~x + 1;
+}
+const int N = 3010;
+int n, m, p;
+int f[N][N], g[N][N], ans;
+inline void update(int &x, int y) {if((x += y) >= p) x -= p;}
+int main() {
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	read(n), read(m), read(p);
+	f[0][0] = 1;
+	for(RE int i = 0; i < m; ++i) {
+		for(RE int j = 0; j <= n && j <= i; ++j)
+			for(RE int k = 0; j + k <= n && k <= i; ++k)
+				g[j][k] = f[j][k], f[j][k] = 0;;
+		for(RE int j = 0; j <= n && j <= i; ++j) {
+			for(RE int k = 0; j + k <= n && k <= i; ++k) {
+				int l = n - j - k, tmp = g[j][k];
+				if(tmp) {
+					if(j) update(f[j][k], tmp), update(f[j - 1][k + 1], tmp); // BW BB
+					else update(f[j + 1][k], tmp), update(f[j][k + 1], tmp); //BW BB
+					if(k) update(f[j][k], tmp), update(f[j + 1][k - 1], tmp); // WB WW
+					else update(f[j][k + 1], tmp), update(f[j + 1][k], tmp); //WB WW
+				}
+			}
+		}
+	}
+	for(int i = 0; i <= n; ++i) 
+		for(int j = 0; i + j <= n; ++j)
+			update(ans, f[i][j]);
+	printf("%d\n",ans);
+}

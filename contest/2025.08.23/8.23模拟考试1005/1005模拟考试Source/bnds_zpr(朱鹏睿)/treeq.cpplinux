@@ -1,0 +1,29 @@
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#define ll long long
+using namespace std;
+int n,siz[100011],ans[100011],faE[100011];ll x[100011];
+struct edge{int v,w,next;edge(){}edge(int _v,int _w,int _next){v=_v;w=_w;next=_next;}}e[200011];int head[100011],sz;
+void init(){memset(head,-1,sizeof(head));sz=-1;}void insert(int u,int v,int w){e[++sz]=edge(v,w,head[u]);head[u]=sz;}
+void dfs(int u,int f)
+{
+	siz[u]=1;for(int i=head[u];~i;i=e[i].next)if(e[i].v^f)
+	{
+		dfs(e[i].v,u);faE[e[i].v]=i/2;x[e[i].v]=1ll*e[i].w*siz[e[i].v];siz[u]+=siz[e[i].v];
+	}
+}
+int main()
+{
+	freopen("treeq.in","r",stdin);freopen("treeq.out","w",stdout);
+	scanf("%d",&n);init();
+	for(int i=2;i<=n;++i){int f,w;scanf("%d%d",&f,&w);insert(f,i,w);insert(i,f,w);}
+	for(int i=1;i<=n;++i)
+	{
+		dfs(i,0);ll mx=-1e18;x[i]=0;
+		for(int _=1;_<=n;++_)mx=max(mx,x[_]);
+		for(int _=1;_<=n;++_)if(x[_]==mx)++ans[faE[_]];
+	}
+	int res=0;for(int i=0;i<=n;++i)res^=ans[i];printf("%d\n",res);
+	fclose(stdin);fclose(stdout);return 0;
+}

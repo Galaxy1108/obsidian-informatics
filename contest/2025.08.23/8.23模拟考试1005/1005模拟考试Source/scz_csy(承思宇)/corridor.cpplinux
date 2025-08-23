@@ -1,0 +1,140 @@
+#include<bits/stdc++.h>
+using namespace std;
+template <typename T>void read(T &a)
+{
+	a=0;T f=1;char ch=getchar();
+	for(;!isdigit(ch);ch=getchar()) if(ch=='-') f=-f;
+	for(;isdigit(ch);ch=getchar()) a=a*10+ch-'0';
+	a*=f;
+}
+template <typename T>void write(T  x)
+{
+	if(x>9) write(x/10);
+	putchar(x%10+'0');
+}
+template <typename T>void writeln(T  x)
+{
+	if(x<0) putchar('-'),x=-x;
+	write(x);
+	puts("");
+}
+template <typename T>void writel(T  x)
+{
+	if(x<0) putchar('-'),x=-x;
+	write(x);
+	putchar(32);
+}
+int tp,n,m,k,q;
+int xl[50010],yl[50010];
+vector<int> vx[50010],vy[50010];
+int upbodx(int x,int a)
+{
+	int l=0,r=vx[x].size(),mid;
+	int ans=-1;
+	while(l<r)
+	{
+		mid=(l+r)/2;
+		if(vx[x][mid]>a) ans=mid,r=mid;
+		else l=mid+1;
+	}
+	if(ans==-1) return ans;
+	return vx[x][ans];
+}
+int upbody(int y,int a)
+{
+	int l=0,r=vy[y].size(),mid;
+	int ans=-1;
+	while(l<r)
+	{
+		mid=(l+r)/2;
+		if(vy[y][mid]>a) ans=mid,r=mid;
+		else l=mid+1;
+	}
+	if(ans==-1) return ans;
+	return vy[y][ans];
+}
+void dfs(int x,int y,bool d,int q)
+{
+	if(!q)
+	{
+		writel(x);
+		writeln(y);
+		return ;
+	}
+	if(!d)
+	{
+		int nextx=upbody(y,x);
+		if(nextx==-1)
+		{
+			writel(n+1);
+			writeln(y);
+			return ;
+		}
+		else dfs(nextx,y,1,q-1);
+	}
+	if(d)
+	{
+		int nexty=upbodx(x,y);
+		if(nexty==-1)
+		{
+			writel(x);
+			writeln(m+1);
+			return ;
+		}
+		else dfs(x,nexty,1,q-1);
+	}
+}
+int main()
+{
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	read(tp);
+	read(n);
+	read(m);
+	read(k);
+	memset(xl,0x3f,sizeof(xl));
+	memset(yl,0x3f,sizeof(yl));
+	for(int i=1;i<=k;i++)
+	{
+		int x,y;
+		read(x);
+		read(y);
+		xl[x]=min(xl[x],y);
+		yl[y]=min(yl[y],x);
+		vx[x].push_back(y);
+		vy[y].push_back(x);
+	}
+	for(int i=1;i<=n;i++) sort(vx[i].begin(),vx[i].end());
+	for(int i=1;i<=m;i++) sort(vy[i].begin(),vy[i].end());
+	read(q);
+	for(int i=1;i<=q;i++)
+	{
+		int opt;
+		read(opt);
+		if(opt==1)
+		{
+			int x,y;
+			read(x);
+			read(y);
+			vx[x].push_back(y);
+			vy[y].push_back(x);
+			xl[x]=min(xl[x],y);
+			yl[y]=min(yl[y],x);
+		}
+		else
+		{
+			int x,y,q;
+			bool d;
+			read(x);
+			read(y);
+			read(q);
+			for(int i=1;i<=n;i++) sort(vx[i].begin(),vx[i].end());
+			for(int i=1;i<=m;i++) sort(vy[i].begin(),vy[i].end());
+			if(x==0) x=yl[y],d=1;//d=1->
+			else if(y==0) y=xl[x],d=0;//d=0 |
+			q--;
+			dfs(x,y,d,q);
+		}
+	}
+	return 0;
+}

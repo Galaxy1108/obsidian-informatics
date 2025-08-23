@@ -1,0 +1,81 @@
+#include <cstdio>
+#include <iostream>
+#define ll long long
+using namespace std;
+const int N = 1e6 + 5;
+struct node {
+	int to, nxt, id; ll w;
+}e[N << 1];
+int n, cnt;
+int head[N], F[N], g[N], size[N];
+ll w[N], f[N], mx;
+template <typename T> inline void read(T &ss) {
+	ss = 0;
+	char ch = getchar();
+	for (; !isdigit(ch); ch = getchar());
+	for (; isdigit(ch); ch = getchar()) ss = (ss << 1) + (ss << 3) + (ch ^ 48);
+}
+void add(int u, int v, ll w, int id) {
+	e[++cnt] = (node){v, head[u], id, w};
+	head[u] = cnt;
+}
+void dfs(int u, int fa) {
+	size[u] = 1;
+	for (int i = head[u]; i; i = e[i].nxt) {
+		int v = e[i].to;
+		if (v == fa) continue;
+		dfs(v, u);
+		f[e[i].id] = e[i].w * (ll)size[v];
+		size[u] += size[v];
+		mx = max(mx, f[e[i].id]); 
+	}
+}
+int main() {
+	freopen("treeq.in", "r", stdin);
+	freopen("treeq.out", "w", stdout);
+	read(n);
+	bool pd = 1;
+	for (int i = 2; i <= n; ++i)
+		read(F[i]), read(w[i]), pd &= F[i] == 1;
+	if (n <= 0) {
+		for (int i = 2; i <= n; ++i)
+			add(F[i], i, w[i], i), add(i, F[i], w[i], i);
+		for (int i = 1; i <= n; ++i) {
+			for (int j = 2; j <= n; ++j) f[j] = 0;
+			mx = 0;
+			dfs(i, 0);
+			for (int j = 2; j <= n; ++j)
+				if (f[j] == mx) ++g[j];
+		}
+	}
+	else if (pd){
+		ll M = 0; int num = 1;
+		for (int i = 2; i <= n; ++i) M = max(M, w[i]);
+		for (int i = 2; i <= n; ++i) {
+			if ((ll)(n - 1) * w[i] >= M) ++g[i];
+			if ((ll)(n - 1) * w[i] <= M) ++num;
+		}
+		for (int i = 2; i <= n; ++i)
+			if (w[i] == M) g[i] += num;
+	}
+	else {
+		for (int i = 2; i <= n; ++i)
+			add(F[i], i, w[i], i), add(i, F[i], w[i], i);
+		dfs(1, 0);
+		for (int i = 1; i <= n; ++i) {
+			int M = 0;
+			for (int j = head[i]; j; j = e[j].nxt) {
+				int v = e[j].to;
+				M = max(M, size[v] > size[i] ? (n - size[i]) : size[v]);
+			}
+			for (int j = head[i]; j; j = e[j].nxt) {
+				int v = e[j].to;
+				if ((size[v] > size[i] ? (n - size[i]) : size[v]) == M) ++g[e[j].id]; 
+			}
+		}
+	}
+	int ans = 0;
+	for (int i = 2; i <= n; ++i) ans ^= g[i];
+	printf("%d\n", ans);
+	return 0;
+}

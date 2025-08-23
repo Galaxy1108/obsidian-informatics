@@ -1,0 +1,50 @@
+#include <bits/stdc++.h>
+using namespace std;
+int type, n, m, k;
+int Q;
+int a[110][110];
+void work (int x, int y, int q) {
+	bool flag;
+	if (x == 0) {
+		flag = 1;
+		x = 1;
+	} else {
+		flag = 0;
+		y = 1;
+	}
+	while (q--) {
+		while (a[x][y] != 1 && x <= n && y <= m) {
+			if (flag == 1) {
+				x++;
+			} else {
+				y++;
+			}
+		}
+	}
+	cout << x << ' ' << y << '\n'; 
+}
+int main () {
+	ios_base::sync_with_stdio(false);
+	cin.tie(0);
+	cin >> type >> n >> m >> k;
+	for (int i = 1; i <= k; ++i) {
+		int x, y;
+		cin >> x >> y;
+		a[x][y] = 1;
+	}
+	cin >> Q;
+	while (Q--) {
+		int w;
+		cin >> w;
+		if (w == 1) {
+			int x, y;
+			cin >> x >> y;
+			a[x][y] = 1;
+		} else {
+			int x, y, q;
+			cin >> x >> y >> q;
+			work (x, y, q);
+		}
+	}
+	return 0;
+}

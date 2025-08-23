@@ -1,0 +1,192 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+const ll mod = 998244353;
+template < class T >
+T read() {
+	T x = T();
+	char c = getchar();
+	while ( c < '0' || c > '9' ) {
+		c = getchar();
+	}
+	while ( c >= '0' && c <= '9' ) {
+		x = ( x << 1 ) + ( x << 3 ) + (c ^ 48);
+		c = getchar();
+	}
+	return x;
+}
+#define dl read< ll >()
+ll n;
+ll a[200005];
+namespace B1 {
+ll s[200005];
+inline ll lowbit( ll x ) {
+	return ( ( x ) & ( -x ) );
+}
+void init() {
+	for ( ll i = 1; i <= n; ++i ) {
+		s[i] += a[i];
+		if ( i + lowbit( i ) <= n ) {
+			s[i + lowbit( i )] += s[i];
+		}
+	}
+}
+void add( ll i, ll x ) {
+	while ( i <= n ) {
+		s[i] += x;
+		i += lowbit( i );
+	}
+}
+ll getsum( ll a ) {
+	ll sum = 0;
+	while ( a ) {
+		sum += s[a];
+		a -= lowbit( a );
+	}
+	return sum;
+}
+ll getsum( ll l, ll r ) {
+	return getsum( r ) - getsum( l - 1 );
+}
+}; // namespace B1
+namespace S1 {
+struct node {
+	ll l, r;
+	ll maxn;
+} nd[200005 << 2];
+inline ll lc( ll x ) {
+	return ( x << 1 );
+}
+inline ll rc( ll x ) {
+	return ( x << 1 ) | 1;
+}
+ll build( ll id, ll l, ll r ) {
+	nd[id].l = l;
+	nd[id].r = r;
+	if ( l == r ) {
+		nd[id].maxn = a[l];
+		return nd[id].maxn;
+	}
+	ll mid = ( l + r ) >> 1;
+	nd[id].maxn = max( build( lc( id ), l, mid ), build( rc( id ), mid + 1, r ) );
+	return nd[id].maxn;
+}
+ll set( ll id, ll x, ll num ) {
+	if ( nd[id].l == nd[id].r ) {
+		nd[id].maxn = num;
+		return nd[id].maxn;
+	}
+	ll mid = ( nd[id].l + nd[id].r ) >> 1;
+	if ( x <= mid ) {
+		nd[id].maxn = max( set( lc( id ), x, num ), nd[rc( id )].maxn );
+	} else {
+		nd[id].maxn = max( nd[lc( id )].maxn, set( rc( id ), x, num ) );
+	}
+	return nd[id].maxn;
+}
+ll ask( ll id, ll l, ll r ) {
+	if ( l == r ) {
+		return nd[id].maxn;
+	}
+	if ( nd[id].l == l && nd[id].r == r ) {
+		return nd[id].maxn;
+	}
+	ll mid = ( nd[id].l + nd[id].r ) >> 1;
+	ll res = -1;
+	if ( l <= mid ) {
+		res = max( res, ask( lc( id ), l, min( mid, r ) ) );
+	}
+	if ( r > mid ) {
+		res = max( res, ask( rc( id ), max( l, mid + 1 ), r ) );
+	}
+	return res;
+}
+}; // namespace S1
+namespace S2 {
+ll ksm( ll b ) {
+	ll a = 2;
+	ll res = 1;
+	while ( b ) {
+		if ( b & 1 ) {
+			res *= a;
+			res %= mod;
+		}
+		a *= a;
+		a %= mod;
+		b >>= 1;
+	}
+	return res;
+}
+ll sum[200005];
+void init() {
+	for ( ll i = 1; i <= n; ++i ) {
+		sum[i] = ( sum[i - 1] + ksm( i ) );
+		if ( sum[i] >= mod ) {
+			sum[i] -= mod;
+		}
+	}
+}
+ll ask( ll l, ll r ) {
+	return ( sum[r] - sum[l - 1] + mod ) % mod;
+}
+}; // namespace S2
+pair< ll, ll > getans( ll l, ll r, ll least ) {
+	if ( least <= 0 ) {
+		return make_pair( 0ll, 0ll );
+	}
+	if ( l == r ) {
+		return ( make_pair( S2::ask( l, r ), a[l] ) );
+	}
+	if ( B1::getsum( l, r ) == least ) {
+		return ( make_pair( S2::ask( l, r ), least ) );
+	}
+	ll mid = ( l + r ) >> 1;
+	ll ls = B1::getsum( l, mid );
+	if ( ls >= least ) {
+		return getans( l, mid, least );
+	}
+	pair< ll, ll > rres = getans( mid + 1, r, least - ls );
+	pair< ll, ll > lres = getans( l, mid, least - rres.second );
+	return make_pair( ( rres.first + lres.first ) % mod, rres.second + lres.second );
+}
+void work() {
+	ll l = 1, r = n;
+	if ( n == 1 ) {
+		printf( "%lld\n", S2::ask( 1, 1 ) );
+		return;
+	}
+	ll c = S1::ask( 1, 1, n );
+	while ( l < r ) {
+		ll mid = ( l + r ) >> 1;
+		if ( c <= B1::getsum( mid ) ) {
+			r = mid;
+		} else {
+			l = mid + 1;
+		}
+	}
+	printf( "%lld\n", getans( 1, l, c ).first );
+}
+ll q;
+ll x, y;
+int main() {
+    freopen("imperishable.in","r",stdin);
+    freopen("imperishable.out","w",stdout);
+	dl;
+	n = dl;
+	for ( ll i = 1; i <= n; ++i ) {
+		a[i] = dl;
+	}
+	B1::init();
+	S1::build( 1, 1, n );
+	S2::init();
+	work();
+	q = dl;
+	while ( q-- ) {
+		x = dl, y = dl;
+		B1::add( x, y - a[x] );
+		S1::set( 1, x, y );
+		a[x] = y;
+		work();
+	}
+	return 0;
+}

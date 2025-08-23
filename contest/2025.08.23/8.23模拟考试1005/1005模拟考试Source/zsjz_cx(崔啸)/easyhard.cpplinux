@@ -1,0 +1,42 @@
+#include<cstdio>
+#include<algorithm>
+using namespace std;
+const int N=150;
+int n,m,mo,f[N][N][N],g[N][N][N],ans;
+int main()
+{
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	scanf("%d%d%d",&n,&m,&mo);
+	f[2*n][2*n][2*n]=1;
+	for(int i=1;i<=m;i++)
+	{
+		for(int j=0;j<=4*n;j++)
+			for(int k=0;k<=4*n;k++)
+				for(int l=0;l<=4*n;l++)
+					if(f[j][k][l])
+					{
+						g[j][max(j+1,k)][l]=(g[j][max(j+1,k)][l]+f[j][k][l])%mo;
+						g[j][k][min(j-1,l)]=(g[j][k][min(j-1,l)]+f[j][k][l])%mo;
+						g[j+2][max(j+2,k)][l]=(g[j+2][max(j+2,k)][l]+f[j][k][l])%mo;
+						g[j-2][k][min(j-2,l)]=(g[j-2][k][min(j-2,l)]+f[j][k][l])%mo;
+					}
+		for(int j=0;j<=4*n;j++)
+			for(int k=0;k<=4*n;k++)
+				for(int l=0;l<=4*n;l++)
+					f[j][k][l]=g[j][k][l],g[j][k][l]=0;
+	}
+	for(int i=0;i<=4*n;i++)
+		for(int j=0;j<=4*n;j++)
+			for(int k=0;k<=4*n;k++)
+				if(f[i][j][k])
+				{
+					if(j-k<2*n||(j-k==2*n&&j%2==0))
+					{
+						ans=(ans+f[i][j][k])%mo;
+//						printf("%d %d %d %d\n",i,j,k,f[i][j][k]);
+					}
+				}
+	printf("%d",ans);
+	return 0;
+}

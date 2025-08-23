@@ -1,0 +1,37 @@
+#include<bits/stdc++.h>
+using namespace std;
+const int NR=1e5+5;
+int n,m,k,Q,type;
+bool block[20005][20005];
+int dx[2]={1,0};
+int dy[2]={0,1};
+int main(){
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	int opt,x,y,q;
+	cin >> type >> n >> m >> k;
+	for(int i=1;i<=k;i++){
+		cin >> x >> y;
+		block[x][y]=1;
+	}
+	cin >> Q;
+	while(Q--){
+		cin >> opt;
+		if(opt==1){
+			cin >> x >> y;
+			block[x][y]=1;
+		}else{
+			cin >> x >> y >> q;
+			int dir;
+			if(x==0) dir=0;
+			else dir=1;
+			while(q&&x<=n&&y<=m){
+				x+=dx[dir],y+=dy[dir];
+				if(block[x][y]) q--,dir^=1;
+			}
+			cout << x << " " << y << endl;
+		}
+	}
+	return 0;
+}
+

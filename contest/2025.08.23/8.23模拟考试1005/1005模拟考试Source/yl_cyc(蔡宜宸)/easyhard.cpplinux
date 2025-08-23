@@ -1,0 +1,63 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+const int N=3005;
+const int M=3005;
+int T,n,m,p,k,ans,dp1[2][M],dp2[2][M];
+inline int read(){
+	int s=0,w=1;char ch=getchar();
+	while((ch<'0')||(ch>'9')){if(ch=='-'){w=-1;}ch=getchar();}
+	while((ch>='0')&&(ch<='9')){s=(s<<3)+(s<<1)+ch-'0';ch=getchar();}
+	return s*w;
+}
+//inline void Solve(){
+//	n=read();m=read();p=read();
+//	for(int i=0;i<=n;i++)dp[0][i]=1;
+//	for(int i=0;i<=n-1;i++){
+//		for(int j=0;j<=n;j++){
+//			if(j>=1){
+//				dp[i+1][j-1]=(dp[i+1][j-1]+dp[i][j])%p;
+//				dp[i+1][j]=(dp[i+1][j]+dp[i][j])%p;
+//			}
+//			if(j<n){				
+//				dp[i+1][j]=(dp[i+1][j]+dp[i][j])%p;
+//				dp[i+1][j+1]=(dp[i+1][j+1]+dp[i][j])%p;
+//			}
+//		}
+//	}
+//	for(int i=0;i<=n;i++)ans=(ans+dp[n][i])%p;
+//	printf("%d\n",ans);
+//}
+
+inline void Solve(){
+	n=read();m=read();p=read();k=0;
+	for(int i=1;i<=n;i++)dp1[k][i]=1;dp2[k][0]=1;
+	for(int i=1;i<=m;i++){
+		k^=1;
+		for(int j=0;j<=n;j++)dp1[k][j]=dp2[k][j]=0;	
+		for(int j=0;j<=n;j++){
+			if(j>0){
+				dp1[k][j]=(dp1[k][j]+dp1[k^1][j-1])%p;
+				dp2[k][j]=(dp2[k][j]+dp2[k^1][j-1]+dp2[k^1][j])%p;
+				if(j==1)dp2[k][j]=(dp2[k][j]+dp1[k^1][j])%p;
+				else dp1[k][j]=(dp1[k][j]+dp1[k^1][j])%p;
+			}
+			if(j<n){
+				dp2[k][j]=(dp2[k][j]+dp2[k^1][j+1]+dp2[k^1][j])%p;
+				if(j==0)dp2[k][j]=(dp2[k][j]+dp1[k^1][j+1])%p;
+				else dp1[k][j]=(dp1[k][j]+dp1[k^1][j+1]+dp1[k^1][j])%p;
+			}
+		}
+	}
+	for(int j=0;j<=n;j++)ans=(ans+dp2[k][j])%p;
+	printf("%lld\n",ans);
+	return ;
+}
+signed main(){
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	Solve();
+	fclose(stdin);
+	fclose(stdout);
+	return 0;
+}

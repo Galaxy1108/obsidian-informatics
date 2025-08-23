@@ -1,0 +1,46 @@
+#include <cstdio>
+using namespace std;
+int n, m, k, q, type, bz[105][105];
+int fx[2] = {0, 1}, fy[2] = {1, 0};
+inline int read() {
+	int an(0), ch(getchar());
+	for (; ch < 48 || ch > 57 ; ch = getchar());
+	for (; ch > 47 && ch < 58 ; ch = getchar())
+		an = (an << 3) + (an << 1) + (ch ^ 48);
+	return an;
+}
+int main() {
+	freopen("corridor.in", "r", stdin);
+	freopen("corridor.out", "w", stdout);
+	type = read();n = read();m = read();k = read();
+	if (type == 0) {
+		for (int i(1) ; i <= k ; ++i) {
+			int x, y;
+			x = read();y = read();
+			bz[x][y] = 1;
+		}
+		q = read();
+		while (q--) {
+			type = read();
+			if (type & 1) {
+				int x, y;
+				x = read();y = read();
+				bz[x][y] = 1;
+			}
+			else {
+				int x, y, cnt, f;
+				x = read();y = read();cnt = read();
+				if (!x)x = 1, f = 1;
+				else y = 1, f = 0;
+				while (x <= n && y <= n) {
+					if (bz[x][y])f ^= 1, cnt--;
+					if (!cnt)break;
+					x += fx[f];y += fy[f];
+				}
+				printf("%d %d\n", x, y);
+			}
+		}
+	}
+	fclose(stdin);fclose(stdout);
+	return 0;
+}

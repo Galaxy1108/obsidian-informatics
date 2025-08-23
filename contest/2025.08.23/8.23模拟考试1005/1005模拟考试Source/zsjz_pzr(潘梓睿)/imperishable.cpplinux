@@ -1,0 +1,47 @@
+#include<bits/stdc++.h>
+#define p 998244353
+#define N 1000000
+#define ll long long
+using namespace std;
+int n,a[N],num,q,x,y,g[N],mi[N],now,v; 
+ll f[N],s[N],ans;
+void update(int k){
+	f[k]=f[k*2]+f[k*2+1];
+	if(a[g[k*2]]>=a[g[k*2+1]])g[k]=g[k*2];
+	else g[k]=g[k*2+1];
+}
+void build(int k,int l,int r){
+	if(l==r){f[k]=a[l];g[k]=l;return;}
+	int mid=(l+r)>>1;
+	build(k*2,l,mid);build(k*2+1,mid+1,r);
+	update(k);
+}
+void change(int k,int l,int r,int x){
+	if(l==r){f[k]=a[l];g[k]=l;return;}
+	int mid=(l+r)>>1;
+	if(x<=mid)change(k*2,l,mid,x);
+	else change(k*2+1,mid+1,r,x);
+	update(k);
+}
+int main(){
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	scanf("%d",&num);scanf("%d",&n);mi[0]=1;
+	for(int i=1;i<=n;i++){
+		scanf("%d",&a[i]);mi[i]=mi[i-1]*2%p;
+		s[i]=s[i-1]+a[i];
+	}
+	build(1,1,n);now=g[1];ans=0;v=a[now];
+	for(int i=now;i>=1;i--)
+	if(s[i-1]<v)ans=(ans+mi[i])%p,v-=a[i];
+	printf("%lld\n",ans);
+	scanf("%d",&q);
+	for(;q;q--){
+		scanf("%d%d",&x,&y);a[x]=y;change(1,1,n,x);
+		for(int i=x;i<=n;i++)s[i]=s[i-1]+a[i];
+		now=g[1];ans=0;v=a[now];
+		for(int i=now;i>=1;i--)
+		if(s[i-1]<v)ans=(ans+mi[i])%p,v-=a[i];
+		printf("%lld\n",ans);
+	}
+}

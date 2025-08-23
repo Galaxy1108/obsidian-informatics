@@ -1,0 +1,63 @@
+#include<iostream>
+#include<cstdio>
+#include<queue>
+using namespace std;
+#define south 0
+#define east 2
+int dx[4]={1,-1,0,0};
+int dy[4]={0,0,1,-1};
+int board[105][105];
+struct pos{
+	int x,y,dir,num;
+};
+queue<pos > q;
+int main(){
+	int type,n,m,k;
+	cin>>type>>n>>m>>k;
+	for(int i=1;i<=k;i++){
+		int x,y;
+		cin>>x>>y;
+		board[x][y]=114;
+	}
+	int t;
+	cin>>t;
+	for(int i=1;i<=t;i++){
+		int op,x,y,xq;
+		cin>>op>>x>>y;
+		if(op==1){
+			board[x][y]=114;
+		}
+		else{
+			cin>>xq;
+			if(x==0)q.push(pos{1,y,south,0});
+			else q.push(pos{x,1,east,0});
+			int posx,posy; 
+			while(!q.empty()){
+				pos p=q.front();
+				q.pop();
+				//cout<<p.x<<' '<<p.y<<' '<<p.dir<<' '<<p.num<<endl;
+				//cin>>op;
+				if(p.x==n+1||p.y==m+1||p.num==xq){
+					posx=p.x;
+					posy=p.y;
+					break;
+				}
+				int newx=p.x+dx[p.dir],newy=p.y+dy[p.dir];
+				pos t;
+				t.x=newx,t.y=newy;
+				if(board[newx][newy]==114){
+					if(p.dir==east)t.dir=south;
+					if(p.dir==south)t.dir=east;
+					t.num=p.num+1;
+					q.push(t); 
+				}
+				else{
+					t.dir=p.dir;
+					t.num=p.num;
+					q.push(t);
+				}
+			}
+			cout<<posx<<' '<<posy<<endl;
+		}
+	}
+}

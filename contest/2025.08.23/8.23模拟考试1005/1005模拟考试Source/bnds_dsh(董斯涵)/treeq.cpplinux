@@ -1,0 +1,42 @@
+#include<cstdio>
+const int N=5010;
+long long a[N];
+int f[N],sz[N];
+int head[N],to[N<<1],nxt[N<<1],val[N<<1],p;
+inline void add(int u,int v,int w){++p;to[p]=v,val[p]=w,nxt[p]=head[u];head[u]=p;}
+void dfs(int u,int fa)
+{
+	sz[u]=1;
+	for(int i=head[u];i;i=nxt[i])
+	{
+		int v=to[i];
+		if(v==fa) continue;
+		dfs(v,u),sz[u]+=sz[v],a[(i+1)>>1]=(long long)sz[v]*val[i];
+	}
+}
+int b[N];
+int main()
+{
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	int n;
+	scanf("%d",&n);
+	for(int i=1;i<n;++i)
+	{
+		int u,v,w;
+		scanf("%d%d%d",&u,&v,&w);
+		add(u,v,w),add(v,u,w);
+	}
+	for(int i=1;i<=n;++i)
+	{
+		for(int j=1;j<n;++j) a[j]=0;
+		dfs(i,0);
+		int mx=0;
+		for(int j=1;j<n;++j) if(a[j]>mx) mx=a[j];
+		for(int j=1;j<n;++j) if(a[j]==mx) ++f[j];
+	}
+	int ans=0;
+	for(int i=1;i<n;++i) ans^=f[i];
+	printf("%d",ans);
+	return 0;
+}

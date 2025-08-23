@@ -1,0 +1,41 @@
+#include<bits/stdc++.h>
+using namespace std;
+const int N=200005,mod=998244353;
+int T,n,q,a[N],ma[N],mi[N];
+long long sum[N];
+int main()
+{
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	scanf("%d%d",&T,&n);
+	for(int i=1;i<=n;i++) scanf("%d",&a[i]);
+	scanf("%d",&q);
+	mi[0]=1;
+	for(int i=1;i<=200000;i++) mi[i]=mi[i-1]*2%mod;
+	if(T<=17)
+	{
+		for(int i=1;i<=n;i++) sum[i]=sum[i-1]+a[i];
+		for(int i=n;i>=1;i--) ma[i]=max(ma[i+1],a[i]);
+		int now=n+1,ans=0,less;
+		while(sum[now-1]>=ma[now]) now--;
+		ans=mi[now];less=ma[now+1]-a[now];
+		for(int j=now-1;j>=1;j--)
+			if(sum[j-1]<less) less-=a[j],ans=(ans+mi[j])%mod;
+		printf("%d\n",ans);
+		for(int i=1;i<=q;i++)
+		{
+			int x,y;
+			scanf("%d%d",&x,&y);
+			a[x]=y;
+			for(int j=x;j<=n;j++) sum[j]=sum[j-1]+a[j];
+			for(int j=x;j>=1;j--) ma[j]=max(ma[j+1],a[j]);
+			
+			now=n+1;
+			while(sum[now-1]>=ma[now]) now--;
+			ans=mi[now];less=ma[now+1]-a[now];
+			for(int j=now-1;j>=1;j--)
+				if(sum[j-1]<less) less-=a[j],ans=(ans+mi[j])%mod;
+			printf("%d\n",ans);
+		}
+	}
+}

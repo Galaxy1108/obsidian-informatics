@@ -1,0 +1,149 @@
+#include <cstdio>
+#define g getchar()
+#define ll long long
+#define r register int
+const int mod(998244353), N(2e5 + 2);
+struct node
+{
+	ll w;
+	int mn, mx;
+}t[N << 2];
+int n, m, tot, pw[N], a[N], ans;
+inline int read()
+{
+	r a(0), b(g);
+	for (; b < 48 || b > 57; b = g);
+	for (; b > 47 && b < 58; b = g)
+		(a *= 10) += b ^ 48;
+	return a;
+}
+inline int min(r x, r y)
+{
+	return x < y ? x : y;
+}
+inline int max(r x, r y)
+{
+	return x > y ? x : y;
+}
+inline void build(r L, r R, r x)
+{
+	if (L == R)
+	{
+		t[x].mn = t[x].mx = t[x].w = a[L] = read();
+		return;
+	}
+	r mid(L + R >> 1), ls(x << 1), rs(ls | 1);
+	build(L, mid, ls);
+	build(mid + 1, R, rs);
+	t[x].mn = min(t[ls].mn, t[rs].mn);
+	t[x].mx = max(t[ls].mx, t[rs].mx);
+	t[x].w = t[ls].w + t[rs].w;
+}
+inline int add(r a, r b)
+{
+	if ((a += b) >= mod)
+		a -= mod;
+	return a;
+}
+inline ll askw(r L, r R, r x, r lk, r rk)
+{
+	r mid(L + R >> 1), ls(x << 1), rs(ls | 1);
+	ll res(0);
+	if (L >= lk && R <= rk)
+		return t[x].w;
+	if (mid >= lk)
+		res = askw(L, mid, ls, lk, rk);
+	if (mid < rk)
+		res += askw(mid + 1, R, rs, lk, rk);
+	return res;
+}
+inline int askmx(r L, r R, r x, r k)
+{
+	r mid(L + R >> 1), ls(x << 1), rs(ls | 1);
+	if (L >= k)
+		return t[x].mx;
+	r res(askmx(mid + 1, R, rs, k));
+	if (mid >= k)
+		res = max(res, askmx(L, mid, ls, k));
+	return res;
+}
+inline int askmn(r L, r R, r x, r lk, r rk)
+{
+	r mid(L + R >> 1), ls(x << 1), rs(ls | 1), res(0x7fffffff);
+	if (L >= lk && R <= rk)
+		return t[x].mn;
+	if (mid >= lk)
+		res = askmn(L, mid, ls, lk, rk);
+	if (mid < rk)
+		res = min(res, askmn(mid + 1, R, rs, lk, rk));
+	return res;
+}
+inline int dfs(r L, r R)
+{
+	if (askmn(1, n, 1, L, R) > ans)
+		return 0;
+	ll nw(askw(1, n, 1, L, R));
+	if (nw <= ans)
+	{
+		ans -= nw;
+		return add(pw[R + 1], mod - pw[L]);
+	}
+	r mid(L + R >> 1), res(0);
+	if (askmn(1, n, 1, mid + 1, R) <= ans)
+		res = dfs(mid + 1, R);
+	if (askmn(1, n, 1, L, mid) <= ans)
+		res = add(res, dfs(L, mid));
+	return res;
+}
+inline void solve()
+{
+	r L(1), R(n), res;
+	while (L <= R)
+	{
+		r mid(L + R >> 1);
+		ll nw(askw(1, n, 1, 1, mid) - askmx(1, n, 1, mid + 1));
+		if (nw >= 0)
+		{
+			ans = nw;
+			res = mid;
+			R = mid - 1;
+		}
+		else
+			L = mid + 1;
+	}
+	printf("%d\n", add(pw[res + 1] - 2, mod - dfs(1, res)));
+}
+inline void change(r L, r R, r x, r lk)
+{
+	if (L == R)
+	{
+		t[x].mn = t[x].mx = t[x].w = a[L] = read();
+		return;
+	}
+	r mid(L + R >> 1), ls(x << 1), rs(ls | 1);
+	if (lk <= mid)
+		change(L, mid, ls, lk);
+	else
+		change(mid + 1, R, rs, lk);
+	t[x].mn = min(t[ls].mn, t[rs].mn);
+	t[x].mx = max(t[ls].mx, t[rs].mx);
+	t[x].w = t[ls].w + t[rs].w;
+}
+int main()
+{
+	freopen("imperishable.in", "r", stdin);
+	freopen("imperishable.out", "w", stdout);
+	pw[0] = 1;
+	for (r i(1); i < N; ++i)
+		pw[i] = (pw[i - 1] << 1) % mod;
+	read();
+	n = read();
+	build(1, n, 1);
+	solve();
+	m = read();
+	for (r i(1); i <= m; ++i)
+	{
+		change(1, n, 1, read());
+		solve();
+	}
+}

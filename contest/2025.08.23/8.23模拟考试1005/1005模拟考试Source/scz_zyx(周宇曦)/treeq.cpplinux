@@ -1,0 +1,72 @@
+#pragma GCC optimize(2)
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long LL;
+template <typename T> inline void read(T &FF) {
+    int RR = 1; FF = 0; char CH = getchar();
+    for(; !isdigit(CH); CH = getchar()) if(CH == '-') RR = -RR;
+    for(; isdigit(CH); CH = getchar()) FF = FF * 10 + CH - 48;
+    FF *= RR;
+}
+inline void file(string str) {
+    freopen((str + ".in").c_str(), "r", stdin);
+    freopen((str + ".out").c_str(), "w", stdout);
+}
+const int N = 1e6 + 10;
+int n, now, siz[N], fst[N], nxt[N], num[N], wi[N], ui[N], vi[N], dfn[N], d, tr[N], w[N];
+void add(int u, int v, int ww) {
+	nxt[++now] = fst[u], fst[u] = now, num[now] = v, wi[now] = ww;
+}
+void dfs(int x) {
+	siz[x] = 1, dfn[x] = ++d; tr[d] = x;
+	for(int i = fst[x]; i; i = nxt[i]) {
+		dfs(num[i]);
+		siz[x] += siz[num[i]];
+	}
+}
+multiset<LL> s; LL v[N];
+void solve(int x) {
+	v[x] = -(*s.begin());
+	for(int i = fst[x]; i; i = nxt[i]) {
+		s.erase(s.find(-1LL * siz[num[i]] * wi[i]));
+		s.insert(-1LL * (n - siz[num[i]]) * wi[i]);
+		solve(num[i]); 
+		s.erase(s.find(-1LL * (n - siz[num[i]]) * wi[i]));
+		s.insert(-1LL * siz[num[i]] * wi[i]);
+	}
+}
+map<LL, int> mi;
+struct op {
+	int x; LL y; int o, id;
+	friend bool operator < (const op &a, const op &b) {
+		return a.x < b.x;
+	}
+}; vector<op> c; int ans[N];
+int main() {
+    file("treeq");
+	read(n);
+	for(int i = 2; i <= n; i++) {
+		int x; read(x), read(w[i]);
+		add(x, i, w[i]); ui[i] = x, vi[i] = i;
+	}
+	dfs(1);
+	for(int i = 2; i <= n; i++) s.insert(-1LL * siz[vi[i]] * w[i]);
+	solve(1);
+	for(int i = 2; i <= n; i++) {
+		c.push_back((op){siz[vi[i]] + dfn[vi[i]] - 1, 1LL * (n - siz[vi[i]]) * w[i], 1, i});
+		c.push_back((op){dfn[vi[i]] - 1, 1LL * (n - siz[vi[i]]) * w[i], -1, i});
+		c.push_back((op){dfn[vi[i]] - 1, 1LL * siz[vi[i]] * w[i], 1, i});
+		c.push_back((op){n, 1LL * siz[vi[i]] * w[i], 1, i});
+		c.push_back((op){dfn[vi[i]] + siz[vi[i]] - 1, 1LL * siz[vi[i]] * w[i], -1, i});
+	}
+	sort(c.begin(), c.end()); int it = 0;
+	for(int i = 0; i <= n; i++) {
+		if(i) mi[v[tr[i]]]++;
+		for(; it < c.size() && c[it].x == i; it++)
+			ans[c[it].id] += c[it].o * mi[c[it].y];
+	}
+	LL res = 0;
+	for(int i = 2; i <= n; i++) res ^= ans[i];
+	cout << res << endl;
+    return 0;
+}

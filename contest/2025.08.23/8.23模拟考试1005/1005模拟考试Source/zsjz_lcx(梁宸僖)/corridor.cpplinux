@@ -1,0 +1,44 @@
+#include<cstdio>
+using namespace std;
+int ty,n,m,k,x,y,T,q;
+bool bz[2010][2010];
+int main()
+{
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	scanf("%d%d%d%d",&ty,&n,&m,&k);
+	for (int i=1;i<=k;i++)
+		scanf("%d%d",&x,&y),bz[x][y]=true;
+	scanf("%d",&T);
+	while (T--)
+	{
+		scanf("%d",&ty);
+		if (ty==1)
+		{
+			scanf("%d%d",&x,&y);bz[x][y]=true;
+		}
+		else
+		{
+			scanf("%d%d%d",&x,&y,&q);
+			int t=0;
+			if (x==0) t=0;
+			else t=1;
+			while (q--)
+			{
+				while (true)
+				{
+					if (x==n+1) break;
+					if (y==m+1) break;
+					if (!t) x++;
+					else y++;
+					if (bz[x][y]) break;
+				}
+				if (x==n+1) break;
+				if (y==m+1) break;
+				t^=1;
+			}
+			printf("%d %d\n",x,y);
+		}
+	}
+	return 0;
+}

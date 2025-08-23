@@ -1,0 +1,157 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+template < typename T >
+inline const void read(register T &x)
+{
+	register bool flg = x = 0;
+	register char c;
+	while ((c = getchar()) < 48 || c > 57)
+		flg |= c == '-';
+	do
+		x = (x << 1) + (x << 3) + (c ^ 48);
+	while ((c = getchar()) > 47 && c < 58);
+	if (flg) x = -x;
+}
+
+int OUTPUT[45];
+
+template < typename T >
+inline const void write(register T x)
+{
+	if (x < 0)
+	{
+		putchar('-');
+		x = -x;
+	}
+	register int len = 0;
+	do
+	{
+		OUTPUT[++len] = x % 10 | 48;
+		x /= 10;
+	}while (x);
+	while (len)
+		putchar(OUTPUT[len--]);
+}
+
+template < typename T >
+inline const void writesp(const register T x)
+{
+	write(x);
+	putchar(32);
+}
+
+template < typename T >
+inline const void writeln(const register T x)
+{
+	write(x);
+	putchar(10);
+}
+
+const int N = 150005, M = 1005;
+int Type, n, m, k, Q;
+pair < int, int > a[N]/*, up[M][M]*/, down[M][M]/*, lft[M][M]*/, rgh[M][M];
+bool vis[M][M];
+
+int main()
+{
+	freopen("corridor.in", "r", stdin);
+	freopen("corridor.out", "w", stdout);
+	read(Type);
+	read(n);
+	read(m);
+	read(k);
+	for (register int i = 1; i <= k; ++i)
+	{
+		read(a[i].first), read(a[i].second);
+//		if (a[i].first <= 100 && a[i].second <= 100) 
+		vis[a[i].first][a[i].second] = 1;
+	}
+	read(Q);
+	while (Q--)
+	{
+		int w;
+		read(w);
+		if (w == 1)
+		{
+			++k;
+			read(a[k].first);
+			read(a[k].second);
+//			if (a[k].first <= 100 && a[k].second <= 100) 
+			vis[a[k].first][a[k].second] = 1;
+		}
+		else
+		{
+			int x, y, z;
+			read(x);
+			read(y);
+			read(z);
+			for (register int i = 0; i <= n; ++i)
+				for (register int j = 0; j <= m; ++j)
+				{
+//					up[i][j] = make_pair(0, j);
+					down[i][j] = make_pair(n + 1, j);
+//					lft[i][j] = make_pair(i, 0);
+					rgh[i][j] = make_pair(i, m + 1);
+				}
+//			for (register int i = 1; i <= n; ++i)
+//				for (register int j = 1; j <= m; ++j)
+//				{
+//					if (i != 1)
+//					{
+//						if (vis[i - 1][j]) up[i][j] = make_pair(i - 1, j);
+//						else up[i][j] = up[i - 1][j];
+//					}
+//					if (j != 1)
+//					{
+//						if (vis[i][j - 1]) lft[i][j] = make_pair(i, j - 1);
+//						else lft[i][j] = lft[i][j - 1];
+//					}
+//				}
+			for (register int i = n; ~i; --i)
+				for (register int j = m; ~j; --j)
+				{
+					if (i != n)
+					{
+						if (vis[i + 1][j]) down[i][j] = make_pair(i + 1, j);
+						else down[i][j] = down[i + 1][j]; 
+					}
+					if (j != m)
+					{
+						if (vis[i][j + 1]) rgh[i][j] = make_pair(i, j + 1);
+						else rgh[i][j] = rgh[i][j + 1];
+					}
+				}
+//0右 1下 
+//			for (register int i = 1; i <= n; ++i)
+//				for (register int j = 1; j <= m; ++j)
+//					writesp(i), writesp(j), writesp(rgh[i][j].first), writesp(rgh[i][j].second), writesp(down[i][j].first), writeln(down[i][j].second);
+			int dir = y;
+			for (register int i = 1; i <= z; ++i)
+			{
+				pair < int, int > tmp;
+				if (dir) tmp = down[x][y];
+				else tmp = rgh[x][y];
+				dir = !dir;
+//				if (!dir) tmp = up[x][y];
+//				else if (dir == 1) tmp = down[x][y];
+//				else if (dir == 2) tmp = lft[x][y];
+//				else tmp = rgh[x][y];
+//				writesp(x), writeln(y), puts("*");
+				x = tmp.first;
+				y = tmp.second;
+//				writesp(x), writeln(y), puts("!");
+				if (x > n || y > m)
+				{
+					writesp(x);
+					writeln(y);
+					goto End;
+				}
+			}
+			writesp(x);
+			writeln(y);
+			End:;
+		}
+	}
+	return 0;
+}

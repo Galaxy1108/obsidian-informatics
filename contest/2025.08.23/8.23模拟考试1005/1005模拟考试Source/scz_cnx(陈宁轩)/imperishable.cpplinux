@@ -1,0 +1,33 @@
+#include<bits/stdc++.h>
+#define int long long
+#define MAXN 200010
+#define p 998244353
+using namespace std;
+const int N=200000;
+int tst,n,Q,a[MAXN];
+int pw[MAXN];
+signed main(){
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	pw[0]=1;for(int i=1;i<=N;i++)pw[i]=pw[i-1]*2%p;
+	scanf("%lld%lld",&tst,&n);int sum=0;
+	for(int i=1;i<=n;i++)scanf("%lld",&a[i]),sum+=a[i];
+	int ans=0;
+	for(int i=n,mx=0,now=sum;i;i--){
+		if(now-a[i]<max(mx,a[i]))ans=(ans+pw[i])%p;
+		else now-=a[i],mx=max(mx,a[i]);
+	}
+	printf("%lld\n",ans);
+	scanf("%lld",&Q);
+	while(Q--){
+		int x,y;scanf("%lld%lld",&x,&y);
+		sum-=a[x];a[x]=y;sum+=a[x];
+		int ans=0;
+		for(int i=n,mx=0,now=sum;i;i--){
+			if(now-a[i]<max(mx,a[i]))ans=(ans+pw[i])%p;
+			else now-=a[i],mx=max(mx,a[i]);
+		}
+		printf("%lld\n",ans);
+	}
+	return 0;
+}

@@ -1,0 +1,102 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+const int MAXN=50505,MAXK=151515,LOGN=22;
+
+int type,n,m,k,q,x[MAXK+MAXN+MAXN],y[MAXK+MAXN+MAXN],t,u,v,w;
+
+set <int> r[MAXN],c[MAXN];
+
+map <pair<int,int>,int> num;
+
+pair<int,int> getNxt(int p,int q,int dir)
+{
+	if(dir==0)
+		return make_pair(p,*r[p].upper_bound(q));
+	return make_pair(*c[q].upper_bound(p),q);
+}
+
+int nxt[LOGN][MAXK+MAXN+MAXN][2];
+
+int main()
+{
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	cin>>type>>n>>m>>k;
+	for(int i=1;i<=k;i++)
+	{
+		cin>>x[i]>>y[i];
+		r[x[i]].insert(y[i]);
+		c[y[i]].insert(x[i]);
+		num[make_pair(x[i],y[i])]=i;
+	}
+	for(int i=1;i<=n;i++)
+	{
+		x[k+i]=i,y[k+i]=m+1;
+		r[i].insert(m+1);
+		num[make_pair(x[k+i],y[k+i])]=k+i;
+	}
+	for(int i=1;i<=m;i++)
+	{
+		x[k+n+i]=n+1,y[k+n+i]=i;
+		c[i].insert(n+1);
+		num[make_pair(x[k+n+i],y[k+n+i])]=k+n+i;
+	}
+	if(type==1)
+	{
+		for(int i=1;i<=k;i++)
+			for(int j=0;j<2;j++)
+				nxt[0][i][j]=num[getNxt(x[i],y[i],j)];
+		for(int i=k+1;i<=k+n+m;i++)
+			for(int j=0;j<2;j++)
+				nxt[0][i][j]=i;
+		for(int i=1;i<=20;i++)
+			for(int j=1;j<=k+n+m;j++)
+				for(int k=0;k<2;k++)
+					nxt[i][j][k]=nxt[i-1][nxt[i-1][j][k]][i==1?1-k:k];
+		cin>>q;
+		for(int i=1;i<=q;i++)
+		{
+			cin>>t>>u>>v>>w;
+			int now=num[getNxt(u,v,(u==0))],dir=(v==0);
+			w--;
+			for(int j=20;j>=0;j--)
+				if(w>=(1<<j))
+				{
+					now=nxt[j][now][dir];
+					w-=1<<j;
+				}
+			cout<<x[now]<<" "<<y[now]<<"\n";
+		}
+		return 0;
+	}
+	cin>>q;
+	for(int i=1;i<=q;i++)
+	{
+		cin>>t;
+		if(t==1)
+		{
+			cin>>u>>v;
+			r[u].insert(v);
+			c[v].insert(u);
+		}
+		else if(t==2)
+		{
+			cin>>u>>v>>w;
+			int dir=(u==0);
+			for(int j=1;j<=w;j++)
+			{
+				pair<int,int> tmp=getNxt(u,v,dir);
+				u=tmp.first,v=tmp.second;
+				dir^=1;
+				if(u==n+1 || v==m+1)
+					break;
+			}
+			cout<<u<<" "<<v<<"\n";
+		}
+	}
+	return 0;
+}

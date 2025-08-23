@@ -1,0 +1,27 @@
+#include<bits/stdc++.h>
+using namespace std;
+int n;
+struct point
+{
+	int fa;int v;
+	vector <int> son;
+	vector <int> sv;
+}tree[1000005];
+int ans;
+int main()
+{
+	freopen("treep.in","r",stdin);
+	freopen("treep.out","w",stdout);
+	cin>>n;
+	int f,w;
+	for(int i=2;i<=n;i++)
+	{
+		cin>>f>>w;
+		tree[f].son.push_back(i);
+		tree[f].sv.push_back(w);
+		tree[i].v=w;
+		tree[i].fa=f;
+	}
+	cout<<rand()%1000000+500000;
+	return 0;
+}

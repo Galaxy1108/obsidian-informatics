@@ -1,0 +1,105 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+inline int read(){
+	int num=0;bool b=0;char c=getchar();
+	for(;c<'0'||c>'9';b=((c=='-')?1:0),c=getchar());
+	for(;c>='0'&&c<='9';num=(num<<3)+(num<<1)+(c^'0'),c=getchar());
+	return b?-num:num;
+}
+const int maxn=50000+500;
+int type,n,m,k;
+vector<int>h[maxn];
+vector<int>l[maxn];
+signed main(){
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	type=read();
+	n=read();
+	m=read();
+	k=read();
+	for(int i=1;i<=k;i++){
+		int x=read();
+		int y=read();
+		h[x].push_back(y);
+		l[y].push_back(x);
+	}
+	for(int i=1;i<=n;i++) sort(h[i].begin(),h[i].end());
+	for(int i=1;i<=n;i++) sort(l[i].begin(),l[i].end());
+	int q=read();
+	while(q--){
+		int op=read();
+		if(op==1){
+			int x=read();
+			int y=read();
+			h[x].push_back(y);
+			l[y].push_back(x);
+			sort(h[x].begin(),h[x].end());
+			sort(l[y].begin(),l[y].end());
+		}else{
+			int x=read();
+			int y=read();
+			int t=read();
+			int dir=1;//下
+			//1下 2上 3左 4右 
+			if(x==0) dir=1;
+			else dir=4;
+		
+			while(t>0){
+				t--;
+//				cout<<x<<" "<<y<<" "<<dir<<endl;
+				if(dir==1||dir==2){
+					int p=lower_bound(l[y].begin(),l[y].end(),x+1)-l[y].begin(); 
+//					cout<<p<<" "<<l[y].size()<<endl;
+					if(dir==1&&p==l[y].size()) {
+						x=n+1;
+						break;	
+					} 
+					if(dir==2&&p==0){
+						x=0;
+						break;
+					}
+					if(dir==1){
+						x=l[y][p];
+						dir=4;
+					}else{
+						x=l[y][p-1];
+						dir=3;
+					}
+				}else{
+					int p;
+					p=lower_bound(h[x].begin(),h[x].end(),y+1)-h[x].begin();
+							
+					if(dir==3){
+						if(p==0){
+							y=0;
+							break;
+						}
+						y=h[x][p-1];
+						dir=2;
+					}else{
+						if(p==h[x].size()){
+							y=m+1;
+							break;
+						}
+						y=h[x][p];
+						dir=1;
+					}
+				}
+			} 
+			cout<<x<<" "<<y<<endl;
+
+		}
+	}
+	return 0;
+} 
+/*
+0 4 4 1
+2 1
+5
+2 2 0 3
+1 3 2
+2 2 0 2
+2 2 0 3
+2 2 0 4
+*/

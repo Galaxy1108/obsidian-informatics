@@ -1,0 +1,58 @@
+#include <cstdio>
+#include <algorithm>
+using namespace std;
+const long long mod = 998244353;
+long long t, n, q, x, y, a[100010];
+long long pow_mod(long long x, long long y, long long Mod = mod) {
+	long long res = 1;
+	for (; y; y >>= 1, x = x * x % Mod) if (y & 1) res = res * x % Mod;
+	return res;
+}
+long long calc() {
+	long long m1n = 0, m1i;
+	for (long long i = 1; i <= n; i++) if (a[i] > m1n) m1i = i, m1n = a[i];
+	long long res = 1e18;
+	for (long long i = 1; i <= n; i++) {
+		long long s = 0;
+		for (long long j = i + 1; j <= n; j++) {
+			s += max(a[j] - a[i], 0ll);
+		}
+		long long ans = pow_mod(2, i);
+		for (long long j = 1; j < m1i; j++) if (j != i && a[j] < a[i]) {
+			ans = (ans + pow_mod(2, j)) % mod;
+			s -= a[j];
+			if (s <= 0) break;
+		}
+		//printf("%lld : %lld\n", i, ans);
+		if (s > 0) res = min(res, pow_mod(2, m1i));
+		else res = min(res, ans);
+	}
+	return res;
+	long long m2n = 0, m2i;
+	for (long long i = 1; i < m1i; i++) if (a[i] > m2n) m2i = i, m2n = a[i];
+	//printf("%lld %lld\n", m1i, m2i);
+	long long s2 = 0;
+	for (long long i = m1i; i <= n; i++) s2 += max(a[i] - m2n, 0ll);
+	long long ans = pow_mod(2, m2i);
+	for (long long i = 1; i < m1i; i++) if (i != m2i) {
+		ans = (ans + pow_mod(2, i)) % mod;
+		s2 -= a[i];
+		if (s2 <= 0) break;
+	}
+	if (s2 > 0) return pow_mod(2, m1i);
+	else return ans;
+}
+int main() {
+	freopen("imperishable.in", "r", stdin);
+	freopen("imperishable.out", "w", stdout);
+	scanf("%lld%lld", &t, &n);
+	for (long long i = 1; i <= n; i++) scanf("%lld", &a[i]);
+	printf("%lld\n", calc());
+	scanf("%lld", &q);
+	while (q--) {
+		scanf("%lld%lld", &x, &y);
+		a[x] = y;
+		printf("%lld\n", calc());
+	}
+	return 0;
+}

@@ -1,0 +1,65 @@
+#include<bits/stdc++.h>
+using namespace std;
+inline long long read()
+{
+	long long s=0,k=1;
+	char c=getchar();
+	while(!isdigit(c))
+	{
+		k=(c=='-')?-1:1;
+		c=getchar();
+	}
+	while(isdigit(c))
+	{
+		s=s*10+c-'0';
+		c=getchar();
+	}
+	return s*k;
+}
+#define d read()
+#define ll long long
+#define Maxn 200010
+#define Size 10010
+#define mp make_pair
+#define pb push_back
+#define fi first
+#define se second
+const int mod=998244353;
+ll m[Maxn];
+ll a[Size],n;
+pair<ll,ll>b[Size];
+ll solve()
+{
+	ll tag=0,maxn=0;
+	ll ans=0,pos=0;
+	while(1)
+	{
+		pos=b[lower_bound(b+1,b+n+1,(pair<ll,ll>)mp(a[pos],0))-b-1].se;
+		pos=b[lower_bound(b+1,b+n+1,(pair<ll,ll>)mp(a[pos],0))-b].se;
+		if((int)(upper_bound(a+1,a+n+1,maxn)-a)==n+1) break;
+		ans+=m[pos];
+		maxn+=a[pos];
+		if(ans>mod) ans-=mod;
+	}
+	return ans;
+}
+int main()
+{
+	m[0]=1;
+	for(int i=1;i<Maxn;i++)
+		m[i]=(m[i-1]<<1),m[i]=((m[i]>mod)?m[i]-mod:m[i]);
+	d;
+	n=d;
+	for(int i=1;i<=n;i++) a[i]=b[i].fi=d,b[i].se=i;
+	sort(b+1,b+n+1);
+	ll q=d;
+	printf("%lld\n",solve());
+	while(q--)
+	{
+		ll id=d,x=d;
+		b[lower_bound(b+1,b+n+1,(pair<ll,ll>)mp(a[id],0))-b].fi=x;
+		sort(b+1,b+n+1);
+		a[id]=x;
+		printf("%lld\n",solve());
+	}
+}

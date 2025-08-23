@@ -1,0 +1,46 @@
+// #pragma GCC optimize("Ofast")
+// #pragma GCC optimize("unroll-loops")
+// #pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,tune=native")
+#include <bits/stdc++.h>
+#define int unsigned int
+// const long long Inf=2e18;
+#define pii pair <int, int> 
+#define i64 long long
+using namespace std;
+inline int read(void) {
+	int x=0,sgn=1,ch=getchar();
+	while(ch<48||57<ch) {if(ch==45)sgn=0;ch=getchar();}
+	while(47<ch&&ch<58) {x=x*10+ch-48;   ch=getchar();}
+	return sgn? x:-x;
+}
+void write(int x) {
+    if(x<0) putchar('-'),x=-x;
+    if(x>9) write(x/10);
+    putchar(x%10+'0');
+}
+int n,m,p; i64 Ans;
+int f[3005][3005],g[3005][3005];
+signed main() {
+    freopen("easyhard.in" ,"r",stdin );
+    freopen("easyhard.out","w",stdout);
+    n=read(); m=read(); p=read();
+    for(int i=1; i<=n; ++i) f[0][i]=1; g[0][0]=1;
+    for(int t=1; t<=m; ++t) {
+        for(int i=0; i<=n; ++i) {
+            if(i!=0) {
+                g[t][i]=(g[t][i]+g[t-1][i-1]+g[t-1][i])%p;
+                (f[t][i]=f[t][i]+f[t-1][i-1])>=p && (f[t][i]-=p);
+                if(i==1) (g[t][i]=g[t][i]+f[t-1][i])>=p && (g[t][i]-=p);
+                else     (f[t][i]=f[t][i]+f[t-1][i])>=p && (f[t][i]-=p);
+            }
+            if(i!=n) {
+                g[t][i]=(g[t][i]+g[t-1][i+1]+g[t-1][i])%p;
+                if(i==0) g[t][i]=(g[t][i]+f[t-1][i+1]+f[t-1][i])%p;
+                else     f[t][i]=(f[t][i]+f[t-1][i+1]+f[t-1][i])%p;
+            }
+        }
+    }
+    for(int i=0; i<=n; ++i) Ans=Ans+g[m][i];
+    write(Ans%p); puts("");
+	return 0;
+}

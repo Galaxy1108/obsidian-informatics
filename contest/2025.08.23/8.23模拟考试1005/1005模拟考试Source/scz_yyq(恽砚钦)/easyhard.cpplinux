@@ -1,0 +1,48 @@
+#include<bits/stdc++.h>
+#define int long long
+#define pb push_back
+using namespace std;
+int n,m,p,ans=0,dig=0;
+set<int>s;
+/*inline int read(){
+	int f=1,x=0;char ch=getchar();
+	while(ch>'9'||ch<'0'){if(ch=='-')f=-1;ch=getchar();}
+	while(ch>='0'&&ch<='9'){x=(x<<1)+(x<<3)+(ch^48);ch=getchar();}
+	return f*x;
+}
+inline void write(int x){
+	stack<int>s;
+	if(x==0){putchar('0');return;}
+	if(x<0){putchar('-');x=-x;}
+	while(x){s.push(x%10);x/=10;}
+	while(!s.empty()){putchar(s.top()^48);s.pop();}
+	return;
+}*/
+void dfs(int b,int w,int t){
+	if(t==0){
+		s.insert(ans);
+		return;
+	}
+	if(t%2){b++;w++;}
+	if(b>0){
+		ans+=pow(2,dig);
+		dig++;
+		dfs(b-1,w,t-1);
+		dig--;
+		ans-=pow(2,dig);
+	}
+	if(w>0){
+		dig++;
+		dfs(b,w-1,t-1);
+		dig--;
+	}
+	return;
+}
+signed main(){
+	cin>>n>>m>>p;
+	for(int i=0;i<=n;i++){
+		dfs(i,n-i,m*2);
+	}
+	cout<<s.size()%p<<endl;
+	return 0;
+}

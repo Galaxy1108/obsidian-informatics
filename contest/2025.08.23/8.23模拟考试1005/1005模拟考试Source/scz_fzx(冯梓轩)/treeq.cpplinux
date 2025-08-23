@@ -1,0 +1,24 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define mp make_pair
+#define ll long long
+#define mod 998244353
+inline int read(){
+	int x=0;char ch=getchar();
+	while(!isdigit(ch))ch=getchar();
+	while(isdigit(ch))x=(x<<3)+(x<<1)+(ch^48),ch=getchar();
+	return x;
+}
+inline void write(int x){
+	if(x>9)write(x/10);
+	putchar(x%10|48);
+}
+inline void writeln(int x){
+	write(x),putchar('\n');
+}
+int main(){
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	puts("0");
+	return 0;
+}

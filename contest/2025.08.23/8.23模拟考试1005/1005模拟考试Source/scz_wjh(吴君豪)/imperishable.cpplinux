@@ -1,0 +1,55 @@
+#include<bits/stdc++.h>
+using namespace std;
+priority_queue<int> q;
+const int cs=998244353;
+int num;
+int n,maxn=0;
+int a[200005];
+int biao[200005];
+int qq,x,y;
+void dabiao(){
+	biao[0]=1;
+	for(int i=1;i<=n;i++) biao[i]=biao[i-1]*2%cs;
+}
+void caozuo(){
+	int ans=0;
+	int h=0,c=0;
+	for(int i=1;i<=n;i++){
+		h+=a[i];
+		if(h>=maxn){
+			c=i;break;
+		}
+	}
+	ans=(ans+biao[c])%cs;
+	for(int i=c-1;i>=1;i--){
+		if(h-a[i]<maxn){
+			ans=(ans+biao[i])%cs;
+		}else h-=a[i];
+	}
+	printf("%d\n",ans);
+}
+int main(){
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	scanf("%d%d",&num,&n);
+	for(int i=1;i<=n;i++){
+		scanf("%d",&a[i]);
+		q.push(a[i]);
+	}
+	maxn=q.top();
+	scanf("%d",&qq);
+	if(num==1){
+		printf("%d",2);
+		return 0;
+	}
+	dabiao();
+	caozuo();
+	for(int i=1;i<=qq;i++){
+		scanf("%d%d",&x,&y);
+		if(q.top()==a[x]) q.pop();		
+		a[x]=y;q.push(y);maxn=q.top();
+		caozuo();
+	}
+	
+	return 0;
+}

@@ -1,0 +1,85 @@
+#include<cstdio>
+#include<cstring>
+#define il inline
+#define ri register int
+#define gc getchar()
+using namespace std;
+il int read()
+{
+	int ans=0,f=1;
+	char ch=gc;
+	while(ch<'0' || ch>'9')
+	{
+		if(ch=='-') f=-1;
+		ch=gc;
+	}
+	while(ch>='0' && ch<='9') ans=(ans<<3)+(ans<<1)+(ch^48),ch=gc;
+	return ans*f;
+}
+const int p=998244353,mm=2e5+100;
+int a[mm],s[mm],ss[mm],maxn=0,maxi=0,maxx=0,maxxi=0;
+il int fpow(int k)
+{
+	int ans=1,base=2;
+	while(k>0)
+	{
+		if(k&1) ans=1LL*ans*base%p;
+		base=1LL*base*base%p,k>>=1;
+	}
+	return ans%p;
+}
+il void file()
+{
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+}
+int main()
+{
+	file();
+	int subtask=read(),n=read(),ans=0;
+	for(ri i=1; i<=n; i++)
+	{
+		a[i]=read();
+		if(a[i]>maxn) maxx=maxn,maxn=a[i],maxxi=maxi,maxi=i;
+		else if(a[i]>maxx) maxx=a[i],maxxi=i;
+		s[i]=s[i-1]+a[i],ss[i]=(ss[i-1]+fpow(i))%p;
+	}
+	if(s[maxi-1]<maxn) ans=fpow(maxi);
+	else
+	{
+		int l=1,r=maxi-1,res=0;
+		while(l<=r)
+		{
+			int m=l+r>>1;
+			if(s[m]>=maxn)  res=m,r=m-1;
+			else l=m+1;
+		}
+		int tot=s[res];ans=ss[res];
+		for(ri i=res; i>=1 && tot>maxn; i--) if(tot-a[i]>=maxn) tot-=a[i],ans=(ans+p-(fpow(i)%p))%p;
+	}
+	printf("%d\n",ans);
+	int q=read();
+	while(q--)
+	{
+		int x=read(),y=read(),sum,ans=0;
+		if(x==maxi) maxn=maxx,maxi=maxxi;
+		if(y>maxn || (y==maxn && x<maxi)) maxi=x,maxn=y;
+		for(ri i=x; i<=maxi; i++) s[i]+=y-a[x];a[x]=y;
+		if(s[maxi-1]<maxn) ans=fpow(maxi);
+		else
+		{
+			int l=1,r=maxi-1,res=0;
+			while(l<=r)
+			{
+				int m=l+r>>1;
+				if(s[m]>=maxn)  res=m,r=m-1;
+				else l=m+1;
+			}
+			int tot=s[res];ans=ss[res];
+			for(ri i=res; i>=1 && tot>maxn; i--) 
+			if(tot-a[i]>=maxn) tot-=a[i],ans=(ans+p-(fpow(i)%p))%p;
+		}
+		printf("%d\n",ans);
+	}
+	return 0;
+}

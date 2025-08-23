@@ -1,0 +1,59 @@
+#include<bits/stdc++.h>
+using namespace std;
+const int maxn=100005,mod=998244353;
+int num,n,q,e[maxn],a[maxn];
+void read(int &s)
+{
+	s=0;
+	int f=1;
+	char c=getchar();
+	while(!isdigit(c))
+	{
+		if(c=='-')f=-1;
+		c=getchar();
+	}
+	while(isdigit(c))
+	{
+		s=(s<<3)+(s<<1)+(c-48);
+		c=getchar();
+	}
+	s=s*f;
+}
+long long solve()
+{
+	int s=0,x=0;
+	long long ans=0;
+	for(int i=1;i<=n;i++)
+	{
+		while(a[i]>s)
+		{
+			s+=a[++x];
+			ans+=e[x];
+			ans%=mod;
+		}
+	}
+	return ans;
+}
+int main()
+{
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	read(num);
+	read(n);
+	for(int i=1;i<=n;i++)
+	{
+		read(a[i]);
+	}
+	e[0]=1;
+	for(int i=1;i<=n;i++)e[i]=e[i-1]*2%mod;
+	printf("%lld\n",solve());
+	read(q);
+	while(q--)
+	{
+		int x,y;
+		read(x);read(y);
+		a[x]=y;
+		printf("%lld\n",solve());
+	}
+	return 0;
+}

@@ -1,0 +1,74 @@
+#include<cstdio>
+#include<algorithm>
+#include<unordered_map>
+#define ll long long
+using namespace std;
+#define gc() (fp==fq&&(fq=(fp=fr)+fread(fr,1,1<<20,stdin))==fp?EOF:*fp++)
+char fr[1<<21],*fp,*fq;
+void read(int &res)
+{
+	res=0;char ch=gc();
+	while(ch<'0'||ch>'9') ch=gc();
+	while('0'<=ch&&ch<='9') res=(res<<1)+(res<<3)+(ch^48),ch=gc();
+}
+const int N=1e7+100;
+int n,fa[N+10],w[N+10],siz[N+10],st[N+10],tot;
+ll f1[N+10],f2[N+10],f[N+10];
+struct edge
+{
+	int to,last;
+}e[N+10];
+void add(int a,int b)
+{
+	e[++tot].to=b;
+	e[tot].last=st[a];
+	st[a]=tot;
+}
+void dfs(int u)
+{
+	siz[u]=1;
+	for(int i=st[u],v;i!=0;i=e[i].last)
+	{
+		v=e[i].to;
+		dfs(v),siz[u]+=siz[v];
+		ll tmp=max(f1[v],1ll*siz[v]*w[v]);
+		if(tmp>f1[u]) f2[u]=f1[u],f1[u]=tmp;
+		else if(tmp>f2[u]) f2[u]=tmp;
+	}
+}
+void dfs1(int u,ll maxn)
+{
+	f[u]=max(f1[u],maxn);
+	for(int i=st[u],v;i!=0;i=e[i].last)
+	{
+		v=e[i].to;
+		if(f1[u]==max(f1[v],1ll*siz[v]*w[v])) dfs1(v,max(max(maxn,f2[u]),1ll*w[v]*(n-siz[v])));
+		else dfs1(v,max(max(maxn,f1[u]),1ll*w[v]*(n-siz[v])));
+	}
+}
+unordered_map<ll,int> t1,t2;
+int ans;
+void dfs2(int u)
+{
+	ll tmp1=1ll*siz[u]*w[u],tmp2=1ll*(n-siz[u])*w[u];
+	int k1=t2[tmp1],k2=t2[tmp2];
+	t2[f[u]]++;
+	for(int i=st[u],v;i!=0;i=e[i].last) v=e[i].to,dfs2(v);
+	k1=t2[tmp1]-k1,k2=t2[tmp2]-k2;
+	int res=t1[tmp1]-k1+k2;
+	// printf("%d\n",res);
+	if(u!=1) ans^=res;
+}
+int main()
+{
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	read(n);
+	for(int i=2;i<=n;i++) read(fa[i]),read(w[i]),add(fa[i],i);
+	dfs(1),dfs1(1,0);
+	for(int i=1;i<=n;i++) t1[f[i]]++;
+	dfs2(1);
+	printf("%d\n",ans);
+	// for(int i=1;i<=n;i++) printf("%lld\n",f[i]);
+	return 0;
+}

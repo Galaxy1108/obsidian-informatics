@@ -1,0 +1,43 @@
+#include <bits/stdc++.h>
+using namespace std;
+const int N = 3e3 + 5;
+int n,m,p;
+int f[2][N][2];
+int main()
+{
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	scanf("%d%d%d",&n,&m,&p);
+	for(int i = 1;i <= n;i++) f[0][i][1] = 1;
+	f[0][0][0] = 1; // 0 与 y = 0 相交，1 与 y = 0 不相交
+	int op = 0;
+	for(int i = 1;i <= m;i++,op ^= 1)
+	{
+		for(int j = 0;j <= n;j++) f[op ^ 1][j][0] = f[op ^ 1][j][1] = 0;
+		for(int j = 0;j <= n;j++)
+			{
+				int bl = j,wh = n - j;
+				if(bl >= 1) //取出黑球
+				{
+					(f[op ^ 1][j][0] += f[op][j][0]) %= p;
+					if(j - 1 == 0) (f[op ^ 1][j][0] += f[op][j][1]) %= p;
+					else (f[op ^ 1][j][1] += f[op][j][1]) %= p;
+					(f[op ^ 1][j - 1][0] += f[op][j][0]) %= p;
+					if(j - 1 == 0) (f[op ^ 1][j - 1][0] += f[op][j][1]) %= p;
+					else (f[op ^ 1][j - 1][1] += f[op][j][1]) %= p;
+				}
+				if(wh >= 1)
+				{
+					(f[op ^ 1][j][0] += f[op][j][0]) %= p;
+					(f[op ^ 1][j][1] += f[op][j][1]) %= p;
+					(f[op ^ 1][j + 1][0] += f[op][j][0]) %= p; // 取白加黑
+					(f[op ^ 1][j + 1][1] += f[op][j][1]) %= p;
+				}
+				
+			}
+	}
+	int ans = 0;
+	for(int i = 0;i <= n;i++) (ans += f[op][i][0]) %= p;
+	cout << ans << endl;
+	return 0;
+}

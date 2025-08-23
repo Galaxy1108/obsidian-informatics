@@ -1,0 +1,20 @@
+#include<bits/stdc++.h>
+using namespace std;
+const int MAXN=3e3+10;
+long long f[MAXN*2][MAXN*2];
+int p;
+int main(){
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	int n,m;
+	long long ans=0;
+	scanf("%d%d%d",&n,&m,&p);
+	f[1][1]=1;
+	for(int i=2;i<=2*m;i++)
+		for(int j=i-n-i/2+1;j<=n+i/2;j++)
+			f[i][j]=(f[i-1][j-1]+f[i-1][j])%p;
+	for(int i=m-n;i<=n+m;i++)
+		ans=(ans+f[2*m][i])%p;
+	printf("%lld",ans*2%p);
+	return 0;
+} 

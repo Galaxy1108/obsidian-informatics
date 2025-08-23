@@ -1,0 +1,44 @@
+#include<iostream>
+#include<cstdio>
+using namespace std;
+int n, m, p, r[3005][3005], l[3005][3005], c1, c2;
+long long ans;
+int main()
+{
+	scanf("%d%d%d", &n, &m, &p);
+	n--;
+	m--;
+	r[0][0]=1;
+	for(int i=0; i<m; i++)
+	{
+		for(int j=0; j<=n; j++)
+			r[i+1][j]=(r[i+1][j]+((2*r[i][j])%p))%p;
+		for(int j=0; j<n; j++)
+			r[i+1][j+1]=(r[i+1][j+1]+r[i][j])%p;
+		for(int j=1; j<=n; j++)
+			r[i+1][j-1]=(r[i+1][j-1]+r[i][j])%p;
+	}
+	l[0][1]=1;
+	for(int i=0; i<m; i++)
+	{
+		for(int j=1; j<=n; j++)
+			l[i+1][j]=(l[i+1][j]+((2*l[i][j])%p))%p;
+		for(int j=1; j<n; j++)
+			l[i+1][j+1]=(l[i+1][j+1]+l[i][j])%p;
+		for(int j=2; j<=n; j++)
+			l[i+1][j-1]=(l[i+1][j-1]+l[i][j])%p;		
+	}
+	for(int i=0; i<=m; i++)
+	{
+		c1=c2=0;
+		for(int j=0; j<=n; j++)
+			c2=(c2+r[m-i][j])%p;
+		if(i==0)
+			c1=1;
+		else 
+			for(int j=0; j<=n; j++)
+				c1=(c1+l[i-1][j])%p;
+		ans=(ans+(1ll*c1*c2)%p)%p;
+	}
+	printf("%lld", (ans*4)%p);
+}

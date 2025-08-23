@@ -1,0 +1,51 @@
+#include<bits/stdc++.h>
+#define ll long long
+using namespace std;
+template <typename T>void read(T &a)
+{
+	a=0;T f=1;char ch=getchar();
+	for(;!isdigit(ch);ch=getchar()) if(ch=='-') f=-f;
+	for(;isdigit(ch);ch=getchar()) a=a*10+ch-'0';
+	a*=f;
+}
+template <typename T>void write(T  x)
+{
+	if(x>9) write(x/10);
+	putchar(x%10+'0');
+}
+template <typename T>void writeln(T  x)
+{
+	if(x<0) putchar('-'),x=-x;
+	write(x);
+	puts("");
+}
+template <typename T>void writel(T  x)
+{
+	if(x<0) putchar('-'),x=-x;
+	write(x);
+	putchar(32);
+}
+ll n,m,p;
+ll pw(ll x)
+{
+	ll ans=1,s=2;
+	while(x)
+	{
+		if(x&1) ans*=s,ans%=p;
+		s*=s;
+		s%=p;
+		x>>=1;
+	}
+	return ans%p;
+}
+int main()
+{
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	read(n);
+	read(m);
+	read(p);
+	if(n==1) writeln(pw(m*2-1));
+	else writeln(pw(m*2));
+	return 0;
+}

@@ -1,0 +1,33 @@
+#include <bits/stdc++.h>
+using namespace std;
+const int N=305;
+int n,m,p;
+int dp[N*2][N*2][N]={0};
+int main()
+{
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	scanf("%d%d%d",&n,&m,&p);
+	int i,j,k;
+	for(i=0;i<=n;i++) dp[0][0][i]=1;
+	for(i=2;i<=2*m;i+=2)
+	{
+		for(j=0;j<=i;j++)//黑 
+		{
+			for(k=0;k<=n;k++)
+			{
+				if(j>=2&&k+i/2>=j) dp[j][i-j][k]=(dp[j][i-j][k]+dp[j-2][i-j][k])%p;
+				if(i-j>=2&&n-k+i/2>=i-j) dp[j][i-j][k]=(dp[j][i-j][k]+dp[j][i-j-2][k])%p;
+				if(j>=1&&i-j>=1)
+				{
+					if(k+i/2-1>=j) dp[j][i-j][k]=(dp[j][i-j][k]+dp[j-1][i-j-1][k])%p;
+					if(n-k+i/2-1>=i-j) dp[j][i-j][k]=(dp[j][i-j][k]+dp[j-1][i-j-1][k])%p;
+				}
+			}	
+		}
+	}
+	long long ans=0;
+	for(i=max(0,m-n);i<=min(2*m,n+m);i++) for(j=0;j<=n;j++) ans=(ans+dp[i][2*m-i][j])%p;
+	printf("%lld\n",ans);
+	return 0;
+}

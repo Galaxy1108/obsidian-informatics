@@ -1,0 +1,74 @@
+#include <bits/stdc++.h>
+
+inline void file () {
+	freopen("corridor.in", "r", stdin);
+	freopen("corridor.out", "w", stdout);
+}
+
+const int gox[] = {0, -1, 0, 1};
+const int goy[] = {1, 0, -1, 0};
+const int N = 1005;
+const int M = 1005;
+int Type, n, m, k, q;
+bool vis[N][M];
+
+bool in_map (int x, int y) {
+	return 1 <= x && x <= n && 1 <= y && y <= m;
+}
+
+int main () {
+	
+	file();
+	std::ios::sync_with_stdio(0);
+	std::cin.tie(nullptr);
+	std::cout.tie(nullptr);
+	
+	std::cin >> Type >> n >> m >> k;
+	for(int i = 1; i <= k; ++ i) {
+		int x, y;
+		std::cin >> x >> y;
+		vis[x][y] = 1;
+	}
+	
+	std::cin >> q;
+	while(q -- ) {
+		int op;
+		std::cin >> op;
+		
+		if(op == 1) {
+			int x, y;
+			std::cin >> x >> y;
+			vis[x][y] = 1;
+		} else {
+			int x, y, t, d;
+			std::cin >> x >> y >> t;
+			
+			if(x == 0) {
+				d = 3;
+			} else {
+				assert(y == 0);
+				d = 0;
+			}
+			
+			while(1) {
+				x += gox[d];
+				y += goy[d];
+//				std::cerr << "Pos = " << x << ' ' << y << '\n';
+				if(!in_map(x, y)) {
+					std::cout << x << ' ' << y << '\n';
+					break;
+				} else if(vis[x][y]) {
+					-- t;
+					if(t == 0) {
+						std::cout << x << ' ' << y << '\n';
+						break;
+					} else {
+						d = 3 - d;
+					}
+				}
+			}
+		}
+	}
+	
+	return 0;
+}

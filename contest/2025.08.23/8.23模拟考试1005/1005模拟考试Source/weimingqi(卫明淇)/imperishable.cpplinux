@@ -1,0 +1,59 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+const int MAXN=202020,mod=998244353;
+
+int num,n,q,x,y;
+
+int a[MAXN];
+
+long long s[MAXN];
+
+int Pow2[MAXN]={1};
+
+inline void Add(int &p,int q)
+{
+	p+=q; if(p>=mod) p-=mod;
+}
+
+int Solve()
+{
+	int ret=0,Max=0,cnt=0;
+	for(int i=1;i<=n;i++)
+		s[i]=s[i-1]+a[i];
+	for(int i=n;i>=1;i--)
+	{
+		if(s[i-1]>=Max && s[i-1]>=a[i])
+			Max=max(Max,a[i]);
+		else
+		{
+			Add(ret,Pow2[i]);
+			Max-=a[i];
+			cnt++;
+		}
+	}
+	return ret;
+}
+
+int main()
+{
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	ios::sync_with_stdio(false);
+	cin.tie(0);
+	cin>>num>>n;
+	for(int i=1;i<=n;i++)
+		cin>>a[i];
+	for(int i=1;i<=n;i++)
+		Pow2[i]=(Pow2[i-1]<<1)%mod;
+	cout<<Solve()<<"\n";
+	cin>>q;
+	for(int i=1;i<=q;i++)
+	{
+		cin>>x>>y;
+		a[x]=y;
+		cout<<Solve()<<"\n";
+	}
+	return 0;
+}

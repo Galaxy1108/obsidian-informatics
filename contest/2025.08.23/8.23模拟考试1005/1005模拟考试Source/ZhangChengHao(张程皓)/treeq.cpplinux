@@ -1,0 +1,206 @@
+#include <bits/stdc++.h>
+using ll = long long;
+
+inline void file () {
+	freopen("treeq.in", "r", stdin);
+	freopen("treeq.out", "w", stdout);
+}
+
+const int N = 1e6 + 5;
+int n;
+int head[N], cnt;
+struct Edge {
+	int to, nxt, w;
+} e[N << 1];
+
+int fa[N], dfn[N], siz[N], cd;
+int col[N];
+
+int f[N];
+
+inline void addE (int x, int y, int w) {
+	e[++ cnt] = (Edge){y, head[x], w};
+	head[x] = cnt;
+	e[++ cnt] = (Edge){x, head[y], w};
+	head[y] = cnt;
+}
+
+void dfs (int x, int par) {
+	fa[x] = par;
+	dfn[x] = ++ cd;
+	siz[x] = 1;
+	
+	for(int i = head[x]; i; i = e[i].nxt) {
+		int y = e[i].to, w = e[i].w;
+		if(y == fa[x]) {
+			continue;
+		}
+		
+		col[y] = w;
+		dfs(y, x);
+		siz[x] += siz[y];
+	}
+}
+
+struct SegmentTree {
+	int s[N << 2];
+	bool t[N << 2];
+	
+	inline void pushup (int x) {
+		s[x] = s[x << 1] + s[x << 1 | 1];
+	}
+	
+	inline void modify (int x) {
+		s[x] = 0;
+		t[x] = 1;
+	}
+	
+	inline void pushdown (int x) {
+		if(!t[x]) {
+			return;
+		}
+		
+		modify(x << 1);
+		modify(x << 1 | 1);
+		t[x] = 0;
+	}
+	
+	void build (int x, int l, int r) {
+		s[x] = r - l + 1;
+		if(l == r) {
+			return;
+		}
+		
+		int mid = l + r >> 1;
+		build(x << 1, l, mid);
+		build(x << 1 | 1, mid + 1, r);
+		
+		pushup(x);
+	}
+	
+	void update (int x, int ul, int ur, int l, int r) {
+		if(!s[x]) {
+			return;
+		}
+		
+		if(l >= ul && r <= ur) {
+			modify(x);
+			return;
+		}
+		
+		pushdown(x);
+		
+		int mid = l + r >> 1;
+		if(mid >= ul) {
+			update(x << 1, ul, ur, l, mid);
+		}
+		if(mid < ur) {
+			update(x << 1 | 1, ul, ur, mid + 1, r);
+		}
+		
+		pushup(x);
+	}
+	
+	int query (int x, int ql, int qr, int l, int r) {
+//		std::cerr << "ql = " << ql << ' ' << "qr = " << qr << ' ' << "l = " << l << ' ' << "r = " << r << ' ' << '\n';
+		if(!s[x]) {
+			return 0;
+		}
+		
+		if(l >= ql && r <= qr) {
+			return s[x];
+		}
+		
+		pushdown(x);
+		
+		int mid = l + r >> 1, res = 0;
+		if(mid >= ql) {
+			res += query(x << 1, ql, qr, l, mid);
+		}
+		if(mid < qr) {
+			res += query(x << 1 | 1, ql, qr, mid + 1, r);
+		}
+		
+		return res;
+	}
+} sgt;
+
+int main () {
+	
+	file();
+	std::ios::sync_with_stdio(0);
+	std::cin.tie(nullptr);
+	std::cout.tie(nullptr);
+	
+	std::cin >> n;
+	for(int i = 1; i < n; ++ i) {
+		int x, y, w;
+		std::cin >> x >> y >> w;
+		addE(x, y, w);
+	}
+	
+	int root = 1;
+	dfs(root, 0);
+	
+	std::vector <std::tuple <int, int, ll> > v(2 * n - 2);
+	for(int i = 1, cp = 0; i <= n; ++ i) {
+		if(i == root) {
+			continue;
+		}
+		
+		v[cp ++ ] = {i, 0, 1ll * col[i] * siz[i]};
+		v[cp ++ ] = {i, 1, 1ll * col[i] * (n - siz[i])};
+	}
+	
+	std::sort(v.begin(), v.end(), [&](auto X, auto Y) {
+		return std::get <2> (X) > std::get <2> (Y);
+	});
+	
+	sgt.build(1, 1, n);
+	
+	for(int i = 0; i < v.size() && sgt.s[1]; ++ i) {
+		int j = i;
+		for(; j + 1 < v.size() && std::get <2> (v[j]) == std::get <2> (v[j + 1]); ++ j);
+		
+		for(int k = i; k <= j; ++ k) {
+			auto [x, t, w] = v[k];
+			if(t == 0) {
+				f[x] += sgt.s[1] - sgt.query(1, dfn[x], dfn[x] + siz[x] - 1, 1, n);
+//				f[x] += sgt.query(1, 1, dfn[x] - 1, 1, n);
+//				if(dfn[x] + siz[x] - 1 < n) {
+//					f[x] += sgt.query(1, dfn[x] + siz[x], n, 1, n);
+//				}
+			} else {
+				f[x] += sgt.query(1, dfn[x], dfn[x] + siz[x] - 1, 1, n);
+			}
+		}
+		
+		for(int k = i; k <= j; ++ k) {
+			auto [x, t, w] = v[k];
+			if(t == 0) {
+				sgt.update(1, 1, dfn[x] - 1, 1, n);
+				if(dfn[x] + siz[x] - 1 < n) {
+					sgt.update(1, dfn[x] + siz[x], n, 1, n);
+				}
+			} else {
+				sgt.update(1, dfn[x], dfn[x] + siz[x] - 1, 1, n);
+			}
+		}
+		
+		i = j;
+	}
+	
+	int ans = 0;
+	for(int i = 1; i <= n; ++ i) {
+		if(i == root) {
+			continue;
+		}
+		
+//		std::cerr << "i = " << i << ' ' << "f[i] = " << f[i] << '\n';
+		ans ^= f[i];
+	}
+	
+	std::cout << ans << '\n';
+	
+	return 0;
+}

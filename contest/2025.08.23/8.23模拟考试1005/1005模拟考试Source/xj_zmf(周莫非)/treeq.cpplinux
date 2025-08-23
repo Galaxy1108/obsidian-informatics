@@ -1,0 +1,117 @@
+/*
+    长弓背负，仙女月鹫，
+	梦中徐来，长夜悠悠。
+	今宵共君，夜赏囃子，
+	盼君速归，长夜悠悠。
+	睡意袭我，眼阖梦徭，
+	睡意袭我，意归襁褓。
+	手扶卓揭，仙女水狃，
+	盼君速归，长夜悠悠。
+	今宵共君，戏于西楼，
+	盼君速归，长夜悠悠。
+	睡意袭我，涟锜池留，
+	睡意袭我，意归海角。
+					                  ——《ever17》
+*/
+
+/*
+	『月正笑，地正润潮，星正舞，风正凉。』
+*/
+
+/*
+	『长夜伴浪破晓梦，梦晓破浪伴夜长。』
+*/
+
+//#pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,tune=native")
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+inline int read()
+{
+	int sum = 0, nega = 1;
+	char ch = getchar();
+	while (ch > '9'||ch < '0')
+	{
+	    if (ch == '-') nega = -1;
+		ch = getchar();
+	}
+	while (ch <= '9' && ch >= '0') sum = sum * 10 + ch - '0', ch = getchar();
+	return sum * nega;
+}
+const int N = 1e6 + 9;
+int n, head[N], nxt[N * 2], to[N * 2], val[N * 2], cnt, siz[N];
+int dfn[N], res, tim, b[N];
+int ans1[N], ans2[N], ans[N], fuck[N];
+multiset<int> s;
+vector<int> G[N];
+inline void addedge(int u, int v, int w) 
+{
+	to[++cnt] = v, nxt[cnt] = head[u], head[u] = cnt; val[cnt] = w;
+	to[++cnt] = u, nxt[cnt] = head[v], head[v] = cnt; val[cnt] = w;
+//	cout << cnt << endl;
+	return ;
+} 
+inline void dfs1(int u, int f)
+{
+//	cout << u << " " << f << endl;
+	dfn[u] = ++tim; siz[u] = 1;
+	for (int i = head[u]; i; i = nxt[i]) 
+		if(to[i] != f) 
+		{
+			fuck[to[i]] = val[i];
+			dfs1(to[i], u); siz[u] += siz[to[i]];
+		}
+	ans1[u] = siz[u] * fuck[u];
+	ans2[u] = (n - siz[u]) * fuck[u]; 
+	return ;
+}
+inline void dfs2(int u, int f) 
+{
+	s.erase(s.lower_bound(ans1[u]));
+	s.insert(ans2[u]);
+	for (int i = head[u]; i; i = nxt[i]) 
+		if(to[i] != f) dfs2(to[i], u);
+	ans[u] = *s.rbegin();
+	s.insert(ans1[u]); s.erase(s.lower_bound(ans2[u]));
+	return ;
+}
+inline int find(int v, int l, int r) 
+{
+	int pos = lower_bound(b + 1, b + n + 1, v) - b;
+	if(b[pos] != v) return 0;
+	if(G[pos].size() == 0) return 0;
+	return upper_bound(G[pos].begin(), G[pos].end(), r) - lower_bound(G[pos].begin(), G[pos].end(), l);
+}
+signed main()
+{
+	freopen("treeq.in", "r", stdin);
+	freopen("treeq.out", "w", stdout);
+	n = read(); int u, v, w;
+	for (int i = 1; i < n; i++) 
+	{
+		u = i + 1, v = read(), w = read();
+		addedge(u, v, w);
+	} 
+	dfs1(1, 0); 
+	for (int i = 1; i <= n; i++) s.insert(ans1[i]); 
+	dfs2(1, 0); 
+//	for (int i = 1; i <= n; i++) cout << dfn[i] << endl;
+	for (int i = 1; i <= n; i++) b[i] = ans[i]; sort(b + 1, b + n + 1);
+	for (int i = 1; i <= n; i++) 
+	{
+		int pos = lower_bound(b + 1, b + n + 1, ans[i]) - b; 
+		G[pos].push_back(dfn[i]);
+	}
+	for (int i = 1; i <= n; i++) sort(G[i].begin(), G[i].end());
+	for (int i = 2; i <= n; i++) 
+	{
+		int fuckyou = 0;
+		fuckyou += find(ans2[i], dfn[i], dfn[i] + siz[i] - 1);
+		//if(i == 5) cout << fuckyou << " " << dfn[i] << " " << dfn[i] + siz[i] - 1 << endl;
+		fuckyou += find(ans1[i], 1, dfn[i] - 1);
+		fuckyou += find(ans1[i], dfn[i] + siz[i], n);
+		res ^= fuckyou;
+ 	}
+	cout << res << endl;
+	return 0; 
+}

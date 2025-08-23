@@ -1,0 +1,60 @@
+#include<cstdio>
+#include<algorithm>
+#include<cstring>
+#include<cmath>
+#include<iostream>
+#include<map>
+#include<bitset>
+#include<queue>
+#include<ctime>
+#define ll long long
+#define R register
+#define I inline
+#define N 1000005
+#define ls (now*2)
+#define rs (now*2+1)
+#define mid ((l+r)/2)
+#define mo
+#define F freopen("treeq.in","r",stdin),freopen("treeq.out","w",stdout);
+using namespace std;
+ll ss,ff,len[2*N],fa[N],w; int u,to[2*N],nxt[2*N],g[N],cnt,tot,n,ans,f[4*N],l[N],r[N],now,sz[N],d[N],lz[4*N],ds[N]; char ch; struct node{int l,r,id; ll w;}ak[3*N];
+I ll read() { ch=getchar(),ss=0,ff=1;
+	while ((ch<'0'||ch>'9')&&ch!='-') ch=getchar(); if (ch=='-') ff=-1;
+	while (ch<'0'||ch>'9') ch=getchar(); while (ch>='0'&&ch<='9') ss=ss*10+ch-'0',ch=getchar(); return ss*ff;
+}
+I void print(int Lz) {Lz<0?putchar('-'),Lz=-Lz:Lz=Lz; if (Lz>9) print(Lz/10); putchar(Lz%10+'0');}
+I bool cmp(node xx,node yy) {return xx.w>yy.w;}
+I void add(int x,int y,ll z) {to[++cnt]=y,nxt[cnt]=g[x],g[x]=cnt,len[cnt]=z;}
+I void dfs(int x,int faa) { d[++now]=x,l[x]=now,sz[x]=1;
+	for (R int i=g[x];i;i=nxt[i]) {
+		if (to[i]==faa) continue;
+		fa[to[i]]=len[i],dfs(to[i],x),sz[x]+=sz[to[i]];
+	} r[x]=now;
+}
+I void down(int now,int l,int r) {
+	if (lz[now]) f[ls]=mid-l+1,f[rs]=r-mid,lz[ls]=1,lz[rs]=1; lz[now]=0;
+}
+I void change(int l,int r,int x,int y,int now) {
+	if (x<=l&&r<=y) {f[now]=r-l+1,lz[now]=1; return;} down(now,l,r);
+	if (x<=mid) change(l,mid,x,y,ls); if (y>mid) change(mid+1,r,x,y,rs); f[now]=f[ls]+f[rs];
+}
+I int get(int l,int r,int x,int y,int now) {
+	if (x<=l&&r<=y) return f[now]; down(now,l,r); R int s1=0,s2=0;
+	if (x<=mid) s1=get(l,mid,x,y,ls); if (y>mid) s2=get(mid+1,r,x,y,rs); return s1+s2;
+}
+int main() {
+	F n=(int)read(); for (R int i=2;i<=n;i++) u=(int)read(),w=read(),add(u,i,w),add(i,u,w);
+	dfs(1,0); 
+	for (R int i=2;i<=n;i++) {
+		ak[++tot].l=l[d[i]],ak[tot].r=r[d[i]],ak[tot].w=fa[d[i]]*(n-sz[d[i]]),ak[tot].id=i;
+		if (l[d[i]]-1>=1) ak[++tot].l=1,ak[tot].r=l[d[i]]-1,ak[tot].w=fa[d[i]]*sz[d[i]],ak[tot].id=i;
+		if (r[d[i]]+1<=n) ak[++tot].l=r[d[i]]+1,ak[tot].r=n,ak[tot].w=fa[d[i]]*sz[d[i]],ak[tot].id=i;
+	} sort(ak+1,ak+1+tot,cmp); R int lst=0;
+	for (R int i=1;i<=tot;i++) {
+		if (lst&&ak[i].w!=ak[i-1].w) {
+			for (R int j=lst;j<=i-1;j++) change(1,n,ak[j].l,ak[j].r,1); lst=i;
+		} if (!lst) lst=i;
+		ds[ak[i].id]+=((ak[i].r-ak[i].l+1)-get(1,n,ak[i].l,ak[i].r,1));
+	} for (R int i=2;i<=n;i++) ans^=ds[i];
+	print(ans);
+}

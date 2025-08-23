@@ -1,0 +1,77 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+using ll = long long;
+
+const ll inf = 0x3f3f3f3f3f3f3f3f;
+
+const int BUFF_SIZE = 1 << 20;
+char BUFF[BUFF_SIZE], *BB, *BE;
+char gc() { return BB == BE ? (BE = (BB = BUFF) + fread(BUFF, 1, BUFF_SIZE, stdin), BB == BE ? EOF : *BB++) : *BB++; }
+template<class T>
+void read(T &x) {
+  x = 0;
+  char ch = 0, w = 0;
+  while (ch < '0' || ch > '9') w |= ch == '-', ch = gc();
+  while (ch >= '0' && ch <= '9') x = x * 10 + (ch ^ '0'), ch = gc();
+  if (w) x = -x;
+}
+
+const int N = 1e7;
+
+int n;
+int fa[N + 5], w[N + 5], siz[N + 5];
+vector<int> e[N + 5];
+ll f[N + 5], g[N + 5];
+pair<ll, int> operator+(pair<ll, int> a, pair<ll, int> b) {
+  if (a.first == b.first) return {a.first, a.second + b.second};
+  return min(a, b);
+}
+pair<ll, int> st[N + 5], stc[N + 5];
+int ans;
+
+int main() {
+  freopen("treeq.in", "r", stdin), freopen("treeq.out", "w", stdout);
+  read(n);
+  for (int i = 2; i <= n; ++i)
+    read(fa[i]), read(w[i]), e[fa[i]].push_back(i);
+  for (int v = n; v; --v) {
+    int u = fa[v];
+    siz[u] += ++siz[v], f[u] = max({f[u], f[v], (ll)siz[v] * w[v]});
+  }
+  for (int u = 1; u <= n; ++u) {
+    g[u] = max(g[u], (ll)w[u] * (n - siz[u]));
+    if (e[u].empty()) continue;
+    vector<ll> suf(e[u].size());
+    for (int i = e[u].size() - 2; i >= 0; --i)
+      suf[i] = max(suf[i + 1], max(f[e[u][i + 1]], (ll)siz[e[u][i + 1]] * w[e[u][i + 1]]));
+    ll tmp = g[u];
+    for (int i = 0; i < e[u].size(); ++i)
+      g[e[u][i]] = max(tmp, suf[i]),
+      tmp = max({tmp, f[e[u][i]], (ll)siz[e[u][i]] * w[e[u][i]]});
+  }
+  for (int i = 1; i <= n; ++i) f[i] = max(f[i], g[i]), st[i] = stc[i] = {inf, 0};
+  for (int v = n; v; --v) {
+    int u = fa[v];
+    st[u] = st[u] + (st[v] = st[v] + make_pair(f[v], 1));
+  }
+  for (int u = 1; u <= n; ++u) {
+    if (e[u].empty()) continue;
+    vector<pair<ll, int>> suf(e[u].size());
+    suf[e[u].size() - 1] = stc[u] + make_pair(f[u], 1);
+    for (int i = e[u].size() - 2; i >= 0; --i)
+      suf[i] = suf[i + 1] + st[e[u][i + 1]];
+    pair<ll, int> tmp = {inf, 0};
+    for (int i = 0; i < e[u].size(); ++i)
+      stc[e[u][i]] = tmp + suf[i],
+      tmp = tmp + st[e[u][i]];
+  }
+  for (int i = 2; i <= n; ++i) {
+    int tmp = 0;
+    if (stc[i].first == (ll)w[i] * siz[i]) tmp += stc[i].second;
+    if (st[i].first == (ll)w[i] * (n - siz[i])) tmp += st[i].second;
+    ans ^= tmp;
+  }
+  printf("%d\n", ans);
+}

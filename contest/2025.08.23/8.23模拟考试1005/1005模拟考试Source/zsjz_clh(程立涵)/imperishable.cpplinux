@@ -1,0 +1,91 @@
+#include<bits/stdc++.h>
+#define mid ((l+r)>>1)
+#define inf 1000000007
+using namespace std;
+long long read()
+{
+	long long x=0,f=1;char ch=getchar();
+	while(ch<'0'||ch>'9'){if(ch=='-')f=-1;ch=getchar();}
+	while(ch>='0'&&ch<='9')x=(x<<1)+(x<<3)+ch-48,ch=getchar();
+	return x*f;
+}
+void write(long long x)
+{
+	if(x<0)putchar('-'),x=-x;
+	if(x>9)write(x/10);
+	putchar(x%10+'0');
+}
+int n,m,test_num,q,cnt;
+int c[15][15],tot,len[15],a[15],ans,s[15];
+void dfs(int x)
+{
+	if(x>cnt)
+	{
+		int sum=0;
+		for(int i=1;i<=tot;i++)
+		{
+			int k=0;
+			for(int j=1;j<=10;j++)
+			{
+				if(c[i][j]>c[i][k])k=j;
+			}
+			sum+=(1<<k);
+		}
+		ans=min(sum,ans);
+		return;
+	}
+	c[++tot][a[x]]++;
+	dfs(x+1);
+	c[tot--][a[x]]--;
+	for(int i=1;i<=tot;i++)
+	{
+		c[i][a[x]]++;
+		dfs(x+1);
+		c[i][a[x]]--;
+	}
+}
+int main()
+{
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	test_num=read();
+	n=read();
+	for(int i=1;i<=n;i++)
+	{
+		s[i]=read();
+	}
+	q=read();
+	if(test_num==1)
+	{
+		printf("2\n");
+		return 0;
+	}
+	for(int i=0,x,y;i<=q;i++)
+	{
+		if(i)
+		{
+			x=read(),y=read();
+			s[x]=y;
+		}
+		cnt=0;
+		for(int j=1;j<=n;j++)
+		{
+			for(int k=s[j];k--;)
+			{
+				a[++cnt]=j;
+			}
+		}
+		ans=inf;
+		tot=0;
+		for(int j=1;j<=cnt;j++)
+		{
+			for(int k=1;k<=10;k++)
+			{
+				c[j][k]=0;
+			}
+		}
+		dfs(1);
+		printf("%d\n",ans);
+	}
+	return 0;
+}

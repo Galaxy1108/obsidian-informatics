@@ -1,0 +1,71 @@
+#include<bits/stdc++.h>
+#define int long long
+using namespace std;
+const int mod=998244353;
+int read(){
+    int s=0,f=1;
+    char ch=getchar();
+    while(ch>'9'||ch<'0'){
+        if(ch=='-'){
+        f=-1;
+        }
+        ch=getchar();
+    }
+    while(ch>='0'&&ch<='9'){
+        s=s*10+(ch-'0');
+        ch=getchar();
+    }
+    return s*f;
+}
+int qpow(int a,int b){
+    int res=1;
+    while(b){
+        if(b&1){
+            res=1ll*res*a%mod;
+        }
+        a=1ll*a*a%mod;
+        b>>=1;
+    }
+    return res;
+}
+int n,q,a[200010],mx,mn=1e9;
+int check(int x){
+    int sum=0,s=0;
+    for(int i=0;i<n;i++){
+        if(x&(1<<i)){
+            sum+=a[i];
+            s+=qpow(2,i+1);
+            s%=mod;
+        }
+        if(sum<a[i])return -1;
+    }
+    return s;
+}
+void solve(){
+    int ans=1e9;
+    for(int i=0;i<(1<<n);i++){
+        int num=check(i);
+        if(num!=-1){
+            ans=min(num,ans);
+        }
+    }
+    printf("%lld\n",ans);
+}
+signed main(){
+    freopen("imperishable.in","r",stdin);
+    freopen("imperishable.out","w",stdout);
+    n=read();
+    n=read();
+    for(int i=0;i<n;i++){
+        a[i]=read();
+    }
+    q=read();
+    solve();
+    while(q--){
+        int x,y;
+        x=read(),y=read();
+        a[x-1]=y;
+        solve();
+    }
+    return 0;
+}

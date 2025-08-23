@@ -1,0 +1,12 @@
+#include<bits/stdc++.h>
+#define ll long long
+using namespace std;
+ll fm(ll a,ll b,ll p){ll ans=(long double)a*b/p;ans=a*b-ans*p;if(ans<0)return ans+p;return ans>=p?ans-p:ans;}
+ll fp(ll a,ll b,ll p){ll ans=1;for(;b;b>>=1,a=fm(a,a,p))if(b&1)ans=fm(ans,a,p);return ans;}
+int n,m,p;
+int main(){
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	scanf("%d %d %d",&n,&m,&p);
+	printf("%lld",fp(2,m+(m>n?n:m),p));return 0;
+}

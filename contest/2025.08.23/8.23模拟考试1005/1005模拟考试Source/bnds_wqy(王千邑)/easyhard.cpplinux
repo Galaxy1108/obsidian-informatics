@@ -1,0 +1,22 @@
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long LL;
+const int MX = 3005;
+int n, m, mod, f[MX][MX], ans; 
+int main()
+{
+	freopen("easyhard.in", "r", stdin);
+	freopen("easyhard.out", "w", stdout);
+	cin >> n >> m >> mod;
+	for (int i = 0; i <= n; i++) f[i][0] = 1;
+	for (int j = 1; j <= m; j++)
+		for (int i = 0; i <= n; i++)
+		{
+			f[i][j] = f[i][j - 1];
+			if (i) f[i][j] = (f[i][j] + f[i - 1][j - 1]) % mod;
+			if (i < n) f[i][j] = (f[i][j] + f[i + 1][j - 1]) % mod;
+		}
+	for (int i = 0; i <= n; i++) ans = (ans + f[i][m]) % mod;
+	cout << ans << endl;
+	return 0;
+}

@@ -1,0 +1,102 @@
+#include <bits/stdc++.h>
+using namespace std;
+const int N=105;
+int type,n,m,k;
+bool a[20001][20001];
+bool flg=0;
+void dfs(int x,int y,int go,int limit)
+{
+    if(limit<0) return ;
+    if(flg==1) return ; 
+    if(go==1)
+    {
+        bool flag=0;
+        for(int i=x+1;i<=n;i++)
+        {
+            if(a[i][y])
+            {
+                flag=1;
+                if(limit==1)
+                {
+                    flg=1;
+                    printf("%d %d\n",i,y);
+                    return ;
+                }
+                dfs(i,y,0,limit-1);
+                break;
+            }
+        }
+        if(flag==0)
+        {
+            flg=1;
+            printf("%d %d\n",n+1,y);
+            return ;
+        }
+    }
+    else{
+        bool flag=0;
+        for(int i=y+1;i<=m;i++)
+        {
+            if(a[x][i])
+            {
+                flag=1;
+                if(limit==1)
+                {
+                    flg=1;
+                    printf("%d %d\n",x,i);
+                    return ;
+                }
+                dfs(x,i,1,limit-1);
+                break;
+            }
+        }
+        if(flag==0)
+        {
+            flg=1;
+            printf("%d %d\n",x,m+1);
+            return ;
+        }
+    }
+}
+int main()
+{
+    freopen("corridor.in","r",stdin);
+    freopen("corridor.out","w",stdout);
+    cin>>type>>n>>m>>k;
+    int x,y;
+    for(int i=1;i<=k;i++)
+    {
+        scanf("%d%d",&x,&y);
+        a[x][y]=1;
+    }
+    int Q;
+    cin>>Q;
+    while(Q--)
+    {
+        int w;
+        scanf("%d",&w);
+        int x,y;
+         scanf("%d%d",&x,&y);
+        if(w==1)
+        {
+            
+           
+            a[x][y]=1;
+        }
+        else{
+            int q;
+            cin>>q;
+            flg=0;
+            //cout<<"herer"<<endl;
+            if(x==0)
+            {
+                dfs(1,y,1,q);
+            }
+            else{
+                dfs(x,1,0,q);
+            }
+
+       }
+    }
+    return 0;
+}

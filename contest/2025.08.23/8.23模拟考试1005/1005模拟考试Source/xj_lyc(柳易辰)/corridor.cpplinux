@@ -1,0 +1,47 @@
+#include <vector>
+#include <stdio.h>
+using namespace std;
+int n, m, k;
+vector<int> a[50004], b[50004];
+inline void ins(const int x, const int y)
+{
+    a[x].insert(lower_bound(a[x].begin(), a[x].end(), y), y);
+    b[y].insert(lower_bound(b[y].begin(), b[y].end(), x), x);
+}
+int main()
+{
+    // freopen("corridor2.in", "r", stdin);
+    // freopen("corridor2.out", "w", stdout);
+    scanf("%d%d%d%d", &n, &n, &m, &k);
+    while (k--) { int x, y; scanf("%d%d", &x, &y); ins(x, y); }
+    scanf("%d", &k);
+    while (k--) {
+        int w, x, y; scanf("%d", &w);
+        if (w == 1) { scanf("%d%d", &x, &y); ins(x, y); }
+        else { 
+            scanf("%d%d%d", &x, &y, &w);
+            int px(x), py(y); bool d(x); // south / east
+            for (int i(1); i <= w; ++i) if (!d) {
+                const auto q(lower_bound(b[py].begin(), b[py].end(), px + 1));
+                if (q == b[py].end()) {
+                    printf("%d %d\n", n + 1, py);
+                    px = py = -1; break;
+                } else d = true, px = *q;
+            } else {
+                const auto q(lower_bound(a[px].begin(), a[px].end(), py + 1));
+                if (q == a[px].end()) {
+                    printf("%d %d\n", px, m + 1);
+                    px = py = -1; break;
+                } else d = false, py = *q;
+            } if (~px && ~py) printf("%d %d\n", px, py);
+    }   } return 0;
+}
+/*
+0 4 4 2
+2 2
+3 2
+3
+2 2 0 2
+2 2 0 3
+2 2 0 4
+*/

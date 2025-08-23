@@ -1,0 +1,41 @@
+#include<bits/stdc++.h>
+using namespace std;
+long long n,m,p,ans=0; 
+int a,b;
+void dfs(int t){
+	if((a-t/2>n||b-t/2>n||a+b-(t-t%2)>n)&&t!=0){
+		return;
+	}
+	if(t==2*m){
+		ans++;
+		cout<<a<<b<<endl;;
+		ans%p;
+		return;
+	}
+	else{
+		a++;
+		dfs(t+1);
+		a--;
+		b++;
+		dfs(t+1);
+		b--;
+	}
+}
+int main(){
+	freopen("easyhard.in ","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	cin>>n>>m>>p;
+	int k=2*m;
+	if(n>=m){
+		ans=1;
+		while(k){
+			ans*=2;
+			ans%p;
+			k--;
+		}
+	}else{
+		dfs(1);
+		
+	}
+	cout<<ans;
+	return 0;}

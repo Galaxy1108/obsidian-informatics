@@ -1,0 +1,54 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define mp make_pair
+#define ll long long
+#define mod 998244353
+inline int read(){
+	int x=0;char ch=getchar();
+	while(!isdigit(ch))ch=getchar();
+	while(isdigit(ch))x=(x<<3)+(x<<1)+(ch^48),ch=getchar();
+	return x;
+}
+inline void write(int x){
+	if(x>9)write(x/10);
+	putchar(x%10|48);
+}
+inline void writeln(int x){
+	write(x),putchar('\n');
+}
+bool a[1005][1005];
+int main(){
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	int id=read(),n=read(),m=read(),k=read();
+	for(int i=1;i<=k;++i){
+		int x=read(),y=read();
+		a[x][y]=1;
+	}
+	int q=read();
+	while(q--){
+		int o=read();
+		if(o==1){
+			int x=read(),y=read();
+			a[x][y]=1;
+			continue;
+		}
+		int x=read(),y=read(),c=read(),r=0;
+		bool fl;
+		if(x==0)fl=1;
+		else fl=0;
+		while(x<=n&&y<=m){
+			if(fl)++x;
+			else ++y;
+			if(a[x][y]){
+				fl^=1;
+				++r;
+				if(r==c)break;
+			}
+		}
+		write(x);
+		putchar(' ');
+		writeln(y);
+	}
+	return 0;
+}

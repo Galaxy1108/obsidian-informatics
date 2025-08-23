@@ -1,0 +1,49 @@
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long LL;
+const int MX = 10005, mod = 998244353;
+LL n, q, a[MX], x, y, pos, sum[MX], mx, ans, pow2[MX] = {1};
+void calc()
+{
+	mx = ans = 0;
+	for (int i = 1; i <= n; i++)
+	{
+		sum[i] = sum[i - 1] + a[i];
+		mx = max(mx, a[i]);
+	}
+	for (int i = 1; i <= n; i++) 
+	{
+		ans = (ans + pow2[i]) % mod;
+		if (sum[i] >= mx)
+		{
+			pos = i;
+			break;
+		}
+	}
+	for (int i = pos; i >= 1; i--)
+	{
+		if (sum[pos] - a[i] >= mx)
+		{
+			sum[pos] -= a[i];
+			ans = (ans - pow2[i] + mod) % mod;
+		}
+	}
+	printf("%d\n", ans);
+}
+int main()
+{
+	freopen("imperishable.in", "r", stdin);
+	freopen("imperishable.out", "w", stdout);
+	for (int i = 1; i < MX; i++) pow2[i] = (pow2[i - 1] * 2) % mod;
+	scanf("%d%d", &n, &n);
+	for (int i = 1; i <= n; i++) scanf("%d", a + i);
+	calc();
+	scanf("%d", &q);
+	for (int i = 1; i <= q; i++)
+	{
+		scanf("%d%d", &x, &y);
+		a[x] = y;
+		calc();
+	}
+	return 0;
+}

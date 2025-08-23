@@ -1,0 +1,67 @@
+#include <algorithm>
+#include <iostream>
+#include <cstring>
+#include <cstdio>
+#include <vector>
+
+#define File(a) freopen(a".in", "r", stdin), freopen(a".out", "w", stdout)
+
+using std::pair;
+using std::make_pair;
+
+#define pii pair<int, int>
+#define mp make_pair
+
+using ll = long long;
+const int inf = 1e9;
+const ll infll = 0ll + 1e18;
+
+const int N = 5000 + 5;
+
+int n, fa[N], c[N][N], siz[N], ww[N], f[N];
+int tot, to[2 * N], val[2 * N], then[2 * N], head[2 * N], id[2 * N];
+
+inline void addline(int x, int y, int v, int Id) {
+  tot ++;
+  to[tot] = y; val[tot] = v; id[tot] = Id;
+  then[tot] = head[x];
+  head[x] = tot;
+}
+
+inline void dfs(int root, int now, int father) {
+  fa[now] = father;
+  siz[now] = 1;
+  for (int i = head[now]; i; i = then[i]) {
+    int t = to[i];
+    if (t == father) continue;
+    dfs(root, t, now);
+    siz[now] += siz[t];
+    c[root][id[i]] = siz[t];
+  }
+}
+
+signed main(void) {
+  File("treeq");
+  std::cin >> n;
+  for (int i = 1, x, w; i < n; i ++) {
+    scanf("%d %d", &x, &w); ww[i] = w;
+    addline(i + 1, x, w, i); addline(x, i + 1, w, i);
+  }
+  if (n <= 5000) {
+    for (int root = 1; root <= n; root ++) {
+      dfs(root, root, 0);
+      for (int j = 1; j < n; j ++)
+        c[root][j] *= ww[j];
+      int maxn = 0;
+      for (int j = 1; j < n; j ++)
+        maxn = std::max(maxn, c[root][j]);
+      for (int j = 1; j < n; j ++)
+        if (c[root][j] == maxn) f[j] ++;
+    }
+    int Xor = 0;
+    for (int i = 1; i < n; i ++)
+      Xor ^= f[i];
+    std::cout << Xor << std::endl;
+  }
+  return 0;
+}

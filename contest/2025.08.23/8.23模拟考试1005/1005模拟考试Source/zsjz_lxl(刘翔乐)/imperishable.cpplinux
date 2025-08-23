@@ -1,0 +1,103 @@
+#if IN_LOCAL
+import local;
+#endif // IN_LOCAL
+#include<utility>
+#include<iostream>
+#include<algorithm>
+using namespace std;
+#if !IN_LOCAL
+#include<fstream>
+ifstream fin("imperishable.in");
+ofstream fout("imperishable.out");
+#define cin fin
+#define cout fout
+#endif // !IN_LOCAL
+#define SC(a, b) static_cast<a>(b)
+using ull = unsigned long long;
+constexpr const unsigned mod = 998244353;
+unsigned d_smt, power_2[200002];
+struct SMT
+{
+	unsigned maxi, sum;
+}smt[524288];
+constexpr unsigned& power_2_0 = power_2[0], & smt_1_maxi = smt[1].maxi;
+inline void Maintain(const unsigned pos)
+{
+	const unsigned lc = pos * 2, rc = lc | 1;
+	smt[pos].maxi = max(smt[pos * 2].maxi, smt[pos * 2 | 1].maxi);
+	smt[pos].sum = min(smt[lc].sum + smt[rc].sum, 200000u);
+	return;
+}
+inline pair<unsigned, unsigned> Query(const unsigned val)
+{
+	unsigned pos = 1, sum = 0;
+	while (pos < d_smt)
+	{
+		if (sum + smt[pos * 2].sum < val)
+		{
+			sum += smt[pos * 2].sum;
+			pos = pos * 2 | 1;
+		}
+		else
+		{
+			pos = pos * 2;
+		}
+	}
+	return make_pair(pos, sum);
+}
+inline void Solve()
+{
+	unsigned v = smt_1_maxi;
+	ull ans = 0;
+	while (v)
+	{
+		const pair<unsigned, unsigned> ret = Query(v);
+		ans += power_2[ret.first ^ d_smt];
+		if (v < smt[ret.first].sum)
+		{
+			break;
+		}
+		if ((v -= smt[ret.first].sum) == ret.second)
+		{
+			ans += SC(ull, power_2[ret.first ^ d_smt] - 2);
+			break;
+		}
+	}
+	cout << SC(unsigned, ans % mod) << '\n';
+	return;
+}
+int main()
+{
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	power_2_0 = 1;
+	for (unsigned i = 1; i <= 200000; ++i)
+	{
+		if ((power_2[i] = power_2[i - 1] * 2) >= mod)
+		{
+			power_2[i] -= mod;
+		}
+	}
+	unsigned num, n;
+	cin >> num >> n;
+	d_smt = 1u << (32 - __builtin_clz(n));
+	for (unsigned i = 1; i <= n; ++i)
+	{
+		auto& target = smt[d_smt | i];
+		cin >> target.maxi;
+		target.sum = target.maxi;
+	}
+	for (unsigned i = d_smt; i > 1; Maintain(--i));
+	Solve();
+	unsigned q;
+	cin >> q;
+	for (unsigned i = 1; i <= q; ++i)
+	{
+		unsigned x, y;
+		cin >> x >> y;
+		for (x |= d_smt, smt[x].sum = smt[x].maxi = y; x > 1; Maintain(x /= 2));
+		Solve();
+	}
+	return 0;
+}

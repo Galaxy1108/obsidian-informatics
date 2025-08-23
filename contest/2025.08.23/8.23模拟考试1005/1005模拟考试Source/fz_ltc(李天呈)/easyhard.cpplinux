@@ -1,0 +1,90 @@
+#include<bits/stdc++.h>
+using namespace std;
+const int N=305;
+
+namespace io{
+	const int SIZE=(1<<21)+1;
+	char ibuf[SIZE],*iS,*iT,obuf[SIZE],*oS=obuf,*oT=oS+SIZE-1,c,qu[55]; int qr;
+	#define gc() (iS==iT?(iT=(iS=ibuf)+fread(ibuf,1,SIZE,stdin),(iS==iT?EOF:*iS++)):*iS++)
+	inline void flush(){
+		fwrite(obuf,1,oS-obuf,stdout);
+		oS=obuf;
+	}
+	inline void putc(char x){
+		*oS++=x;
+		if(oS==oT) flush();
+	}
+	template <class I>
+	inline void read(I &x){
+		for(c=gc();c<'0'||c>'9';c=gc());
+		for(x=0;c<='9'&&c>='0';c=gc()) x=x*10+(c&15);
+	}
+	template <class I>
+	inline void print(I x){
+		if(!x) putc('0'); if(x<0) putc('-'),x=-x;
+		while(x) qu[++qr]=x%10+'0',x/=10;
+		while(qr) putc(qu[qr--]);
+	}
+}
+using io::read; using io::putc; using io::print;
+
+int n,m,mod;
+int f[N][N][N],ans;
+int sta[1<<21];
+void dfs(int a,int b,int k,int s){
+	if(k>m){
+		sta[s]=1;
+		return;
+	}
+	if(b>=1) dfs(a+1,b-1,k+1,s|(1<<2*k-1)|(1<<2*k));
+	if(a>=1) dfs(a-1,b+1,k+1,s);
+	if(b>=1) dfs(a,b,k+1,s|(1<<2*k-1));
+	if(a>=1) dfs(a,b,k+1,s|(1<<2*k));
+}
+void brute(){
+	for(int i=0;i<=n;i++) dfs(i,n-i,1,0);
+	for(int i=0;i<(1<<m*2+1);i++) ans+=sta[i];
+}
+int qpow(int x,int y){
+	int res=1;
+	while(y){
+		if(y&1) res=1ll*res*x%mod;
+		x=1ll*x*x%mod;
+		y>>=1;
+	}
+	return res;
+}
+void solve(){
+	// f[i][j][k] 表示 i 次操作，整了 j 个白球，且该状态下强制要选 k 个黑球的方案数
+	f[0][0][0]=1;
+	for(int i=1;i<=m;i++){
+		for(int j=0;j<=n+i-1;j++){
+			for(int k=0;k<=n;k++){
+				if(f[i-1][j][k] == 0) continue;
+				if((i-1)*2-j+1 <= n+i-1){
+					int nk=max(k,i-j);
+					(f[i][j][nk] += f[i-1][j][k]) %= mod;
+					(f[i][j+1][nk] += f[i-1][j][k]) %= mod;
+				}
+				if(j+1 <= n+i-1 && (i-1)*2-j <= n+i-1){
+					(f[i][j+2][k] += f[i-1][j][k]) %= mod;
+					(f[i][j+1][k] += f[i-1][j][k]) %= mod;
+				}
+			}
+		}
+	}
+	for(int i=0;i<=n+m;i++)
+		for(int j=0;j<=n;j++){
+			// printf("i:%d j:%d f:%d\n",i,j,f[m][i][j]);
+			if(i-m<=n-j) (ans += f[m][i][j]) %= mod;
+		}
+}
+
+main(){
+	freopen("easyhard.in","r",stdin); freopen("easyhard.out","w",stdout);
+	read(n); read(m); read(mod);
+	if(n<=10) brute();
+	else solve();
+	print(ans);
+	io::flush();
+}

@@ -1,0 +1,71 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define mp make_pair
+inline int read(){
+	int x=0;char ch=getchar();
+	while(!isdigit(ch))ch=getchar();
+	while(isdigit(ch))x=(x<<3)+(x<<1)+(ch^48),ch=getchar();
+	return x;
+}
+inline void write(int x){
+	if(x>9)write(x/10);
+	putchar(x%10|48);
+}
+inline void writeln(int x){
+	write(x),putchar('\n');
+}
+int n,m,mod,ans=0,f1[3005][3005],f2[3005][3005],f3[3005][3005],d1[3005],d2[3005],d3[3005];
+int main(){
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	n=read(),m=read(),mod=read();
+	f1[0][0]=1;
+	for(int i=0;i<=m;++i){
+		for(int j=0;j<n;++j){
+			if(j){
+				f1[i+1][j-1]=(f1[i+1][j-1]+f1[i][j])%mod;
+				f1[i+1][j]=(f1[i+1][j]+f1[i][j])%mod;
+			}
+			if(j<n-1){
+				f1[i+1][j]=(f1[i+1][j]+f1[i][j])%mod;
+				f1[i+1][j+1]=(f1[i+1][j+1]+f1[i][j])%mod;
+			}
+			d1[i]=(d1[i]+f1[i][j])%mod;
+		}
+	}
+	f2[0][1]=1;
+	for(int i=0;i<=m;++i){
+		for(int j=0;j<=n;++j){
+			if(j){
+				f2[i+1][j-1]=(f2[i+1][j-1]+f2[i][j])%mod;
+				f2[i+1][j]=(f2[i+1][j]+f2[i][j])%mod;
+			}
+			if(j<n){
+				f2[i+1][j]=(f2[i+1][j]+f2[i][j])%mod;
+				f2[i+1][j+1]=(f2[i+1][j+1]+f2[i][j])%mod;
+			}
+			d2[i]=(d2[i]+f2[i][j])%mod;
+		}
+	}
+	f3[0][0]=1;
+	for(int i=0;i<=m;++i){
+		for(int j=0;j<=n;++j){
+			if(j){
+				f3[i+1][j-1]=(f3[i+1][j-1]+f3[i][j])%mod;
+				f3[i+1][j]=(f3[i+1][j]+f3[i][j])%mod;
+			}
+			if(j<n){
+				f3[i+1][j]=(f3[i+1][j]+f3[i][j])%mod;
+				f3[i+1][j+1]=(f3[i+1][j+1]+f3[i][j])%mod;
+			}
+			d3[i]=(d3[i]+f3[i][j])%mod;
+		}
+	}
+	ans=d3[m];
+	for(int i=0;i<m;++i){
+		ans=(ans+d1[i]*1ll*d2[m-1-i])%mod;
+		ans=(ans+d1[i]*1ll*d3[m-1-i])%mod;
+	}
+	writeln(ans);
+	return 0;
+}

@@ -1,0 +1,67 @@
+#include<bits/stdc++.h>
+using namespace std;
+long long n,m,p,sum,d[3005][3005],e[3005][3005],dd[3005];
+int main()
+{
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	cin>>n>>m>>p;
+	if(n>=m)
+	{
+		long long ans=1;
+		for(int i=1;i<=2*m;i++)
+		{
+			ans=(ans*2)%p;
+		}
+		cout<<ans<<endl;
+		return 0;
+	}
+	d[0][n+1]=1;
+	for(int i=1;i<=m;i++)
+	{
+		for(int j=0;j<=n;j++)
+		{
+			d[i][j+1]=((d[i-1][j+1]*2%p+d[i-1][j+1+1])%p+d[i-1][j-1+1])%p;
+			if(j==0)
+			{
+				d[i][j+1]-=d[i-1][j+1];
+				d[i][j+1]=(d[i][j+1]+p)%p;
+			}
+			if(j==n)
+			{
+				d[i][j+1]-=d[i-1][j+1];
+				d[i][j+1]=(d[i][j+1]+p)%p;
+			}
+			dd[i]=(dd[i]+d[i][j+1])%p;
+		}
+	}
+	e[0][n+1]=1;
+	for(int i=1;i<=m;i++)
+	{
+		for(int j=0;j<n;j++)
+		{
+			e[i][j+1]=((e[i-1][j+1]*2%p+e[i-1][j+1+1])%p+e[i-1][j-1+1])%p;
+			if(j==0)
+			{
+				e[i][j+1]-=e[i-1][j+1];
+				e[i][j+1]=(e[i][j+1]+p)%p;
+			}
+			if(j==n-1)
+			{
+				e[i][j+1]-=e[i-1][j+1];
+				e[i][j+1]=(e[i][j+1]+p)%p;
+			}
+		}
+	}
+	for(int i=1;i<m;i++)
+	{
+		for(int j=0;j<=n;j++)
+		{
+			sum+=((long long)e[i][j+1]*dd[m-i])%p*2%p;
+			sum%=p;
+		}
+	}
+	sum=(sum+dd[m]*2)%p;
+	cout<<sum<<endl;
+	return 0;
+}

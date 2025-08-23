@@ -1,0 +1,48 @@
+// #pragma GCC optimize("O3")
+// // #pragma GCC optimize("Ofast")
+// #pragma GCC optimize("unroll-loops")
+// #pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,tune=native")
+#include <bits/stdc++.h>
+using namespace std;
+
+#define PB emplace_back
+// #define int long long
+#define ll long long
+#define vi vector<int>
+#define siz(a) ((int)((a).size()))
+#define rep(i, a, b) for (int i = (a); i <= (b); ++i)
+#define per(i, a, b) for (int i = (a); i >= (b); --i)
+
+const int N = 2e5, mod = 998244353;
+int a, b, s[N + 5], p[N + 5], pw[N + 5];
+
+int calc() {
+	int mx = 0;
+	rep(i, 1, a) p[i] = p[i - 1] + s[i];
+	rep(i, 1, a) if(s[i] > s[mx]) mx = i;
+	int now = s[mx], res = 0;
+	per(i, mx, 1) if(p[i - 1] < now) (res += pw[i]) %= mod, now -= s[i];
+	return res;
+}
+
+signed main() {
+	freopen("imperishable.in", "r", stdin);
+	freopen("imperishable.out", "w", stdout);
+	ios::sync_with_stdio(0);
+	cin.tie(0), cout.tie(0);
+	pw[0] = 1;
+	rep(i, 1, N) pw[i] = pw[i - 1] * 2 % mod;
+	int T;
+	cin >> T;
+	cin >> a;
+	rep(i, 1, a) cin >> s[i];
+	cin >> b;
+	cout << calc() << '\n';
+	int x, y;
+	rep(i, 1, b) {
+		cin >> x >> y;
+		s[x] = y;
+		cout << calc() << '\n';
+	}
+	return 0;
+}

@@ -1,0 +1,127 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+using ll = long long;
+
+const int BUFF_SIZE = 1 << 20;
+char BUFF[BUFF_SIZE], *BB, *BE;
+char gc() { return BB == BE ? (BE = (BB = BUFF) + fread(BUFF, 1, BUFF_SIZE, stdin), BB == BE ? EOF : *BB++) : *BB++; }
+template<class T>
+void read(T &x) {
+  x = 0;
+  char ch = 0, w = 0;
+  while (ch < '0' || ch > '9') w |= ch == '-', ch = gc();
+  while (ch >= '0' && ch <= '9') x = x * 10 + (ch ^ '0'), ch = gc();
+  if (w) x = -x;
+}
+
+const int N = 5e4;
+const int M = 150000 * 2 + 50000 * 2 * 2 * 2;
+const int LG = 20;
+
+struct item {
+  int x, y, z;
+  item(int x = 0, int y = 0, int z = 0): x(x), y(y), z(z) {}
+  bool operator<(const item &o) const {
+    if (x != o.x) return x < o.x;
+    if (y != o.y) return y < o.y;
+    return z < o.z;
+  }
+} p[M + 5];
+
+int type, n, m, k, Q;
+set<int> s[2][N + 5];
+
+namespace Subtask0 {
+  int sucRow(int x, int y) {
+    return *s[0][x].upper_bound(y);
+  }
+  int sucColumn(int x, int y) {
+    return *s[1][x].upper_bound(y);
+  }
+  void solve(int x, int y, int z) {
+    int d = x ? 0 : 1;
+    while (1) {
+      if (d == 0) y = sucRow(x, y);
+      else x = sucColumn(y, x);
+      d ^= 1, --z;
+      if (!z || x == n + 1 || y == m + 1) { printf("%d %d\n", x, y); return ; }
+    }
+  }
+  void main() {
+    for (int i = 1; i <= n; ++i) s[0][i].insert(m + 1);
+    for (int i = 1; i <= m; ++i) s[1][i].insert(n + 1);
+    for (int i = 1; i <= k; ++i) {
+      int x, y; read(x), read(y);
+      s[0][x].insert(y), s[1][y].insert(x);
+    }
+    for (read(Q); Q; --Q) {
+      int op, x, y, z;
+      read(op), read(x), read(y);
+      if (op == 1) s[0][x].insert(y), s[1][y].insert(x);
+      else read(z), solve(x, y, z);
+    }
+  }
+}
+
+namespace Subtask1 {
+  int sucRow(int x, int y) {
+    if (x == n + 1 || y == m + 1)return y;
+    return *s[0][x].upper_bound(y);
+  }
+  int sucColumn(int x, int y) {
+    if (x == m + 1 || y == n + 1)return y;
+    return *s[1][x].upper_bound(y);
+  }
+  map<item, int> id;
+  int e[LG + 5][M + 5], tot;
+  void add(int x, int y, int z) {
+    p[++tot] = item(x, y, z), id[p[tot]] = tot;
+  }
+  void init() {
+    for (int i = 1; i <= n; ++i)
+      add(i, 0, 0), add(i, 0, 1), add(i, m + 1, 0), add(i, m + 1, 1);
+    for (int i = 1; i <= m; ++i)
+      add(0, i, 0), add(0, i, 1), add(n + 1, i, 0), add(n + 1, i, 1);
+    for (int i = 1; i <= tot; ++i)
+      if (p[i].z == 0) e[0][i] = id[item(p[i].x, sucRow(p[i].x, p[i].y), 1)];
+      else e[0][i] = id[item(sucColumn(p[i].y, p[i].x), p[i].y, 0)];
+    for (int k = 1; k < LG; ++k)
+      for (int i = 1; i <= tot; ++i)
+        e[k][i] = e[k - 1][e[k - 1][i]];
+  }
+  void solve(int x, int y, int z) {
+    int now = (x ? id[item(x, y, 0)] : id[item(x, y, 1)]);
+    for (int k = LG - 1; k >= 0; --k)
+      if (z >= (1 << k))
+        z -= (1 << k), now = e[k][now];
+    printf("%d %d\n", p[now].x, p[now].y);
+  }
+  void main() {
+    for (int i = 1; i <= n; ++i)
+      s[0][i].insert(m + 1);
+    for (int i = 1; i <= m; ++i)
+      s[1][i].insert(n + 1);
+    for (int i = 1; i <= k; ++i) {
+      int x, y; read(x), read(y);
+      s[0][x].insert(y);
+      s[1][y].insert(x);
+      add(x, y, 0), add(x, y, 1);
+    }
+    init();
+    for (read(Q); Q; --Q) {
+      int op, x, y, z;
+      read(op), read(x), read(y), read(z);
+      assert(op == 2);
+      solve(x, y, z);
+    }
+  }
+}
+int main() {
+  freopen("corridor.in", "r", stdin), freopen("corridor.out", "w", stdout);
+  read(type), read(n), read(m), read(k);
+  if (type == 0) Subtask0::main();
+  else if (type == 1) Subtask1::main();
+  else Subtask0::main();
+}

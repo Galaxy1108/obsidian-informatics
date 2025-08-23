@@ -1,0 +1,104 @@
+#include <bits/stdc++.h>
+using namespace std;
+const int N = 50010, L = 20;
+int type, n, m, k, q;
+set <int> a[N], b[N];
+pair <int, int> c[N];
+pair <int, int> f[N][2][L];
+map <pair <int, int>, int> id;
+int main() {
+    freopen("corridor.in", "r", stdin);
+    freopen("corridor.out", "w", stdout);
+    scanf("%d%d%d%d", &type, &n, &m, &k);
+    for (int i = 1; i <= k; ++i) {
+        int x, y;
+        scanf("%d%d", &x, &y);
+        a[x].insert(y);
+        b[y].insert(x);
+        c[i] = {x, y};
+    }
+    if (type == 1) {
+        for (int i = 1; i <= n; ++i) {
+            int x = c[i].first, y = c[i].second;
+            id[{x, y}] = i;
+            if (a[x].upper_bound(y) == a[x].end())
+                f[i][1][0] = {x, m + 1};
+            else
+                f[i][1][0] = {x, *a[x].upper_bound(y)};
+            if (b[y].upper_bound(x) == b[y].end())
+                f[i][0][0] = {n + 1, y};
+            else
+                f[i][0][0] = {*b[y].upper_bound(x), y};
+        }
+        for (int j = 1; j < L; ++j)
+            for (int i = 1; i <= n; ++i)
+                for (int k = 0; k < 2; ++k) {
+                    int x = f[i][k][j - 1].first, y = f[i][k][j - 1].second;
+                    if (x == n + 1 || y == m + 1)
+                        f[i][k][j] = f[i][k][j - 1];
+                    else
+                        f[i][k][j] = f[id[{x, y}]][k ^ (j == 1)][j - 1];
+                }
+        scanf("%d", &q);
+        while (q--) {
+            int w, x, y, z;
+            scanf("%d%d%d%d", &w, &x, &y, &z);
+            int dir = !y;
+            if (dir) {
+                if (a[x].upper_bound(y) == a[x].end())
+                    y = m + 1;
+                else
+                    y = *a[x].upper_bound(y);
+            } else {
+                if (b[y].upper_bound(x) == b[y].end())
+                    x = n + 1;
+                else
+                    x = *b[y].upper_bound(x);
+            }
+            --z;
+            dir ^= 1;
+            if (x ^ (n + 1) && y ^ (m + 1))
+                for (int i = L - 1; ~i; --i) {
+                    if (z < 1 << i)
+                        continue;
+                    int j = id[{x, y}];
+                    x = f[j][dir][i].first;
+                    y = f[j][dir][i].second;
+                    if (!i)
+                        dir ^= 1;
+                    if (x == n + 1 || y == m + 1)
+                        break;
+                }
+            printf("%d %d\n", x, y);
+        }
+        return 0;
+    }
+    scanf("%d", &q);
+    while (q--) {
+        int w, x, y;
+        scanf("%d%d%d", &w, &x, &y);
+        if (w == 1) {
+            a[x].insert(y);
+            b[y].insert(x);
+        } else {
+            int z, dir = !y;
+            scanf("%d", &z);
+            for (; z--; dir ^= 1)
+                if (dir) {
+                    if (a[x].upper_bound(y) == a[x].end()) {
+                        y = m + 1;
+                        break;
+                    }
+                    y = *a[x].upper_bound(y);
+                } else {
+                    if (b[y].upper_bound(x) == b[y].end()) {
+                        x = n + 1;
+                        break;
+                    }
+                    x = *b[y].upper_bound(x);
+                }
+            printf("%d %d\n", x, y);
+        }
+    }
+    return 0;
+}

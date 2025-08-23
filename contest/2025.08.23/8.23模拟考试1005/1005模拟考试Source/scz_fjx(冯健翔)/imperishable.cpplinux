@@ -1,0 +1,62 @@
+#include<bits/stdc++.h>
+#define mod 998244353
+#define maxn 200500
+#define ll long long
+#define re register
+#define il inline
+using namespace std;
+inline ll fm(ll a,ll b,ll p){ll ans=(long double)a*b/p;ans=a*b-ans*p;if(ans<0)return ans+p;return ans>=p?ans-p:ans;}
+inline ll fp(ll a,ll b,ll p){ll ans=1;for(;b;b>>=1,a=fm(a,a,p))if(b&1)ans=fm(ans,a,p);return ans;}
+int n,a[maxn],q,x,y,maxx,maxi;ll ans;
+inline void solve1(){
+	int dx=0;
+	for(re int i=1;i<=n;++i){
+		dx+=a[i];
+		if(dx>=maxx){
+			if(a[i]==maxx){printf("%lld\n",fp(2,i,mod));return;}
+			for(re int j=i;j;--j){
+				if(dx-a[j]<maxx)ans=(ans+fp(2,j,mod))%mod;
+				else dx-=a[j];
+			}
+			break;
+		}
+	}
+	printf("%lld\n",ans);
+}
+inline void get_maxx(){
+	for(re int i=1;i<=n;++i)
+		if(maxx<=a[i])maxx=a[i],maxi=i;
+}
+inline void solve(int x,int y){
+	a[x]=y;
+	if(x>maxi){if(y<=maxx){printf("%lld\n",ans);return;}maxx=y;}
+	if(x==maxi)if(y>=maxx){printf("%lld\n",ans);return;}
+	get_maxx();
+	int dx=0;ans=0;
+	for(re int i=1;i<=n;++i){
+		dx+=a[i];
+		if(dx>=maxx){
+			if(a[i]==maxx){printf("%lld\n",fp(2,i,mod));return;}
+			for(re int j=i;j;--j){
+				if(dx-a[j]<maxx)ans=(ans+fp(2,j,mod))%mod;
+				else dx-=a[j];
+			}
+			break;
+		}
+	}//n*q
+	printf("%lld\n",ans);
+}
+int main(){
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable1.out","w",stdout);
+	scanf("%d",&n);
+	scanf("%d",&n);
+	for(re int i=1;i<=n;++i){
+		scanf("%d",&a[i]);
+		if(maxx<=a[i])maxx=a[i],maxi=i;
+	}
+	solve1();
+	scanf("%d",&q);
+	while(q--)scanf("%d %d",&x,&y),solve(x,y);
+	return 0;
+}

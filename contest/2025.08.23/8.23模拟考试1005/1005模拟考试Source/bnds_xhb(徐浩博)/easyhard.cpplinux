@@ -1,0 +1,21 @@
+#include<bits/stdc++.h>
+using namespace std;
+int n,m,p;
+long long ee(long long w){
+	long long e=1,r=2;
+	while(w){
+		if(w%2)e*=r;
+		r*=r;
+		e%=p;
+		r%=p;
+		w/=2;
+	}
+	return e;
+} 
+int main(){
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	cin>>n>>m>>p;
+	cout<<ee(n+m);
+	return 0;
+}

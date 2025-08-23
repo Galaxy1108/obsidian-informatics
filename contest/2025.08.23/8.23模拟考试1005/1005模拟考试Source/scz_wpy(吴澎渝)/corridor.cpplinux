@@ -1,0 +1,69 @@
+#include <bits/stdc++.h>
+using namespace std;
+int type,n,m,k,px,py,q,choice,x,y,turn,in,ax;
+struct node{
+	int l = 1,H[1000];
+}Hang[50001];
+struct Node{
+	int l = 1,L[1000];
+}Lie[50001];
+string face;
+void work();
+int main()
+{
+//	freopen("corridor.in","r",stdin);
+//	freopen("corridor.out","w",stdout);
+	scanf("%d%d%d%d",&type,&n,&m,&k);
+	for (int i = 1;i <= k;i++)
+		{
+			scanf("%d%d",&px,&py);
+			Hang[py].H[Hang[py].l++] = px;
+			Lie[px].L[Lie[px].l++] = py;
+		}
+	scanf("%d",&q);
+	for (int i = 1;i <= q;i++)
+		{
+			scanf("%d%d%d",&choice,&x,&y);
+			if (choice == 1)
+				Hang[y].H[Hang[y].l++] = x,Lie[x].L[Lie[x].l++] = y;
+				else
+					scanf("%d",&turn),work();
+		}
+	return 0;
+}
+void work()
+{
+	if (y == 0)
+		face = "down";
+		else
+			face = "right";
+	while(x <= m && y <= n && turn > 0)
+		{
+			if (face == "down")
+				{
+					bool inin = 0;
+					in = 0x3f3f3f3f;
+					for (int i = 1;i <= Lie[x].l;i++)
+						if (Lie[x].L[i] > y)
+							in = min(Lie[x].L[i],in),inin = 1;
+					if (inin == 0)
+						printf("%d %d\n",x,n + 1),y = n + 5;
+						else
+							y = in,turn--,face = "right";
+				}
+				else
+					{
+						bool inin = 0;
+						in = 0x3f3f3f3f;
+						for (int i = 1;i <= Hang[y].l;i++)
+							if (Hang[y].H[i] > x)
+								in = min(Hang[y].H[i],in),inin = 1;
+						if (inin == 0)
+							printf("%d %d\n",m + 1,y),x = m + 5;
+							else
+								x = in,turn--,face = "down";
+					}
+		}
+	if (x < m + 5 && y < n + 5)
+		printf("%d %d\n",x,y);
+}

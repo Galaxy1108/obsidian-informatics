@@ -1,0 +1,46 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+const int N=200005;
+const int Mod=998244353;
+int n,m,q,ans,Ans,sum,Sum,num,maxx,a[N],Pow[N];
+inline int read(){
+	int s=0,w=1;char ch=getchar();
+	while((ch<'0')||(ch>'9')){if(ch=='-'){w=-1;}ch=getchar();}
+	while((ch>='0')&&(ch<='9')){s=(s<<3)+(s<<1)+ch-'0';ch=getchar();}
+	return s*w;
+}
+namespace Sub17{
+	inline void Main(){
+		int ans=Ans,sum=Sum,maxx=0;
+		for(int i=n;i>=1;i--){
+			if(sum-a[i]>=max(maxx,a[i])){
+				sum-=a[i];maxx=max(maxx,a[i]);ans-=Pow[i];
+			}
+		}
+		printf("%lld\n",ans%Mod);
+		return ;
+	}
+}
+inline void Solve(){
+	num=read();n=read();
+	for(int i=1;i<=n;i++)a[i]=read();
+	for(int i=1;i<=n;i++)Sum+=a[i];
+	Pow[0]=1;
+	for(int i=1;i<=n;i++)Pow[i]=(Pow[i-1]<<1)%Mod;
+	for(int i=1;i<=n;i++)Ans+=Pow[i];
+	q=read();Sub17::Main();
+	while(q--){
+		int x,y;x=read(),y=read();
+		Sum+=y-a[x];a[x]=y;Sub17::Main();
+	}
+	return ;
+}
+signed main(){
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	Solve();
+	fclose(stdin);
+	fclose(stdout);
+	return 0;
+}

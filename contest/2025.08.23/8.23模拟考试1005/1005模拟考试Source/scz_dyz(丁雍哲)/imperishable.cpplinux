@@ -1,0 +1,40 @@
+#include <bits/stdc++.h>
+using namespace std ;
+#define fir(i, n, m) for(int i=n;i<=m;i++)
+#define fur(i, n, m) for(int i=n;i>=m;i--)
+int type, n, q, x, y, num ;
+const int N = 2e5 + 5 ; int a[N] ;
+inline int read() {
+	char ch = getchar() ;
+	while (! isdigit(ch))
+		ch = getchar() ;
+	int s = ch - '0' ;
+	ch = getchar() ;
+	while (isdigit(ch)) {
+		s = s * 10 + ch - '0' ;
+		ch = getchar() ; 
+	}
+	return s ;
+}
+long long pow_two(int k) {
+	long long sum = 1 ;
+	fir(i, 1, k) sum *= 2 ;
+	return sum ;
+}
+int main () {
+	type = read(), n = read() ;
+	fir(i, 1, n) {
+		int x = read() ;
+		a[i] = x ;
+	}
+	q = read() ;
+	fir(i, 1, q) {
+		int x = read(), y = read() ;
+		a[x] = y ;
+	}
+	if (n == 1 && q == 0) {
+		cout << 2 << endl ;
+		return 0 ;
+	}
+	return 0 ;
+}

@@ -1,0 +1,105 @@
+#include<bits/stdc++.h>
+using namespace std;
+const int h=50010;
+int type,n,m,k;
+int row[h][3010],rtot[h];
+int line[h][3010],ltot[h];
+int row_nxt(int now,int x){
+	int l=1,r=rtot[now],ans=r;
+	while(l<r){
+		int mid=(l+r)/2;
+		if(row[now][mid]<=x)
+			l=mid+1;
+		else
+			ans=mid,r=mid;
+	}
+	return row[now][ans];
+}
+
+int line_nxt(int now,int x){
+	int l=1,r=ltot[now],ans=r;
+	while(l<r){
+		int mid=(l+r)/2;
+		if(line[now][mid]<=x)
+			l=mid+1;
+		else
+			ans=mid,r=mid;
+	}
+	return line[now][ans];
+}
+
+int fx,fy;
+void roll(int x,int y,int dir,int tim){
+	if(tim==0||x>n||y>m){
+		fx=x,fy=y;
+		return;
+	}
+	if(dir==0){
+		roll(line_nxt(y,x),y,dir^1,tim-1); 
+	}
+	else{
+		roll(x,row_nxt(x,y),dir^1,tim-1);
+	}
+}
+int main(){
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	scanf("%d%d%d%d",&type,&n,&m,&k);
+	int x,y;
+	for(int i=1;i<=n;i++){
+		row[i][++rtot[i]]=0;
+		row[i][++rtot[i]]=m+1;
+	}
+	for(int i=1;i<=m;i++){
+		line[i][++ltot[i]]=0;
+		line[i][++ltot[i]]=n+1;
+	}
+	for(int i=1;i<=k;i++){
+		scanf("%d%d",&x,&y);
+		row[x][++rtot[x]]=y;
+		line[y][++ltot[y]]=x;
+	}
+	for(int i=1;i<=n;i++)
+		sort(row[i]+1,row[i]+1+rtot[i]);
+	for(int i=1;i<=m;i++)
+		sort(line[i]+1,line[i]+1+ltot[i]);
+	int Q;
+	scanf("%d",&Q);
+	int w;
+	int layx,layy;
+	int q;
+	int tar;
+	int pos;
+	while(Q--){
+		scanf("%d",&w);
+		scanf("%d%d",&layx,&layy);
+		if(w==1){
+			row[layx][++rtot[layx]]=layy;
+			pos=rtot[layx];
+			while(true){
+				if(row[layx][pos-1]>row[layx][pos])
+					swap(row[layx][pos-1],row[layx][pos]),pos--;
+				else
+					break;
+			}
+			line[layy][++ltot[layy]]=layx;
+			pos=ltot[layy];
+			while(true){
+				if(line[layy][pos-1]>line[layy][pos])
+					swap(line[layy][pos-1],line[layy][pos]),pos--;
+				else
+					break;
+			}
+		}
+		else{
+			scanf("%d",&q);
+			if(layx==0)
+				tar=0,layx=line_nxt(layy,layx);
+			else
+				tar=1,layy=row_nxt(layx,layy);
+			roll(layx,layy,tar^1,q-1);
+			cout<<fx<<' '<<fy<<endl;
+		}
+	}
+	return 0;
+} 

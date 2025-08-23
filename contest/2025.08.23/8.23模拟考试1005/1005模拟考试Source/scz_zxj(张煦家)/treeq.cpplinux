@@ -1,0 +1,8 @@
+#include <cstdio>
+int main()
+{
+	freopen("treeq.in", "r", stdin);
+	freopen("treeq.out", "w", stdout);
+	printf("出题人，你 马什么时候死啊");
+	return 0;
+}

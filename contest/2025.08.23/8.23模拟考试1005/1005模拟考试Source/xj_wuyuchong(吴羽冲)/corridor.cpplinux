@@ -1,0 +1,199 @@
+/*
+链表存储，样例跑飞快
+*期望第一档和第三档
+44pts? 
+*/
+#pragma GCC optimize(2)
+//#pragma GCC optimize("Ofast","-ffast-math")
+//#pragma GCC targer("avx");
+#include <bits/stdc++.h>
+using namespace std;
+#define gtc getchar()
+#define ptc(x) putchar(x)
+#define il inline
+#define re register
+#define ll long long
+#define rd read()
+#define rdl readl()
+il int read(){re int x=0;re bool f=0;re char c=gtc;while(c<'0'||c>'9'){if(c=='-')f=1;c=gtc;}while(c>='0'&&c<='9')x=(x<<1)+(x<<3)+(c^48),c=gtc;return f?-x:x;}
+il ll readl(){re ll x=0;re bool f=0;re char c=gtc;while(c<'0'||c>'9'){if(c=='-')f=1;c=gtc;}while(c>='0'&&c<='9')x=(x<<1)+(x<<3)+(c^48),c=gtc;return f?-x:x;}
+il void wt(re ll x){if(x>9)wt(x/10);ptc(x%10+48);}
+il void wrt(re ll x){if(x<0)ptc('-'),x=-x;wt(x);}
+
+const int Inf=1e5;
+const int N=150010;
+const int maxn=50010;
+int x[N],y[N];
+int blw[N],upn[N],lft[N],rgt[N];
+int tot;
+int han[maxn],lie[maxn];
+int ans[N][2];
+int cnt;
+int n,m;
+
+il void out(){
+	for(re int i=1;i<=n;i++){
+		if(han[i]!=Inf)
+			wrt(han[i]),ptc('\n');
+		else cout<<"INF",ptc('\n');
+	}
+	for(re int i=1;i<=m;i++){
+		if(lie[i]!=Inf)
+			wrt(lie[i]),ptc(' ');
+		else cout<<"INF",ptc(' ');
+	}
+}
+il void out0(re int i){
+	cout<<i<<'*'<<x[i]<<','<<y[i]<<'\n';
+}
+
+il void insert(re int a,re int b){
+	tot++;
+	x[tot]=a,y[tot]=b;
+	if(han[a]==Inf){
+//			ptc('*');
+		han[a]=tot;
+		rgt[tot]=Inf;
+		lft[tot]=-1;
+	}else{
+		re int i;
+		for(i=han[a];rgt[i]!=Inf;i=rgt[i]){
+			if(y[i]>b) break;
+		}
+		if(y[i]>b){
+			if(lft[i]==-1){
+				han[a]=tot;
+				lft[tot]=-1;
+				rgt[tot]=i;
+				lft[i]=tot;
+			}else{
+				lft[tot]=lft[i];
+				rgt[lft[i]]=tot;
+				lft[i]=tot;
+				rgt[tot]=i;
+			}
+		}else{
+			rgt[i]=tot;
+			lft[tot]=i;
+			rgt[tot]=Inf;
+		}
+	}
+	if(lie[b]==Inf){
+		lie[b]=tot;
+		blw[tot]=Inf;
+		upn[tot]=-1;
+	}else{
+		re int i;
+		for(i=lie[b];blw[i]!=Inf;i=blw[i]){
+			if(x[i]>a) break;
+		}
+		if(x[i]>a){
+			if(upn[i]==-1){
+				lie[b]=tot;
+				upn[i]=tot;
+				upn[tot]=-1;
+				blw[tot]=i;
+			}else{
+				upn[tot]=upn[i];
+				blw[upn[i]]=tot;
+				blw[tot]=i;
+				upn[i]=tot;
+			}
+		}else{
+			blw[i]=tot;
+			blw[tot]=Inf;
+			upn[tot]=i;
+		}
+	}
+}
+
+il void go(re int a,re int b,re int q){
+	q--;
+	re bool d;
+	re bool kkk=0;
+	re int i;
+	if(b==0)i=han[a],d=0;
+	if(a==0)i=lie[b],d=1;
+	
+	if(i==Inf){
+		if(d) ans[cnt][0]=n+1,ans[cnt][1]=b;
+		if(!d) ans[cnt][0]=a,ans[cnt][1]=m+1;
+		cnt++;
+		return;
+	}
+	while(q>=1){
+		if(!d){
+			if(blw[i]==Inf){kkk=1;break;}
+			i=blw[i];
+		}else{
+			if(rgt[i]==Inf){kkk=1;break;}
+			i=rgt[i];
+		}
+		d=!d;
+		q--;
+		if(i==Inf) break;
+	}
+//		out0(i);
+	if(kkk){
+		if(!d) ans[cnt][0]=n+1,ans[cnt][1]=y[i];
+		else ans[cnt][0]=x[i],ans[cnt][1]=m+1;
+		cnt++;
+		return;
+	}
+	ans[cnt][0]=x[i],ans[cnt][1]=y[i];
+	cnt++;
+}
+
+signed main(){
+	
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	
+	re int subtask=rd;
+	n=rd,m=rd;
+	re int k=rd;
+	for(re int i=1,mn=max(n,m);i<=mn;i++){
+		han[i]=Inf;
+		lie[i]=Inf;
+	}
+	
+	for(re int i=1;i<=k;i++){
+		re int a=rd,b=rd;
+		insert(a,b);
+	}
+	
+//	out();
+//	cout<<blw[1]<<'\n';
+	
+	re int q=rd;
+	while(q--){
+		re int op=rd;
+		if(op==1){
+			re int a=rd,b=rd;
+			insert(a,b);
+		}else{
+			re int a=rd,b=rd,q=rd;
+			go(a,b,q);
+			
+//	wrt(ans[cnt-1][0]),ptc(' '),wrt(ans[cnt-1][1]),ptc('\n');
+			
+		}
+	}
+	
+	for(re int i=0;i<cnt;i++){
+		wrt(ans[i][0]),ptc(' '),wrt(ans[i][1]),ptc('\n');
+	}
+	
+	return 0;
+}
+/*
+0 5 5 5
+1 1
+1 2
+1 3
+1 4
+1 5
+100
+2 1 0 1
+
+*/

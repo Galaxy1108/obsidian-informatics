@@ -1,0 +1,137 @@
+#include <cstdio>
+#include <algorithm>
+#define g getchar()
+#define ll long long
+#define r register int
+const int N(1e6 + 2);
+struct EDGE
+{
+	int next, to;
+	ll w;
+}edge[N << 1];
+struct node
+{
+	int u, v, w, id;
+}e[N << 1];
+int n, head[N], ans[N], cnt(1), size[N], tot, fa[N], dfn[N], dt, t[N << 2], res;
+inline int read()
+{
+	r a(0), b(g);
+	for (; b < 48 || b > 57; b = g);
+	for (; b > 47 && b < 58; b = g)
+		(a *= 10) += b ^ 48;
+	return a;
+}
+inline void add(r u, r v, r w)
+{
+	edge[++cnt].next = head[u];
+	edge[head[u] = cnt].to = v;
+	edge[cnt].w = w;
+}
+inline void dfs(r x)
+{
+	dfn[x] = ++dt;
+	size[x] = 1;
+	for (r i(head[x]); i; i = edge[i].next)
+	{
+		r v(edge[i].to);
+		if (v ^ fa[x])
+		{
+			fa[v] = x;
+			dfs(v);
+			size[x] += size[v];
+			edge[i].w *= size[v];
+			edge[i ^ 1].w *= n - size[v];
+		}
+	}
+}
+inline bool cmp(node a, node b)
+{
+	return a.w > b.w;
+}
+inline void build(r L, r R, r x)
+{
+	t[x] = R - L + 1;
+	if (L == R)
+		return;
+	r mid(L + R >> 1);
+	build(L, mid, x << 1);
+	build(mid + 1, R, x << 1 | 1);
+}
+inline int ask(r L, r R, r x, r lk, r rk)
+{
+	if (L >= lk && R <= rk || !t[x])
+		return t[x];
+	r mid(L + R >> 1), ls(x << 1), rs(ls | 1);
+	r res(0);
+	if (mid >= lk)
+		res = ask(L, mid, ls, lk, rk);
+	if (mid < rk)
+		res += ask(mid + 1, R, rs, lk, rk);
+	return res;
+}
+inline void change(r L, r R, r x, r lk, r rk)
+{
+	if (lk > rk)
+		return;
+	if (L >= lk && R <= rk || !t[x])
+	{
+		t[x] = 0;
+		return;
+	}
+	r mid(L + R >> 1), ls(x << 1), rs(ls | 1);
+	if (mid >= lk)
+		change(L, mid, ls, lk, rk);
+	if (mid < rk)
+		change(mid + 1, R, rs, lk, rk);
+	t[x] = t[ls] + t[rs];
+}
+int main()
+{
+	freopen("treeq.in", "r", stdin);
+	freopen("treeq.out", "w", stdout);
+	n = read();
+	for (r i(1); i < n; ++i)
+	{
+		r u(read()), v(read()), w(read());
+		add(u, v, w);
+		add(v, u, w);
+	}
+	dfs(1);
+	for (r i(1); i <= n; ++i)
+		for (r j(head[i]); j; j = edge[j].next)
+		{
+			e[++tot].u = i;
+			e[tot].v = edge[j].to;
+			e[tot].w = edge[j].w;
+			e[tot].id = j >> 1;
+		}
+	std :: sort(e + 1, e + tot + 1, cmp);
+	build(1, n, 1);
+	for (r i(1), j; i <= tot; i = j + 1)
+	{
+		for (j = i; j < tot && e[j + 1].w == e[j].w; ++j);
+		for (r k(i); k <= j; ++k)
+		{
+			r u(e[k].u), v(e[k].v);
+			if (u == fa[v])
+				ans[e[k].id] += t[1] - ask(1, n, 1, dfn[v], dfn[v] + size[v] - 1);
+			else
+				ans[e[k].id] += ask(1, n, 1, dfn[u], dfn[u] + size[u] - 1);
+		}
+		for (r k(i); k <= j; ++k)
+		{
+			r u(e[k].u), v(e[k].v);
+			if (u == fa[v])
+			{
+				change(1, n, 1, 1, dfn[v] - 1);
+				change(1, n, 1, dfn[v] + size[v], n);
+			}
+			else
+				change(1, n, 1, dfn[u], dfn[u] + size[u] - 1);
+		}
+	}
+	for (r i(1); i < n; ++i)
+		res ^= ans[i];
+	printf("%d", res);
+}

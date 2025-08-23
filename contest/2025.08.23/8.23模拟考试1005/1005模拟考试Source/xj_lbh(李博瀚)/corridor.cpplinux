@@ -1,0 +1,130 @@
+//时间nk 渣 
+#include<bits/stdc++.h>
+using namespace std;
+const int N=50005,block=50;
+int read() {
+    int x=0,f=1;
+    char ch=getchar();
+    while(ch<'0' || ch>'9') {
+        if(ch=='-') f=-1;
+        ch=getchar();
+    }
+    while(ch>='0' && ch<='9') {
+        x=(x<<3)+(x<<1)+ch-'0';
+        ch=getchar();
+    }
+    return x*f;
+}
+int n,m,k;
+struct node{
+	int x,y;
+}point[150005];
+bool cmp(node a,node b){
+	if(a.x!=b.x) return a.x<b.x;
+	return a.y<b.y;
+}
+
+int dow(int nx,int ny){
+	int ans=n+1;
+	for(int i=1;i<=k;i++){
+		if(point[i].y==ny&&point[i].x>nx){
+			ans=min(ans,point[i].x);
+		}
+	}
+	return ans;
+}
+int rig(int nx,int ny){
+	int ans=m+1;
+	for(int i=1;i<=k;i++){
+		if(point[i].x==nx&&point[i].y>ny){
+			ans=min(ans,point[i].y);
+		}
+	}
+	return ans;
+}
+
+int Ransx[N][N/block],Ransy[N][N/block];
+int Dansx[N][N/block],Dansy[N][N/block];
+
+int main(){
+//	freopen("ans.in","r",stdin);
+//	freopen("ans.out","w",stdout);
+	int type=read();
+	n=read(),m=read(),k=read();
+	for(int i=1;i<=k;i++){
+		point[i].x=read();
+		point[i].y=read();
+	}
+//	sort(point+1,point+k+1,cmp);
+	int Q=read();
+	while(Q--){
+		int op=read();
+		if(op==1){
+			int x=read(),y=read();
+			point[++k].x=x;
+			point[k].y=y;
+//			for(int i=k;i>=1;i--){
+//				if(cmp({x,y},point[i])){
+//					point[i+1].x=x;
+//					point[i+1].y=y;
+//					break;
+//				}
+//				point[i+1].x=point[i].x;
+//				point[i+1].y=point[i].y;
+//			}
+		}
+		if(op==2){
+			int x=read(),y=read(),q=read();
+			int nx,ny,i=1;
+			bool f,fl=0;
+			if(!x){//down
+				nx=0,ny=y,f=0;
+				int j=min(Dansx[y][0],q/block);
+				if(Dansx[y][0]) i=block*j,nx=Dansx[y][j],ny=Dansy[y][j];
+			}
+			if(!y){//right
+				nx=x,ny=0,f=1;
+				int j=min(Ransx[x][0],q/block);
+				if(Ransx[x][0]) i=block*j,nx=Ransx[x][j],ny=Ransy[x][j];
+			}
+			for(;i<=q;i++){
+//				printf("->%d %d\n",nx,ny);
+				if(!f){
+					nx=dow(nx,ny);
+					if(nx==n+1){
+						printf("%d %d\n",n+1,ny);
+						fl=1;
+						break;
+					}
+				}
+				else if(f){
+					ny=rig(nx,ny);
+					if(ny==m+1){
+						printf("%d %d\n",nx,m+1);
+						fl=1;
+						break;
+					}
+				}
+				f=!f;
+				if((i%block)==0){
+					if(!x){
+						Dansx[y][0]=max(i/block,Dansx[y][0]);
+						Dansx[y][i/block]=nx;
+						Dansy[y][i/block]=ny;
+					}
+					if(!y){
+						Ransx[x][0]=max(i/block,Dansx[x][0]);
+						Ransx[x][i/block]=nx;
+						Ransy[x][i/block]=ny;
+					}			
+				}	
+				
+			}
+			if(fl) continue;
+			printf("%d %d\n",nx,ny);
+		}
+	}
+	
+	return 0;
+	
+}

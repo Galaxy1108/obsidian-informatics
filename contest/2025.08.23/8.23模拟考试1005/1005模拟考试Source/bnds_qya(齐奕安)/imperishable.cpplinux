@@ -1,0 +1,65 @@
+#include <algorithm>
+#include <cstdio>
+#include <cstring>
+using namespace std;
+const int N=2e5+5,mod=998244353;
+int Num,n,a[N],q;
+long long pre[N];
+int maxa(int l,int r){
+	int res=0;
+	for (int i=l;i<=r;i++)
+		res=max(res,a[i]);
+	return res;
+}
+int find(int l,int r){
+	if (l==r)
+		return l;
+	int mid=l+r>>1;
+	if (pre[mid]<maxa(mid+1,r))
+		return find(mid+1,r);
+	else
+		return find(l,mid);
+}
+long long fastpow(int base,int exp){
+	if (exp==0)
+		return 1;
+	else if (exp==1)
+		return base%mod;
+	else{
+		int tmp=fastpow(base,exp/2);
+		if (exp%2==0)
+			return (tmp*tmp)%mod;
+		else
+			return (((tmp*tmp)%mod)*base)%mod;
+	}
+}
+void solve(){
+	int p=find(1,n),ans=0;
+	for (int i=1;i<=p;i++)
+		ans=(ans+fastpow(2,i))%mod;
+	printf("%d\n",ans);
+	return;
+}
+int main(){
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	scanf("%d%d",&Num,&n);
+	for (int i=1;i<=n;i++){
+		scanf("%d",&a[i]);
+		pre[i]=pre[i-1]+1ll*a[i];
+	}
+	solve();
+	scanf("%d",&q);
+	while (q--){
+		int x,y;
+		scanf("%d%d",&x,&y);
+		a[x]=y;
+		memset(pre,0,sizeof(pre));
+		for (int i=1;i<=n;i++)
+			pre[i]=pre[i-1]+1ll*a[i];
+		solve();
+	}
+	fclose(stdin);
+	fclose(stdout);
+	return 0;
+}

@@ -1,0 +1,36 @@
+#include<cstdio>
+#include<algorithm>
+#include<cstring>
+#include<cmath>
+#include<iostream>
+#include<map>
+#include<bitset>
+#include<queue>
+#include<ctime>
+#define ll long long
+#define R register
+#define I inline
+#define N 3005
+#define mo p
+#define F freopen("easyhard.in","r",stdin),freopen("easyhard.out","w",stdout);
+using namespace std;
+int n,m; ll ss,ff,p,ans,f[3][N]; char ch;
+I ll read() { ch=getchar(),ss=0,ff=1;
+	while ((ch<'0'||ch>'9')&&ch!='-') ch=getchar(); if (ch=='-') ff=-1;
+	while (ch<'0'||ch>'9') ch=getchar(); while (ch>='0'&&ch<='9') ss=ss*10+ch-'0',ch=getchar(); return ss*ff;
+}
+I void print(ll Lz) {Lz<0?putchar('-'),Lz=-Lz:Lz=Lz; if (Lz>9) print(Lz/10); putchar(Lz%10+'0');}
+ll fast(ll x,ll y) {ll pp=1; while (y) {if (y%2) pp=pp*x%mo; y/=2,x=(x*x)%mo;} return pp;}
+int main() {
+	F n=(int)read(),m=(int)read(),p=read();
+	if (m<=n) {printf("%lld",fast(4,(ll)m)); return 0;}
+	if (n==1) {printf("%lld",fast(2,(ll)m+1)); return 0;}
+	f[0][n]=1; R int u=0,v=1;
+	for (R int i=1;i<=m;i++) { swap(u,v);
+		for (R int j=0;j<=2*n;j++) { if (!f[v][j]) continue;
+			if (j<2*n) (f[u][j]+=f[v][j])%=mo,(f[u][j+1]+=f[v][j])%=mo;
+			if (j>0) (f[u][j]+=f[v][j])%=mo,(f[u][j-1]+=f[v][j])%=mo; f[v][j]=0;
+		}
+	} 
+	for (R int i=0;i<=2*n;i++) (ans+=f[u][i])%=mo; print(ans); 
+}

@@ -1,0 +1,71 @@
+#include<bits/stdc++.h>
+#define I inline
+#define R register
+#define LL long long
+#define fo(i, a, b) for(R int i = a; i <= b; ++i)
+#define fd(i, a, b) for(R int i = a; i >= b; --i)
+#define fz(i, x) for(R int i = head[x]; i; i = nxt[i])
+using namespace std;
+const int N = 1010, dx[2] = {1, 0}, dy[2] = {0, 1};
+int n, m, type, num, q, k;
+bool bz, b[N][N];
+I int read(){
+	int res = 0, flag = 0; char ch = getchar();
+	for(; !isdigit(ch); ch = getchar()) if(ch == '-') flag = 1;
+	for(; isdigit(ch); ch = getchar()) res = (res << 1) + (res << 3) + (ch ^ 48);
+	if(flag) res = ~res + 1; return res;
+}
+I void dfs(int x, int y, int z, int p){
+	if(bz) return;
+	if(b[x][y]) z ^= 1, p++;
+	if(p == num){
+		printf("%d %d\n",x,y);
+		bz = 1;
+		return;
+	}
+	if(x + dx[z] > n || y + dy[z] > m){
+		printf("%d %d\n",x + dx[z], y + dy[z]);
+		bz = 1;
+		return;
+	}
+	dfs(x + dx[z], y + dy[z], z, p);
+}
+int main(){
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	type = read(), n = read(), m = read(), k = read();
+	fo(i, 1, k){
+		int x = read(), y = read();
+		b[x][y] = 1;
+	}
+	q = read();
+	fo(i, 1, q){
+		int z, opt = read(), x = read(), y = read();
+		if(opt == 1){ b[x][y] = 1; continue; }
+		if(opt == 2){
+			num = read(), bz = 0;
+			if(!x) z = 0;
+			else z = 1;
+			dfs(x, y, z, 0);
+		}
+	}
+}
+/**
+*¡¡¡¡©³©·¡¡¡¡¡¡©³©·+ +
+*¡¡©³©¿©ß©¥©¥©¥©¿©ß©· + +
+*¡¡©§¡¡¡¡¡¡¡¡¡¡¡¡¡¡©§
+*¡¡©§¡¡¡¡¡¡©¥¡¡¡¡¡¡©§ ++ + + +
+*  ¨€¨€¨€¨€©¥¨€¨€¨€¨€+
+*  ¨¨€¨€¨¡¡¨¨€¨€¨ +
+*¡¡©§¡¡¡¡¡¡©ß¡¡¡¡¡¡©§
+*¡¡©§¡¡¡¡¡¡¡¡¡¡¡¡¡¡©§ + +
+*¡¡©»©¥©·¡¡¡¡¡¡©³©¥©¿
+*¡¡¡¡¡¡©§¡¡¡¡¡¡©§ + + + + Code is far away from ¡¡
+*¡¡¡¡¡¡©§¡¡¡¡¡¡©§ + bug with the animal protecting
+*¡¡¡¡¡¡©§¡¡ ¡¡ ©»©¥©¥©¥©· ÉñÊÞ±£ÓÓ,´úÂëÎÞbug¡¡
+*¡¡¡¡¡¡©§              ©Ç©·
+*¡¡¡¡  ©§              ©³©¿
+*¡¡    ©»©·©·©³©¥©×©·©³©¿ + + + +
+*¡¡¡¡¡¡¡¡©§©Ï©Ï¡¡©§©Ï©Ï
+*¡¡¡¡¡¡¡¡©»©ß©¿¡¡©»©ß©¿+ + + +
+*/

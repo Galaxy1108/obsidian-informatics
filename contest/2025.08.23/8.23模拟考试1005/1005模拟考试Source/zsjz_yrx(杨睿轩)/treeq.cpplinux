@@ -1,0 +1,59 @@
+#include<bits/stdc++.h>
+#define LL long long
+using namespace std;
+const LL N=1e7+7;
+int b[N],c[2*N][2],d[N][3],f[N],head[N],nextt[2*N];
+LL n,p,x,y,a[N];
+
+void add(LL x,LL y,LL z)
+{
+	d[y][0]=x;  d[y][1]=z;
+	p++;  c[p][0]=y;  c[p][1]=z;  nextt[p]=head[x];  head[x]=p;
+	p++;  c[p][0]=x;  c[p][1]=z;  nextt[p]=head[y];  head[y]=p;
+}
+
+LL dg1(LL k)
+{
+	LL size=1;
+	b[k]=1;
+	for (LL j=head[k];j;j=nextt[j])
+		if (!b[c[j][0]]) size+=dg1(c[j][0]);
+	b[k]=0;
+	return size;
+}
+
+void dg2(LL k,LL t,LL u)
+{
+	b[k]=1;
+	if (!t) a[k]=max(a[k],u);
+	else y+=(a[k]==u);
+	for (LL j=head[k];j;j=nextt[j])
+		if (!b[c[j][0]]) dg2(c[j][0],t,u);
+	b[k]=0;
+}
+
+int main()
+{
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	scanf("%lld",&n);
+	for (LL i=2;i<=n;i++) scanf("%lld%lld",&x,&y) , add(x,i,y);
+	if (n<=5000)
+	{
+		p=0;
+		for (LL i=2;i<=n;i++)		
+		{
+			b[i]=1;  d[i][2]=x=dg1(d[i][0]);
+			dg2(d[i][0],0,d[i][1]*(n-x));  b[i]=0; 
+			b[d[i][0]]=1;  dg2(i,0,d[i][1]*x);  b[d[i][0]]=0;
+		}
+		for (LL i=2;i<=n;i++)		
+		{
+			x=d[i][2];  y=0;  b[i]=1;
+			dg2(d[i][0],1,d[i][1]*(n-x));  b[i]=0; 
+			b[d[i][0]]=1;  dg2(i,1,d[i][1]*x);  b[d[i][0]]=0;
+			p^=y;
+		}
+		printf("%lld\n",p);
+	}
+}

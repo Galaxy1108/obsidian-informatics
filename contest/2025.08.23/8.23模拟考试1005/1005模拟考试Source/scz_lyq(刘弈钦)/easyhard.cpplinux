@@ -1,0 +1,12 @@
+#include<bits/stdc++.h>
+using namespace std;
+int n,m,p;
+long long f=1;
+int main(){
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	cin>>n>>m>>p;
+	for(int i=1;i<=n+m;i++) f=f*2%p;
+	cout<<f<<endl;
+	return 0;
+}

@@ -1,0 +1,147 @@
+#include<bits/stdc++.h>
+#define mod 998244353
+using namespace std;
+typedef long long int ll;
+const int maxn=2E5+5;
+const int limit=200000;
+int n,a[maxn],P2[maxn];
+inline int read()
+{
+	char ch=getchar();
+	while(!isdigit(ch))ch=getchar();
+	int s=ch-'0';ch=getchar();
+	while(isdigit(ch)){s=s*10+ch-'0';ch=getchar();}
+	return s;
+}
+int G[55];
+inline void write(int x)
+{
+	int g=0;
+	do{G[++g]=x%10;x/=10;}while(x);
+	for(int i=g;i>=1;--i)putchar('0'+G[i]);putchar('\n');
+}
+inline void add(int&x,int y)
+{
+	x=(x+y)%mod;
+}
+inline void init()
+{
+	P2[0]=1;
+	for(int i=1;i<=limit;++i)
+		P2[i]=P2[i-1]*2%mod;
+	P2[0]=0;
+	for(int i=1;i<=limit;++i)
+		P2[i]=(P2[i-1]+P2[i])%mod;
+}
+namespace SEG
+{
+	ll t[maxn*4],tMin[maxn*4];
+	void build(int l,int r,int num) {
+		if(l==r)
+		{
+			tMin[num]=t[num]=a[l];
+			return;
+		}
+		int mid=(l+r)>>1;
+		build(l,mid,num<<1),build(mid+1,r,num<<1|1);
+		t[num]=t[num<<1]+t[num<<1|1];
+		tMin[num]=min(tMin[num<<1],tMin[num<<1|1]);
+	}
+	int ask(int l,int r,ll&k,int num) {
+		if(l==r)
+		{
+			k-=t[num];
+			return l;
+		}
+		int mid=(l+r)>>1;
+		if(t[num<<1]>=k)
+			return ask(l,mid,k,num<<1);
+		k-=t[num<<1];
+		return ask(mid+1,r,k,num<<1|1);
+	}
+	void askS(int R,int l,int r,ll&k,ll&ans,int num) {
+		if(tMin[num]+k>0)
+			return;
+		int mid=(l+r)>>1;
+		if(r<=R)
+		{
+			if(k+t[num]<=0)
+			{
+				k+=t[num];
+				ans-=P2[r]-P2[l-1];
+				return;
+			}
+			if(l==r)
+				return;
+			if(k+t[num<<1|1]<=0)
+			{
+				k+=t[num<<1|1];
+				ans-=P2[r]-P2[mid];
+				askS(R,l,mid,k,ans,num<<1);
+				return;
+			}
+			askS(R,mid+1,r,k,ans,num<<1|1);
+			askS(R,l,mid,k,ans,num<<1);
+			return;
+		}
+		if(R<=mid)
+		{
+			askS(R,l,mid,k,ans,num<<1);
+			return;
+		}
+		askS(R,mid+1,r,k,ans,num<<1|1);
+		askS(R,l,mid,k,ans,num<<1);
+	}
+	void change(int l,int r,int pos,int x,int num)
+	{
+		if(l==r)
+		{
+			t[num]=tMin[num]=x;
+			return;
+		}
+		int mid=(l+r)>>1;
+		if(pos<=mid)
+			change(l,mid,pos,x,num<<1);
+		else
+			change(mid+1,r,pos,x,num<<1|1);
+		t[num]=t[num<<1]+t[num<<1|1];
+		tMin[num]=min(tMin[num<<1],tMin[num<<1|1]);
+	}
+}
+multiset<int,greater<int> >have;
+inline void solve()
+{
+	ll maxV=*have.begin();
+	int pos=SEG::ask(0,n+1,maxV,1);
+	ll ans=P2[pos];
+	SEG::askS(pos,0,n+1,maxV,ans,1);
+	ans=(ans%mod+mod)%mod;
+	write(ans);
+}
+int main()
+{
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	ios::sync_with_stdio(false);
+	init();
+	int useless=read();
+	n=read();
+	for(int i=1;i<=n;++i)
+	{
+		a[i]=read();
+		have.insert(a[i]);
+	}
+	SEG::build(0,n+1,1);
+	solve();
+	int q=read();
+	while(q--)
+	{
+		int x=read(),y=read();
+		have.erase(have.find(a[x]));
+		a[x]=y;
+		have.insert(a[x]);
+		SEG::change(0,n+1,x,y,1);
+		solve();
+	}
+	return 0;
+}

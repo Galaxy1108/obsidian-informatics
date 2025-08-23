@@ -1,0 +1,79 @@
+#include <cstdio>
+#include <iostream>
+#define ll long long
+using namespace std;
+const ll P = 998244353;
+const int N = 2e5 + 5;
+int n;
+int mx[N << 2], s[N], a[N];
+ll pw[N], sum[N];
+template <typename T> inline void read(T &ss) {
+	ss = 0;
+	char ch = getchar();
+	for (; !isdigit(ch); ch = getchar());
+	for (; isdigit(ch); ch = getchar()) ss = (ss << 1) + (ss << 3) + (ch ^ 48);
+}
+void change(int x, int l, int r, int p, int v) {
+	if (l == r) {
+		mx[x] = v;
+		sum[x] = v;
+		return;
+	}
+	int mid = (l + r) >> 1;
+	if (p <= mid) change(x << 1, l, mid, p, v);
+	else change(x << 1 | 1, mid + 1, r, p, v);
+	mx[x] = max(mx[x << 1], mx[x << 1 | 1]);
+	sum[x] = sum[x << 1] + sum[x << 1 | 1];
+}
+int query(int x, int l, int r, int st, int en) {
+	if (st > en) return 0;
+	if (l == st && r == en) return mx[x];
+	int mid = (l + r) >> 1;
+	if (en <= mid) return query(x << 1, l, mid, st, en);
+	else if (st > mid) return query(x << 1 | 1, mid + 1, r, st, en);
+	else return max(query(x << 1, l, mid, st, mid), query(x << 1 | 1, mid + 1, r, mid + 1, en));
+}
+ll get(int x, int l, int r, int p) {
+	if (l == r) return sum[x];
+	int mid = (l + r) >> 1;
+	if (p <= mid) return get(x << 1, l, mid, p);
+	else return sum[x << 1] + get(x << 1 | 1, mid + 1, r, p); 
+}
+ll solve() {
+	ll res = 0;
+	int x = n, M = 0;
+	while (x > 0) {
+		int l = 1, r = x, s = 0, t = 0;
+		while (l <= r) {
+			int mid = (l + r) >> 1;
+			ll f = get(1, 1, n, mid), g = max(M, query(1, 1, n, mid + 1, x));
+			if (f >= g) r = mid - 1, s = mid, t = g;
+			else l = mid + 1;
+		}
+		M = max(0, t - a[s]);
+		res = (res + pw[s]) % P;
+		x = s - 1;
+	}
+	return res;
+}
+int main() {
+	freopen("imperishable.in", "r", stdin);
+	freopen("imperishable.out", "w", stdout);
+	int _;
+	read(_);
+	read(n);
+	pw[0] = 1;
+	for (int i = 1; i <= n; ++i) pw[i] = pw[i - 1] * 2ll % P; 
+	for (int i = 1; i <= n; ++i)
+		read(a[i]), change(1, 1, n, i, a[i]);
+	printf("%lld\n", solve());
+	int Q;
+	read(Q);
+	while (Q--) {
+		int x, y;
+		read(x); read(y);
+		change(1, 1, n, x, a[x] = y);
+		printf("%lld\n", solve());
+	}
+	return 0;
+}

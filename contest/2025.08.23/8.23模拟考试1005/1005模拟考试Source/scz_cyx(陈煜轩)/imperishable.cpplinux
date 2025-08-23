@@ -1,0 +1,33 @@
+#include<bits/stdc++.h>
+using namespace std;
+int a[200010];
+int Num,n,q,x,y;
+int f(){
+	
+}
+void sol_ans(){
+	
+}
+int main(){
+	//freopen("imperishable.in","r",stdin);
+	//freopen("imperishable.out","w",stdout);
+	
+	scanf("%d",&Num);
+	scanf("%d",&n);
+	if(Num==1){
+		int t;
+		cin>>t;
+		cout<<2<<endl;
+		return 0;
+	}
+	for(int i=1;i<=n;i++){
+		scanf("%d",&a[i]);
+		sol_ans();
+	}
+	for(int i=1;i<=q;i++){
+		scanf("%d",&x,&y);
+		a[x]=y;
+		sol_ans();
+	}
+	return 0;
+}

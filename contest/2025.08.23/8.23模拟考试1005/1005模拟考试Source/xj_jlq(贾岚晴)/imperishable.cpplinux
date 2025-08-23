@@ -1,0 +1,39 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long
+inline ll read(){
+	ll x=0,f=1;char ch=getchar();
+	while(ch<'0'||ch>'9'){if(ch=='-')f=-1;ch=getchar();}
+	while(ch>='0'&&ch<='9')x=(x<<3)+(x<<1)+ch-'0',ch=getchar();
+	return x*f;
+}
+const ll N=5010,mod=998244353;
+ll n,q,a[N],p,s[N],ans,v[N],val,S;
+int main(){
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	n=read(),n=read();
+	for(ll i=1;i<=n;i++)
+		a[i]=read(),s[i]=s[i-1]+a[i];
+	for(ll i=1,x=0;i<=n;i++)if(a[i]>x)x=a[i],p=i;
+	S=s[p],val=2;
+	for(ll i=p;i;i--)
+		if(S-a[i]>=a[p])v[i]=1,S-=a[i];
+	for(ll i=1;i<=p;i++,val=val*2%mod)
+		if(!v[i])ans=(ans+val)%mod;
+	q=read(),printf("%lld\n",ans);
+	for(ll t=1,x,y;t<=q;t++){
+		x=read(),y=read(),a[x]=y,p=0;
+		memset(s,0,sizeof(s)),memset(v,0,sizeof(v));
+		for(ll i=1;i<=n;i++)s[i]=s[i-1]+a[i];
+		for(ll i=1,x=0;i<=n;i++)
+			if(a[i]>x)x=a[i],p=i;
+		S=s[p],val=2,ans=0;
+		for(ll i=p;i;i--)
+			if(S-a[i]>=a[p])v[i]=1,S-=a[i];
+		for(ll i=1;i<=p;i++,val=val*2%mod)
+			if(!v[i])ans=(ans+val)%mod;
+		printf("%lld\n",ans);
+	}
+	return 0;
+}

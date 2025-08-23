@@ -1,0 +1,101 @@
+#include <bits/stdc++.h>
+using namespace std;
+const int N = 1e7+5;
+int n;
+struct Node {
+	long long val;
+	int id;
+	bool operator < (const Node &o) const {
+		return o.val < val;
+	}
+};
+multiset <Node> s;
+multiset<Node>::iterator it, tmp;
+struct edge {
+	int to, nxt, id;
+	long long val;
+}e[N<<1];
+int head[N] = {0}, ind = 0;
+void add (int u, int v, long long w, int x) {
+	e[++ind].to = v;
+	e[ind].val = w;
+	e[ind].id = x;
+	e[ind].nxt = head[u];
+	head[u] = ind;
+}
+int sz[N], fa[N];
+void dfs1 (int x, int par) {
+	sz[x] = 1;
+	fa[x] = par;
+	for (int i = head[x]; i; i = e[i].nxt) {
+		if (e[i].to == par)
+			continue;
+		dfs1(e[i].to, x);
+		sz[x] += sz[e[i].to];
+	}
+	return;
+}
+int ans[N] = {0};
+//long long mp[N];
+void dfs2 (int x) {
+	/*printf("%d\n", x);
+	for (it = s.begin(); it != s.end(); it++) {
+		printf("%d %d\n", it->id, it->val);
+	}*/
+	tmp = s.begin();
+	it = tmp++;
+	while (tmp->val == it->val) {
+		ans[it->id]++;
+		it = tmp;
+		tmp++;
+	}
+	ans[it->id]++;
+	for (int i = head[x]; i; i = e[i].nxt) {
+		if (e[i].to == fa[x])
+			continue;
+		int y = e[i].to;
+		s.erase(s.find((Node){sz[y] * e[i].val, e[i].id}));
+		s.insert((Node){(n - sz[y]) * e[i].val, e[i].id});
+		dfs2(y);
+		s.erase(s.find((Node){(n - sz[y]) * e[i].val, e[i].id}));
+		s.insert((Node){sz[y] * e[i].val, e[i].id});
+	}
+	return;
+}
+inline long long read () {
+	long long res = 0;
+	char c = getchar();
+	while (c < '0' || c > '9') c = getchar();
+	while (c >= '0' && c <= '9') {
+		res = res * 10 + c - '0';
+		c = getchar();
+	}
+	return res;
+}
+int main () {
+	freopen("treeq.in", "r", stdin);
+	freopen("treeq.out", "w", stdout);
+	n = read();
+	for (int i = 1; i < n; i++) {
+		int u = read(), v = i + 1;
+		long long w = read();
+		//scanf("%d%lld", &u, &w);
+		add(u, v, w, i);
+		add(v, u, w, i);
+	}
+	dfs1(1, 0);
+	for (int i = 1; i < n; i++) {
+		int u = e[i<<1].to, v = e[i*2-1].to;
+		if (fa[u] == v)
+			swap(u, v);
+		s.insert((Node){sz[v] * e[i<<1].val, i});
+		//mp[i] = sz[v] * e[i].val;
+	}
+	dfs2(1);
+	int Ans = 0;
+	for (int i = 1; i < n; i++) {
+		Ans ^= ans[i];
+	}
+	printf("%d\n", Ans);
+	return 0;
+}

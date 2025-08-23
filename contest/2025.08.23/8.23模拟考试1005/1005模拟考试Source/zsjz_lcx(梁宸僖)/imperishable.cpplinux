@@ -1,0 +1,16 @@
+#include<cstdio>
+using namespace std;
+int num,n,a[200010],q;
+int main()
+{
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	scanf("%d",&num);
+	scanf("%d",&n);
+	for (int i=1;i<=n;i++)
+		scanf("%d",&a[i]);
+	scanf("%d",&q);
+	if (!a[1]) puts("0");
+	else puts("2");
+	return 0;
+}

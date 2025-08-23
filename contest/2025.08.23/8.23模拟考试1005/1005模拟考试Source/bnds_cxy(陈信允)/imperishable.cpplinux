@@ -1,0 +1,33 @@
+#include<stdio.h>
+const int p=998244353;
+int a[200001],b[200001],f[200001],tr[800001];long long s;
+inline int sum(int a,int b){return p-a>b?a+b:b-(p-a);}
+inline int max(int x,int y){return a[x]>a[y]?x:y;}
+void init(int x,int l,int r){
+	if(l==r)return (void)(tr[x]=l);
+	int mid=l+r>>1;
+	init(x<<1,l,mid),init(x<<1|1,mid+1,r),tr[x]=max(tr[x<<1],tr[x<<1|1]);
+}
+void change(int x,int y,int l,int r){
+	if(l==r)return (void)(tr[x]=l);
+	int mid=l+r>>1;
+	if(y<=mid)change(x<<1,y,l,mid);
+	else change(x<<1|1,y,mid+1,r);
+	tr[x]=max(tr[x<<1],tr[x<<1|1]);
+}
+int last[200001];
+int work(){
+	return f[tr[1]];
+}
+int main(){
+	FILE *in=fopen("impershable.in","r"),*out=fopen("impershable","w");
+	int n;
+	fscanf(in,"%*d%d",&n);
+	f[0]=1;
+	for(int i=1;i<=n;++i)fscanf(in,"%d",a+i),s+=a[i],f[i]=sum(f[i-1],f[i-1]);
+	init(1,1,n);
+	fprintf(out,"%d\n",work());
+	int q,x;
+	for(;q--;fprintf(out,"%d",work()))fscanf(in,"%d",&x),s-=a[x],fscanf(in,"%d",a+x),s+=a[x],change(1,x,1,n);
+	return 0;
+}

@@ -1,0 +1,76 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+int n;
+int u,w;
+int size[10000010];
+vector<int>son[10000010],len[10000010];
+int dp[10000010];
+long long val[10000010];
+int ans[10000010];
+void dfs(int now,int fa)
+{
+	size[now]=1;
+	for(int i=0;i<son[now].size();++i) if(son[now][i]!=fa)
+	{
+		dfs(son[now][i],now);
+		size[now]+=size[son[now][i]];
+		long long tmp=1ll*len[now][i]*size[son[now][i]];
+		if(tmp>val[son[now][i]] && tmp>val[now])
+			val[now]=tmp,dp[now]=son[now][i];
+		else if(val[son[now][i]]>=val[now])
+			val[now]=val[son[now][i]],dp[now]=dp[son[now][i]];
+	}
+}
+void AC(int now,int fa,int wei)
+{
+	long long temp=val[now];
+	if(1ll*wei*(size[1]-size[now])>val[now])
+		dp[now]=now,val[now]=1ll*wei*(size[1]-size[now]);
+	if(dp[fa]!=now)
+	{
+		if(val[fa]>val[now]) dp[now]=dp[fa],val[now]=val[fa];
+		if(val[fa]==val[now]) ++ans[dp[fa]];
+	}
+	if(val[now]==temp && 1ll*wei*(size[1]-size[now])==temp)
+		++ans[dp[now]];
+	
+	for(int i=0;i<son[now].size();++i) if(son[now][i]!=fa)
+	{
+		if(dp[now]!=son[now][i] && 1ll*len[now][i]*size[son[now][i]]==val[now]) ++ans[son[now][i]];
+		AC(son[now][i],now,len[now][i]);
+	}
+}
+int read()
+{
+	int s=0;
+	char ch=getchar();
+	while(!isdigit(ch)) ch=getchar();
+	while(isdigit(ch))
+	{
+		s=(s<<3)+(s<<1)+(ch^48);
+		ch=getchar();
+	}
+	return s;
+}
+int main()
+{
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	n=read();
+	for(int i=2;i<=n;++i)
+	{
+		u=read();
+		w=read();
+		son[i].push_back(u);
+		son[u].push_back(i);
+		len[i].push_back(w);
+		len[u].push_back(w);
+	}
+	dfs(1,0);
+	AC(1,0,0);
+	for(int i=1;i<=n;++i) ++ans[dp[i]];
+	for(int i=1;i<=n;++i) ans[0]^=ans[i];
+	cout<<ans[0];
+	return 0;
+}

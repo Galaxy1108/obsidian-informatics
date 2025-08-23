@@ -1,0 +1,111 @@
+#include<iostream>
+#include<set>
+#include<unordered_map>
+using namespace std;
+int type,n,m,k,q,fa[300010],num=0;
+set<int> s1[50010],s2[50010];
+pair<int,int> a[150010];
+unordered_map<long long,int> id;
+inline long long ID(int x,int y)
+{
+	return (x-1)*m+y;
+}
+inline void insert(int x,int y)
+{
+	a[++num]=make_pair(x,y);
+	s1[x].insert(y);
+	auto it=s1[x].lower_bound(y);
+	if(it!=s1[x].begin())
+	{
+		auto IT=--it;
+		fa[id[ID(x,*IT)]]=num+150000;
+	}
+	++it;
+	if(it!=s1[x].end())
+	{
+		fa[num]=id[ID(x,*it)]+150000;
+	}
+	s2[y].insert(x);
+	it=s2[y].lower_bound(x);
+	if(it!=s2[y].begin())
+	{
+		auto IT=--it;
+		fa[id[ID(*IT,y)]+150000]=num;
+	}
+	++it;
+	if(it!=s2[y].end())
+	{
+		fa[num+150000]=id[ID(*it,y)];
+	}
+	id[ID(x,y)]=num;
+}
+int main()
+{
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	ios::sync_with_stdio(false);
+	cin>>type>>n>>m>>k;
+	while(k--)
+	{
+		int x,y;
+		cin>>x>>y;
+		insert(x,y);
+	}
+	cin>>q;
+	while(q--)
+	{
+		int op,x,y;
+		cin>>op>>x>>y;
+		if(op==1)
+		{
+			insert(x,y);
+		}
+		else
+		{
+			int q;
+			cin>>q;
+			int now;
+			if(x)
+			{
+				if(!s1[x].size())
+				{
+					cout<<x<<" "<<m+1<<endl;
+					continue;
+				}
+				now=id[ID(x,*s1[x].begin())]+150000;
+			}
+			else
+			{
+				if(!s2[y].size())
+				{
+					cout<<n+1<<" "<<y<<endl; 
+					continue;
+				}
+				now=id[ID(*s2[y].begin(),y)];
+			}
+			while(--q)
+			{
+				if(!fa[now])
+				{
+					if(now>150000)
+					{
+						cout<<n+1<<" "<<a[now-150000].second<<endl;
+					}
+					else
+					{
+						cout<<a[now].first<<" "<<m+1<<endl;
+					}
+					now=0;
+					break;
+				}
+				now=fa[now];
+			}
+			if(now)
+			{ 
+				now=now>150000?now-150000:now;
+				cout<<a[now].first<<" "<<a[now].second<<endl;
+			}
+		}
+	}
+	return 0;
+}

@@ -1,0 +1,80 @@
+#include<bits/stdc++.h>
+#define ll long long
+using namespace std;
+const int maxn = 2e5 + 5;
+const ll mod = 998244353;
+ll n, a[maxn], ans;
+priority_queue<ll> shan, p;
+ll qpow(ll a, ll n){
+    ll ans = 1;
+    while(n){
+        if(n&1) ans *= a, ans %= mod;
+        a *= a;       
+		a %= mod;
+        n >>= 1;
+    }
+    return ans;
+}
+void solve()
+{
+	ans = 0;
+	ll he = 0, maxx = 0, biao;
+	for(int i = 1;i <= n;i ++) if(maxx < a[i]) maxx = a[i], biao = i;
+	for(int i = 1;i <= n;i ++)
+	{
+		if(biao == i) biao ++;
+		he += a[i];
+		ans += qpow(2, i);
+		ans %= mod;
+		if(he > maxx)
+		{
+			while(biao <= n && he > a[biao]) biao ++;
+			if(biao != n + 1) 
+			{
+				maxx = a[biao];
+				break;
+			}
+			for(int j = i;j >= 1;j --)
+			{
+				if(he - a[j] >= maxx)
+				{
+					ans -= qpow(2, j);
+					while(ans < 0) ans += mod;
+					he -= a[j];
+				}
+			}
+			break;
+		}
+	}
+	printf("%lld\n", ans);
+}
+int main()
+{
+	freopen("imperishable.in", "r", stdin);
+	freopen("imperishable.out", "w", stdout);
+	int t;
+	scanf("%d", &t);
+	scanf("%lld", &n);
+	for(int i = 1;i <= n;i ++) scanf("%lld", &a[i]);
+	solve();
+	int q;
+	ll u, v;
+	scanf("%d", &q);
+	// cout << "%%%%%" << q << endl;
+	// return 0;
+	for(int yeshouxianbei = 1;yeshouxianbei <= q;yeshouxianbei ++)
+	{
+		scanf("%lld%lld", &u, &v);
+		a[u] = v;
+		// cout << u << ' ' << v << endl;
+		// cout << "%%%%%%%%\n";
+		// return 0;
+		solve();
+	}
+}
+/*
+再交一遍只有一件事
+我开摆了
+第一题是贺的
+就这样
+*/

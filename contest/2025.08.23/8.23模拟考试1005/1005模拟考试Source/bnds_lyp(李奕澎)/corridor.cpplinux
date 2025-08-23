@@ -1,0 +1,61 @@
+#include <cstdio>
+using namespace std;
+int typ,n,m,k,Q;
+bool vis[105][105];
+inline void dfs(int x,int y,int dir,int s)
+{
+	if (x == n + 1 || y == m + 1 || s == 0)
+		printf("%d %d\n",x,y);
+	else
+	{
+		if (dir == 1)
+		{
+			if (vis[x + 1][y] == false)
+				dfs(x + 1,y,1,s);
+			else
+				dfs(x + 1,y,0,s - 1);
+		}
+		else
+		{
+			if (vis[x][y + 1] == false)
+				dfs(x,y + 1,0,s);
+			else
+				dfs(x,y + 1,1,s - 1);
+		}
+	}
+	return;
+}
+int main()
+{
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	scanf("%d%d%d%d",&typ,&n,&m,&k);
+	for (int i = 1;i <= k;i++)
+	{
+		int x,y;
+		scanf("%d%d",&x,&y);
+		vis[x][y] = true;
+	}
+	scanf("%d",&Q);
+	while (Q--)
+	{
+		int op;
+		scanf("%d",&op);
+		if (op == 1)
+		{
+			int x,y;
+			scanf("%d%d",&x,&y);
+			vis[x][y] = true;
+		}
+		else
+		{
+			int x,y,z;
+			scanf("%d%d%d",&x,&y,&z);
+			if (x == 0)
+				dfs(1,y,1,z);
+			else
+				dfs(x,1,0,z);
+		}
+	}
+	return 0;
+}

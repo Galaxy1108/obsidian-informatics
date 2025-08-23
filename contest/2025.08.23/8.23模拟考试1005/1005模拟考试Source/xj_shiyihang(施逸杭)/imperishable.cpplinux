@@ -1,0 +1,141 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define ull unsigned long long
+#define l(x) x<<1
+#define r(x) x<<1|1
+const ll SIZE = 200005;
+const ll mod = 998244353;
+ll n, T;
+ll a[SIZE];
+ll lasid, lasans;
+
+inline ll rd(){
+	ll f = 1, x = 0;
+	char ch = getchar();
+	while(ch < '0' || ch > '9'){
+		if(ch == '-') f = -1;
+		ch = getchar();
+	}
+	while(ch >= '0' && ch <= '9'){
+		x = (x << 1) + (x << 3) + (ch ^ 48);
+		ch = getchar();
+	}
+	return f*x;
+}
+
+ll power(ll x, ll y){
+	ll jl = 1;
+	while(y){
+		if(y & 1) jl = (jl * x) % mod;
+		x = (x * x) % mod;
+		y >>= 1;
+	}	
+	return jl;
+}
+
+struct Tree{
+	ll l, r;
+	ll Max, id;
+	ll sum;
+}t[SIZE<<2];
+
+void pushup(ll p){
+	if(t[l(p)].Max >= t[r(p)].Max){
+		t[p].Max = t[l(p)].Max;		
+		t[p].id = t[l(p)].id;
+	}
+	else{
+		t[p].Max = t[r(p)].Max;		
+		t[p].id = t[r(p)].id;
+	}
+	t[p].sum = t[l(p)].sum + t[r(p)].sum;
+}
+
+void Build(ll p, ll l, ll r){
+	t[p].l = l, t[p].r = r;
+	if(l == r){
+		t[p].Max = t[p].sum = a[l];
+		t[p].id = l;
+		return;
+	}	
+	ll mid = (l + r) >> 1;
+	Build(l(p), l, mid);
+	Build(r(p), mid+1, r);
+	pushup(p);
+}
+
+void change(ll p, ll x, ll val){
+	if(t[p].l == t[p].r){
+		t[p].Max = t[p].sum = val;
+		return;
+	}
+	ll mid = (t[p].l + t[p].r) >> 1;
+	if(x <= mid) change(l(p), x, val);
+	else change(r(p), x, val);
+	pushup(p);
+}
+
+ll ask_max(ll p, ll l, ll r){
+	if(l <= t[p].l && r >= t[p].r){
+		return t[p].id;
+	}
+	ll mid = (t[p].l + t[p].r) >> 1, jl1 = 0, jl2 = 0;
+	if(l <= mid) jl1 = ask_max(l(p), l, r);
+	if(r > mid) jl2 = ask_max(r(p), l, r);
+	if(!jl1 || !jl2) return jl1 + jl2;
+	if(a[jl1] >= a[jl2]) return jl1;
+	else return jl2;
+}
+
+ll ask_sum(ll p, ll l, ll r){
+	if(l <= t[p].l && r >= t[p].r){
+		return t[p].sum;
+	}
+	ll mid = (t[p].l + t[p].r) >> 1, jl = 0;
+	if(l <= mid) jl = jl + ask_sum(l(p), l, r);
+	if(r > mid) jl = jl + ask_sum(r(p), l, r);
+	return jl;
+}
+
+void solve(ll val){
+	ll z = ask_max(1, 1, n) - 1; lasid = z+1;
+	if(z+1 > lasid && val){
+		printf("%lld\n", lasans);
+		return;
+	}
+	ll cnt = ask_sum(1, 1, z);
+	if(cnt < a[z+1]){
+		lasans = power(2, z+1);
+		printf("%lld\n", lasans);
+		return;
+	}
+	ll ans = 0;
+	for(ll i = z; i >= 1; i--){
+		if(cnt - a[i] >= a[z+1]) cnt -= a[i];
+		else ans = (ans + power(2, i)) % mod;
+	}
+	lasans = ans;
+	printf("%lld\n", ans);
+}
+
+int main(){
+	freopen("imperishable.in", "r", stdin);
+	freopen("imperishable.out", "w", stdout);
+	rd();
+	n = rd();
+	for(ll i = 1; i <= n; i++) a[i] = rd();
+	Build(1, 1, n);
+	T = rd();
+	lasid = (1ll<<60);
+	solve(0);
+	while(T--){
+		ll x = rd(), val = rd(); ll jjl = 0;
+		if(val <= a[x]) jjl = 1;
+		change(1, x, val); a[x] = val;
+		solve(jjl);
+	}
+	return 0;
+}
+
+

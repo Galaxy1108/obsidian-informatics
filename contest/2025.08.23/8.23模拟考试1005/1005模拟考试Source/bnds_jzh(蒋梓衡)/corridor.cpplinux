@@ -1,0 +1,107 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+void setio(string s) {
+	freopen((s + ".in").c_str(), "r", stdin);
+	freopen((s + ".out").c_str(), "w", stdout);
+	cin.tie(0)->sync_with_stdio(0), cout.tie(0);
+#ifdef LOCAL
+	atexit([](){ system("grep VmPeak /proc/$PPID/status > /dev/tty"); });
+#endif
+}
+
+#define F(i, a, b) for (int i = (a), i##end = (b); i <= i##end; i++)
+#define R(i, a, b) for (int i = (a), i##end = (b); i >= i##end; i--)
+#define edge(i, u, x) for (int i = head[x], u = e[i].v; i; u = e[i = e[i].nxt].v)
+#define mp make_pair
+#define fi first
+#define ins emplace
+#define se second
+
+mt19937 rng(4399);
+const int N = 400100;
+pair<int, int> p[N];
+int lc[N], rc[N], sz[N], w[N], fa[N], tot;
+void up(int x) {
+	fa[lc[x]] = fa[rc[x]] = x;
+	sz[x] = sz[lc[x]] + sz[rc[x]] + 1;
+}
+int split(int &y) {
+	int x = lc[y], w = fa[y];
+	lc[y] = fa[y] = 0, up(y);
+	for(; w; y = w, w = fa[w]) {
+		if (y == rc[w])
+			lc[w] = y, up(w), y = w;
+		else
+			rc[w] = x, up(w), x = w;
+	}
+	fa[x] = fa[y] = 0;
+	return x;
+}
+int merge(int x, int y) {
+	if (!x || !y) return x | y;
+	if (w[x] < w[y])
+		return rc[x] = merge(rc[x], y), up(x), fa[x] = 0, x;
+	else
+		return lc[y] = merge(x, lc[y]), up(y), fa[y] = 0, y;
+}
+void split(int t, int k, int &x, int &y) {
+	if (!t) { x = y = 0; return; }
+	int rk = sz[lc[t]] + 1;
+	if (rk <= k)
+		x = t, split(rc[x], k - rk, rc[x], y), up(x), fa[x] = 0;
+	else
+		y = t, split(lc[y], k, x, lc[y]), up(y), fa[y] = 0;
+}
+int alloc(int x, int y) {
+	int q = ++tot;
+	p[q] = {x, y}, sz[q] = 1, w[q] = rng(), fa[q] = lc[q] = rc[q] = 0;
+	return q;
+}
+
+int type, n, m, k, q;
+map<int, int> row[N], col[N];
+void ins(int x, int y) {
+	if (row[x].find(y) != row[x].end()) return;
+	auto p = row[x].lower_bound(y);
+	auto q = col[y].lower_bound(x);
+	int a = split(p->se), b = split(q->se), c = alloc(x, y), d = alloc(x, y);
+	a = merge(a, c), b = merge(b, d);
+	int u = q->se, v = p->se;
+	while (fa[u]) u = fa[u];
+	while (fa[v]) v = fa[v];
+	merge(a, u), merge(b, v);
+	row[x].ins(y, c), col[y].ins(x, d);
+}
+void qry(int x, int k) {
+	while (k) {
+		int rk = sz[lc[x]] + 1;
+		if (k > rk) {
+			if (!rc[x]) break;
+			k -= rk, x = rc[x];
+		} else if (k < rk) {
+			x = lc[x];
+		} else {
+			break;
+		}
+	}
+	cout << p[x].fi << " " << p[x].se << endl;
+}
+
+int main() {
+	setio("corridor");
+	cin >> type >> n >> m >> k;
+	F(i, 1, n) row[i].ins(m + 1, alloc(i, m + 1));
+	F(i, 1, m) col[i].ins(n + 1, alloc(n + 1, i));
+	F(i, 1, k) { int x, y; cin >> x >> y; ins(x, y); }
+	cin >> q;
+	F(i, 1, q) {
+		int op, x, y, k;
+		cin >> op >> x >> y;
+		if (op == 1) { ins(x, y); continue; }
+		cin >> k;
+		int p = begin(y ? col[y] : row[x])->se;
+		while (fa[p]) p = fa[p];
+		qry(p, k);
+	}
+}

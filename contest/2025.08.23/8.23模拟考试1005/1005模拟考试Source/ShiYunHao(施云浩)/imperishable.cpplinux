@@ -1,0 +1,45 @@
+
+
+#include <bits/stdc++.h>
+#define int long long
+using namespace std;
+const int mod = 998244353;
+int num, n, q, a[50050];
+map<int, int> ma;
+
+int qp(int u, int v){
+	int mul = 1;
+	while(v){
+		if(v & 1) mul = u * mul % mod;
+		u = u * u % mod;
+		v >>= 1;
+	}
+	return mul;
+}
+
+signed main (){
+	freopen("imperishable.in", "r", stdin);
+	freopen("imperishable.out", "w", stdout);
+	cin >> num;
+	cin >> n;
+	for(int i = 1; i <= n; i++){
+		cin >> a[i];
+		ma[a[i]] = i;
+	}
+	map<int, int>::iterator it;
+	it = ma.end();
+	it--;
+	cout << qp(2, (*it).second) << endl;
+	cin >> q;
+	int x = 0, y = 0;
+	for(int i = 1; i <= q; i++){
+		cin >> x >> y;
+		ma.erase(ma.find(a[x]));
+		ma[y] = x;
+		it = ma.end();
+		it--;
+		cout << qp(2, (*it).second) << endl;
+	}
+	
+	return 0;
+}

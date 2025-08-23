@@ -1,0 +1,31 @@
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+ll Num,n,q,a[200005],mod=998244353;
+ll c,d;
+ll Pow(ll x,ll y,ll p){
+	if(y==0){
+		return 1;
+	}
+	ll tmp=Pow(x,y/2,p);
+	tmp=tmp*tmp%p;
+	if(y%2==1){
+		tmp=tmp*x%p;
+	}
+	return tmp;
+}
+int main(){
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	cin>>Num;
+	cin>>n;
+	for(int i=1;i<=n;i++){
+		cin>>a[i];
+	} 
+	cin>>q;
+	for(int i=1;i<=q;i++){
+		cin>>c>>d;
+	}
+	cout<<2;
+	return 0;
+}

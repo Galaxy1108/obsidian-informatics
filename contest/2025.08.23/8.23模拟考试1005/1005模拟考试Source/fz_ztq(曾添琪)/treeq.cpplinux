@@ -1,0 +1,107 @@
+#include <bits/stdc++.h>
+#define FOR(i,j,k) for(int i=j; i<=k; ++i)
+#define ROF(i,j,k) for(int i=j; i>=k; --i)
+namespace FastIO {
+  char buf[1<<21], *p1=buf, *p2=buf;
+  inline int getch (void) {
+    return p1==p2&&(p2=(p1=buf)+fread(buf,1,1<<21,stdin),p1==p2)?EOF:*p1++;
+  }
+  inline int read (void) {
+    int x = 0, f = 1, ch = getch();
+    while(!isdigit(ch)) { if(ch == '-') f = -f; ch = getch(); }
+    while(isdigit(ch)) { x = x * 10 + ch - '0'; ch = getch(); }
+    return x * f;
+  }
+}
+using FastIO::read;
+const int maxn = 1000005;
+int tot_edge, head[maxn], to[maxn], link[maxn];
+inline void add_edge (int x, int y) {
+  to[++tot_edge] = y;
+  link[tot_edge] = head[x];
+  head[x] = tot_edge;
+}
+using ll = long long;
+struct Heap {
+  int t; std::pair <ll, int> a[maxn<<1];
+  inline std::pair <ll, int> top (void) { return a[1]; }
+  inline bool empty (void) { return t == 0; }
+  inline void push (std::pair <ll, int> v) {
+    a[++ t] = v; int n = t;
+    while(n > 1 && a[n] > a[n >> 1])
+    { std::swap (a[n], a[n >> 1]); n >>= 1; }
+  }
+  inline void pop (void) {
+    a[1] = a[t --]; int n = 1, p;
+    while(n << 1 <= t) {
+      p = n << 1;
+      if((p|1) <= t && a[p|1] > a[p]) p |= 1;
+      if(a[p] <= a[n]) break;
+      std::swap (a[n], a[p]); n = p;
+    }
+  }
+} h;
+struct Sgt {
+  #define maxm 2097152
+  #define mid (l + r >> 1)
+  int t[maxm];
+  void build (int l, int r, int k=1) {
+    t[k] = r - l + 1;
+    if(l == r) return ;
+    build (l, mid, k<<1);
+    build (mid+1, r, k<<1|1);
+  }
+  void modify (int l, int r, int ql, int qr, int k=1) {
+    if((ql <= l && r <= qr) || !t[k]) {
+      t[k] = 0; return ;
+    }
+    if(ql <= mid) modify (l, mid, ql, qr, k<<1);
+    if(mid < qr) modify (mid+1, r, ql, qr, k<<1|1);
+    t[k] = t[k<<1] + t[k<<1|1];
+  }
+  int query (int l, int r, int ql, int qr, int k=1) {
+    if((ql <= l && r <= qr) || !t[k]) return t[k];
+    if(ql <= mid)
+      if(mid < qr) return query (l, mid, ql, qr, k<<1) + query (mid+1, r, ql, qr, k<<1|1);
+      else return query (l, mid, ql, qr, k<<1);
+    else return query (mid+1, r, ql, qr, k<<1|1);
+  }
+  #undef maxm
+  #undef mid
+} s;
+int fa[maxn], w[maxn], id[maxn], sz[maxn], top, sta[maxn<<1], tot_dfs, ans[maxn];
+int main (void) {
+  freopen("treeq.in", "r", stdin);
+  freopen("treeq.out", "w", stdout);
+  int n = read();
+  FOR(i,2,n) fa[i] = read(), w[i] = read();
+  ROF(i,n,1) add_edge (fa[i], i), sz[fa[i]] += ++ sz[i];
+  sta[top = 1] = 1; int x;
+  while(top) {
+    id[x = sta[top --]] = ++ tot_dfs;
+    for(int now=head[x]; now; now=link[now])
+      sta[++ top] = to[now];
+  }
+  FOR(i,2,n) {
+    h.push(std::make_pair (1ll * w[i] * sz[i], i));
+    h.push(std::make_pair (1ll * w[i] * (n - sz[i]), -i));
+  }
+  s.build (1, n);
+  while(!h.empty() && s.query(1, n, 1, n)) {
+    ll val = h.top().first; sta[top = 1] = h.top().second; h.pop();
+    while(!h.empty() && h.top().first == val)
+    { sta[++ top] = h.top().second; h.pop(); }
+    FOR(i,1,top)
+      if(sta[i] > 0) ans[sta[i]] += s.query (1, n, 1, n) - s.query (1, n, id[sta[i]], id[sta[i]]+sz[sta[i]]-1);
+      else ans[-sta[i]] += s.query (1, n, id[-sta[i]], id[-sta[i]]+sz[-sta[i]]-1);
+    FOR(i,1,top)
+      if(sta[i] > 0) {
+        if(1 <= id[sta[i]]-1) s.modify (1, n, 1, id[sta[i]]-1);
+        if(id[sta[i]]+sz[sta[i]] <= n) s.modify (1, n, id[sta[i]]+sz[sta[i]], n);
+      } else s.modify (1, n, id[-sta[i]], id[-sta[i]]+sz[-sta[i]]-1);
+  }
+  int Ans = 0;
+  FOR(i,2,n) Ans ^= ans[i];
+  printf("%d\n", Ans);
+  return 0;
+}

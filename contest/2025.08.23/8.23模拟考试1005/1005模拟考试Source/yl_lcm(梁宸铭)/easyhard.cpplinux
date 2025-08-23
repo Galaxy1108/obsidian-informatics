@@ -1,0 +1,78 @@
+#include<bits/stdc++.h>
+#define ll long long    
+#define ull unsigned long long
+#define db double
+#define ldb long double
+#define pb push_back
+#define mp make_pair
+#define pii pair<int, int>
+#define FR first
+#define SE second
+using namespace std;
+inline int read() {
+    int x = 0; bool op = 0;
+    char c = getchar();
+    while(!isdigit(c))op |= (c == '-'), c = getchar();
+    while(isdigit(c))x = (x << 1) + (x << 3) + (c ^ 48), c = getchar();
+    return op ? -x : x;
+}
+const int N = 3e3 + 10;
+int n, m, P;
+void add(int &a, int b) {a = (a + b) % P;}
+void sub(int &a, int b) {a = (a - b + P) % P;}
+namespace bf {
+    int ans = 0;
+    void dfs(int cur, int sum, int mn, int mx) {
+        if(mx - mn > n)return ;
+        if(cur > m)return add(ans, 1), void();
+        dfs(cur + 1, sum, min(mn, sum - 1), mx);
+        dfs(cur + 1, sum - 1, min(mn, sum - 1), mx);
+        dfs(cur + 1, sum, mn, max(mx, sum + 1));
+        dfs(cur + 1, sum + 1, mn, max(mx, sum + 1));
+        return ;
+    }
+    void MAIN() {
+        dfs(1, 0, 0, 0);
+        printf("%d\n", ans);
+        return ;
+    }
+};
+namespace sol {
+    int f[N][N][2];
+    void MAIN() {
+        for(int i = 0; i <= n; i++) {
+            f[0][i][i == 0] = 1;
+        }
+        for(int i = 1; i <= m; i++) {
+            for(int j = 0; j <= n; j++) {
+                for(int o = 0; o < 2; o++) {
+                    if(j > 0) {
+                        add(f[i][j][o | (j == 1)], f[i - 1][j][o]);
+                        add(f[i][j - 1][o | (j == 1)], f[i - 1][j][o]);
+                    }
+                    if(j < n) {
+                        add(f[i][j][o], f[i - 1][j][o]);
+                        add(f[i][j + 1][o], f[i - 1][j][o]);
+                    }
+                }
+            }
+            // for(int j = 0; j <= n; j++) {
+            //     for(int o = 0; o < 2; o++) {
+            //         printf("f:%d %d %d %d\n", i, j, o, f[i][j][o]);
+            //     }
+            // }
+        }
+        int ans = 0;
+        for(int i = 0; i <= n; i++)add(ans, f[m][i][1]);
+        printf("%d\n", ans);
+        return ;
+    }
+};
+int main() { 
+    freopen("easyhard.in", "r", stdin);
+    freopen("easyhard.out", "w", stdout);
+    n = read(); m = read(); P = read();
+    // bf::MAIN();
+    sol::MAIN();
+    return 0;
+}

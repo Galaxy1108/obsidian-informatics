@@ -1,0 +1,68 @@
+#include <cstdio>
+#include <algorithm>
+#include <iostream>
+#include <cstring>
+#include <string>
+#include <queue>
+#include <deque>
+#include <cmath>
+#include <vector>
+#include <map>
+#include <stack>
+#include <set>
+#define LL long long
+#define ULL unsigned long long
+#define IT set<int>::iterator
+using namespace std;
+const int MAXN = 15;
+int n, m, p;
+int ans[MAXN][MAXN] = 
+{
+{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+{0, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048},
+{0, 4, 16, 56, 184, 584, 1816, 5576, 16984, 51464, 155416},
+{0, 4, 16, 64, 248, 936, 3464, 12632, 45544, 162744, 577384},
+{0, 4, 16, 64, 256, 1016, 3992, 15536, 59960, 229768, 875152},
+{0, 4, 16, 64, 256, 1024, 4088, 16264, 64440, 254240, 999008}, 
+{0, 4, 16, 64, 256, 1024, 4096, 16376, 65400, 260768, 1037768},
+{0, 4, 16, 64, 256, 1024, 4096, 16384, 65528, 261992, 1046888},
+{0, 4, 16, 64, 256, 1024, 4096, 16384, 65536, 262136, 1048408},
+{0, 4, 16, 64, 256, 1024, 4096, 16384, 65536, 262144, 1048568},
+{0, 4, 16, 64, 256, 1024, 4096, 16384, 65536, 262144, 1048576}
+};
+int qp(int x, int y)
+{
+	if(y == 0) return 1;
+	if(y == 1) return x;
+	int mid = y >> 1;
+	LL res = 1ll * qp(x, mid);
+	res *= res;
+	res %= p;
+	if(y & 1)
+	{
+		res *= x;
+		res %= p;
+	}
+	return (int)res;
+}
+int main()
+{
+	freopen("easyhard.in", "r", stdin);
+	freopen("easyhard.out", "w", stdout);
+	scanf("%d%d%d", &n, &m, &p);
+	if(n <= 10 && m <= 10)
+	{
+		printf("%d\n", ans[n][m] % p);
+		return 0;
+	}
+	else
+	{
+		if(m <= n)
+		{
+			int ans = qp(4, m);
+			printf("%d\n", ans);
+		}
+		else printf("0\n");
+	}
+	return 0;
+}

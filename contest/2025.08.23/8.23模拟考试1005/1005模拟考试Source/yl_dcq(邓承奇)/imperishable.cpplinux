@@ -1,0 +1,66 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+namespace Sub1 {
+inline void main() {
+    int n, a, q;
+    scanf("%d%d%d", &n, &a, &q);
+    printf("2\n");
+}
+}  // namespace Sub1
+
+namespace Sub2 {
+const int mod = 998244353;
+long long n, q, a[10005], pw[10005];
+long long ans, sum;
+inline void main() {
+    scanf("%d", &n);
+    for (int i = 1; i <= n; ++i) scanf("%d", a + i);
+
+    pw[0] = 1;
+    int Ans = 0;
+    for (int i = 1; i <= n; ++i)
+        pw[i] = pw[i - 1] * 2 % mod, (Ans += pw[i]) %= mod;
+
+    long long sum = 0;
+    for (int i = 1; i <= n; ++i) sum += a[i];
+    long long mx = 0;
+    long long ans = Ans;
+    for (int i = n; i; --i) {
+        if (sum - a[i] >= max(mx, a[i])) {
+            sum -= a[i], mx = max(mx, a[i]), ans = (ans - pw[i] + mod) % mod;
+        }
+    }
+    printf("%d\n", ans % mod);
+
+    scanf("%d", &q);
+
+    while (q--) {
+        int x, y;
+        cin >> x >> y;
+        a[x] = y;
+        ans = Ans;
+        sum = 0;
+        for (int i = 1; i <= n; ++i) sum += a[i];
+        mx = 0;
+        for (int i = n; i; --i) {
+            if (sum - a[i] >= max(mx, a[i])) {
+                sum -= a[i], mx = max(mx, a[i]),
+                             ans = (ans - pw[i] + mod) % mod;
+            }
+        }
+        printf("%d\n", ans % mod);
+    }
+}
+}  // namespace Sub2
+
+int main() {
+    freopen("imperishable.in", "r", stdin);
+    freopen("imperishable.out", "w", stdout);
+    int Case;
+    scanf("%d", &Case);
+    if (Case == 1) Sub1::main();
+    if (Case >= 2 && Case <= 17) Sub2::main();
+    return 0;
+}

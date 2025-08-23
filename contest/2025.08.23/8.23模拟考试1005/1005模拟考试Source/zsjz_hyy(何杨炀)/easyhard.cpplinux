@@ -1,0 +1,31 @@
+#include<cstdio>
+#define LL long long
+using namespace std;
+const int N = 3005;
+int n,m,P; LL f[N << 1][N << 1];
+
+int main()
+{
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	scanf("%d%d%d",&n,&m,&P);
+	f[0][n] = 1;
+	for (int i = 1; i <= m << 1; i++)
+	{
+		if (i & 1) {
+			for (int j = 0; j <= n << 1; j++) {
+				if (j < (n << 1)) (f[i][j] += f[i - 1][j + 1]) %= P;
+				if (j > 0) (f[i][j] += f[i - 1][j]) %= P; 
+			}
+		}
+		else {
+			for (int j = 0; j <= n << 1; j++) {
+				if (j > 0) (f[i][j] += f[i - 1][j - 1]) % P;
+				if (j < (n << 1)) (f[i][j] += f[i - 1][j]) % P;
+			}
+		}
+	}
+	LL ans = 0;
+	for (int i = 0; i <= n << 1; i++) (ans += f[m * 2][i]) %= P;
+	printf("%lld\n",ans);
+ } 

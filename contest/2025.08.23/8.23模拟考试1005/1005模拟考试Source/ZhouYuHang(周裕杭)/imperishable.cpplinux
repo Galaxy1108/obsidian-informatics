@@ -1,0 +1,66 @@
+#include <bits/stdc++.h>
+
+using LL = long long;
+using namespace std;
+
+const int MAXN = 1e5 + 10, mod = 998244353;
+
+void add (int &a, int b) {
+	a = (a + b >= mod ? a + b - mod : a + b);
+}
+
+int num;
+
+int n, a[MAXN];
+
+int pw[MAXN];
+
+LL sum[MAXN];
+
+int solve () {
+	for (int i = 1; i <= n; ++i) sum[i] = sum[i - 1] + a[i];
+	
+	int ans = 0;
+	LL mx = 0, res = 0;
+	
+	for (int i = n; i; --i) {
+		if (sum[i - 1] < max(mx, a[i] + res) - res) {
+			res += a[i];
+			add(ans, pw[i]);
+		} else {
+			mx = max(mx, a[i] + res);	
+		}
+	}
+	
+	return ans;
+}
+
+int q;
+
+int main () {
+	ios::sync_with_stdio(false);
+	
+	freopen("imperishable.in", "r", stdin);
+	freopen("imperishable.out", "w", stdout);
+	
+	cin >> num;
+	cin >> n;
+	
+	for (int i = 1; i <= n; ++i) cin >> a[i]; 
+	
+	pw[0] = 1;
+	for (int i = 1; i <= n; ++i) pw[i] = (pw[i - 1] + pw[i - 1]) % mod;
+	
+	cin >> q;
+	
+	cout << solve() << '\n';
+	
+	while (q--) {
+		int x, y;
+		cin >> x >> y;
+		a[x] = y;
+		cout << solve() << '\n';
+	}
+	
+	return 0;
+}

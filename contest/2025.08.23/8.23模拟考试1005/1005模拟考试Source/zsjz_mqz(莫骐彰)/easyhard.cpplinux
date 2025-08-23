@@ -1,0 +1,41 @@
+#include<iostream>
+#include<cstdio>
+using namespace std;
+#define fo(i,a,b) for(int i=a;i<=b;++i)
+#define fod(i,a,b) for(int i=a;i>=b;--i)
+#define LL long long
+int n,m,p;
+LL f[3011][3011];
+LL g[3011][3011];
+int main(){
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	scanf("%d%d%d",&n,&m,&p);
+	if(n==1){
+		LL ans=2;
+		fo(i,1,m)ans=ans*2%p;
+		printf("%lld",ans);
+		return 0;
+	}
+	++m;
+	fo(i,0,n)f[m][i]=g[1][i]=1;
+	fod(i,m-1,1){
+		fo(j,1,n-1)f[i][j]=(f[i+1][j+1]+f[i+1][j-1]+f[i+1][j]*2)%p;
+		f[i][0]=(f[i+1][1]+f[i+1][0])%p;
+		f[i][n]=(f[i+1][n-1]+f[i+1][n])%p;
+	}
+	fo(i,2,m){
+		fo(j,2,n-1)g[i][j]=(g[i-1][j-1]+g[i-1][j+1]+g[i-1][j]*2)%p;
+		g[i][0]=g[i-1][1];
+		g[i][1]=(g[i-1][1]+g[i-1][2])%p;
+		g[i][n]=(g[i-1][n-1]+g[i-1][n])%p;
+	}
+	LL ans=0;
+	fo(i,1,m){
+		ans+=g[i][0]*f[i][0]%p;
+		if(i<m)ans+=g[i][1]*f[i+1][1]%p;
+	}
+	ans%=p;
+	printf("%lld",ans);
+	return 0;
+}

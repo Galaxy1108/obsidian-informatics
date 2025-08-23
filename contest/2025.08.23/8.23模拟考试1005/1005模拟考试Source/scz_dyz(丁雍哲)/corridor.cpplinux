@@ -1,0 +1,183 @@
+#include <bits/stdc++.h>
+using namespace std ;
+#define pb push_back
+#define fir(i, n, m) for(int i=n;i<=m;i++)
+#define fur(i, n, m) for(int i=n;i>=m;i--)
+int type, Q, k, n, m, T ;
+const int Len = 1e3 ;
+const int Lim = 1e4 ;
+const int NNN = 1e5 + 5 ;
+set<long long> row[NNN], col[NNN] ;
+unordered_map<long long, long long> bel, nxt, pre ;
+unordered_map<long long, vector<long long> > blck ;
+int TOT = 0 ;
+inline long long findhead(int S) {
+	long long pos = bel[S] ;
+	while (pre[pos])
+		pos = pre[pos] ;
+	return pos ;
+}
+void merge(int idx, int idy) {
+	int S = bel[blck[idx][0]] ;
+	fir(i, 0, blck[idy].size() - 1) {
+		blck[idx].pb(blck[idy][i]) ;
+		bel[blck[idy][i]] = S ;
+	}
+	nxt[idx] = nxt[idy] ;
+	pre[nxt[idy]] = idx ;
+}
+void rebuild(int S) {
+	long long pos = findhead(S) ;
+	while (nxt[pos]) {
+		++ TOT ;
+		if (blck[pos].size() + blck[nxt[pos]].size() < Len)
+			merge(pos, nxt[pos]) ;
+		else pos = nxt[pos] ;
+	}
+}
+const int UP = false ;
+const int DOWN = true ; 
+long long getnum(long long x, long long y, int z = 0) {
+	if (x == 0) return y ;
+	else if (y == 0) return m + x ;
+	else if (y == m + 1) return m + x + n ;
+	else if (x == n + 1) return m + 2 * n + y ;
+	else return 2 * (n + m) + (x - 1) * m + y + (long long) n * m * z ;
+}
+long long find(int x, int y, int k) {
+	long long pos = findhead(getnum(x, y)) ;
+	long long g = 0, h = pos ;
+	while (pos) {
+		TOT += 1 ;
+		if (blck[pos].size() >= k + 1) {
+			if (g > Lim)
+				rebuild(getnum(x, y)) ;
+			return blck[pos][k] ;
+		}
+		k -= blck[pos].size() ;
+		h = pos, pos = nxt[pos] ;
+		if (blck[pos].size() < Len)
+			g += Len - blck[pos].size() ;
+	}
+	long long ans = blck[h][blck[h].size() - 1] ;
+	if (g > Lim) rebuild(getnum(x, y)) ;
+	return ans ;
+}
+void split(long long x, long long y) {
+	if (bel[x] != bel[y]) {
+		assert(nxt[bel[x]] == bel[y]) ;
+		assert(pre[bel[y]] == bel[x]) ;
+		nxt[bel[x]] = pre[bel[y]] = 0 ;
+		return ;
+	}
+	long long S = bel[x] ;
+	vector<long long> wait1, wait2 ;
+	bool flag = false ;
+	fir(i, 0, blck[S].size() - 1) {
+		if (flag == false)
+			wait1.pb(blck[S][i]) ;
+		else if (flag == true)
+			wait2.pb(blck[S][i]) ;
+		if (blck[S][i] == x || blck[S][i] == y)
+			flag = true ;
+	}
+	T += 1 ;
+	fir(i, 0, wait2.size() - 1) {
+		blck[T].pb(wait2[i]) ;
+		bel[wait2[i]] = T ;
+	}
+	nxt[T] = nxt[S] ;
+	pre[T] = S, pre[nxt[S]] = T ;
+	nxt[S] = T ;
+	blck[S].clear() ;
+	fir(i, 0, wait1.size() - 1)
+		blck[S].pb(wait1[i]) ;
+}
+void link(long long x, long long y) {
+	nxt[bel[x]] = bel[y] ;
+	pre[bel[y]] = bel[x] ;
+}
+typedef pair<int, int> pii ;
+map<pii, int> visit ;
+void add(long long x, long long y) {
+	assert(visit[pii(x, y)] == 0) ;
+	visit[pii(x, y)] = 1 ;
+	auto p = row[y].upper_bound(x) ;
+	long long down = getnum(*p, y, UP) ;
+	-- p ;
+	long long up = getnum(*p, y, DOWN) ;
+	p = col[x].upper_bound(y) ;
+	long long right = getnum(x, *p, DOWN) ;
+	-- p ;
+	long long left = getnum(x, *p, UP) ;
+	assert(left != right) ;
+	split(left, right) ;
+	split(up, down) ;
+	++ T ;
+	blck[T].pb(getnum(x, y, DOWN)) ;
+	bel[getnum(x, y, DOWN)] = T ;
+	++ T ;
+	blck[T].pb(getnum(x, y, UP)) ;
+	bel[getnum(x, y, UP)] = T ;
+	link(left, getnum(x, y, DOWN)) ;
+	link(getnum(x, y, DOWN), down) ;
+	link(up, getnum(x, y, UP)) ;
+	link(getnum(x, y, UP), right) ;
+	row[y].insert(x) ;
+	col[x].insert(y) ;
+}
+int main () {
+	ios::sync_with_stdio(false) ;
+	cin >> type >> n >> m >> k ;
+	fir(i, 1, n) {
+		row[0].insert(i) ;
+		row[m + 1].insert(i) ;
+		col[i].insert(0) ;
+		col[i].insert(m + 1) ;
+		T += 1 ; bel[getnum(i, 0)] = T ;
+		bel[getnum(i, m + 1)] = T ;
+		blck[T].pb(getnum(i, 0)) ;
+		blck[T].pb(getnum(i, m + 1)) ;
+	}
+	fir(i, 1, m) {
+		row[i].insert(0) ;
+		row[i].insert(n + 1) ;
+		col[0].insert(i) ;
+		col[n + 1].insert(i) ;
+		T += 1 ; bel[getnum(0, i)] = T ;
+		bel[getnum(n + 1, i)] = T ;
+		blck[T].pb(getnum(0, i)) ;
+		blck[T].pb(getnum(n + 1, i)) ;
+	}
+	fir(i, 1, k) {
+		int x, y ;
+		cin >> x >> y ;
+		add(x, y) ;
+	}
+	cin >> Q ;
+	while (Q --) {
+		int tp, x, y ;
+		cin >> tp >> x >> y ;
+		if (tp == 1) add(x, y) ;
+		else {
+			int k ;
+			cin >> k ;
+			long long ans = find(x, y, k) ;
+			if (ans <= m) 
+				cout << 0 << ' ' << ans << endl ;
+			else if (ans <= n + m)
+				cout << ans - m << ' ' << 0 << endl ;
+			else if (ans <= n * 2 + m)
+				cout << ans - n - m << ' ' << m + 1 << endl ;
+			else if (ans <= 2 * (n + m))
+				cout << n + 1 << ' ' << ans - 2 * n - m << endl ;
+			else {
+				cout << ((ans - 2 * (n + m)) % ((long long) n * m) - 1) / m + 1  ;
+				cout << ' ' ;
+				cout << ((ans - 2 * (n + m)) % ((long long) n * m) - 1) % m + 1  ;
+				cout << endl ;
+			}
+		}
+	}
+	return 0 ;
+}

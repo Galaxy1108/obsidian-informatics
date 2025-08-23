@@ -1,0 +1,147 @@
+#include<bits/stdc++.h>
+#define I inline
+#define R register
+#define LL long long
+#define fo(i, a, b) for(R int i = a; i <= b; ++i)
+#define fd(i, a, b) for(R int i = a; i >= b; --i)
+#define fz(i, x) for(R int i = head[x]; i; i = nxt[i])
+#define fz1(i, x) for(R int i = head1[x]; i; i = nxt1[i])
+using namespace std;
+const int N = 2500010;
+int n, cnt, cnt1, fr[N], st[N << 1], in[N << 2], num[N], head1[N << 1], to1[N << 2], nxt1[N << 2], head[N], nxt[N << 1], to[N << 1], size[N];
+LL f[N << 1], w[N << 1];
+vector<int> d[N << 1], q[N << 1];
+I int read(){
+	int res = 0, flag = 0; char ch = getchar();
+	for(; !isdigit(ch); ch = getchar()) if(ch == '-') flag = 1;
+	for(; isdigit(ch); ch = getchar()) res = (res << 1) + (res << 3) + (ch ^ 48);
+	if(flag) res = ~res + 1; return res;
+}
+I void write(int X){
+    if(X < 0) {X = ~(X - 1), putchar('-');}
+    if(X > 9) write(X / 10);
+    putchar(X % 10 + '0');
+}
+I void add(int x, int y, int z){
+	to[++cnt] = y;
+	nxt[cnt] = head[x];
+	w[cnt] = z;
+	head[x] = cnt;
+}
+I void add1(int x, int y){
+	to1[++cnt1] = y;
+	nxt1[cnt1] = head1[x];
+	head1[x] = cnt1;
+}
+I bool pd(int x, int v, int i){ return (d[x].size() > 1 || (d[x].size() == 1 && d[x][0] != v) || (q[x].size() > 1) || (q[x].size() == 1 && q[x][0] != ((i + 1) / 2 + n * 2))); }
+I void dfs(int x, int fa){
+	size[x] = 1, f[x] = f[n + x] = 0;
+	fz(i, x){
+		int v = to[i];
+		if(v == fa) continue;
+		dfs(v, x);
+		LL y = max(f[v], w[i] * size[v]);
+		fr[v] = i;
+		if(y >= f[x]){
+			if(y > f[x]){
+				d[x + n] = d[x], q[x + n] = q[x], d[x].clear(), q[x].clear();
+				f[x + n] = f[x], f[x] = y;
+			}
+			if(y == f[v]) d[x].push_back(v);
+			if(y == w[i] * size[v]) q[x].push_back((i + 1) / 2 + n * 2);
+		}else if(y >= f[x + n]){
+			if(y > f[x + n]){
+				d[x + n].clear(), q[x + n].clear();
+				f[x + n] = y;
+			}
+			if(y == f[v]) d[x + n].push_back(v);
+			if(y == w[i] * size[v]) q[x + n].push_back((i + 1) / 2 + n * 2);
+		} 
+		size[x] += size[v];
+	}
+}
+I void dfs2(int x, int fa){
+	fz(i, x){
+		int v = to[i]; int bz = - 1;
+		if(v == fa) continue;
+		LL y = w[i] * (n - size[v]);
+		if(pd(x, v, i)) y = max(y, f[x]), bz = 0;
+		else if(pd(x + n, v, i)) y = max(y, f[x + n]), bz = 1;
+		if(y >= f[v]){
+			if(y > f[v]){
+				d[v + n] = d[v], q[v + n] = q[v], d[v].clear(), q[v].clear();
+				f[n + v] = f[v], f[v] = y;
+			}
+			if(y == f[x + bz * n] && bz > -1) d[v].push_back(x + bz * n);
+			if(y == w[i] * (n - size[v])) q[v].push_back((i + 1) / 2 + n * 2);
+		}else if(y >= f[n + v]){
+			if(y > f[n + v]){
+				d[v + n].clear(), q[v + n].clear();
+				f[n + v] = y;
+			}
+			if(y == f[x + bz * n] && bz > -1) d[v + n].push_back(x + bz * n);
+			if(y == w[i] * (n - size[v])) q[v + n].push_back((i + 1) / 2 + n * 2);
+		}
+		dfs2(v, x);
+	}
+}
+int main(){
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	n = read();
+	fo(i, 2, n){
+		int y = read(), z = read();
+		add(i, y, z);
+		add(y, i, z);
+	}
+	dfs(1, 1);
+	dfs2(1, 1);
+//	fo(i, 1, n) printf("%lld\n",f[i]);
+	fo(i, 1, 2 * n){
+		int l = d[i].size() - 1;
+//		printf("fff %d\n",i);
+		fo(j, 0, l) add1(i, d[i][j]), in[d[i][j]]++;
+//		fo(j, 0, l) printf("%d ",d[i][j]); puts("");
+		l = q[i].size() - 1;
+		fo(j, 0, l) add1(i, q[i][j]), in[q[i][j]]++;
+//		fo(j, 0, l) printf("%d ",q[i][j]); puts("");
+	}
+	fo(i, 1, n) num[i] = 1;
+	int h = 0, t = 0;
+	fo(i, 1, 2 * n) if(!in[i]) st[++t] = i;
+	while(h < t){
+		int u = st[++h];
+		fz1(i, u){
+			int v = to1[i], l = d[v].size() - 1;
+			in[v]--, num[v] += num[u];
+			fo(j, 0, l) if(d[v][j] == (u % n)) num[d[v][j]]--;
+			l = q[v].size() - 1;
+			fo(j, 0, l) if(q[v][j] == (fr[u % n] + 1) / 2 + 2 * n) num[q[v][j]]--;
+			if(!in[v] && v <= 2 * n) st[++t] = v;
+		}
+	}
+//	fo(i, 1, n - 1)
+//	printf("%d\n",num[i + 2 * n]);
+	int ans = 0;
+	fo(i, 1, n - 1) ans ^= num[i + 2 * n];
+	printf("%d\n",ans);
+}
+/**
+*¡¡¡¡©³©·¡¡¡¡¡¡©³©·+ +
+*¡¡©³©¿©ß©¥©¥©¥©¿©ß©· + +
+*¡¡©§¡¡¡¡¡¡¡¡¡¡¡¡¡¡©§
+*¡¡©§¡¡¡¡¡¡©¥¡¡¡¡¡¡©§ ++ + + +
+*  ¨€¨€¨€¨€©¥¨€¨€¨€¨€+
+*  ¨¨€¨€¨¡¡¨¨€¨€¨ +
+*¡¡©§¡¡¡¡¡¡©ß¡¡¡¡¡¡©§
+*¡¡©§¡¡¡¡¡¡¡¡¡¡¡¡¡¡©§ + +
+*¡¡©»©¥©·¡¡¡¡¡¡©³©¥©¿
+*¡¡¡¡¡¡©§¡¡¡¡¡¡©§ + + + + Code is far away from ¡¡
+*¡¡¡¡¡¡©§¡¡¡¡¡¡©§ + bug with the animal protecting
+*¡¡¡¡¡¡©§¡¡ ¡¡ ©»©¥©¥©¥©· ÉñÊÞ±£ÓÓ,´úÂëÎÞbug¡¡
+*¡¡¡¡¡¡©§              ©Ç©·
+*¡¡¡¡  ©§              ©³©¿
+*¡¡    ©»©·©·©³©¥©×©·©³©¿ + + + +
+*¡¡¡¡¡¡¡¡©§©Ï©Ï¡¡©§©Ï©Ï
+*¡¡¡¡¡¡¡¡©»©ß©¿¡¡©»©ß©¿+ + + +
+*/

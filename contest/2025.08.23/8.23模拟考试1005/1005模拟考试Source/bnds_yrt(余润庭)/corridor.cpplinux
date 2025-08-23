@@ -1,0 +1,141 @@
+
+
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <algorithm>
+
+const int MAXN = 2e5+9;
+using namespace std;
+
+int N, M, K, P;
+vector<int> heng[MAXN], shu[MAXN];
+
+inline bool cmp (int one, int two) {
+	return one < two;
+}
+
+inline void srt (int i, int m) {
+	if (heng[i].size()>1) stable_sort(heng[i].begin(), heng[i].end(), cmp);
+	if (shu[m].size()>1) stable_sort(shu[m].begin(), shu[m].end(), cmp);
+}
+
+inline void Solve (int x, int y, int q) {
+
+}
+
+int main () {
+	ifstream fin ("corridor.in");
+	ofstream fout ("corridor.out");
+	
+	fin >> K >> N >> M >> K;
+	// cin >> K >> N >> M >> K;
+	 // cout << K << ' ' << N << ' ' << M << endl;
+	for (int i = 1, x, y; i < K+1; i++) {
+		fin >> x >> y;
+		// cin >> x >> y;
+		heng[y].push_back(x);
+		shu[x].push_back(y);
+	}
+	fin >> P;
+	// cin >> P;
+	for (int i = 1; i < max(N, M)+1; i++) {
+		srt(i, i);
+	}
+	
+	int typ, x, y, q;
+	
+	while (P--) {
+		fin >> typ >> x >> y;
+		// cin >> typ >> x >> y;
+		if (typ == 1) {
+			heng[y].push_back(x);
+			shu[x].push_back(y);
+			srt(y, x);
+			continue;
+		}
+		fin >> q;
+		// cin >> q;
+			int dir;
+		if (x == 0) {
+			dir = 1;
+			if (heng[y].size()) {
+				x = heng[y][0];
+				dir = 0;
+				q--;
+			}
+			else {
+				x = N+1;
+				q = 0;
+			}
+		}
+		if (y == 0) {
+			dir = 0;
+			if (shu[x].size()) {
+				y = shu[x][0];
+				dir = 1;
+				q--;
+		}
+			else {
+				y = M+1;
+				q = 0;
+			}
+		}
+		int sz;
+	
+		while (q > 0) {
+			// cout << dir << endl;
+			if (dir == 0) {
+				sz = shu[x].size();
+				if (sz) {
+					for (int i = 0; i < sz; i++) {
+						if (shu[x][i] == y) {
+							if (i != sz-1) y = shu[x][i+1];
+							else {
+								y = M+1;
+								q = 0;
+							}
+							break;
+						}
+					}
+					dir = 1;
+					q--;
+				}
+				else {
+					q = 0;
+					y = M+1;
+				}
+				continue;
+			}
+		
+			if (dir == 1) {
+				sz = heng[y].size();
+				if (sz) {
+					for (int i = 0; i < sz; i++) {
+						if (heng[y][i] == x) {
+							if (i != sz-1) x = heng[y][i+1];
+							else {
+								x = N+1;
+								q = 0;
+							}
+							break;
+						}
+					}
+					dir = 0;
+					q--;
+				}
+				else {
+					q = 0;
+					x = N+1;
+				}
+			}
+		}
+		// cout << x << ' ' << y << endl;
+		fout << x << ' ' << y << endl;
+	}
+	
+	fin.close();
+	fout.close();
+	
+	return 0;
+}

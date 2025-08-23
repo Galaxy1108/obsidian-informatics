@@ -1,0 +1,80 @@
+#include <bits/stdc++.h>
+#define sz(a) int((a).size())
+#define FOR(i, l, r) for(int i = (l); i <= (r); i++)
+#define ROF(i, r, l) for(int i = (r); i >= (l); i--)
+#define ll long long
+#define ull unsigned long long
+#define vi vector<int>
+#define pr pair<int, int>
+using namespace std;
+const int N = 1e7 + 10;
+int n;
+vector<pair<int, int>> g[N];
+int siz[N], cnt1[N * 2], cnt2[N * 2], f[N], vid[N], eid[N * 2], w[N];
+ll mx1[N], mx2[N], mx[N];
+unordered_map<ll, int> id;
+void dfs(int u, int fa) {
+    siz[u] = 1;
+    for(auto [v, w] : g[u]) {
+        dfs(v, u);
+        siz[u] += siz[v];
+        mx1[u] = max({mx1[u], mx1[v], (ll)siz[v] * w});
+        ::w[v] = w;
+    }
+}
+void dfs2(int u, int fa) {
+    ll tmpv = mx2[u];
+    for(auto [v, w] : g[u]) {
+        mx2[v] = max({mx2[v], tmpv});
+        tmpv = max(tmpv, mx1[v]);
+    }
+    tmpv = 0;
+    reverse(g[u].begin(), g[u].end());
+    for(auto [v, w] : g[u]) {
+        mx2[v] = max({mx2[v], tmpv, (ll)w * (n - siz[v])});
+        tmpv = max({tmpv, mx1[v], (ll)w * siz[v]});
+    }
+    for(auto [v, w] : g[u]) dfs2(v, u);
+}
+void dfs3(int u, int fa, ll w) {
+    int lu = cnt2[eid[u * 2]];
+    int ld = cnt2[eid[u * 2 - 1]];
+    cnt2[id[mx[u]]]++;
+    for(auto [v, w] : g[u]) dfs3(v, u, w);
+    int ru = cnt2[eid[u * 2]];
+    int rd = cnt2[eid[u * 2 - 1]];
+    f[u] = ru - lu + cnt1[eid[u * 2 - 1]] - (rd - ld);
+    return;
+}
+int main() {
+    ios :: sync_with_stdio(0), cin.tie(0), cout.tie(0);
+    freopen("treeq.in", "r", stdin);
+    freopen("treeq.out", "w", stdout);
+    cin >> n;
+    FOR(i, 2, n) {
+        int fa, w;
+        cin >> fa >> w;
+        g[fa].emplace_back(i, w);
+    }
+    dfs(1, 0);
+    dfs2(1, 0);
+    FOR(i, 1, n) mx[i] = max(mx1[i], mx2[i]);
+    int tot = 0;
+    FOR(i, 1, n) {
+        if(!id.count(mx[i])) id[mx[i]] = ++tot;
+        vid[i] = id[mx[i]];
+        cnt1[vid[i]]++;
+    }
+    FOR(i, 2, n) {
+        ll u = (ll)w[i] * siz[i];
+        ll d = (ll)w[i] * (n - siz[i]);
+        if(!id.count(u)) id[u] = ++tot;
+        if(!id.count(d)) id[d] = ++tot;
+        eid[i * 2 - 1] = id[u], eid[i * 2] = id[d];
+    }
+    dfs3(1, 0, 0);
+    int ans = 0;
+    FOR(i, 2, n) ans ^= f[i];
+    cout << ans << "\n";
+    return 0;
+}

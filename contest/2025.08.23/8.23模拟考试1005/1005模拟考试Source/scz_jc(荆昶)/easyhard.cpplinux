@@ -1,0 +1,22 @@
+#include<bits/stdc++.h>
+using namespace std;
+int main()
+{
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	long long n,m,p; cin>>n>>m>>p; 
+	long long num=n-1; long long ans=2;
+	if(num==0) 
+	{
+		ans=1;
+		for(long long i=1;i<=m+1;i++) ans=ans*2,ans=ans%p;
+		cout<<ans<<endl;
+	}
+	else 
+	{
+		ans=1;
+		for(long long i=1;i<=m*2;i++) ans=ans*2,ans=ans%p;
+		cout<<ans<<endl;	
+	}
+	return 0;
+ }

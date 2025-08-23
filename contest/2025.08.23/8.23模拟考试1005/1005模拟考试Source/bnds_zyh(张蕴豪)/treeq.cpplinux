@@ -1,0 +1,61 @@
+#include <cstdio>
+#include <iostream>
+#define go(p,u) for(int p=head[u];p;p=edge[p].nxt)
+#define macro_expand(x) #x
+#define print_macro(x) printf("%s\n",macro_expand(x))
+#define FOR(i,l,r) for(int i=(l),i##ADJK=(r);i<=i##ADJK;++i)
+#define ROF(i,r,l) for(int i=(r),i##ADJK=(l);i>=i##ADJK;--i)
+using namespace std;
+typedef long long LL;
+const int MN=1e6+5;
+int N,head[MN];
+struct E{
+	int v,nxt,w,id;
+	E():v(0),nxt(0),w(0),id(0){}
+	E(int _v,int _nxt,int _w,int _id):v(_v),nxt(_nxt),w(_w),id(_id){}
+}edge[MN*2];
+int tote;
+void AddE(int u,int v,int w,int id){
+	edge[++tote]=E(v,head[u],w,id);
+	head[u]=tote;
+}
+int siz[MN];
+LL maxv;
+void dfs1(int u,int ff){
+	siz[u]=1;
+	go(p,u){
+		int v=edge[p].v;
+		if(v!=ff){
+			dfs1(v,u);
+			siz[u]+=siz[v];
+			maxv=max(maxv,(LL)siz[v]*edge[p].w);
+		}
+	}
+}
+int ans[MN];
+void dfs2(int u,int ff){
+	go(p,u){
+		int v=edge[p].v;
+		if(v!=ff){
+			dfs2(v,u);
+			if((LL)siz[v]*edge[p].w==maxv)
+				++ans[edge[p].id];
+		}
+	}
+}
+int main(){
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	scanf("%d",&N);
+	FOR(i,1,N-1){
+		int f=0,w=0;scanf("%d%d",&f,&w);
+		AddE(i,f,w,i),AddE(i,f,w,i);
+	}
+	FOR(i,1,N)maxv=0,dfs1(i,0),dfs2(i,0);
+	int out=0;
+	FOR(i,1,N-1)out^=ans[i];
+	printf("%d\n",out);
+	fclose(stdin);
+	fclose(stdout);
+	return 0;
+}

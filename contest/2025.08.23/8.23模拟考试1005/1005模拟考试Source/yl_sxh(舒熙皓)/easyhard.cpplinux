@@ -1,0 +1,34 @@
+#include<bits/stdc++.h>
+const int N=3010;
+using namespace std;
+
+int n,m,mod,dp[N][N];
+
+int solve(int n)
+{
+	memset(dp,0,sizeof(dp));
+	for(int i=0;i<=n;i++) dp[0][i]=1;
+	for(int i=0;i<m;i++)
+	{
+		for(int j=0;j<=n;j++)
+		{
+			if(j) dp[i+1][j]=(dp[i+1][j]+dp[i][j])%mod;
+			if(n-j) dp[i+1][j]=(dp[i+1][j]+dp[i][j])%mod;
+			if(j) dp[i+1][j-1]=(dp[i+1][j-1]+dp[i][j])%mod;
+			if(n-j) dp[i+1][j+1]=(dp[i+1][j+1]+dp[i][j])%mod;
+		}
+	}
+	int ans=0;
+	for(int i=0;i<=n;i++)
+		ans=(ans+dp[m][i])%mod;
+	return ans;
+}
+int main()
+{
+    freopen("easyhard.in","r",stdin);
+    freopen("easyhard.out","w",stdout);
+
+	scanf("%d%d%d",&n,&m,&mod);
+	printf("%d\n",(solve(n)-solve(n-1)+mod)%mod);
+	return 0;
+}

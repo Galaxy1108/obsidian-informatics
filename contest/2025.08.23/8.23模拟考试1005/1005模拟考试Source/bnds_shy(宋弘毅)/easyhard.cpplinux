@@ -1,0 +1,42 @@
+#include <cstring>
+#include <fstream>
+using namespace std;
+ifstream cin( "easyhard.in" );
+ofstream cout( "easyhard.out" );
+int dp[ 3010 ][ 3010 ], pmod;
+int solve( int n, int m )
+{
+    memset( dp, 0, sizeof( dp ) );
+    for ( int i = 0; i <= n; i++ )
+    {
+        dp[ 0 ][ i ] = 1;
+    }
+    for ( int i = 0; i < m; i++ )
+    {
+        for ( int j = 0; j <= n; j++ )
+        {
+            if ( j )
+            {
+                ( dp[ i + 1 ][ j ] += dp[ i ][ j ] ) %= pmod;
+                ( dp[ i + 1 ][ j - 1 ] += dp[ i ][ j ] ) %= pmod;
+            }
+            if ( n - j )
+            {
+                ( dp[ i + 1 ][ j ] += dp[ i ][ j ] ) %= pmod;
+                ( dp[ i + 1 ][ j + 1 ] += dp[ i ][ j ] ) %= pmod;
+            }
+        }
+    }
+    int ans = 0;
+    for ( int i = 0; i <= n; i++ )
+    {
+        ( ans += dp[ m ][ i ] ) %= pmod;
+    }
+    return ans;
+}
+int main()
+{
+    int n, m;
+    cin >> n >> m >> pmod;
+    cout << ( solve( n, m ) - solve( n - 1, m ) + pmod ) % pmod << endl;
+}

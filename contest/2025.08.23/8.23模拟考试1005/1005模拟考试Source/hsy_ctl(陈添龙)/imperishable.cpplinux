@@ -1,0 +1,46 @@
+#include<bits/stdc++.h>
+#define pc putchar
+#define int long long
+using namespace std;
+inline int read()
+{
+	int x=0,f=1;char ch=getchar();
+	while(ch<'0'||ch>'9'){f=ch=='-'?-1:f;ch=getchar();}
+	while(ch>='0'&&ch<='9'){x=x*10+(ch^48);ch=getchar();}
+	return x*f;
+}
+void write(int x)
+{
+	if(x<0){x=-x;pc('-');}
+	if(x>9)write(x/10);
+	pc(x%10+48);
+}
+const int mod=998244353;
+int num,n,q,mx,ans,pw[200005];
+int a[200005],pre[200005];
+signed main()
+{
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	num=read();n=read();pw[0]=1;
+	for(int i=1;i<=n;++i)a[i]=read(),pre[i]=pre[i-1]+a[i],mx=max(mx,a[i]);
+	for(int i=1;i<=n;++i)pw[i]=pw[i-1]*2%mod;
+	for(int i=n;i;--i)
+	{
+		if(pre[i-1]>=mx)continue;
+		mx-=a[i];ans+=pw[i];ans%=mod;
+	}write(ans),pc('\n');
+	q=read();
+	while(q--)
+	{
+		int x=read(),y=read();a[x]=y;ans=0;mx=0;
+		for(int i=1;i<=n;++i)pre[i]=pre[i-1]+a[i],mx=max(mx,a[i]);
+		for(int i=n;i;--i)
+		{
+			if(pre[i-1]>=mx)continue;
+			mx-=a[i];ans+=pw[i];ans%=mod;
+		}write(ans),pc('\n');
+	}
+
+	return 0;
+}

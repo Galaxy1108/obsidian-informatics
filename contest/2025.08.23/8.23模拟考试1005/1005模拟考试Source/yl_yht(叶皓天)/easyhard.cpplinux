@@ -1,0 +1,57 @@
+#include <bits/stdc++.h>
+namespace IO {
+  #define iL (1 << 20)
+  char ibuf[iL], *iS = ibuf + iL, *iT = ibuf + iL;
+  #define gc() ((iS == iT) ? (iT = (iS = ibuf) + fread(ibuf, 1, iL, stdin), iS == iT ? EOF : *iS ++) : *iS ++)
+  template<class T> inline void read(T &x) {
+    x = 0;int f = 0;char ch = gc();
+    for (; !isdigit(ch); f |= ch == '-', ch = gc());
+    for (; isdigit(ch); x = (x << 1) + (x << 3) + (ch ^ 48), ch = gc());
+    x = (f == 1 ? ~ x + 1 : x);
+  }
+  char Out[iL], *iter = Out;
+  #define flush() fwrite(Out, 1, iter - Out, stdout), iter = Out
+  template<class T> inline void write(T x, char ch = '\n') {
+    T l, c[35];
+    if (x < 0) *iter ++ = '-', x = ~ x + 1;
+    for (l = 0; !l || x; c[l] = x % 10, l++, x /= 10);
+    for (; l; -- l, *iter ++ = c[l] + '0');*iter ++ = ch;
+    flush();
+  }
+}
+using namespace IO;
+#define N 3005
+#define ll long long
+#define DEBUG
+using namespace std;
+ll n, m, p, f[2][N][2], cur, ans;
+int main() {
+// #ifndef ONLINE_JUDGE
+//   freopen("test.in", "r", stdin);
+//   freopen("test.out", "w", stdout);
+// #endif
+  freopen("easyhard.in", "r", stdin);
+  freopen("easyhard.out", "w", stdout);
+  read(n), read(m), read(p);
+  for (int i = 1; i <= n; i++) f[0][i][0] = 1; f[0][0][1] = 1;
+  for (int i = 1; i <= m; i++) { cur ^= 1;
+    memset(f[cur], 0, sizeof f[cur]);
+    // memset(f[cur], 0, (n + 4) * sizeof(int));
+    for (int j = 0; j <= n; j++) {
+      if (j > 0) {
+        f[cur][j][0] = (f[cur][j][0] + f[cur ^ 1][j - 1][0]) % p;
+        f[cur][j][1] = (f[cur][j][1] + f[cur ^ 1][j - 1][1] + f[cur ^ 1][j][1]) % p;
+        if (j == 1) f[cur][j][1] = (f[cur][j][1] + f[cur ^ 1][j][0]) % p;
+        else f[cur][j][0] = (f[cur][j][0] + f[cur ^ 1][j][0]) % p;
+      }
+      if (j < n) {
+        f[cur][j][1] = (f[cur][j][1] + f[cur ^ 1][j + 1][1] + f[cur ^ 1][j][1]) % p;
+        if (j == 0) f[cur][j][1] = (f[cur][j][1] + f[cur ^ 1][j + 1][0] + f[cur ^ 1][j][0]) % p;
+        else f[cur][j][0] = (f[cur][j][0] + f[cur ^ 1][j + 1][0] + f[cur ^ 1][j][0]) % p;
+      }
+    }
+  }
+  for (int i = 0; i <= n; i++) ans = (ans + f[cur][i][1]) % p;
+  write(ans);
+  return 0;
+}

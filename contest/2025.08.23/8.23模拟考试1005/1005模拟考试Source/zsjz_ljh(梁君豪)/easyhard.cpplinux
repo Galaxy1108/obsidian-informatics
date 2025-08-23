@@ -1,0 +1,47 @@
+#include <cstdio>
+#define r register int
+int n, m, p, q, f[2][121][121][241], ans;
+inline int c(r x)
+{
+	return x + (x & 1);
+}
+inline void add(r &x, r &y)
+{
+	x += y;
+	if (x >= p)
+		x -= p;
+}
+int main()
+{
+	freopen("easyhard.in", "r", stdin);
+	freopen("easyhard.out", "w", stdout);
+	scanf("%d%d%d", &n, &m, &p);
+	n <<= 1;
+	m <<= 1;
+	f[0][0][0][n] = 1;
+	for (r i(1); i <= m; ++i, q ^= 1)
+		for (r j(0); j <= n; ++j)
+			for (r k(0); c(j) + c(k) <= n; ++k)
+				for (r l(n - j); l <= n + k; ++l)
+				{
+					r &nw(f[q][j][k][l]);
+					if (!nw)
+						continue;
+					if (l + j > n)
+						add(f[!q][j][k][l - 1], nw);
+					else
+						if (c(j + 1) + c(k) <= n)
+							add(f[!q][j + 1][k][l - 1], nw);
+					if (n + k > l)
+						add(f[!q][j][k][l + 1], nw);
+					else
+						if (c(j) + c(k + 1) <= n)
+							add(f[!q][j][k + 1][l + 1], nw);
+					nw = 0;
+				}
+	for (r j(0); j <= n; ++j)
+		for (r k(0); c(j) + c(k) <= n; ++k)
+			for (r l(n - j); l <= n + k; ++l)
+				add(ans, f[q][j][k][l]);
+	printf("%d", ans);
+}

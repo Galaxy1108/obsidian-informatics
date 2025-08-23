@@ -1,0 +1,42 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define ull unsigned long long
+#define l(x) x<<1
+#define r(x) x<<1|1
+const ll SIZE = 200005;
+ll n, m, mod;
+
+inline ll rd(){
+	ll f = 1, x = 0;
+	char ch = getchar();
+	while(ch < '0' || ch > '9'){
+		if(ch == '-') f = -1;
+		ch = getchar();
+	}
+	while(ch >= '0' && ch <= '9'){
+		x = (x << 1) + (x << 3) + (ch ^ 48);
+		ch = getchar();
+	}
+	return f*x;
+}
+
+ll power(ll x, ll y){
+	ll jl = 1;
+	while(y){
+		if(y & 1) jl = (jl * x) % mod;
+		x = (x * x) % mod;
+		y >>= 1;
+	}	
+	return jl;
+}
+
+int main(){
+	freopen("easyhard.in", "r", stdin);
+	freopen("easyhard.out", "w", stdout);
+	n = rd(), m = rd(), mod = rd();
+	printf("%lld", power(2, 2*m));
+	return 0;
+}
+
+

@@ -1,0 +1,44 @@
+#include<bits/stdc++.h>
+using namespace std;
+int n,m,k,typ,cnt,t,opt,x,y,w[1000][1000];
+struct Node{
+	int x,y;
+}a[150006];
+int main(){
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	cin>>typ>>n>>m>>k;
+	if(typ==0){
+		for(int i=1;i<=k;i++){
+			cin>>a[i].x>>a[i].y;
+			w[a[i].x][a[i].y]=1;
+		}
+		cnt=k;
+		cin>>t;
+		while(t--){
+			cin>>opt>>x>>y;
+			if(opt==1){
+				a[++cnt].x=x;
+				a[cnt].y=y;
+				w[x][y]=1;
+			}else{
+				cin>>opt;
+				bool dir=x; 
+				while(opt&&x<=n&&y<=m){
+					if(dir)y++;
+					else x++;
+					if(w[x][y])opt--,dir=(dir)?0:1;
+				}
+				cout<<x<<' '<<y<<endl;
+			}
+		}
+	}
+	return 0;
+}
+/*
+00010000
+00010100
+01000100
+00100100
+00000000
+*/

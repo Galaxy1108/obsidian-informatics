@@ -1,0 +1,28 @@
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#define ll long long
+using namespace std;
+int n,q,a[200011],pw[200011];ll sum[200011];const int p=998244353;
+int solve()
+{
+	int mx=0;long long ans=0;
+	for(int i=1;i<=n;++i)mx=max(mx,a[i]),sum[i]=sum[i-1]+a[i];
+	for(int i=n;i;--i)
+	{
+		if(sum[i-1]<mx)ans+=pw[i],mx-=a[i];
+	}
+	return ans;
+}
+int main()
+{
+	freopen("imperishable.in","r",stdin);freopen("imperishable.out","w",stdout);
+	scanf("%*d%d",&n);pw[0]=1;
+	for(int i=1;i<=n;++i)scanf("%d",a+i),pw[i]=2ll*pw[i-1]%p;
+	printf("%d\n",solve());
+	scanf("%d",&q);while(q--)
+	{
+		int x,y;scanf("%d%d",&x,&y);
+		a[x]=y;printf("%d\n",solve());
+	}fclose(stdin);fclose(stdout);return 0;
+}

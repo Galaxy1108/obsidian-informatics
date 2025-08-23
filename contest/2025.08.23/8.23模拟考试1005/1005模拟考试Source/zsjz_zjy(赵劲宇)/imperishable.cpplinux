@@ -1,0 +1,90 @@
+#include<cstdio>
+#include<iostream>
+#include<algorithm>
+#include<cstring>
+#include<cmath>
+#define I_Love_Ycx_Forever int main()
+#define fo(i,a,b) for(int i=a;i<=b;i++)
+#define fd(i,b,a) for(int i=b;i>=a;i--)
+#define ll long long
+#define N 200007
+#define ls num<<1
+#define rs num<<1|1
+#define lson ls,l,mid
+#define rson rs,mid+1,r
+using namespace std;
+int read(){
+	int a=0,f=1;
+	char ch=getchar();
+	while(ch<'0'||ch>'9'){if(ch=='-')f=-1;ch=getchar();}
+	while(ch>='0'&&ch<='9'){a=a*10+ch-48;ch=getchar();}
+	return a*f;
+}
+const ll mod=998244353;
+int num,n,q,a[N],mx[N<<2];
+ll sum[N<<2],er[N],s[N];
+void build(int num,int l,int r){
+	if(l==r) a[l]=mx[num]=sum[num]=read();
+	else{
+		int mid=l+r>>1;
+		build(lson),build(rson);
+		mx[num]=max(mx[ls],mx[rs]);
+		sum[num]=sum[ls]+sum[rs];
+	}
+}
+void change(int num,int l,int r,int x,int y){
+	if(l==r) mx[num]=sum[num]=y;
+	else{
+		int mid=l+r>>1;
+		if(x<=mid) change(lson,x,y);
+		else change(rson,x,y);
+		mx[num]=max(mx[ls],mx[rs]);
+		sum[num]=sum[ls]+sum[rs];
+	}
+}
+int Mx(int num,int l,int r,int x,int y){
+	if(x>y) return 0;
+	if(x<=l&&r<=y) return mx[num];
+	int mid=l+r>>1,a=0;
+	if(x<=mid) a=Mx(lson,x,y);
+	if(y>mid) a=max(a,Mx(rson,x,y));
+	return a;
+}
+ll Sum(int num,int l,int r,int x,int y){
+	if(x>y) return 0;
+	if(x<=l&&r<=y) return sum[num];
+	int mid=l+r>>1;ll a=0;
+	if(x<=mid) a=Sum(lson,x,y);
+	if(y>mid) a+=Sum(rson,x,y);
+	return a;
+}
+void work(){
+	int l=1,r=n,lst=0;
+	while(l<=r){
+		int mid=l+r>>1;
+		if(Mx(1,1,n,mid+1,n)-a[mid]<=Sum(1,1,n,1,mid-1)) lst=mid,r=mid-1;
+		else l=mid+1;
+	}
+	int up=Mx(1,1,n,lst+1,n)-a[lst];
+	ll ans=er[lst];
+	fo(i,1,lst-1) s[i]=s[i-1]+a[i];
+	fd(i,lst-1,1){
+		if(s[i-1]<up) (ans+=er[i])%=mod,up-=a[i];
+	}
+	printf("%lld\n",ans);
+}
+I_Love_Ycx_Forever{
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	num=read(),n=read();
+	er[0]=1;
+	fo(i,1,n) er[i]=(er[i-1]<<1ll)%mod;
+	build(1,1,n);
+	work();
+	q=read();
+	while(q--){
+		int x=read(),y=read();
+		change(1,1,n,x,y),a[x]=y;
+		work();
+	}
+}

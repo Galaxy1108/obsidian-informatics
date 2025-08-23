@@ -1,0 +1,55 @@
+#include <bits/stdc++.h>
+
+#define int long long
+
+using namespace std;
+
+const int N = 200005, mod = 998244353;
+int trash, n, a[N], b[N], q, pow2[N], sum;
+int min_ans = INT_MAX;
+
+int dfs(int dep, int cnt, int ans, int mx_num, int mx_cnt, int lst_cnt) {
+	if(ans >= min_ans) return INT_MAX;
+//	printf("call dfs dep:%d cnt:%d ans:%d mx_num:%d mx_cnt:%d\n", dep, cnt, ans, mx_num, mx_cnt);
+	int id = dep % (n + 1);
+	if(id == 0) {
+		if(cnt == lst_cnt) return INT_MAX;
+		if(cnt == sum) return ans + pow2[mx_num];
+		return dfs(dep + 1, cnt, ans + pow2[mx_num], 0, -1, cnt);
+	}
+	int res = INT_MAX;
+	for(int i = 0; i <= b[id]; i++) {
+		b[id] -= i;
+		if(i > mx_cnt) res = min(res, dfs(dep + 1, cnt + i, ans, id, i, lst_cnt));
+		else res = min(res, dfs(dep + 1, cnt + i, ans, mx_num, mx_cnt, lst_cnt));
+		b[id] += i;
+	}
+	if(res == INT_MAX) return INT_MAX;
+	min_ans = min(min_ans, res);
+	return res;
+}
+
+signed main() {
+	pow2[0] = 1;
+	for(int i = 1; i < N; i++) pow2[i] = pow2[i - 1] * 2 % mod;
+	scanf("%lld%lld", &trash, &n);
+	for(int i = 1; i <= n; i++) {
+		scanf("%lld", a + i);
+		sum += a[i];
+	}
+	scanf("%lld", &q);
+	while(q--) {
+		min_ans = INT_MAX;
+		for(int i = 1; i <= n; i++) b[i] = a[i];
+		printf("%lld\n", dfs(1, 0, 0, 0, -1, 0) % mod);
+		int x, y;
+		scanf("%lld%lld", &x, &y);
+		sum -= a[x];
+		sum += y;
+		a[x] = y;
+	}
+	min_ans = INT_MAX;
+	for(int i = 1; i <= n; i++) b[i] = a[i];
+	printf("%lld\n", dfs(1, 0, 0, 0, -1, 0) % mod);
+	return 0;
+}

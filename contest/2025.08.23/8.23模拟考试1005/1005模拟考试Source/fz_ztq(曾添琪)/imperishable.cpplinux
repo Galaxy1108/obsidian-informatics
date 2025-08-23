@@ -1,0 +1,79 @@
+#include <bits/stdc++.h>
+#define mid (l + r >> 1)
+#define FOR(i,j,k) for(int i=j; i<=k; ++i)
+#define ROF(i,j,k) for(int i=j; i>=k; --i)
+inline int read (void) {
+  int x = 0, f = 1, ch = getchar();
+  while(!isdigit(ch)) { if(ch == '-') f = -f; ch = getchar(); }
+  while(isdigit(ch)) { x = x * 10 + ch - '0'; ch = getchar(); }
+  return x * f;
+}
+using ll = long long;
+const int maxn = 200005;
+const int mod = 998244353;
+int pw[maxn], a[maxn];
+inline int max (int p, int q) {
+  return p > q ? p : q;
+}
+namespace SGT {
+  const int maxm = 524288;
+  ll t[maxm]; int mx[maxm];
+  void build (int l, int r, int k=1) {
+    if(l == r) {
+      t[k] = mx[k] = a[l];
+      return ;
+    }
+    build (l, mid, k<<1);
+    build (mid+1, r, k<<1|1);
+    t[k] = t[k<<1] + t[k<<1|1];
+    mx[k] = max(mx[k<<1], mx[k<<1|1]);
+  }
+  void modify (int l, int r, int q, int c, int k=1) {
+    if(l == r) {
+      t[k] = mx[k] = a[l] = c;
+      return ;
+    }
+    if(q <= mid) modify (l, mid, q, c, k<<1);
+    else modify (mid+1, r, q, c, k<<1|1);
+    t[k] = t[k<<1] + t[k<<1|1];
+    mx[k] = max(mx[k<<1], mx[k<<1|1]);
+  }
+  ll ress; int resid, resmx;
+  void query (int l, int r, int k=1) {
+    if(l == r) {
+      resid = l; return ;
+    }
+    if(max (resmx, mx[k<<1|1]) > ress + t[k<<1]) {
+      ress += t[k<<1]; query (mid+1, r, k<<1|1);
+    } else {
+      resmx = max (resmx, mx[k<<1|1]); query (l, mid, k<<1);
+    }
+  }
+}
+inline void solve (int n) {
+  SGT::resid = SGT::resmx = SGT::ress = 0;
+  SGT::query (1, n);
+  ll s = SGT::ress, ans = 0;
+  int mx = SGT::resmx, Mx;
+  ROF(i,SGT::resid,1) {
+    Mx = max (mx, a[i]);
+    if(Mx > s) {
+      ans += pw[i];
+      mx = max(mx - a[i], 0);
+    } else mx = Mx;
+    s -= a[i-1];
+  } printf("%lld\n", ans % mod);
+}
+int main (void) {
+  freopen("imperishable.in", "r", stdin);
+  freopen("imperishable.out", "w", stdout);
+  read(); int n = read(); pw[0] = 1;
+  FOR(i,1,n) pw[i] = 2ll * pw[i-1] % mod, a[i] = read();
+  SGT::build (1, n); solve (n); int q = read();
+  while(q--) {
+    int x = read(), y = read();
+    SGT::modify (1, n, x, y);
+    solve (n);
+  }
+  return 0;
+}

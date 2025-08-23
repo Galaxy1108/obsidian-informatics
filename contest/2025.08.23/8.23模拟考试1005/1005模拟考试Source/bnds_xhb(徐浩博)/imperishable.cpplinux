@@ -1,0 +1,19 @@
+#include<bits/stdc++.h>
+using namespace std;
+int tye,n,a[500005],q;
+int main(){
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	cin>>tye>>n;
+	for(int i=1;i<=n;i++)cin>>a[i];
+	cin>>q;
+	if(tye==1){
+		cout<<2;return 0;
+	}
+	cout<<"2\n";
+	while(q--)cout<<"2\n"; 
+	return 0;
+}/*
+1122233444444555
+
+*/

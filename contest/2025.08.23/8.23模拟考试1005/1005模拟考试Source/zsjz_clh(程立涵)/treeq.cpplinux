@@ -1,0 +1,210 @@
+#include<bits/stdc++.h>
+#define mid ((l+r)>>1)
+#define inf 1000000007
+#define N 1000005
+using namespace std;
+long long read()
+{
+	long long x=0,f=1;char ch=getchar();
+	while(ch<'0'||ch>'9'){if(ch=='-')f=-1;ch=getchar();}
+	while(ch>='0'&&ch<='9')x=(x<<1)+(x<<3)+ch-48,ch=getchar();
+	return x*f;
+}
+void write(long long x)
+{
+	if(x<0)putchar('-'),x=-x;
+	if(x>9)write(x/10);
+	putchar(x%10+'0');
+}
+int n,m,h[N],cnt,fa[N],st[N],tot,f[N],ans;
+long long wt[N];
+int sz[N],bz1,bz2,bz3,dfn[N],num;
+vector<int>ls[N],rs[N],temp;
+long long lss[N],rss[N];
+struct node
+{
+	int next,to,dis;
+}e[N<<1];
+void add(int x,int y,int z)
+{
+	e[++cnt].to=y;
+	e[cnt].dis=z;
+	e[cnt].next=h[x];
+	h[x]=cnt;
+}
+void dfs(int x)
+{
+	sz[x]=1;
+	dfn[x]=++num;
+	for(int i=h[x];i;i=e[i].next)
+	{
+		int y=e[i].to;
+		dfs(y);
+		sz[x]+=sz[y];
+	}
+}
+void work1()
+{
+	for(int x=1;x<=n;x++)
+	{
+		tot=0;long long t=0;
+		if(x>1)
+		{
+			t=n-sz[x];
+			st[++tot]=x;
+		}
+		for(int i=h[x];i;i=e[i].next)
+		{
+			int y=e[i].to;
+			if(sz[y]>t)
+			{
+				t=sz[y];
+				st[tot=1]=y;
+			}
+			else if(sz[y]==t)
+			{
+				st[++tot]=y;
+			}
+		}
+		for(int i=1;i<=tot;i++)
+		{
+			f[st[i]]++;
+		}
+	}
+}
+bool is_son(int x,int y)
+{
+	return (y>=dfn[x]&&y<=dfn[x]+sz[x]-1);
+}
+void work4()
+{
+	for(int x=1;x<=n;x++)
+	{
+		tot=0;long long t=0;
+		for(int y=2;y<=n;y++)
+		{
+			long long ss=0;
+			if(is_son(y,x))
+			{
+				ss=n-sz[y];
+			}
+			else
+			{
+				ss=sz[y];
+			}
+			if(ss*wt[y]>t)
+			{
+				t=ss*wt[y];
+				st[tot=1]=y;
+			}
+			else if(ss*wt[y]==t)
+			{
+				st[++tot]=y;
+			}
+		}
+		for(int i=1;i<=tot;i++)
+		{
+			f[st[i]]++;
+		}
+	}
+}
+void work2()
+{
+	long long t=0;
+	for(int i=2;i<=n;i++)
+	{
+		long long ss=wt[i]*(i-1);
+		if(ss>t)
+		{
+			temp.clear();
+			temp.push_back(i);
+			t=ss;
+		}else if(ss==t)
+		{
+			temp.push_back(i);
+		}
+		ls[i]=temp;
+		lss[i]=t;
+	}
+	temp.clear();
+	for(int i=n;i>1;i--)
+	{
+		long long ss=wt[i]*(n-i+1);
+		if(ss>t)
+		{
+			temp.clear();
+			temp.push_back(i);
+			t=ss;
+		}else if(ss==t)
+		{
+			temp.push_back(i);
+		}
+		rs[i-1]=temp;
+		rss[i]=t;
+	}
+	for(int i=1;i<=n;i++)
+	{
+		if(lss[i]>=rss[i])
+		{
+			for(int j=0;j<(int)ls[i].size();j++)
+			{
+				f[ls[i][j]]++;
+			}
+		}
+		if(rss[i]>=lss[i])
+		{
+			for(int j=0;j<(int)rs[i].size();j++)
+			{
+				f[rs[i][j]]++;
+			}
+		}
+	}
+}
+void solve()
+{
+	if(n<=5000)
+	{
+		work4();
+		return;
+	}
+	if(bz1)
+	{
+		//printf("OK\n");
+		work1();
+		return;
+	}
+	if(bz2)
+	{
+		work2();
+		return;
+	}
+	if(bz3)
+	{
+		return;
+	}
+}
+int main()
+{
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	n=read();
+	bz1=bz2=bz3=1;
+	for(int i=2,x,w;i<=n;i++)
+	{
+		x=read(),w=read();
+		fa[i]=x;wt[i]=w;
+		add(x,i,w);
+		if(w!=1)bz1=0;
+		if(x!=i-1)bz2=0;
+		if(x!=1)bz3=0;
+	}
+	dfs(1);
+	solve();
+	for(int i=2;i<=n;i++)
+	{
+		//printf("f[%d]=%d\n",i,f[i]);
+		ans^=f[i];
+	}
+	printf("%d\n",ans);
+	return 0;
+}

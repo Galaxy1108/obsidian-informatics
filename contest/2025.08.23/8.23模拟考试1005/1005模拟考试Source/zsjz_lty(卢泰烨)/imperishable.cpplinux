@@ -1,0 +1,51 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+#define fo(i,a,b) for(int i=a;i<=b;++i)
+#define fd(i,a,b) for(int i=a;i>=b;--i)
+#define ll long long
+
+const int mo = 998244353;
+
+int Num;
+int n;
+int a[200005];
+ll s[200005];
+int two[200005];
+
+int calc() {
+	s[0] = 0;
+	fo(i, 1, n) s[i] = s[i - 1] + a[i];
+	ll res = 0;
+	ll hou = 0;
+	fd(i, n, 1) {
+		if(max((ll)a[i], hou) > s[i - 1]) {
+			hou -= a[i];
+			res += two[i];
+		} else {
+			hou = max((ll)a[i], hou);
+		}
+	}
+	return res % mo;
+}
+
+int main() {
+	freopen("imperishable.in", "r", stdin);
+	freopen("imperishable.out", "w", stdout);
+	two[0] = 1;
+	fo(i, 1, 200000) two[i] = two[i - 1] * 2 % mo;
+	scanf("%d %d", &Num, &n);
+	fo(i, 1, n) {
+		scanf("%d", &a[i]);
+	}
+	printf("%d\n", calc());
+	int q;
+	scanf("%d", &q);
+	fo(i, 1, q) {
+		int x, y;
+		scanf("%d %d", &x, &y);
+		a[x] = y;
+		printf("%d\n", calc());
+	}
+	return 0;
+}

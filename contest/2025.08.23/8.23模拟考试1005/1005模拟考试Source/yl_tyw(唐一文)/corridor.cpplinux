@@ -1,0 +1,213 @@
+#include <bits/stdc++.h>
+#define il inline
+#define re register
+#define ll long long
+#define ull unsigned ll
+#define db double
+#define ldb long db
+#define fi first
+#define se second
+#define pii pair<int, int>
+#define MP(x, y) make_pair(x, y)
+using namespace std;
+namespace FastIO {
+  const int iL = 1 << 20;
+  char ibuf[iL], *iS = ibuf + iL, *iT = ibuf + iL;
+  #define GC() (iS == iT) ? \
+  (iT = (iS = ibuf) + fread(ibuf, 1, iL, stdin), (iS == iT) ? EOF : *iS++) : *iS++
+  template <class T>il void read(T &x) {
+    x = 0;
+    char c = GC(); bool flg = false;
+    while(!isdigit(c)) {flg |= c == '-'; c = GC();}
+    while(isdigit(c)) {x = (x << 1) + (x << 3) + (c & 15); c = GC();}
+    if(flg) x = -x;
+  }
+  template <class T>il void gread(T &x) {
+    x = 0;
+    char c = getchar(); bool flg = false;
+    while(!isdigit(c)) {flg |= c == '-'; c = getchar();}
+    while(isdigit(c)) {x = (x << 1) + (x << 3) + (c & 15); c = getchar();}
+    if(flg) x = -x;
+  }
+  il int read() {
+    int x = 0;
+    char c = GC(); bool flg = false;
+    while(!isdigit(c)) {flg |= c == '-'; c = GC();}
+    while(isdigit(c)) {x = (x << 1) + (x << 3) + (c & 15); c = GC();}
+    return flg ? -x : x;
+  }
+  char Out[iL], *iter = Out;
+  #define Flush() fwrite(Out, 1, iter - Out, stdout); iter = Out
+  template <class T>il void write(T x, char LastChar = '\n') {
+    int c[35], len = 0;
+    if(x < 0) {*iter++ = '-'; x = -x;}
+    do {c[++len] = x % 10; x /= 10;} while(x);
+    while(len) *iter++ = c[len--] + '0';
+    *iter++ = LastChar; Flush();
+  }
+}
+using namespace FastIO;
+#define N 300005
+#define M 50005
+int n, m, Q;
+int cnt, nxt[N], lst[N];
+int a[N], b[N], c[N], f[N];
+map<int, int> MX[M], MY[M];
+set<int> SX[M], SY[M];
+vector<int> G[N];
+namespace Sub0 {
+  il void ins(int x, int y) {
+    MX[x][y] = ++cnt; a[cnt] = x; b[cnt] = y; c[cnt] = 0;
+    for(re int i = x - 1; i; --i)
+      if(MY[i][y]) {nxt[MY[i][y]] = cnt; lst[cnt] = MY[i][y]; break;}
+    for(re int i = y + 1; i <= m; ++i)
+      if(MY[x][i]) {lst[MY[x][i]] = cnt; nxt[cnt] = MY[x][i]; break;}
+    MY[x][y] = ++cnt; a[cnt] = x; b[cnt] = y; c[cnt] = 1;
+    for(re int i = x + 1; i <= n; ++i)
+      if(MX[i][y]) {lst[MX[i][y]] = cnt; nxt[cnt] = MY[i][y]; break;}
+    for(re int i = y - 1; i; --i)
+      if(MX[x][i]) {nxt[MX[x][i]] = cnt; lst[cnt] = MY[x][i]; break;}
+  }
+  il void MAIN() {
+    read(n); read(m); read(Q);
+    for(re int _ = 0; _ < Q; ++_) {
+      int x, y; read(x); read(y); ins(x, y);
+    }
+    read(Q);
+    for(re int _ = 0; _ < Q; ++_) {
+      int op, x, y; read(op); read(x); read(y);
+      if(op == 1) {ins(x, y); continue;}
+      int w, p = 0; read(w); --w;
+      if(!x) {for(re int i = 1; i <= n; ++i) if(MX[i][y]) {p = MX[i][y]; break;}}
+      else for(re int i = 1; i <= m; ++i) if(MY[x][i]) {p = MY[x][i]; break;}
+      if(!p) {
+        if(!x) {write(n + 1, ' '); write(y); continue;}
+        write(x, ' '); write(m + 1); continue;
+      }
+      while(w) {
+        if(!nxt[p]) {
+          if(!c[p]) {write(a[p], ' '); write(m + 1); break;}
+          write(n + 1, ' '); write(b[p]); break;
+        }
+        p = nxt[p]; --w;
+      }
+      if(!w) {write(a[p], ' '); write(b[p]);}
+    }
+  }
+}
+namespace Sub1 {
+  il void ins(int x, int y) {
+    MX[x][y] = ++cnt; a[cnt] = x; b[cnt] = y; c[cnt] = 0;
+    if(SY[y].lower_bound(x) != SY[y].begin()) {
+      int p = MY[*--SY[y].lower_bound(x)][y];
+      nxt[p] = cnt; lst[cnt] = p;
+    }
+    if(SX[x].lower_bound(y) != SX[x].end()) {
+      int p = MY[x][*SX[x].lower_bound(y)];
+      lst[p] = cnt; nxt[cnt] = p;
+    }
+    MY[x][y] = ++cnt; a[cnt] = x; b[cnt] = y; c[cnt] = 1;
+    if(SY[y].lower_bound(x) != SY[y].end()) {
+      int p = MX[*SY[y].lower_bound(x)][y];
+      lst[p] = cnt; nxt[cnt] = p;
+    }
+    if(SX[x].lower_bound(y) != SX[x].begin()) {
+      int p = MX[x][*--SX[x].lower_bound(y)];
+      nxt[p] = cnt; lst[cnt] = p;
+    }
+    SX[x].insert(y); SY[y].insert(x);
+  }
+  int rt[N], dep[N], fa[N][20];
+  void DFS(int x, int fat, int rot) {
+    dep[x] = dep[fat] + 1; rt[x] = rot; fa[x][0] = fat;
+    for(re int i = 1; i < 20; ++i) fa[x][i] = fa[fa[x][i - 1]][i - 1];
+    for(auto y : G[x]) DFS(y, x, rot);
+  }
+  il void MAIN() {
+    read(n); read(m); read(Q);
+    for(re int _ = 0; _ < Q; ++_) {int x, y; read(x); read(y); ins(x, y);}
+    for(re int i = 1; i <= cnt; ++i) if(nxt[i]) G[nxt[i]].emplace_back(i);
+    for(re int i = 1; i <= cnt; ++i) if(!nxt[i]) DFS(i, 0, i);
+    read(Q);
+    for(re int _ = 0; _ < Q; ++_) {
+      int op, x, y, w, p = 0; read(op); read(x); read(y); read(w); --w;
+      if(!x) {
+        if(SY[y].empty()) {write(n + 1, ' '); write(y); continue;}
+        p = MX[*SY[x].begin()][y];
+      }
+      else {
+        if(SX[x].empty()) {write(x, ' '); write(m + 1); continue;}
+        p = MY[x][*SX[x].begin()];
+      }
+      if(dep[p] - 1 < w) {
+        p = rt[p];
+        if(!nxt[p]) {
+          if(!c[p]) {write(a[p], ' '); write(m + 1); continue;}
+          write(n + 1, ' '); write(b[p]); continue;
+        }
+      }
+      for(re int i = 19; ~i; --i) if(w >> i & 1) p = fa[p][i];
+      write(a[p], ' '); write(b[p]);
+    }
+  }
+}
+namespace Sub2 {
+  il void ins(int x, int y) {
+    MX[x][y] = ++cnt; a[cnt] = x; b[cnt] = y; c[cnt] = 0;
+    if(SY[y].lower_bound(x) != SY[y].begin()) {
+      int p = MY[*--SY[y].lower_bound(x)][y];
+      nxt[p] = cnt; lst[cnt] = p;
+    }
+    if(SX[x].lower_bound(y) != SX[x].end()) {
+      int p = MY[x][*SX[x].lower_bound(y)];
+      lst[p] = cnt; nxt[cnt] = p;
+    }
+    MY[x][y] = ++cnt; a[cnt] = x; b[cnt] = y; c[cnt] = 1;
+    if(SY[y].lower_bound(x) != SY[y].end()) {
+      int p = MX[*SY[y].lower_bound(x)][y];
+      lst[p] = cnt; nxt[cnt] = p;
+    }
+    if(SX[x].lower_bound(y) != SX[x].begin()) {
+      int p = MX[x][*--SX[x].lower_bound(y)];
+      nxt[p] = cnt; lst[cnt] = p;
+    }
+    SX[x].insert(y); SY[y].insert(x);
+  }
+  il void MAIN() {
+    read(n); read(m); read(Q);
+    for(re int _ = 0; _ < Q; ++_) {
+      int x, y; read(x); read(y); ins(x, y);
+    }
+    read(Q);
+    for(re int _ = 0; _ < Q; ++_) {
+      int op, x, y; read(op); read(x); read(y);
+      if(op == 1) {ins(x, y); continue;}
+      int w, p = 0; read(w); --w;
+      if(!x) {
+        if(SY[y].empty()) {write(n + 1, ' '); write(y); continue;}
+        p = MX[*SY[x].begin()][y];
+      }
+      else {
+        if(SX[x].empty()) {write(x, ' '); write(m + 1); continue;}
+        p = MY[x][*SX[x].begin()];
+      }
+      while(w) {
+        if(!nxt[p]) {
+          if(!c[p]) {write(a[p], ' '); write(m + 1); break;}
+          write(n + 1, ' '); write(b[p]); break;
+        }
+        p = nxt[p]; --w;
+      }
+      if(!w) {write(a[p], ' '); write(b[p]);}
+    }
+  }
+}
+int main() {
+  freopen("corridor.in", "r", stdin);
+  freopen("corridor.out", "w", stdout);
+  int Type; read(Type);
+  if(Type == 0) {Sub0::MAIN(); return 0;}
+  if(Type == 1) {Sub1::MAIN(); return 0;}
+  if(Type == 2) {Sub2::MAIN(); return 0;}
+  return 0;
+}

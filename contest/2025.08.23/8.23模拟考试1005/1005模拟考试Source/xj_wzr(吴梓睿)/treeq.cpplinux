@@ -1,0 +1,131 @@
+#include<bits/stdc++.h>
+using namespace std;
+inline long long read()
+{
+	long long s=0,k=1;
+	char c=getchar();
+	while(!isdigit(c))
+	{
+		k=(c=='-')?-1:1;
+		c=getchar();
+	}
+	while(isdigit(c))
+	{
+		s=s*10+c-'0';
+		c=getchar();
+	}
+	return s*k;
+}
+#define d read()
+#define ll long long
+#define Maxn 2000010
+#define Size 1000010
+#define mp make_pair
+#define pb push_back
+#define fi first
+#define se second
+struct e
+{
+	ll u,v,w,nxt;
+}e[Maxn];
+ll h[Size],top;
+void add(ll u,ll v,ll w)
+{
+	e[top]={u,v,w,h[u]};
+	h[u]=top;
+	top++;
+}
+ll sz[Size],dep[Size];
+ll maxn[Size],Max[Size],Mx[Size],n;
+bool vis[Size];
+vector<ll>son[Size];
+vector<ll>q[Size];
+void dfs(ll u,ll fa)
+{
+	sz[u]=1;
+	dep[u]=dep[fa]+1;
+	for(int i=h[u];~i;i=e[i].nxt)
+	{
+		if(e[i].v==fa) continue;
+		son[u].pb(e[i].v);
+		dfs(e[i].v,u);
+		sz[u]+=sz[e[i].v];
+		Max[u]=max(Max[u],e[i].w*(n-sz[e[i].v]));
+		if(Mx[u]<=Max[u])
+		{
+			if(Mx[u]<Max[u]) q[u].clear();
+			Mx[u]=Max[u];
+			q[u].pb(i/2);
+		}
+		maxn[u]=max(maxn[u],max(Max[e[i].v],maxn[e[i].v]));
+		if(Mx[u]<=maxn[u])
+		{
+			if(Mx[u]<maxn[u]) q[u].clear();
+			Mx[u]=Max[u];
+			for(auto x:q[e[i].v]) q[u].pb(x);
+		}
+	}
+	for(auto v:son[u])
+	{
+		for(auto x:q[u]) q[v].pb(x);
+		if(maxn[v]!=maxn[u])
+			vis[v]=1,maxn[v]=maxn[u];
+	}
+}
+ll Ma[Size];
+void dfs1(ll u,ll fa)
+{
+	for(int i=h[u];~i;i=e[i].nxt)
+	{
+		ll v=e[i].v;
+		if(vis[u])
+		{
+			maxn[v]=max(maxn[v],maxn[u]);
+			if(Mx[v]<=maxn[v])
+			{
+				if(Mx[v]<maxn[v]) q[v].clear();
+				Mx[v]=Max[v];
+				for(auto x:q[u]) q[v].pb(x);
+			}
+		}
+		Ma[v]=max(Ma[u],sz[v]*e[i].w);
+		if(Mx[v]<=Ma[v])
+		{
+			if(Mx[v]<Ma[v]) q[v].clear();
+			Mx[v]=Ma[v];
+			q[v].pb(i/2);
+		}
+		dfs1(v,u);
+	}
+}
+ll f[Size];
+int main()
+{
+	memset(h,-1,sizeof h);
+	n=d;
+	for(int i=1;i<n;i++)
+	{
+		ll x=d,y=d,w=d;
+		add(x,y,w),add(y,x,w);
+	}
+	dfs(1,0);
+	dfs1(1,0);
+	vector<ll>p;
+	for(int i=1;i<=n;i++)
+	{
+		if(q[i].empty()) continue;
+		sort(q[i].begin(),q[i].end());
+		p.clear();p.pb(q[i][0]);
+		for(auto x:q[i])
+			if(x!=p.back())
+				p.pb(x);
+		q[i]=p;
+	}
+	for(int i=1;i<=n;i++)
+		for(auto x:q[i])
+			f[x]++;
+	ll ans=0;
+	for(int i=0;i<n-1;i++)
+		ans^=f[i];
+	printf("%lld\n",ans);
+}

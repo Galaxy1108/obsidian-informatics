@@ -1,0 +1,58 @@
+#include <cstdio>
+#include <iostream>
+#include <set>
+#define macro_expand(x) #x
+#define print_macro(x) printf("%s\n",macro_expand(x))
+#define FOR(i,l,r) for(int i=(l),i##ADJK=(r);i<=i##ADJK;++i)
+#define ROF(i,r,l) for(int i=(r),i##ADJK=(l);i>=i##ADJK;--i)
+using namespace std;
+typedef long long LL;
+const int MN=5e4+5;
+int type,N,M,K;
+set<int> row[MN],col[MN];
+int down(int x,int y){
+	auto t=col[y].upper_bound(x);
+	if(t==col[y].end())return N+1;
+	else return *t;
+}
+int right(int x,int y){
+	auto t=row[x].upper_bound(y);
+	if(t==row[x].end())return M+1;
+	else return *t;
+}
+void go(int x,int y,int q){
+	int t=(x==0)?0:1;
+	while(q--){
+		// cerr<<"x:"<<x<<" y:"<<y<<endl;
+		if(t==0)x=down(x,y);
+		else y=right(x,y);
+		if(x==N+1||y==M+1)break;
+		t^=1;
+	}
+	printf("%d %d\n",x,y);
+}
+int main(){
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	scanf("%d%d%d%d",&type,&N,&M,&K);
+	FOR(i,1,K){
+		int x=0,y=0;scanf("%d%d",&x,&y);
+		row[x].insert(y),col[y].insert(x);
+	}
+	int Q=0;
+	scanf("%d",&Q);
+	while(Q--){
+		int w=0,x=0,y=0,q=0;
+		scanf("%d%d%d",&w,&x,&y);
+		if(w==1){
+			row[x].insert(y);
+			col[y].insert(x);
+		}else{
+			scanf("%d",&q);
+			go(x,y,q);
+		}
+	}
+	fclose(stdin);
+	fclose(stdout);
+	return 0;
+}

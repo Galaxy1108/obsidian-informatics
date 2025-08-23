@@ -1,0 +1,76 @@
+#include <bits/stdc++.h>
+#define il inline
+#define re register
+#define ll long long
+#define ull unsigned ll
+#define db double
+#define ldb long db
+#define fi first
+#define se second
+#define pii pair<int, int>
+#define MP(x, y) make_pair(x, y)
+using namespace std;
+namespace FastIO {
+  const int iL = 1 << 20;
+  char ibuf[iL], *iS = ibuf + iL, *iT = ibuf + iL;
+  #define GC() (iS == iT) ? \
+  (iT = (iS = ibuf) + fread(ibuf, 1, iL, stdin), (iS == iT) ? EOF : *iS++) : *iS++
+  template <class T>il void read(T &x) {
+    x = 0;
+    char c = GC(); bool flg = false;
+    while(!isdigit(c)) {flg |= c == '-'; c = GC();}
+    while(isdigit(c)) {x = (x << 1) + (x << 3) + (c & 15); c = GC();}
+    if(flg) x = -x;
+  }
+  template <class T>il void gread(T &x) {
+    x = 0;
+    char c = getchar(); bool flg = false;
+    while(!isdigit(c)) {flg |= c == '-'; c = getchar();}
+    while(isdigit(c)) {x = (x << 1) + (x << 3) + (c & 15); c = getchar();}
+    if(flg) x = -x;
+  }
+  il int read() {
+    int x = 0;
+    char c = GC(); bool flg = false;
+    while(!isdigit(c)) {flg |= c == '-'; c = GC();}
+    while(isdigit(c)) {x = (x << 1) + (x << 3) + (c & 15); c = GC();}
+    return flg ? -x : x;
+  }
+  char Out[iL], *iter = Out;
+  #define Flush() fwrite(Out, 1, iter - Out, stdout); iter = Out
+  template <class T>il void write(T x, char LastChar = '\n') {
+    int c[35], len = 0;
+    if(x < 0) {*iter++ = '-'; x = -x;}
+    do {c[++len] = x % 10; x /= 10;} while(x);
+    while(len) *iter++ = c[len--] + '0';
+    *iter++ = LastChar; Flush();
+  }
+}
+using namespace FastIO;
+#define N 200005
+#define MOD 998244353
+int n, m, a[N], pw[N]; ll Ans, Sum;
+il ll solve() {
+  ll ans = Ans, sum = Sum; int mx = 0;
+  for(re int i = n; i; --i)
+    if(sum - a[i] >= max(mx, a[i])) {
+      sum -= a[i]; mx = max(mx, a[i]); ans -= pw[i];
+    }
+  return ans % MOD;
+}
+int main() {
+  freopen("imperishable.in", "r", stdin);
+  freopen("imperishable.out", "w", stdout);
+  int TESTID; read(TESTID);
+  read(n); pw[0] = 1;
+  for(re int i = 1; i <= n; ++i) {
+    read(a[i]); Sum += a[i];
+    pw[i] = (pw[i - 1] << 1) % MOD; Ans += pw[i];
+  }
+  read(m); write(solve());
+  for(re int _ = 0; _ < m; ++_) {
+    int x, y; read(x); read(y);
+    Sum += y - a[x]; a[x] = y; write(solve());
+  }
+  return 0;
+}

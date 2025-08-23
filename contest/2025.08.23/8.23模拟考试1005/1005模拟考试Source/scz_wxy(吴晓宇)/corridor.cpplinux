@@ -1,0 +1,118 @@
+#include <bits/stdc++.h>
+#define setit set<int>::iterator
+using namespace std;
+int type,n,m,k;
+int tot;//瀹跺叿鐨勬€绘暟 
+struct coor{
+	int x,y;
+}ob[150010];
+const int N = 50010;
+set <int> cross[N];//瀵逛簬妯潗鏍囦负x鐨勪俊鎭?
+set <int> over[N];//瀵逛簬绾靛潗鏍囦负y鐨勪俊鎭?
+void solve(int x,int y,int q){
+	int nx,ny;
+	nx=x,ny=y;
+	int dir;
+	//鏂瑰悜  0:鍚戜笅 1:鍚戜笂 2:鍚戝彸 3:鍚戝乏
+	if(x==0) dir=0;
+	if(y==0) dir=2;
+	while(q){
+		if(dir==0){
+			setit it;
+			it=upper_bound(cross[nx].begin(),cross[nx].end(),ny);
+			ny=*it;
+			dir=2;
+			q--;
+		}
+		if(dir==1){
+			setit it;
+			it=lower_bound(cross[nx].begin(),cross[nx].end(),ny);
+			for(it;it!=cross[nx].begin() && *it>=ny;it--);
+			ny=*it;
+			dir=3;
+			q--;
+		}
+		if(dir==2){
+			setit it;
+			it=upper_bound(over[ny].begin(),over[ny].end(),nx);
+			nx=*it;
+			dir=0;
+			q--;
+		}
+		if(dir==3){
+			setit it;
+			it=lower_bound(over[ny].begin(),cross[ny].end(),nx);
+			for(it;it!=over[ny].begin() && *it>=nx;it--);
+			nx=*it;
+			dir=1;
+			q--;
+		}
+		if(q==0){
+			if(dir==0){
+				setit it;
+				it=upper_bound(cross[nx].begin(),cross[nx].end(),ny);
+				if(*it==ny) ny=m+1;
+				else ny=*it;
+				dir=2;
+			}
+			if(dir==1){
+				setit it;
+				it=lower_bound(cross[nx].begin(),cross[nx].end(),ny);
+				for(it;it!=cross[nx].begin() && *it>=ny;it--);
+				if(*it>=ny) ny=0;
+				else ny=*it;
+				dir=3;
+			}
+			if(dir==2){
+				setit it;
+				it=upper_bound(over[ny].begin(),over[ny].end(),nx);
+				if(*it==nx) nx=m+1;
+				else nx=*it;
+				dir=0;
+			}
+			if(dir==3){
+				setit it;
+				it=lower_bound(over[ny].begin(),cross[ny].end(),nx);
+				for(it;it!=over[ny].begin() && *it>=nx;it--);
+				if(*it>=nx) nx=0;
+				else nx=*it;
+				dir=1;
+			}
+			break;
+		}
+	}
+	cout<<nx<<' '<<ny<<endl;
+	return ;
+}
+int main(){
+	 freopen("corridor.in","r",stdin);
+	 freopen("corridor.out","w",stdout);
+	scanf("%d%d%d%d",&type,&n,&m,&k);
+	for(int i=1;i<=k;i++){
+		tot++;
+		int x,y;
+		scanf("%d%d",&x,&y);
+		ob[tot]=(coor){x,y};
+		cross[x].insert(y);
+		over[y].insert(x);
+	}
+	int Q;
+	scanf("%d",&Q);
+	while(Q--){
+		int opt;
+		scanf("%d",&opt);
+		if(opt==1){
+			int x,y;
+			scanf("%d%d",&x,&y);
+			tot++;
+			ob[tot]=(coor){x,y};
+			cross[x].insert(y);
+			over[y].insert(x);
+			continue;
+		}
+		int x,y,q;
+		scanf("%d%d%d",&x,&y,&q);
+		solve(x,y,q);
+	}
+	return 0;
+}

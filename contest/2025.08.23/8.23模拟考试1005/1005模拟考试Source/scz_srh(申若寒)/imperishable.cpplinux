@@ -1,0 +1,41 @@
+#include<bits/stdc++.h>
+using namespace std;
+inline int read(){
+	int sum = 0, fh = 1; char ch = getchar();
+	while (!isdigit(ch)) {if (ch == '-') fh = -1; ch = getchar();}
+	while (isdigit(ch)) {sum = sum * 10 + ch - '0'; ch = getchar();}
+	return sum*fh;
+}
+const int MAXN = 2e5, p = 998244353;
+int n;
+int a[MAXN];
+void solve()
+{
+	;
+}
+int main()
+{
+	freopen ("imperishable.in", "r", stdin);
+	freopen ("imperishable.out", "w", stdout);
+	int num = read();
+	int n = read();
+	for (int i = 1; i <= n; i++)
+	{
+		a[i] = read();
+	}
+	if(num == 1)
+	{
+		int q = read();
+		cout << 2;
+		return 0;
+	}
+	solve();
+	int q = read();
+	for(int i = 1; i <= q; i++)
+	{
+		int x = read(), y = read();
+		a[x] = y;
+		solve();
+	}
+	return 0;
+} 

@@ -1,0 +1,72 @@
+#include <bits/stdc++.h>
+using namespace std;
+int type,n,m,K;
+int tar;
+bool mapp[105][105]={0};
+void mo(int x,int y,int k,int dir)
+{
+//	cout<<"cv "<<x<<" "<<y<<" "<<k<<" "<<dir<<endl; 
+	if(k==tar)
+	{
+		if(dir==0) printf("%d %d\n",x,y-1);
+		else printf("%d %d\n",x-1,y);
+		return;
+	}
+	if(dir==1)
+	{
+		while(mapp[x][y]==0&&x<=n) ++x;
+		if(x>n) 
+		{
+			printf("%d %d\n",n+1,y);
+			return;
+		}
+		else mo(x,y+1,k+1,0);
+	} 
+	if(dir==0)
+	{
+		while(mapp[x][y]==0&&y<=m) ++y;
+		if(y>m) 
+		{
+			printf("%d %d\n",x,m+1);
+			return;
+		}
+		else mo(x+1,y,k+1,1);
+	} 
+}
+int main()
+{
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	scanf("%d%d%d%d",&type,&n,&m,&K);
+	int i,j,k;
+	for(i=1;i<=K;i++)
+	{
+		scanf("%d%d",&j,&k);
+		mapp[j][k]=1;
+	}
+	int q;
+	scanf("%d",&q);
+	while(q)
+	{
+		--q;
+		scanf("%d",&i);
+		if(i==1)
+		{
+			scanf("%d%d",&j,&k);
+			mapp[j][k]=1;
+		}
+		else
+		{
+			scanf("%d%d%d",&i,&j,&tar);
+			if(i==0)
+			{
+				mo(1,j,0,1);
+			}
+			else
+			{
+				mo(i,1,0,0);
+			} 
+		} 
+	}
+	return 0;
+}

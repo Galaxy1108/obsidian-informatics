@@ -1,0 +1,37 @@
+#include<bits/stdc++.h>
+#define F(i,x,y) for(int i=(x);i<=(y);i++)
+using namespace std;
+long long f[3010][3010],ans,ans1;
+int n,m;
+long long p;
+int main()
+{
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	cin>>n>>m>>p;
+	F(i,0,n)f[0][i]=1;
+	F(i,1,m)
+		F(j,0,n)
+		{
+			if(j!=0)
+				f[i][j]+=f[i-1][j-1]+f[i-1][j];
+			if(j!=n)
+				f[i][j]+=f[i-1][j+1]+f[i-1][j];
+			f[i][j]%=p;
+		}
+	F(i,0,n)ans=(ans+f[m][i])%p;
+	memset(f,0,sizeof f);
+	F(i,0,n-1)f[0][i]=1;
+	F(i,1,m)
+		F(j,0,n-1)
+		{
+			if(j!=0)
+				f[i][j]+=f[i-1][j-1]+f[i-1][j];
+			if(j!=n-1)
+				f[i][j]+=f[i-1][j+1]+f[i-1][j];
+			f[i][j]%=p;
+		}
+	F(i,0,n-1)ans1=(ans1+f[m][i])%p;
+	cout<<(ans-ans1+p)%p;
+	return 0;
+}

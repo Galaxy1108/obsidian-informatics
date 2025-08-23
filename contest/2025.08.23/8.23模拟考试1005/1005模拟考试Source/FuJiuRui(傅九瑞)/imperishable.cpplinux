@@ -1,0 +1,42 @@
+#include<stdio.h>
+#include<algorithm>
+using namespace std;
+typedef long long LL;
+const int NR=2e5+5;
+const int MOD=998244353;
+int a[NR];
+LL sum[NR];
+int gx[NR];
+void solve(int n)
+{
+	int maxx=0;
+	for(int i=1;i<=n;++i) sum[i]=sum[i-1]+a[i],maxx=max(maxx,a[i]);
+	int ans=0;
+	for(int i=n;i>=1;--i)
+	{
+		if(sum[i-1]<maxx)
+		{
+			maxx-=a[i];
+			ans=(ans+gx[i])%MOD;
+		}
+	}
+	printf("%d\n",ans);
+}
+int main()
+{
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	int Num;scanf("%d",&Num);
+	int n;scanf("%d",&n);
+	gx[0]=1;
+	for(int i=1;i<=n;++i) scanf("%d",a+i),gx[i]=gx[i-1]*2%MOD;
+	int Q;scanf("%d",&Q);
+	solve(n);
+	while(Q--)
+	{
+		int x,y;scanf("%d%d",&x,&y);
+		a[x]=y;
+		solve(n);
+	}
+	return 0;
+}

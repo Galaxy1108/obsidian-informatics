@@ -1,0 +1,63 @@
+#include<bits/stdc++.h>
+using namespace std;
+int a[1001][1001];
+int tim,q,fx=0,n,m,x,y,k,qx,qy,opt,typ;
+int main()
+{
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	cin>>typ;
+	cin>>n>>m>>k;
+	for(int i=1;i<=k;i++)
+	{
+		cin>>x>>y;
+		a[x][y]=1;
+	}
+	x=0,y=0;
+    cin>>q;
+	while(q--)
+	{
+		cin>>opt;
+		if(opt==1)
+		{
+			cin>>qx>>qy;
+			a[qx][qy]=1;
+		}
+		else
+		{
+			int tan=0;
+			cin>>qx>>qy>>tim;
+			//fx up 1 down 2 left 3  right 4
+			if(qx==0)fx=2;
+			else fx=4;
+			while(1)
+			{
+			//	cout<<qx<<"*"<<qy<<"*"<<fx<<endl;
+				if(tan==tim)
+				{
+					cout<<qx<<" "<<qy<<endl;
+					break;
+				}
+				if(fx==1)qx--;
+				if(fx==2)qx++;
+				if(fx==3)qy--;
+				if(fx==4)qy++;
+				if((qx>n||qx<0||qy>m||qy<0)&&tan<tim)
+				{
+					if(qx>n||qx<0)cout<<n+1<<" "<<qy<<endl;
+					else cout<<qx<<" "<<m+1<<endl;
+					break;
+				}
+				if(a[qx][qy]==1)
+				{
+					//cout<<qx<<"**"<<qy<<endl;
+					if(fx==1)fx=3;
+					else if(fx==2)fx=4;
+					else if(fx==3)fx=1;
+					else if(fx==4)fx=2;
+					tan++;
+				}
+			}
+		}
+	}
+}

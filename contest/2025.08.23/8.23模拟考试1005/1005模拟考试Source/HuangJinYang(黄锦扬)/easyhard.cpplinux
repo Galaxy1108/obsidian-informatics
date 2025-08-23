@@ -1,0 +1,94 @@
+#include<iostream>
+#include<cstdio>
+using namespace std;
+#define ww 0
+#define bw 1
+#define wb 2
+#define bb 3
+const int MX=3e3+7;
+bool f[2][4][MX];
+int f2[2][4];
+bool trans[4][4];
+int n,m,p;
+void add(bool &x){
+	x=true;
+}
+int main(){
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	cin>>n>>m>>p;
+	if(m==1){
+		cout<<4%p<<endl;
+		return 0;
+	}
+	f2[1][ww]=1;	
+	f2[1][wb]=1;	
+	f2[1][bw]=1;	
+	f2[1][bb]=1;	
+	for(int i=0;i<=n;i++){
+		if(i==0){
+			f[1][ww][i+1]=true;
+			f[1][wb][i]=true;
+		}
+		else if(i==n){
+			f[1][bb][i-1]=true;
+			f[1][bw][i]=true;
+		}
+		else{
+			f[1][ww][i+1]=true;
+			f[1][wb][i]=true;
+			f[1][bb][i-1]=true;
+			f[1][bw][i]=true;
+		}
+	}
+	for(int j=1;j<m;j++){
+		int u=j&1,v=(j+1)&1;
+		for(int i=0;i<=n;i++)f[v][ww][i]=f[v][wb][i]=f[v][bw][i]=f[v][bb][i]=false;
+		f2[v][ww]=f2[v][wb]=f2[v][bw]=f2[v][bb]=0;
+		for(int i=0;i<=n;i++){
+			if(i>0){
+				if(f[u][ww][i]>0)add(f[v][bb][i-1]),trans[ww][bb]=true;//bb
+				if(f[u][wb][i]>0)add(f[v][bb][i-1]),trans[wb][bb]=true;
+				if(f[u][bw][i]>0)add(f[v][bb][i-1]),trans[bw][bb]=true;
+				if(f[u][bb][i]>0)add(f[v][bb][i-1]),trans[bb][bb]=true;
+				if(f[u][ww][i]>0)add(f[v][bw][i]),trans[ww][bw]=true;//bw
+				if(f[u][wb][i]>0)add(f[v][bw][i]),trans[wb][bw]=true;
+				if(f[u][bw][i]>0)add(f[v][bw][i]),trans[bw][bw]=true;
+				if(f[u][bb][i]>0)add(f[v][bw][i]),trans[bb][bw]=true;
+			}
+			if(i<n){
+				if(f[u][ww][i]>0)add(f[v][ww][i+1]),trans[ww][ww]=true;//ww
+				if(f[u][wb][i]>0)add(f[v][ww][i+1]),trans[wb][ww]=true;
+				if(f[u][bw][i]>0)add(f[v][ww][i+1]),trans[bw][ww]=true;
+				if(f[u][bb][i]>0)add(f[v][ww][i+1]),trans[bb][ww]=true;
+				if(f[u][ww][i]>0)add(f[v][wb][i]),trans[ww][wb]=true;//wb
+				if(f[u][wb][i]>0)add(f[v][wb][i]),trans[wb][wb]=true;
+				if(f[u][bw][i]>0)add(f[v][wb][i]),trans[bw][wb]=true;
+				if(f[u][bb][i]>0)add(f[v][wb][i]),trans[bb][wb]=true;
+			}
+		}
+		for(int x=0;x<=3;x++){
+			for(int y=0;y<=3;y++){
+				if(trans[x][y])f2[v][y]=(f2[v][y]+f2[u][x])%p;
+				//cout<<trans[x][y]<<' ';
+			}
+			//cout<<endl;
+		}
+		/*
+		for(int y=0;y<=3;y++)
+			cout<<f2[v][y]<<' ';
+		cout<<endl;
+		cout<<"----------"<<endl;
+		for(int x=0;x<=n;x++){
+			for(int y=0;y<=3;y++)
+				cout<<f[v][x][y]<<' ';
+			cout<<endl;
+		}
+		cout<<"**********"<<endl;
+		*/
+	}
+	int to=m&1,ans=0;
+	for(int i=0;i<=3;i++)ans=(ans+f2[to][i])%p;
+	cout<<ans<<endl;
+	return 0;
+} 

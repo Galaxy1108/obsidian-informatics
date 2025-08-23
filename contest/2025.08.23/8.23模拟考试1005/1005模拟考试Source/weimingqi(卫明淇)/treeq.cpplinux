@@ -1,0 +1,119 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+const int MAXN=1010101;
+
+int n,u,v,w;
+
+struct Edge{
+	int to,nxt,w;
+} es[MAXN<<1];
+int cnt=1;
+
+int first[MAXN];
+
+void addE(int from,int to,int w)
+{
+	es[++cnt]=(Edge){to,first[from],w};
+	first[from]=cnt;
+}
+
+int sz[MAXN];
+
+long long Max;
+
+void getMax(int p,int from)
+{
+	sz[p]=1;
+	for(int e=first[p];e;e=es[e].nxt)
+	{
+		int to=es[e].to;
+		if(to==from) continue;
+		getMax(to,p);
+		sz[p]+=sz[to];
+		Max=max(Max,1ll*sz[to]*es[e].w);
+	}
+}
+
+int f[MAXN];
+
+void Update(int p,int from)
+{
+	for(int e=first[p];e;e=es[e].nxt)
+	{
+		int to=es[e].to;
+		if(to==from) continue;
+		if(Max==1ll*sz[to]*es[e].w)
+			f[e>>1]++;
+		Update(to,p);
+	}
+}
+
+void dfs(int p,int from)
+{
+	sz[p]=1;
+	for(int e=first[p];e;e=es[e].nxt)
+	{
+		if(from==(e^1)) continue;
+		int to=es[e].to;
+		dfs(to,e);
+		sz[p]+=sz[to];
+	}
+	int Max=n-sz[p];
+	for(int e=first[p];e;e=es[e].nxt)
+	{
+		if(from==(e^1)) continue;
+		int to=es[e].to;
+		Max=max(Max,sz[to]);
+	}
+	if(Max==n-sz[p])
+		f[from>>1]++;
+	for(int e=first[p];e;e=es[e].nxt)
+	{
+		if(from==(e^1)) continue;
+		int to=es[e].to;
+		if(Max==sz[to])
+			f[e>>1]++;
+	}
+}
+
+int ans=0;
+
+int main()
+{
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	cin>>n;
+	bool flag1=true,flag2=true,flag3=true;
+	for(int i=1;i<n;i++)
+	{
+		cin>>u>>v>>w;
+		addE(u,v,w),addE(v,u,w);
+		if(w!=1) flag1=false;
+		if(u!=i || v!=i+1) flag2=false;
+		if(u!=1 || v!=i+1) flag3=false;
+	}
+	if(n<=5000)
+	{
+		for(int i=1;i<=n;i++)
+		{
+			Max=0;
+			getMax(i,0);
+			Update(i,0);
+		}
+		for(int i=1;i<n;i++)
+			ans^=f[i];
+		cout<<ans<<"\n";
+		return 0;
+	}
+	if(flag1)
+	{
+		dfs(1,0);
+		for(int i=1;i<n;i++)
+			ans^=f[i];
+		cout<<ans<<"\n";
+		return 0;
+	}
+	return 0;
+}

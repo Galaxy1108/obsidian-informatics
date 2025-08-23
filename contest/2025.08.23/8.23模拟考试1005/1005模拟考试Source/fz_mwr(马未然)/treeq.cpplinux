@@ -1,0 +1,94 @@
+#include <iostream>
+#include <cstdio>
+#define ll long long
+using namespace std;
+int read(){
+	int x=0;
+	char ch=getchar();
+	while(ch<'0'||ch>'9')ch=getchar();
+	while(ch>='0'&&ch<='9')x=x*10+ch-'0',ch=getchar();
+	return x;
+}
+int n,u[10000005],v[10000005],w[10000005],first[10000005],nxt[10000005];
+int sz[10000005],idx,dfn[10000005],nfd[10000005];
+ll qwq1[10000005],qwq2[10000005];
+ll val1[10000005],val2[10000005],val3[10000005];
+int tag1[10000005],tag2[10000005],tag3[10000005];
+int ans[10000005];
+void dfs(int now){
+	sz[now]=1;
+	dfn[now]=++idx;
+	nfd[idx]=now;
+	for (int i=first[now];i;i=nxt[i]){
+		dfs(v[i]);
+		sz[now]+=sz[v[i]];
+	}
+	return;
+}
+int main(){
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	n=read();
+	for (int i=2;i<=n;i++){
+		u[i]=read(),v[i]=i,w[i]=read();
+		nxt[i]=first[u[i]],first[u[i]]=i;
+	}
+	dfs(1);
+	for (int i=2;i<=n;i++)qwq1[v[i]]=1ll*w[i]*sz[v[i]],qwq2[v[i]]=1ll*w[i]*(n-sz[v[i]]);
+	for (int awa=n;awa>=1;awa--){
+		int now=nfd[awa];
+		for (int i=first[now];i;i=nxt[i])val1[now]=max(val1[now],max(val1[v[i]],1ll*w[i]*sz[v[i]]));
+	}
+	for (int awa=1;awa<=n;awa++){
+		int now=nfd[awa];
+		ll fi=val2[now],se=val2[now];
+		for (int i=first[now];i;i=nxt[i]){
+			ll val=max(val1[v[i]],qwq1[v[i]]);
+			if (val>fi)se=fi,fi=val;
+			else if (val>se)se=val;
+		}
+		for (int i=first[now];i;i=nxt[i]){
+			ll val=max(val1[v[i]],qwq1[v[i]]);
+			if (val==fi)val2[v[i]]=se;
+			else val2[v[i]]=fi;
+			val3[v[i]]=max(val3[now],qwq2[v[i]]);
+		}
+	}
+	for (int awa=1;awa<=n;awa++){
+		int now=nfd[awa];
+		if (val1[now]>=val2[now]&&val1[now]>=val3[now])tag1[now]++;
+		if (val2[now]>=val1[now]&&val2[now]>=val3[now])tag2[now]++;
+		if (val3[now]>=val1[now]&&val3[now]>=val2[now])tag3[now]++;
+	}
+	for (int awa=n;awa>=1;awa--){
+		int now=nfd[awa];
+		if (tag3[now]==0)continue;
+		if (qwq2[now]==val3[now])ans[now]+=tag3[now];
+		int f=u[now];
+		if (f!=0&&val3[f]==val3[now])tag3[f]+=tag3[now];
+	}
+	for (int awa=n;awa>=1;awa--){
+		int now=nfd[awa];
+		if (tag2[now]==0)continue;
+		int f=u[now];
+		if (f==0)continue;
+		for (int i=first[f];i;i=nxt[i]){
+			if (v[i]==now)continue;
+			if (qwq1[v[i]]==val2[now])ans[v[i]]+=tag2[now];
+			if (val1[v[i]]==val2[now])tag1[v[i]]+=tag2[now];
+		}
+		if (val2[f]==val2[now])tag2[f]+=tag2[now];
+	}
+	for (int awa=1;awa<=n;awa++){
+		int now=nfd[awa];
+		if (tag1[now]==0)continue;
+		for (int i=first[now];i;i=nxt[i]){
+			if (1ll*w[i]*sz[v[i]]==val1[now])ans[v[i]]+=tag1[now];
+			if (val1[v[i]]==val1[now])tag1[v[i]]+=tag1[now];
+		}
+	}
+	int qwq=0;
+	for (int i=2;i<=n;i++)qwq^=ans[i];
+	cout<<qwq<<endl;
+	return 0;
+}

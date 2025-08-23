@@ -1,0 +1,38 @@
+#include<bits/stdc++.h>
+#define ll long long
+using namespace std;
+int n,m,p;
+ll c[3051][3051];
+int qpow(ll x,int k){
+	ll ans=1;
+	while(k){
+		if(k&1)ans=(ans*x)%p;
+		x=(x*x)%p;
+		k>>=1;
+	}
+	return ans;
+}
+void init(){
+	c[0][0]=1;
+	for(int i=0;i<=3000;i++){
+		for(int j=0;j<=i;j++){
+			if(i||j)c[i][j]=(c[i-1][j]+c[i-1][j-1])%p;
+		}
+	}
+}
+ll ans;
+int main(){
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	cin>>n>>m>>p;
+	init();
+	if(n==1){
+		cout<<pow(2,2*m-1)<<endl;
+		return 0;
+	}
+	for(int i=max(0,m-n);i<=min(m+n,2*m);i++){
+		ans=(ans+c[2*m][i])%p;
+	}
+	cout<<ans<<endl;
+	return 0;
+} 

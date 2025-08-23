@@ -1,0 +1,84 @@
+#include<iostream>
+#include<cstdio>
+using namespace std;
+inline int read()
+{
+	int x=0,f=1;char ch=getchar();
+	while(ch<'0'||ch>'9')
+	{
+		if(ch=='-')  f=-1;
+		ch=getchar();
+	}
+	while(ch>='0'&&ch<='9')
+	{
+		x=x*10+ch-'0';
+		ch=getchar();
+	}
+	return x*f;
+}
+int Q,type,n,m,k;
+int mp[105][105];
+int dx[2]={1,0},dy[2]={0,1};
+void hulue(int x,int y,int q)
+{
+	int i,j;
+	int d;
+	if(x==0)  d=0;//向下
+	else  d=1;//向右
+	bool f=true;
+	for(i=1;i<=q;i++)
+	{
+		x+=dx[d];y+=dy[d];
+		while(mp[x][y]!=1)
+		{
+			x+=dx[d];y+=dy[d];
+			if(x>n||y>m)
+			{
+				f=false;
+				break;
+			}
+			//cout<<x<<" "<<y<<endl;
+		}
+		if(!f)  break;
+		d=1-d;
+		//cout<<i<<" qq "<<q<<endl;
+	}
+	cout<<x<<" "<<y<<endl;
+}
+int main()
+{
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	type=read();n=read();m=read();k=read();
+	int i,j,x,y,w;
+	for(i=1;i<=k;i++)
+	{
+		x=read();y=read();
+		mp[x][y]=1;
+	}
+	Q=read();
+	for(i=1;i<=Q;i++)
+	{
+		w=read();x=read();y=read();
+		if(w==1)
+		{
+			mp[x][y]=1;
+		}
+		else
+		{
+			int q=read();
+			hulue(x,y,q);
+		}
+	}
+	return 0;
+}
+/*
+0 4 4 1
+2 2
+5
+2 2 0 3
+1 3 2
+2 2 0 2
+2 2 0 3
+2 2 0 4
+*/

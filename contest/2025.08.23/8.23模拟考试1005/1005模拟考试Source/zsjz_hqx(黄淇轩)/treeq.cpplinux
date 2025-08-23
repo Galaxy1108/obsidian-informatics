@@ -1,0 +1,90 @@
+#include<cstdio>
+#include<vector>
+#include<cstring>
+#include<algorithm>
+#include<forward_list>
+using namespace std;
+using uni=unsigned;
+using ll=long long;
+using db=double;
+const int N=1100010,FSIZE=(1<<28)*0.8,bt=65535;
+int n,fa[N],dp[N],dfn[N],sz[N],rk[N],tp[N],tn[bt+1],cnt,t0[N*3],t1[N*3],sum[N],ans;
+forward_list<pair<int,int>> q[N];
+ll w[N],mx,*ls[N*3],*tmp[N*3],v[N],is[N][2];
+char BuF[FSIZE],*InF=BuF;
+template<typename T>void read(T &x){
+    for(;48>*InF||*InF>57;++InF);
+    for(x=0;47<*InF&&*InF<58;x=x*10+(*InF++^48));
+}
+void cmax(ll &x,ll y){if(x<y) x=y;}
+void sort(ll **ls,int cnt,ll z){
+    memset(tn,0,sizeof(tn));
+    for(ll **i=ls,**r=ls+cnt;i<r;++tn[**i++>>z&bt]);
+    for(int *i=tn,*r=tn+bt;i<r;++i) *(i+1)+=*i;
+    for(ll **i=ls+cnt-1;i>=ls;--i) tmp[--tn[**i>>z&bt]]=*i;
+    memcpy(ls,tmp,cnt<<3);
+}
+void lsh(ll **ls,int cnt){
+    int m=1;
+    sort(ls,cnt,0);
+    sort(ls,cnt,16);
+    sort(ls,cnt,32);
+    sort(ls,cnt,48);
+    for(int i=m=1;i<cnt;++i) *ls[i-1]=(*ls[i]!=*ls[i-1])?m++:m;
+    *ls[cnt-1]=m;
+}
+int main(){
+    freopen("treeq.in","r",stdin);
+    freopen("treeq.out","w",stdout);
+    fread(BuF,1,FSIZE,stdin);
+    read(n);
+    dp[1]=1;
+    for(int i=2;i<=n;++i){
+        read(fa[i]);read(w[i]);
+        dp[i]=dp[fa[i]]+1;
+    }
+    for(int i=n;i>1;--i){
+        dfn[i]=sz[fa[i]]+1;
+        sz[fa[i]]+=++sz[i];
+    }
+    for(int i=dfn[1]=1;i<=n;++i)
+        rk[dfn[i]+=dfn[fa[i]]]=i;
+    for(int i=1,nd=0;i<=n+1;++i){
+        int x=rk[i];
+        for(;dp[x]<=nd;--nd){
+            int y=tp[nd];
+            cmax(v[y],mx);
+            cmax(mx,is[y][1]=sz[y]*w[y]);
+        }
+        if(x){
+            tp[++nd]=x;
+            v[x]=max(v[tp[nd-1]],is[x][0]=(n-sz[x])*w[x]);
+            ls[cnt++]=&v[x];
+            ls[cnt++]=&is[x][0];
+            ls[cnt++]=&is[x][1];
+        }
+    }
+    lsh(ls,cnt);
+    for(int i=1;i<=n;++i){
+        ++t0[v[i]];
+        if(i>1){
+            q[dfn[i]].emplace_front(is[i][0],-i);
+            q[dfn[i]+sz[i]-1].emplace_front(is[i][0],i);
+            q[dfn[i]].emplace_front(is[i][1],i);
+            q[dfn[i]+sz[i]-1].emplace_front(is[i][1],-i);
+        }
+    }
+    for(int i=1,x;i<=n;++i){
+        ++t1[v[x=rk[i]]];
+        for(auto j:q[i]){
+            if(j.second>0) sum[j.second]+=t1[j.first];
+            else sum[-j.second]-=t1[j.first];
+        }
+    }
+    for(int i=2;i<=n;++i)
+        ans^=sum[i]+t0[is[i][1]]-(v[i]==is[i][1])+(is[i][0]==v[i]);
+    printf("%d\n",ans);
+    fclose(stdin);
+    fclose(stdout);
+    return(0);
+}

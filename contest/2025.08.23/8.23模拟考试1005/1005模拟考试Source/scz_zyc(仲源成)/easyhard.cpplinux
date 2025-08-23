@@ -1,0 +1,26 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define freall(file) \
+		freopen(file".in","r",stdin);\
+		freopen(file".out","w",stdout);
+int n,m,p;
+int remem[3001][6001];
+int dfs(int dm,int bl,int wh)
+{
+	if(dm==m){
+		return 1;
+	}
+	if(remem[dm][bl]!=0)return remem[dm][bl];
+	if(bl==n+dm)
+		return remem[dm][bl]=(dfs(dm+1,bl+1,wh+1)+dfs(dm+1,bl,wh+2))%p;
+	if(bl==n+dm)
+		return remem[dm][bl]=(dfs(dm+1,bl+1,wh+1)+dfs(dm+1,bl+2,wh))%p;
+	return remem[dm][bl]=((dfs(dm+1,bl+1,wh+1)+dfs(dm+1,bl+2,wh))%p+dfs(dm+1,bl,wh+2))%p;
+}
+int main()
+{
+//	freall("easyhard");
+	scanf("%d %d %d",&n,&m,&p);
+	printf("%d",dfs(0,0,0));
+ 	return 0;
+}

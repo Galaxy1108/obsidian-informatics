@@ -1,0 +1,73 @@
+#include<iostream>
+#include<fstream>
+#include<set>
+using namespace std;
+int n, m;
+set<int, less<int> > r[50005], c[50005];
+int main()
+{
+    ifstream cin("corridor.in");
+    ofstream cout("corridor.out");
+    ios::sync_with_stdio(false);
+    int k;
+    cin >> n >> n >> m >> k;
+    for(int i = 1; i <= k; i++)
+    {
+        int x, y;
+        cin >> x >> y;
+        r[x].insert(y);
+        c[y].insert(x);
+    }
+    for(int i = 1; i <= n; i++) r[i].insert(m+1);
+    for(int i = 1; i <= m; i++) c[i].insert(n+1);
+    int Q;
+    cin >> Q;
+    while(Q--)
+    {
+        int w, x, y, q;
+        cin >> w;
+        if(w == 1)
+        {
+            cin >> x >> y;
+            r[x].insert(y);
+            c[y].insert(x);
+        }
+        else
+        {
+            cin >> x >> y >> q;
+            if(!x)
+            {
+                for(int i = 0; i < q; i++)
+                {
+                    if(i%2 == 0)
+                    {
+                        x = *(c[y].upper_bound(x));
+                    }
+                    else
+                    {
+                        y = *(r[x].upper_bound(y));
+                    }
+                    if(x == n+1 || y == m+1) break;
+                }
+                cout << x << " " << y << endl;
+            }
+            else
+            {
+                for(int i = 0; i < q; i++)
+                {
+                    if(i%2 == 0)
+                    {
+                        y = *(r[x].upper_bound(y));
+                    }
+                    else
+                    {
+                        x = *(c[y].upper_bound(x));
+                    }
+                    if(x == n+1 || y == m+1) break;
+                }
+                cout << x << " " << y << endl;
+            }
+        }
+    }
+    return 0;
+}

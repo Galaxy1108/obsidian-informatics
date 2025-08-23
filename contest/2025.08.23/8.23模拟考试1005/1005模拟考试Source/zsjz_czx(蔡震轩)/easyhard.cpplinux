@@ -1,0 +1,38 @@
+#include<bits/stdc++.h>
+using namespace std;
+const int N=3005;
+int f[N][N],g[N][N],n,m,mod,ans;
+int main()
+{
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	scanf("%d%d%d",&n,&m,&mod);
+	for (int i=0;i<=n;++i) f[0][i]=1;
+	for (int i=1;i<=m;++i)
+		for (int j=0;j<=n;++j)
+		{
+			if (j>0)
+			{
+				f[i][j]=(f[i][j]+f[i-1][j])%mod;
+				g[i][j]=(g[i][j]+g[i-1][j])%mod;
+			}
+			if (j<n)
+			{
+				f[i][j]=(f[i][j]+f[i-1][j+1])%mod;
+				g[i][j]=(g[i][j]+g[i-1][j+1])%mod;
+			}
+			if (j<n)
+			{
+				f[i][j]=(f[i][j]+f[i-1][j])%mod;
+				g[i][j]=(g[i][j]+g[i-1][j])%mod;
+			}
+			if (j>0)
+			{
+				f[i][j]=(f[i][j]+f[i-1][j-1])%mod;
+				g[i][j]=(g[i][j]+g[i-1][j-1])%mod;
+			}
+			if (j==0 || j==n) g[i][j]=(g[i][j]+f[i][j])%mod,f[i][j]=0;
+		}
+	for (int i=0;i<=n;++i) (ans+=g[m][i])%=mod;
+	printf("%d",ans);
+}

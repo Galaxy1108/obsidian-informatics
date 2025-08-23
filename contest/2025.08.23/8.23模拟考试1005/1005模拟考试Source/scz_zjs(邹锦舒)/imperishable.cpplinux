@@ -1,0 +1,58 @@
+#include<bits/stdc++.h>
+using namespace std;
+const int mod=998244353;
+int a[200009],n;
+int k[200009],b[200009];
+int C(int j){
+	int y=1;
+	for(int i=1;i<=j;i++){
+		y<<=1;
+		y%=mod;
+	}
+	return y;
+}
+void js(){
+	int ans=0;
+	for(int i=1;i<=n;i++) b[i]=a[i];
+	for(int j=n;j>=1;j--){
+		for(int i=1;i<j;i++){
+			b[j]=max(b[j]-b[i],0);
+		}
+		if(b[j]) {
+			ans+=C(j);
+			ans%=mod;
+		}
+	}
+	printf("%d\n",ans);
+	return ;
+}
+int main(){
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	int num,q;
+	int min1=0;
+	bool f;
+	scanf("%d%d",&num,&n);
+	for(int i=1;i<=n;i++){
+		scanf("%d",&a[i]);
+		if(a[i]&&f==false) {
+			min1=a[i];
+			f=true;
+		}
+	}
+	if(num==1){
+		if(min1==1) printf("%d\n",2);
+		else printf("%d\n",1);
+	}
+	else{
+		js();
+		scanf("%d",&q);
+		while(q--){
+			int x,y;
+			scanf("%d%d",&x,&y);
+			a[x]=y;
+			js();
+		}
+	}
+	return 0;
+}

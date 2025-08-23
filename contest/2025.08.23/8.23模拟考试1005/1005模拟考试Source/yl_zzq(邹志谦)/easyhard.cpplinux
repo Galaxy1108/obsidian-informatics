@@ -1,0 +1,29 @@
+#include<bits/stdc++.h>
+#define Mx 3005
+#define ll long long 
+using namespace std;
+int n,m,f[Mx][Mx][2],ans,mod;
+int main(){
+	scanf("%d%d%d",&n,&m,&mod);
+	f[0][0][1]=1;
+	for(int j=1;j<=n;j++)f[0][j][0]=1;
+	for(int i=0;i<m;i++)
+		for(int j=0;j<=n;j++){
+			if(j-1>=0){
+				j==1 ? f[i+1][j-1][1]=(f[i+1][j-1][1]+f[i][j][0])%mod : f[i+1][j-1][0]=(f[i+1][j-1][0]+f[i][j][0])%mod;
+				f[i+1][j-1][1]=(f[i+1][j-1][1]+f[i][j][1])%mod;
+				j==1 ? f[i+1][j][1]=(f[i+1][j][1]+f[i][j][0])%mod : f[i+1][j][0]=(f[i+1][j][0]+f[i][j][0])%mod;
+				f[i+1][j][1]=(f[i+1][j][1]+f[i][j][1])%mod;
+			}
+			if(j+1<=n){
+				f[i+1][j+1][1]=(f[i+1][j+1][1]+f[i][j][1])%mod;
+				f[i+1][j+1][0]=(f[i+1][j+1][0]+f[i][j][0])%mod;
+				f[i+1][j][1]=(f[i+1][j][1]+f[i][j][1])%mod;
+				f[i+1][j][0]=(f[i+1][j][0]+f[i][j][0])%mod;
+			}
+		}
+	for(int j=0;j<=n;j++)
+		ans=(ans+f[m][j][1])%mod;
+	printf("%d\n",ans);
+    return 0;
+}

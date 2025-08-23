@@ -1,0 +1,60 @@
+#include<bits/stdc++.h>
+typedef long long ll;
+using namespace std;
+const int N=200005;
+const int mod=998244353;
+
+namespace io{
+	const int SIZE=(1<<21)+1;
+	char ibuf[SIZE],*iS,*iT,obuf[SIZE],*oS=obuf,*oT=oS+SIZE-1,c,qu[55]; int qr;
+	#define gc() (iS==iT?(iT=(iS=ibuf)+fread(ibuf,1,SIZE,stdin),(iS==iT?EOF:*iS++)):*iS++)
+	inline void flush(){ fwrite(obuf,1,oS-obuf,stdout); oS=obuf; }
+	inline void putc(char x){ *oS++=x; if(oS==oT) flush(); }
+	template <class I>
+	inline void read(I &x){
+		for(c=gc();c<'0'||c>'9';c=gc());
+		for(x=0;c<='9'&&c>='0';c=gc()) x=x*10+(c&15);
+	}
+	template <class I>
+	inline void print(I x){
+		if(!x) putc('0');
+		while(x) qu[++qr]=x%10+'0',x/=10;
+		while(qr) putc(qu[qr--]);
+	}
+}
+using io::read; using io::putc; using io::print;
+
+int n,a[N],pw[N],q,ans,pre[N],suf[N]; ll sum[N];
+
+void solve(){
+	int l=1,r=n,x=n;
+	while(l<=r){
+		int mid=l+r>>1;
+		if(suf[mid+1] <= sum[mid]) x=mid,r=mid-1;
+		else l=mid+1;
+	}
+	ans = pw[x]; ll t = sum[x]-suf[x+1];
+	for(int i=x-1;i;i--)
+		if(t >= a[i] && pre[i-1] >= a[i]) t -= a[i];
+		else ans = ans + pw[i] >= mod ? ans + pw[i] - mod : ans + pw[i];
+	print(ans); putc('\n');
+}
+
+main(){
+	freopen("imperishable.in","r",stdin); freopen("imperishable.out","w",stdout);
+    read(n); read(n);
+    for(int i=1;i<=n;i++) read(a[i]);
+    pw[0]=1; for(int i=1;i<=n;i++) pw[i] = (pw[i-1]<<1) % mod;
+	for(int i=1;i<=n;i++) pre[i]=max(pre[i-1],a[i]),sum[i]=sum[i-1]+a[i];
+	for(int i=n;i;i--) suf[i]=max(suf[i+1],a[i]);
+    solve();
+	read(q);
+	while(q--){
+		int x,y; read(x); read(y);
+		a[x]=y;
+		for(int i=x;i<=n;i++) pre[i]=max(pre[i-1],a[i]),sum[i]=sum[i-1]+a[i];
+		for(int i=x;i;i--) suf[i]=max(suf[i+1],a[i]);
+		solve();
+	}
+	io::flush();
+}

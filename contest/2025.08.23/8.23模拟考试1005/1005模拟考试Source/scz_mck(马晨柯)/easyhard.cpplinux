@@ -1,0 +1,69 @@
+#include<cstdio>
+#include<algorithm>
+#include<cstring>
+#include<vector>
+#include<map>
+#include<cmath>
+#include<set>
+#include<queue>
+#include<stack>
+#include<iostream>
+using namespace std;
+typedef long long ll ;
+typedef unsigned long long ull ;
+typedef double db ;
+typedef pair <ll ,int > PI ;
+inline int read(){
+	register int v=0,f=1; register char c=getchar();
+	while(c<48||57<c){
+		if(c=='-') f=-1;
+		c=getchar();
+	}
+	while(48<=c&&c<=57) v=(v<<3)+(v<<1)+(c^48),c=getchar();
+	return v*f;
+}
+inline void print(int x){
+	if(x>9) print(x/10);
+	putchar(x%10+48);
+}
+inline ll readL(){
+	register ll v=0,f=1; register char c=getchar();
+	while(c<48||57<c){
+		if(c=='-') f=-1;
+		c=getchar();
+	}
+	while(48<=c&&c<=57) v=(v<<3)+(v<<1)+(c^48),c=getchar();
+	return v*f;
+}
+inline void printL(ll x){
+	if(x>9) printL(x/10);
+	putchar(x%10+48);
+}
+inline void write(int x,char c){
+	if(x<0) putchar('-'),x=-x;
+	print(x),putchar(c);
+}
+inline void writeL(ll x,char c){
+	if(x<0) putchar('-'),x=-x;
+	printL(x),putchar(c);
+}
+#define REP(i,j,k) for(register int i=j;i<=k;++i)
+#define For(x) for(register int i=head[x],to=ver[i];i;i=nxt[i],to=ver[i])
+#define pb push_back
+#define mkp make_pair
+#define ls(p) (p<<1)
+#define rs(p) (p<<1|1)
+#define lowbit(x) (x&(-x))
+#define fir first
+#define sec second
+const int N=3000*2+5;
+int n,m,p,d; ll f[N]={1ll};
+int main(){
+	d=n=read(),m=read(),p=read();
+	REP(i,1,m<<1){
+		if(d) f[i]=f[i-1]*2%p,--d;
+		else f[i]=f[i-1];
+		if(i&1) ++d;
+	}
+	writeL(f[m<<1],'\n');
+}

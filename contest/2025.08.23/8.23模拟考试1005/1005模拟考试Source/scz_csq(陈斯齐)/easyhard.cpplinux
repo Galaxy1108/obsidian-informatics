@@ -1,0 +1,81 @@
+#include <bits/stdc++.h>
+#define int long long
+
+using namespace std;
+
+const int N = 35;
+int MOD ;
+
+int n, m;
+int f[N][N][2];
+//取了 i 次，当前序列中有 j 个白球，是否经历过没有白球的状态
+
+signed main()
+{
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	scanf("%lld %lld %lld", &n, &m,&MOD);
+	if(n>=35)
+	{
+		long long num=n-1; long long ans=2;
+		if(num==0) 
+		{
+			ans=1;
+			for(long long i=1;i<=m+1;i++) ans=ans*2,ans=ans%MOD;
+			cout<<ans<<endl;
+		}
+		else 
+		{
+			if(n>=m) 
+			{
+				ans=1;
+				for(long long i=1;i<=m*2;i++) ans=ans*2,ans=ans%MOD;
+				cout<<ans<<endl;
+			}
+			else 
+			{
+				ans=1;
+				for(long long i=1;i<=n;i++) ans=ans*4,ans=ans%MOD;
+				for(long long i=n+1;i<=m;i++) ans=ans*2,ans=ans%MOD;
+				cout<<ans<<endl;
+			}
+		}
+		return 0;
+	}
+	for(register int k = 1; k <= n; k++)
+		f[0][k][0] = 1;
+	f[0][0][1] = 1;
+
+	for(register int k = 0; k < m; k++)
+		for(register int i = 0; i <= n; i++)
+		{
+			f[k][i][0] %= MOD, f[k][i][1] %= MOD;
+
+			if(i - 1 >= 0)
+			{
+				if(i == 1) f[k + 1][i - 1][1] += f[k][i][0];
+				else f[k + 1][i - 1][0] += f[k][i][0];
+				f[k + 1][i - 1][1] += f[k][i][1];
+
+				if(i == 1) f[k + 1][i][1] += f[k][i][0];
+				else f[k + 1][i][0] += f[k][i][0];
+				f[k + 1][i][1] += f[k][i][1];
+			}
+			if(i + 1 <= n)
+			{
+				f[k + 1][i + 1][0] += f[k][i][0];
+				f[k + 1][i + 1][1] += f[k][i][1];
+
+				f[k + 1][i][0] += f[k][i][0];
+				f[k + 1][i][1] += f[k][i][1];
+			}
+		}
+
+	int answ = 0;
+	for(register int k = 0; k <= n; k++)
+		answ += f[m][k][1], answ %= MOD;
+
+	printf("%lld", answ);
+
+	return 0;
+}

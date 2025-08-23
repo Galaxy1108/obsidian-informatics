@@ -1,0 +1,97 @@
+#include<bits/stdc++.h>
+#define I inline
+#define R register
+#define LL long long
+#define fo(i, a, b) for(R int i = a; i <= b; ++i)
+#define fd(i, a, b) for(R int i = a; i >= b; --i)
+#define fz(i, x) for(R int i = head[x]; i; i = nxt[i])
+using namespace std;
+const int N = 200010, P = 998244353, inf = 0x3f3f3f3f;
+struct T{
+	int x;
+	LL y;
+}tr[N << 2];
+int num, n, q;
+LL a[N], inv[N];
+I int read(){
+	int res = 0, flag = 0; char ch = getchar();
+	for(; !isdigit(ch); ch = getchar()) if(ch == '-') flag = 1;
+	for(; isdigit(ch); ch = getchar()) res = (res << 1) + (res << 3) + (ch ^ 48);
+	if(flag) res = ~res + 1; return res;
+}
+I void write(int X){
+    if(X < 0) {X = ~(X - 1), putchar('-');}
+    if(X > 9) write(X / 10);
+    putchar(X % 10 + '0');
+}
+I void add(int x, int l, int r, int k){
+	if(l == r) return tr[x].x = tr[x].y = a[l], void();
+	int mid = l + r >> 1;
+	if(k <= mid) add(x << 1, l, mid, k);
+	else add(x << 1 | 1, mid + 1, r, k);
+	tr[x].x = max(tr[x << 1].x, tr[x << 1 | 1].x);
+	tr[x].y = tr[x << 1].y + tr[x << 1 | 1].y;
+}
+I int query(int x, int l, int r, int ll, int rr){
+	if(ll <= l && r <= rr) return tr[x].x;
+	int mid = l + r >> 1, res = 0;
+	if(ll <= mid) res = max(res, query(x << 1, l, mid, ll, rr));
+	if(mid < rr) res = max(res, query(x << 1 | 1, mid + 1, r, ll, rr));
+	return res;
+}
+I LL query1(int x, int l, int r, int ll, int rr){
+	if(ll <= l && r <= rr) return tr[x].y;
+	int mid = l + r >> 1; LL res = 0;
+	if(ll <= mid) res += query1(x << 1, l, mid, ll, rr);
+	if(mid < rr) res += query1(x << 1 | 1, mid + 1, r, ll, rr);
+	return res;
+}
+I LL get(int x){
+	LL ansx = 0, ans = query1(1, 1, n, 1, x), ansy = query(1, 1, n, x + 1, n);
+	fo(i, 1, x) if(a[i]) (ansx += inv[i]) %= P;
+	fd(i, x, 1) if(ans - a[i] >= ansy && a[i]) ans -= a[i], ansx = (ansx - inv[i] + P) % P;
+	return ansx;
+}
+I LL ef(){
+	int l = 1, r = n, ans = 0;
+	while(l <= r){
+		int mid = l + r >> 1;
+		if(query1(1, 1, n, 1, mid) >= query(1, 1, n, mid + 1, n)) r = mid - 1, ans = mid;
+		else l = mid + 1;
+	}
+	return get(ans);
+}
+int main(){
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	num = read(), n = read();
+	fo(i, 1, n) a[i] = read(), add(1, 1, n, i);
+	inv[0] = 1;
+	fo(i, 1, n) inv[i] = inv[i - 1] * 2ll % P;
+	printf("%lld\n",ef());
+	q = read();
+	fo(i, 1, q){
+		int x = read(), y = read();
+		a[x] = y, add(1, 1, n, x);
+		printf("%lld\n",ef());
+	}
+}
+/**
+*¡¡¡¡©³©·¡¡¡¡¡¡©³©·+ +
+*¡¡©³©¿©ß©¥©¥©¥©¿©ß©· + +
+*¡¡©§¡¡¡¡¡¡¡¡¡¡¡¡¡¡©§
+*¡¡©§¡¡¡¡¡¡©¥¡¡¡¡¡¡©§ ++ + + +
+*  ¨€¨€¨€¨€©¥¨€¨€¨€¨€+
+*  ¨¨€¨€¨¡¡¨¨€¨€¨ +
+*¡¡©§¡¡¡¡¡¡©ß¡¡¡¡¡¡©§
+*¡¡©§¡¡¡¡¡¡¡¡¡¡¡¡¡¡©§ + +
+*¡¡©»©¥©·¡¡¡¡¡¡©³©¥©¿
+*¡¡¡¡¡¡©§¡¡¡¡¡¡©§ + + + + Code is far away from ¡¡
+*¡¡¡¡¡¡©§¡¡¡¡¡¡©§ + bug with the animal protecting
+*¡¡¡¡¡¡©§¡¡ ¡¡ ©»©¥©¥©¥©· ÉñÊÞ±£ÓÓ,´úÂëÎÞbug¡¡
+*¡¡¡¡¡¡©§              ©Ç©·
+*¡¡¡¡  ©§              ©³©¿
+*¡¡    ©»©·©·©³©¥©×©·©³©¿ + + + +
+*¡¡¡¡¡¡¡¡©§©Ï©Ï¡¡©§©Ï©Ï
+*¡¡¡¡¡¡¡¡©»©ß©¿¡¡©»©ß©¿+ + + +
+*/

@@ -1,0 +1,73 @@
+#include <bits/stdc++.h>
+using namespace std;
+int n,m,p,ans,a[10005],s=0,f[2][10005],b[10005],ff[10005];
+bool check(int cd)
+{
+	for(int i=1;i<=cd;i++)
+	{
+		if(f[b[i]][i]==0) return true;
+	}
+	return false;
+} 
+void walk(int num,int cd)
+{
+	if(cd==2*m)
+	{
+		if(check(cd)==true)
+		{
+			memset(f,0,sizeof(f));
+			for(int i=1;i<=cd;i++)
+			{
+				f[b[i]][i]=1;
+			}
+			ans++;
+			ans%=p;
+		}
+		return;
+	}
+	for(int i=1;i<=num;i++)
+	{
+		if(ff[i]==0)
+		{
+			ff[i]=1;
+			b[cd+1]=a[i];
+			a[num+1]=0; a[num+2]=1;
+			for(int j=1;j<=num+2;j++)
+			{
+				if(ff[j]==0)
+				{
+					ff[j]=1;
+					b[cd+2]=a[j];
+					walk(num+2,cd+2);
+					ff[j]=0;
+				}
+			}
+			ff[i]=0;
+		}
+	}
+}
+void sc(int num)
+{
+	if(num==n)
+	{
+		walk(n,0);
+		return;
+	}
+	else
+	{
+		for(int i=0;i<=1;i++)
+		{
+			a[num+1]=i;
+			sc(num+1);
+		}
+	}
+}
+int main()
+{
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	cin>>n>>m>>p;
+	sc(0);
+	cout<<ans<<endl;
+	return 0;
+}

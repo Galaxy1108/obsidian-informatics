@@ -1,0 +1,109 @@
+#include <cstdio>
+#include <iostream>
+#include <algorithm>
+#include <cstring>
+#include <set>
+using namespace std;
+#define fi first
+#define sc second
+#define mkp make_pair
+#define pii pair<int,int>
+typedef long long ll;
+const int N=1e7+5,M=5005,K=35,oo=1e9+5,mod=998244353;
+inline int read() {
+    int x=0,flag=0;char ch=getchar();
+    while(ch<'0'||ch>'9') {flag|=(ch=='-');ch=getchar();}
+    while('0'<=ch&&ch<='9') {x=(x<<3)+(x<<1)+ch-'0';ch=getchar();}
+    return flag?-x:x;
+}
+inline int mx(int x,int y) {return x>y?x:y;}
+inline int mn(int x,int y) {return x<y?x:y;}
+inline void swp(int &x,int &y) {x^=y^=x^=y;}
+inline int as(int x) {return x>0?x:-x;}
+
+int n,hd[N],num,x[N],y[N];
+pair<ll,int> val[N<<1];
+struct node {
+    int nxt,to;
+}e[N];
+#define v e[i].to
+inline void adde(int x,int y) {
+    e[++num]=(node){hd[x],y};
+    hd[x]=num;
+}
+int dfn[N],sz[N],st[N],top,tot;
+void dfs(int x) {
+    sz[x]=1; dfn[x]=++dfn[0];
+    for(int i=hd[x];i;i=e[i].nxt) {
+        dfs(v);
+        sz[x]+=sz[v];
+    }
+}
+struct Bit {
+    int w[N];
+    inline void Add(int x,int val) {
+        while(x<=n) {
+            w[x]+=val;
+            x+=x&-x;
+        }
+    }
+    inline int Query(int x) {
+        int sum=0;
+        while(x) {
+            sum+=w[x];
+            x-=x&-x;
+        }
+        return sum;
+    }
+}tr;
+set<int> S;
+set<int>::iterator it,It;
+int main() {
+    freopen("treeq.in","r",stdin);
+    freopen("treeq.out","w",stdout);
+    n=read();
+    for(int i=2;i<=n;++i) {
+        x[i]=read();y[i]=read();
+        adde(x[i],i);
+    }
+    dfs(1);
+    for(int i=2;i<=n;++i) val[++tot]=mkp(1ll*y[i]*sz[i],-i),val[++tot]=mkp(1ll*y[i]*(n-sz[i]),i);
+    sort(val+1,val+tot+1);
+    for(int i=1;i<=n;++i) S.insert(i),tr.Add(i,1);
+    int cnt=n,Ans=0;
+    for(int i=tot;i>=1;--i) {
+        if(i<tot&&val[i].fi!=val[i+1].fi) {
+            for(int j=1;j<=top;++j) tr.Add(st[j],-1),--cnt;
+            top=0;
+        }
+        if(val[i].sc<0) {
+            val[i].sc*=-1;
+            Ans^=(tr.Query(dfn[val[i].sc]-1)+cnt-tr.Query(dfn[val[i].sc]+sz[val[i].sc]-1));
+            it=S.begin();
+            while(it!=S.end()&&*it<dfn[val[i].sc]) {
+                It=it; ++It;
+                st[++top]=*it;
+                S.erase(it);
+                it=It;
+            }
+            it=S.lower_bound(dfn[val[i].sc]+sz[val[i].sc]);
+            while(it!=S.end()) {
+                It=it; ++It;
+                st[++top]=*it;
+                S.erase(it);
+                it=It;
+            }
+        } else {
+            Ans^=(tr.Query(dfn[val[i].sc]+sz[val[i].sc]-1)-tr.Query(dfn[val[i].sc]-1));
+            it=S.lower_bound(dfn[val[i].sc]);
+            while(it!=S.end()&&*it<=dfn[val[i].sc]+sz[val[i].sc]-1) {
+                It=it; ++It;
+                st[++top]=*it;
+                S.erase(it);
+                it=It;
+            }
+        }
+    }
+    printf("%d\n",Ans);
+    return 0;
+}

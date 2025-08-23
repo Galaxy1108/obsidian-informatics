@@ -1,0 +1,52 @@
+#include <cstdio>
+#include <iostream>
+#define macro_expand(x) #x
+#define print_macro(x) printf("%s\n",macro_expand(x))
+#define FOR(i,l,r) for(LL i=(l),i##ADJK=(r);i<=i##ADJK;++i)
+#define ROF(i,r,l) for(LL i=(r),i##ADJK=(l);i>=i##ADJK;--i)
+using namespace std;
+typedef long long LL;
+const LL MN=2e5+5,Mod=998244353;
+LL ad(LL x,LL y){return ((x+y)>=Mod)?(x+y-Mod):(x+y);}
+LL ml(LL x,LL y){return (LL)x*y%Mod;}
+LL ksm(LL x,LL y){
+	LL ret=1;
+	for(;y;y>>=1,x=ml(x,x))if(y&1)ret=ml(ret,x);
+	return ret;
+}
+LL num,n,a[MN],pw[MN],q;
+LL sum[MN];
+LL calc(){
+	FOR(i,1,n)sum[i]=sum[i-1]+a[i];
+	LL ret=0,maxv=0,fu=0;
+	LL cnt=0;
+	ROF(i,n,1){
+		maxv=max(maxv,a[i]-fu);
+		if(sum[i-1]<maxv){
+			ret=ad(pw[i],ret);
+			maxv-=a[i];
+			fu+=a[i];
+			++cnt;
+		}
+	}
+	return ret;
+}
+int main(){
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	scanf("%lld%lld",&num,&n);
+	FOR(i,1,n)scanf("%lld",&a[i]);
+	pw[0]=1;
+	FOR(i,1,n)pw[i]=ml(pw[i-1],2);
+	printf("%lld\n",calc());
+	scanf("%lld",&q);
+	while(q--){
+		LL x=0,y=0;
+		scanf("%lld%lld",&x,&y);
+		a[x]=y;
+		printf("%lld\n",calc());
+	}
+	fclose(stdin);
+	fclose(stdout);
+	return 0;
+}

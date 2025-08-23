@@ -1,0 +1,39 @@
+#include <bits/stdc++.h>
+#define ll long long
+using namespace std;
+ll n, m, p;
+ll f[3010][3010];
+int main () {
+	freopen("easyhard.in", "r", stdin);
+	freopen("easyhard.out", "w", stdout);
+	ios_base::sync_with_stdio(false);
+	cin.tie(0);
+	cin >> n >> m >> p;
+	f[0][1] = 1;
+	f[0][0] = 1;
+	for (int i = 1; i < m; ++i) {
+		for (int j = 0; j <= 2 * i - 1; ++j) {
+			int k1 = j;
+			int k2 = 2 * i - 1 - j;
+			if (k1 + 2 <= n + i && k1 + k2 - 2 * i + 3 <= n) {
+				f[i][j + 2] = (f[i][j + 2] + f[i - 1][j]) % p;
+			}
+			if (k2 + 2 <= n + i && k1 + k2 - 2 * i + 3 <= n) {
+				f[i][j] = (f[i][j] + f[i - 1][j]) % p;
+			}
+			f[i][j + 1] = (f[i][j + 1] + f[i - 1][j] * 2) % p;
+		}
+	}
+//	for (int i = 0; i < m; ++i) {
+//		for (int j = 0; j <= 2 * i + 1; ++j) {
+//			cout << f[i][j] << ' ';
+//		}
+//		cout << '\n';
+//	}
+	ll sum = 0;
+	for (int i = 0; i <= 2 * m - 1; ++i) {
+		sum = (sum + 2 * f[m - 1][i]) % p;
+	}
+	cout << sum;
+	return 0;
+}

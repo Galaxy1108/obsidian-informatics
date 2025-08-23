@@ -1,0 +1,60 @@
+#include<bits/stdc++.h>
+#define ll long long    
+#define ull unsigned long long
+#define db double
+#define ldb long double
+#define pb push_back
+#define mp make_pair
+#define pii pair<int, int>
+#define FR first
+#define SE second
+#define int long long
+using namespace std;
+inline int read() {
+    int x = 0; bool op = 0;
+    char c = getchar();
+    while(!isdigit(c))op |= (c == '-'), c = getchar();
+    while(isdigit(c))x = (x << 1) + (x << 3) + (c ^ 48), c = getchar();
+    return op ? -x : x;
+}
+const int N = 2e5 + 10;
+const int P = 998244353;
+void add(int &a, int b) {a = (a + b) % P;}
+void sub(int &a, int b) {a = (a - b + P) % P;}
+int type, n, Q;
+int a[N], pw[N], pre[N];
+namespace bf {
+    int calc() {
+        int cursum = 0, res = 0, mx = 0;
+        for(int i = n; i; i--) {
+            if(a[i] > pre[i - 1] + cursum || pre[i - 1] < mx) {
+                add(res, pw[i]);
+                cursum += a[i] - 1; mx -= a[i];
+            }
+            else mx = max(mx, a[i] - cursum);
+        }
+        return res;
+    }
+    void MAIN() {
+        printf("%d\n", calc());
+        while(Q--) {
+            int x = read(), y = read();
+            a[x] = y;
+            for(int i = 1; i <= n; i++)pre[i] = pre[i - 1] + a[i];
+            printf("%d\n", calc());
+        }
+        return ;
+    }
+};
+signed main() { 
+    freopen("imperishable.in", "r", stdin);
+    freopen("imperishable.out", "w", stdout);
+    type = read(); n = read(); 
+    for(int i = 1; i <= n; i++)a[i] = read();
+    for(int i = 1; i <= n; i++)pre[i] = pre[i - 1] + a[i];
+    pw[0] = 1;
+    for(int i = 1; i <= n; i++)pw[i] = (pw[i - 1] << 1) % P;
+    Q = read();
+    bf::MAIN();
+    return 0;
+}

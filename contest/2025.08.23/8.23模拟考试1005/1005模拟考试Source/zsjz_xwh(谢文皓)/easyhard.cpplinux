@@ -1,0 +1,42 @@
+#include<bits/stdc++.h>
+using namespace std;
+int i,j,n,m,k,l,o,p;
+int f[3005][6005];
+inline int read()
+{
+	int f(1),x(0);
+	char ch=getchar();
+	while (!isdigit(ch)) {if (ch=='-') f*=-1;ch=getchar();}
+	while (isdigit(ch)) x=(x<<1)+(x<<3)+ch-'0',ch=getchar();
+	return f*x;
+}
+inline void writ(int x)
+{
+	if (x<0) putchar('-'),x=-x;
+	if (x/10) writ(x/10);
+	putchar((char)(x%10+'0'));
+}
+inline void write(int x)
+{
+	writ(x);
+	putchar(' ');
+}
+int main()
+{
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	n=read(),m=read(),p=read();
+	for (i=0;i<=n;i++) f[0][i]=1;
+	for (i=1;i<=m;i++)
+	{
+		for (j=0;j<=n;j++)
+		{
+			(f[i][j]+=2*f[i-1][j])%=p;
+			(f[i][j]+=f[i-1][j+2])%=p;
+			(f[i][j]+=f[i-1][j-2])%=p;
+		}
+	}
+	int ans(0);
+	for (i=0;i<=n;i++) (ans+=f[m][i])%=p;
+	printf("%d",ans);
+}

@@ -1,0 +1,51 @@
+//回家？我没有家可以回，我没有退路。
+#include<bits/stdc++.h>
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
+#pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,tune=native")
+using namespace std;
+#define ll long long
+inline int read(){
+   int s=0,w=1;
+   char ch=getchar();
+   while(ch<'0'||ch>'9'){if(ch=='-')w=-1;ch=getchar();}
+   while(ch>='0'&&ch<='9') s=s*10+ch-'0',ch=getchar();
+   return s*w;
+}
+const int p=998244353;
+int pw[1000003],a[1000003],sub,n;
+ll pre[1000003];
+void solve()
+{
+	int res=0,mx=0;
+	for(int i=1; i<=n; ++i) pre[i]=pre[i-1]+a[i];
+	for(int i=n; i>=1; --i)
+	{
+		if(pre[i-1]<max(mx,a[i]))
+		{
+			if(a[i]>=mx)
+			{
+				printf("%d\n",(res+pw[i])%p);
+				return ;
+			}
+			else res=(res+pw[i])%p,mx-=a[i];
+		}
+		else mx=max(mx,a[i]);
+	}
+	printf("%d\n",res);
+	return ;
+}
+signed main()
+{
+#ifndef local
+	freopen("imperishable.in","r",stdin),
+	freopen("imperishable.out","w",stdout);
+#endif
+	sub=read(),n=read(),pw[0]=1;
+	for(int i=1; i<=n; ++i)
+		a[i]=read(),pw[i]=(pw[i-1]<<1)%p;
+	solve();
+	for(int T=read(),x,y; T--;)
+		x=read(),y=read(),a[x]=y,solve();
+	return 0;
+}

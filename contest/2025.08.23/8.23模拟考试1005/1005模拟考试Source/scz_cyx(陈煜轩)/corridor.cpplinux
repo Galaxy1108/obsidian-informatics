@@ -1,0 +1,83 @@
+#include<bits/stdc++.h>
+using namespace std;
+/*struct NODE{
+	int x,y,next;
+};
+NODE fur1[150010];
+NODE fur2[150010];
+bool cmp1(const NODE &a,const NODE &b){
+	
+}*/
+int n,m,N,M;
+bool fur[40000][40000]={false};
+void sear(int tx,int ty,int q){
+	int ttx=tx,tty=ty,turn;
+	if(ttx==0)turn=1;//turn为1向下走，turn为2向右走 
+	if(tty==0)turn=2;
+	while(1){
+		if(turn==1){
+			ttx+=1;
+			for(int i=ttx;i<=n+1;i++){
+				if(i==n+1){
+					N=i;
+					M=tty;
+					return;
+				}
+				if(fur[i][tty]==true){
+					ttx=i;
+					turn=2;
+					q--;
+					break;
+				}
+			}
+		} 
+		if(q==0){
+			N=ttx;M=tty;return;
+		}
+		if(turn==2){
+			tty+=1;
+			for(int i=tty;i<=m+1;i++){
+				if(i==m+1){
+					N=ttx;
+					M=i;
+					return;
+				}
+				if(fur[ttx][i]==true){
+					tty=i;
+					turn=1;
+					q--;
+					break;
+				}
+			}
+		} 
+		if(q==0){
+			N=ttx;M=tty;return;
+		}
+	}
+}
+int main(){
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	int type,k,tx,ty;
+	scanf("%d %d %d %d",&type,&n,&m,&k);
+	for(int i=1;i<=k;i++){
+		scanf("%d %d",&tx,&ty);
+		fur[tx][ty]=true;
+		
+	}
+	int Q,w,q;
+	cin>>Q;
+	for(int i=1;i<=Q;i++){
+		scanf("%d",&w);
+		if(w==1){
+			scanf("%d %d",&tx,&ty);
+			fur[tx][ty]=true;
+		}
+		if(w==2){
+			scanf("%d %d %d",&tx,&ty,&q);
+			sear(tx,ty,q);
+			printf("%d %d\n",N,M);
+		}
+	}
+	return 0;
+}

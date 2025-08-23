@@ -1,0 +1,146 @@
+#include<bits/stdc++.h>
+using namespace std;
+struct modint{
+    #define mod 998244353
+    int x;modint(int o=0) {x=o;}
+    modint &operator = (int o) {return x=o,*this;}
+    modint &operator += (modint o) {return x=x+o.x>=mod?x+o.x-mod:x+o.x,*this;}
+    modint &operator *= (modint o) {return x=1ll*x*o.x%mod,*this;}
+    modint &operator -= (modint o) {return x=x-o.x<0?x-o.x+mod:x-o.x,*this;}
+    modint &operator ^= (int b) {
+        modint a=*this,c=1;for(;b;b>>=1,a=a*a) if(b&1) c*=a;return x=c.x,*this;
+    }bool operator ! () {return !x;}
+    friend modint operator + (modint a,modint b) {return a+=b;}
+    friend modint operator * (modint a,modint b) {return a*=b;}
+    friend modint operator - (modint a,modint b) {return a-=b;}
+    friend modint operator ^ (modint a,int k) {return a^k;}
+    friend inline std::istream&
+    operator>>(std::istream& _is,modint& _b){return _is>>_b.x;}
+    friend inline std::ostream&
+    operator<<(std::ostream& _os,const modint& _b){return _os<<_b.x;}
+    #undef mod
+};
+namespace DF{
+    #define fi first
+    #define se second
+    #define mk make_pair
+    #define pc putchar
+    #define emp emplace_back
+    #define all(x) x.begin(),x.end()
+    #define FOR(i,j,k) for(int i=j;i<=k;++i)
+    #define ROF(i,j,k) for(int i=j;i>=k;--i)
+    template<typename x,typename y> 
+    ostream& operator<<(ostream& _os,const pair<x,y> &pp) {
+        return _os<<'{'<<pp.fi<<','<<pp.se<<'}';
+    }
+    template<typename A> 
+    ostream& operator<<(ostream& _os,const vector<A> &vc) {
+        _os<<'{';for(A &x:vc) _os<<x<<',';return _os<<'}';
+    }
+    template<typename T>
+    inline void print(T *f,int n) {
+        cout<<'{';FOR(i,1,n) cout<<f[i]<<',';cout<<'}'<<endl;
+    }
+}using namespace DF;
+namespace IO{
+    inline void rd(int &x) {
+        bool f=0;unsigned int ch=getchar();
+        for(;(ch^48)>9||(ch^48)<0;ch=getchar())if(ch=='-')f=1;
+        for(x=0;(ch^48)<10&&(ch^48)>=0;ch=getchar())x=(x<<3)+(x<<1)+(ch^48);
+        if(f) x=-x;
+    }
+    void pr(int x) {
+        if(x>=10) pr(x/10);
+        pc(x%10+'0');
+    }
+    template<typename T>T& read(T &x){rd(x);return x;}
+    template<typename T,typename... Tr> 
+    void read(T &x,Tr&... r){rd(x);read(r...);}
+}using namespace IO;bool Mbe;
+//-------------------------------------------//
+
+const int N=1e7+10;
+int n,head[N],cnt=1,sz[N];
+int ans[N],w[N];
+#define val1(u) (1ll*w[u]*sz[u])
+#define val2(u) (1ll*w[u]*(n-sz[u]))
+long long Mxson[N];
+struct edge{int v,nxt,w;}e[N<<1];
+inline void add(int u,int v,int w) {
+    e[++cnt]=edge{v,head[u],w};head[u]=cnt;
+}
+void dfs(int u,int f) {
+    sz[u]=1;
+    for(int i=head[u];i;i=e[i].nxt) {
+        int v=e[i].v;if(v!=f) {
+            w[v]=e[i].w;dfs(v,u);
+            Mxson[u]=max(Mxson[u],Mxson[v]);
+            sz[u]+=sz[v];
+        }
+    }
+    Mxson[u]=max(Mxson[u],val1(u));
+}
+struct Tree{
+    long long add[N],minus[N];
+    unordered_map<long long,int> mp1,mp2;
+    void dfs(int u,int f) {
+        int x=mp2[val1(u)],y=mp1[val2(u)];
+        if(add[u]) ++mp1[add[u]];
+        if(minus[u]) ++mp2[minus[u]];
+        for(int i=head[u];i;i=e[i].nxt) {
+            int v=e[i].v;if(v!=f) dfs(v,u);
+        }
+        ans[u]+=mp1[val2(u)]-y;
+        ans[u]-=mp2[val1(u)]-x;
+    }
+}T;
+unordered_map<long long,int> _all;
+long long Mxinc[N];
+void dfs2(int u,int f,long long val) {
+    if(f) Mxinc[u]=max(Mxinc[f],val2(u));
+    long long Mxx=0,Mx=0;
+    for(int i=head[u];i;i=e[i].nxt) {
+        int v=e[i].v;if(v!=f) {
+            if(Mxson[v]>Mx) Mxx=Mx,Mx=Mxson[v];
+            else if(Mxson[v]>Mxx) Mxx=Mxson[v];
+        }
+    }
+    long long tmp=max(val,Mx);
+    if(tmp==Mxinc[u]) {
+        ++_all[tmp];
+        T.minus[u]=tmp;
+        T.add[u]=tmp;
+    }else if(tmp>Mxinc[u]) {
+        ++_all[tmp];
+        T.minus[u]=tmp;
+    }else {
+        T.add[u]=Mxinc[u];
+    }
+    for(int i=head[u];i;i=e[i].nxt) {
+        int v=e[i].v;if(v!=f) {
+            long long x=(Mxson[v]==Mx)?Mxx:Mx;
+            dfs2(v,u,max(val,x));
+        }
+    }
+}
+
+//-------------------------------------------//
+bool Med;
+signed main() {
+    freopen("treeq.in","r",stdin);
+    freopen("treeq.out","w",stdout);
+	rd(n);FOR(i,1,n-1) {
+        int u,v,w;rd(u);rd(v);rd(w);
+       add(u,v,w);add(v,u,w);
+    }
+   dfs(1,0);
+   dfs2(1,0,0);
+   T.dfs(1,0);
+   FOR(i,2,n) ans[i]+=_all[val1(i)];
+   int tmp=0;FOR(i,2,n) tmp^=ans[i];cout<<tmp<<endl;
+#ifdef LOCAL    
+    fprintf(stderr,"\n%.4lfMB\n",(&Med-&Mbe)/1048576.0);
+    fprintf(stderr,"%.4lfs\n",1.0*clock()/CLOCKS_PER_SEC);
+#endif
+  return 0;
+}

@@ -1,0 +1,27 @@
+#include <cstdio>
+#include <iostream>
+#define LL long long
+using namespace std;
+const int N = 4e3;
+LL sum[N], las[N];
+int n, m, p;
+LL ksm(LL a, int nn) {
+	LL res = 1;
+	while (nn) {
+		if (nn & 1) res = res * a % p;
+		a = a * a % p, nn >>= 1;
+	}
+	return res;
+}
+int main() {
+	freopen("easyhard.in", "r", stdin);
+	freopen("easyhard.out", "w", stdout);
+	scanf("%d%d%d", &n, &m, &p);
+	if (n >= m) {
+		printf("%lld\n", ksm(4ll, m));
+		return 0;
+	}
+//	LL tmp = ksm(2, m - n) * m;
+//	for (int i = 0; i <= )
+//	printf("%lld", s);
+}

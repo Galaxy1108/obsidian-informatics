@@ -1,0 +1,146 @@
+#include <bits/stdc++.h>
+#define il inline
+#define re register
+#define ll long long
+#define ull unsigned ll
+#define db double
+#define ldb long db
+#define fi first
+#define se second
+#define pii pair<int, int>
+#define MP(x, y) make_pair(x, y)
+namespace IO {
+	#define iL (1 << 20)
+	char ibuf[iL], *iS = ibuf + iL, *iT = ibuf + iL;
+	#define gc() ((iS == iT) ? (iT = (iS = ibuf) + fread(ibuf, 1, iL, stdin), iS == iT ? EOF : *iS ++) : *iS ++)
+	template<class T> inline void read(T &x) {
+		x = 0;int f = 0;char ch = gc();
+		for (; !isdigit(ch); f |= ch == '-', ch = gc());
+		for (; isdigit(ch); x = (x << 1) + (x << 3) + (ch ^ 48), ch = gc());
+		x = (f == 1 ? ~ x + 1 : x);
+	}
+	char Out[iL], *iter = Out;
+	#define flush() fwrite(Out, 1, iter - Out, stdout), iter = Out
+	template<class T> inline void write(T x, char ch = '\n') {
+		T l, c[35];
+		if (x < 0) *iter ++ = '-', x = ~ x + 1;
+		for (l = 0; !l || x; c[l] = x % 10, l++, x /= 10);
+		for (; l; -- l, *iter ++ = c[l] + '0');*iter ++ = ch;
+		flush();
+	}
+}
+using namespace IO;
+#define N 1000005
+#define ll long long
+#define DEBUG
+using namespace std;
+struct edge { int x, y, w; }e[N * 2];
+ll n, cnt, head[N], nxt[N * 2], ww[N], fa[N], sz[N], f[N];
+void add(int x, int y, int w) { e[++ cnt] = (edge){x, y, w}, nxt[cnt] = head[x], head[x] = cnt; }
+namespace sub1 {
+	#define kN 5005
+	ll sct, dfn[kN], rv[kN], mx[kN]; vector<int> ans[kN];
+	void dfs(int x, int fa) {
+		dfn[x] = ++ sct; rv[sct] = x; sz[x] = 1;
+		for(re int i = head[x]; i; i = nxt[i]) {
+			int y = e[i].y; if (y == fa) continue;
+			dfs(y, x); sz[x] += sz[y];
+		}
+	}
+	void main() {
+		dfs(1, 0);
+		for(re int i = 2; i <= n; ++i) {
+			ll k = sz[i];
+			for(re int j = dfn[i]; j <= dfn[i] + sz[i] - 1; ++j) {
+				if(ww[i] * (n - k) > mx[j]) {
+          vector<int>().swap(ans[j]);
+          ans[j].push_back(i); mx[j] = ww[i] * (n - k);
+        }
+				else if(ww[i] * (n - k) == mx[j]) ans[j].push_back(i);
+			}
+			for(re int j = 1; j < dfn[i]; ++j) {
+				if(ww[i] * k > mx[j]) {
+          vector<int>().swap(ans[j]);
+          ans[j].push_back(i); mx[j] = ww[i] * k;
+        }
+				else if(ww[i] * k == mx[j]) ans[j].push_back(i);
+			}
+			for(re int j = dfn[i] + sz[i]; j <= n; ++j) {
+				if(ww[i] * k > mx[j]) {
+          vector<int>().swap(ans[j]);
+          ans[j].push_back(i); mx[j] = ww[i] * k;
+        }
+				else if(ww[i] * k == mx[j]) ans[j].push_back(i);
+			}
+		}
+		for (int i = 1; i <= n; i++) {
+			for (auto x : ans[i]) f[x] ++;
+		}
+		ll ans = 0; for (int i = 1; i <= n; i++) ans ^= f[i];
+		write(ans);
+	}
+}
+namespace sub2 {
+	il bool check() {
+		for(re int i = 2; i <= n; ++i)
+      if (ww[i] != 1) return false;
+		return true;
+	}
+	il void dfs(int x, int fa) {
+		sz[x] = 1;
+		for (int i = head[x]; i; i = nxt[i]) {
+			int y = e[i].y; if (y == fa) continue;
+			dfs(y, x); sz[x] += sz[y];
+		}
+	}
+	il void main() {
+		dfs(1, 0);
+		ll ans = 0;
+		for (int x = 1; x <= n; x++) {
+			int mx = 0;
+			for (int i = head[x]; i; i = nxt[i]) {
+				int y = e[i].y; if (y == fa[x]) continue;
+				if (sz[y] > mx) { mx = sz[y]; }
+			}
+			if ((n - sz[x]) > mx) mx = n - sz[x];
+			for (int i = head[x]; i; i = nxt[i]) {
+				int y = e[i].y; if (y == fa[x]) continue;
+				if (sz[y] == mx) f[y] ++;
+			}
+			if ((n - sz[x]) == mx) f[x] ++;
+		}
+		for (int i = 2; i <= n; i++) ans ^= f[i];
+		write(ans);
+	}
+}
+namespace sub4 {
+	il bool check() {
+		for (re int i = 2; i <= n; ++i)
+      if (fa[i] != 1) return false;
+		return true;
+	}
+	il void main() {
+		ll mx = 0, num = 0, cou = n;
+		for (re int i = 2; i <= n; ++i) mx = max(mx, ww[i]);
+		for (re int i = 2; i <= n; ++i) if (ww[i] == mx) ++num;
+		cou -= num; ++cou;
+		for(re int i = 2; i <= n; ++i) {
+			if(ww[i] < mx && 1ll * ww[i] * (n - 1) > mx) --cou;
+		}
+		ll ans = 0; for(re int i = 1; i <= num; ++i) ans ^= cou;
+		write(ans);
+	}
+}
+int main() {
+	freopen("treeq.in", "r", stdin);
+	freopen("treeq.out", "w", stdout);
+	read(n);
+  for(re int i = 2; i <= n; ++i) {
+    read(fa[i]); read(ww[i]);
+    add(i, fa[i], ww[i]); add(fa[i], i, ww[i]);
+  }
+	if(n <= 5000) {sub1::main(); return 0;}
+	if(sub2::check()) {sub2::main(); return 0;}
+	if(sub4::check()) {sub4::main(); return 0;}
+	return 0;
+}

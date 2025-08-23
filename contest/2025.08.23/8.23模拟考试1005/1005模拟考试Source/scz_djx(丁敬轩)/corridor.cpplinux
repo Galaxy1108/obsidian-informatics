@@ -1,0 +1,101 @@
+#include <bits/stdc++.h>
+using namespace std;
+const int N(50100);
+int Type,n,m,k,q,fx[2][2]={{1,0},{0,1}};
+bool a[110][110];
+set<int> row[N],col[N];
+inline int read(){
+	int FF=0,RR=1;
+	char ch=getchar();
+	for(;!isdigit(ch);ch=getchar())
+		if(ch=='-')
+			RR=-1;
+	for(;isdigit(ch);ch=getchar())
+		FF=(FF<<1)+(FF<<3)+ch-48;
+	return FF*RR;
+}
+int main(){
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout); 
+	Type=read(),n=read(),m=read(),k=read();
+	if(Type==0){
+		for(int i=1,x,y;i<=k;i++){
+			x=read(),y=read();
+			a[x][y]=1;
+		}
+		q=read();
+		for(int i=1,op,x,y,t;i<=q;i++){
+			op=read(),x=read(),y=read();
+			if(op==1)
+				a[x][y]=1;
+			else{
+				t=read();
+				int curx,cury,dir;
+				if(x==0)
+					curx=1,cury=y,dir=0;
+				else
+					curx=x,cury=1,dir=1;
+				while(curx<=n&&cury<=m&&t){
+					if(a[curx][cury])
+						dir^=1,t--;
+					if(t==0)
+						break;
+					curx+=fx[dir][0],cury+=fx[dir][1];
+				}
+				printf("%d %d\n",curx,cury);
+			} 
+		}
+	}
+	else{
+		for(int i=1,x,y;i<=k;i++){
+			x=read(),y=read();
+			row[x].insert(y),col[y].insert(x);
+		}
+		q=read();
+		for(int i=1,op,x,y,t;i<=q;i++){
+			op=read(),x=read(),y=read();
+			if(op==1)
+				row[x].insert(y),col[y].insert(x);
+			else{
+				t=read();
+				bool first=1;
+				int curx,cury,dir;
+				if(x==0)
+					curx=1,cury=y,dir=0;
+				else
+					curx=x,cury=1,dir=1;
+				while(curx<=n&&cury<=m&&t){
+					set<int>::iterator it;
+					if(dir==0){
+						if(first)
+							it=col[cury].lower_bound(curx);
+						else
+							it=col[cury].upper_bound(curx);
+						if(it==col[cury].end()){
+							curx=n+1;
+							break;
+						}
+						curx=*it;
+					}
+					if(dir==1){
+						set<int>::iterator it;
+						if(first)
+							it=row[curx].lower_bound(cury);
+						else
+							it=row[curx].upper_bound(cury);
+						if(it==row[curx].end()){
+							cury=m+1;
+							break;
+						}
+						cury=*it;
+					} 
+					t--;
+					dir^=1;
+					first=0;
+				}
+				printf("%d %d\n",curx,cury);
+			} 
+		}
+	}
+	return 0;
+}

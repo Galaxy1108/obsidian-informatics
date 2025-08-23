@@ -1,0 +1,213 @@
+#include<bits/stdc++.h>
+#define mp make_pair
+#define pb push_back
+#define fi first
+#define se second
+using namespace std;
+inline int read() {
+	int s=0;
+	char ch=getchar();
+	while(ch<'0'||ch>'9')ch=getchar();
+	while(ch>='0'&&ch<='9')s=(s<<3)+(s<<1)+(ch^48),ch=getchar();
+	return s;
+}
+int type,n,m,k,Q;
+int b[1051][1051];
+void work(int x,int y,int q) {
+	if(x==0) {
+		x++;
+		int cnt=0,dir=0;
+		while(x<=n&&y<=m&&cnt<=q) {
+			if(b[x][y]) {
+				cnt++;
+				if(cnt==q) {
+					cout<<x<<" "<<y<<endl;
+					return;
+				}
+				if(dir==0) {
+					dir=1;
+					y++;
+				} else {
+					dir=0;
+					x++;
+				}
+			} else {
+				if(dir==0)x++;
+				else y++;
+			}
+		}
+		cout<<x<<" "<<y<<endl;
+	} else {
+		y++;
+		int cnt=0,dir=1;
+		while(x<=n&&y<=m&&cnt<=q) {
+			if(b[x][y]) {
+				cnt++;
+				if(cnt==q) {
+					cout<<x<<" "<<y<<endl;
+					return;
+				}
+				if(dir==0) {
+					dir=1;
+					y++;
+				} else {
+					dir=0;
+					x++;
+				}
+			} else {
+				if(dir==0)x++;
+				else y++;
+			}
+		}
+		cout<<x<<" "<<y<<endl;
+	}
+}
+vector<pair<int,int> >fx[150501],fy[150501];
+int tr[50501],td[50501],to[2][150501];
+int xx[150501],yy[150501];
+void work1(int x,int y,int q) {
+	int di;
+	int cnt=1;
+	int now;
+	if(x==0) {
+		di=1,now=td[y];
+	} else {
+		di=0,now=tr[x];
+	}
+	while(cnt<q) {
+		if(now>150000) {
+			if(now>200000) {
+				printf("%d %d\n",n+1,now-200000);
+			} else {
+				printf("%d %d\n",now-150000,m+1);
+			}
+			return;
+		}
+		di^=1;
+		now=to[di][now];
+		cnt++;
+	}
+	if(now>150000) {
+		if(now>200000) {
+			printf("%d %d\n",n+1,now-200000);
+		} else {
+			printf("%d %d\n",now-150000,m+1);
+		}
+		return;
+	}
+	cout<<xx[now]<<" "<<yy[now]<<endl;
+}
+int main() {
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	type=read(),n=read(),m=read(),k=read();
+	if(type==0) {
+		for(int i=1; i<=k; i++) {
+			int x=read(),y=read();
+			b[x][y]=1;
+		}
+		Q=read();
+		for(int i=1; i<=Q; i++) {
+			int op=read();
+			if(op==1) {
+				int x=read(),y=read();
+				b[x][y]=1;
+			} else {
+				int x=read(),y=read(),q=read();
+				work(x,y,q);
+			}
+		}
+	} else if(type==1) {
+		for(int i=1; i<=k; i++) {
+			int x=read(),y=read();
+			fx[x].pb(mp(y,i)),fy[y].pb(mp(x,i));
+			xx[i]=x,yy[i]=y;
+		}
+		for(int i=1; i<=n; i++) {
+			if(fx[i].size())sort(fx[i].begin(),fx[i].end());
+			fx[i].pb(mp(m+1,150000+i));
+			tr[i]=fx[i][0].se;
+		}
+		for(int i=1; i<=m; i++) {
+			if(fy[i].size())sort(fy[i].begin(),fy[i].end());
+			fy[i].pb(mp(n+1,200000+i));
+			td[i]=fy[i][0].se;
+		}
+		for(int i=1; i<=n; i++) {
+			for(int j=0; j<fx[i].size()-1; j++) {
+				to[0][fx[i][j].se]=fx[i][j+1].se;
+			}
+		}
+		for(int i=1; i<=m;i++) {
+			for(int j=0; j<fy[i].size()-1; j++) {
+				to[1][fy[i][j].se]=fy[i][j+1].se;
+			}
+		}
+		Q=read();
+		for(int i=1; i<=Q; i++) {
+			int op=read();
+			if(op==1) {
+				int x=read(),y=read();
+			} else {
+				int x=read(),y=read(),q=read();
+			}
+		}
+	} else if(type==2) {
+		for(int i=1; i<=k; i++) {
+			int x=read(),y=read();
+			fx[x].pb(mp(y,i)),fy[y].pb(mp(x,i));
+			xx[i]=x,yy[i]=y;
+		}
+		for(int i=1; i<=n; i++) {
+			if(fx[i].size())sort(fx[i].begin(),fx[i].end());
+			fx[i].pb(mp(m+1,150000+i));
+			tr[i]=fx[i][0].se;
+		}
+		for(int i=1; i<=m; i++) {
+			if(fy[i].size())sort(fy[i].begin(),fy[i].end());
+			fy[i].pb(mp(n+1,200000+i));
+			td[i]=fy[i][0].se;
+		}
+		for(int i=1; i<=n; i++) {
+			for(int j=0; j<fx[i].size()-1; j++) {
+				to[0][fx[i][j].se]=fx[i][j+1].se;
+			}
+		}
+		for(int i=1; i<=m; i++) {
+			for(int j=0; j<fy[i].size()-1; j++) {
+				to[1][fy[i][j].se]=fy[i][j+1].se;
+			}
+		}
+		Q=read();
+		for(int i=1; i<=Q; i++) {
+			int op=read();
+			if(op==1) {
+				int x=read(),y=read();
+				xx[k+i]=x,yy[k+i]=y;
+				int pos=-1,minn=150000;
+				for(int j=0;j<fx[x].size();j++){
+					if(fx[x][j].fi<y){
+						if(y-fx[x][j].fi<minn)pos=j,minn=y-fx[x][j].fi;
+					}
+				}
+//				cout<<pos<<" "<<minn1<<" "<<endl;
+				if(pos==-1)to[0][k+i]=tr[x],tr[x]=k+i;
+				else to[0][k+i]=to[0][fx[x][pos].se],to[0][fx[x][pos].se]=k+i;
+				minn=150000;
+				pos=-1;
+				for(int j=0;j<fy[y].size();j++){
+					if(fy[y][j].fi<x){
+						if(x-fy[y][j].fi<minn)pos=j,minn=x-fy[y][j].fi;
+					}
+				}
+				if(pos==-1)to[1][k+i]=td[y],td[y]=k+i;
+				else to[1][k+i]=to[1][fy[y][pos].se],to[1][fy[y][pos].se]=k+i;
+				fx[x].pb(mp(y,k+i)),fy[y].pb(mp(x,k+i));
+			} else {
+				int x=read(),y=read(),q=read();
+				work1(x,y,q);
+			}
+		}
+	}
+	return 0;
+}

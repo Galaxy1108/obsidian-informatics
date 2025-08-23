@@ -1,0 +1,32 @@
+#include<bits/stdc++.h>
+const int N = 3010;
+using namespace std;
+typedef long long ll;
+ll n,m,f[N][N],mod;
+int dp(int n)
+{
+	memset(f,0,sizeof(f));
+	for(int i=0;i<=n;i++) f[0][i]=1;
+	for(int i=0;i<m;i++)
+	{
+		for(int j=0;j<=n;j++)
+		{
+			if(j>0) f[i+1][j]=(f[i+1][j]+f[i][j])%mod; 
+			if(j<n) f[i+1][j]=(f[i+1][j]+f[i][j])%mod; 
+			if(j>0) f[i+1][j-1]=(f[i+1][j-1]+f[i][j])%mod;
+			if(j<n) f[i+1][j+1]=(f[i+1][j+1]+f[i][j])%mod;
+		}
+	}
+	int ans=0;
+	for(int i=0;i<=n;i++)
+		ans=(ans+f[m][i])%mod;
+	return ans;
+}
+int main()
+{
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	scanf("%lld%lld%lld",&n,&m,&mod);
+	printf("%d\n",(dp(n)-dp(n-1)+mod)%mod);
+	return 0;
+}

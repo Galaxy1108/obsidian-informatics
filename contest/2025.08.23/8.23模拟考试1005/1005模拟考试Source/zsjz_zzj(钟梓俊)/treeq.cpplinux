@@ -1,0 +1,90 @@
+#include <bits/stdc++.h>
+#define maxN 5010
+#define LL long long
+using namespace std;
+struct Edge{ LL x, y, g; } b[maxN << 1];
+LL len = 0;
+LL F[20][maxN], val[maxN], f[maxN];
+LL tmp[maxN], dep[maxN], siz[maxN], h[maxN];
+LL read ()
+{
+	LL x = 0, Fu = 1;
+	char c = getchar();
+	while(c < '0' || c > '9')
+	{
+		if(c == '-') Fu = -1;
+		c = getchar();
+	}
+	while(c >= '0' && c <= '9')
+	{
+		x = x * 10 + (c - '0');
+		c = getchar();
+	}
+	return x * Fu;
+}
+LL Min (LL x, LL y) { return x < y ? x : y; }
+LL Max (LL x, LL y) { return x > y ? x : y; }
+void ins (LL x, LL y)
+{
+	b[++len] = (Edge){x, y, h[x]};
+	h[x] = len;
+}
+void GoThr (LL x)
+{
+	siz[x] = 1;
+	for(LL i = h[x];i;i = b[i].g)
+	{
+		LL y = b[i].y;
+		F[0][y] = x, dep[y] = dep[x] + 1;
+		GoThr(y);
+		siz[x] += siz[y];
+	}
+}
+LL LCA (LL x, LL y)
+{
+	if(dep[x] < dep[y]) { LL t = x; x = y; y = t; }
+	for(LL i = 19;i >= 0; i--)
+		if(dep[F[i][x]] >= dep[y]) x = F[i][x];
+	if(x == y) return x;
+	for(LL i = 19;i >= 0; i--)
+		if(F[i][x] != F[i][y]) x = F[i][x], y = F[i][y];
+	return F[0][x];
+}
+int main ()
+{
+	freopen("treeq.in", "r", stdin);
+	freopen("treeq.out", "w", stdout);
+	LL n = read();
+	for(LL i = 2;i <= n; i++)
+	{
+		LL x = read(); val[i - 1] = read();
+		ins(x, i);
+	}
+	dep[1] = 1; GoThr(1);
+	for(LL j = 1;j < 20; j++)
+		for(LL i = 1;i <= n; i++)
+			F[j][i] = F[j - 1][F[j - 1][i]];
+	for(LL j = 1;j <= n; j++)
+	{
+		LL ma = -1;
+		for(LL i = 1;i < n; i++)
+		{
+			LL x = b[i].x, y = b[i].y;
+			if(dep[x] > dep[y]) { LL t = x; x = y; y = t; }
+			if(x == j) tmp[i] = siz[y] * val[i];
+			else if(y == j) tmp[i] = (n - siz[y]) * val[i];
+			else
+			{
+				LL lca = LCA(y, j);
+				if(dep[lca] < dep[y]) tmp[i] = siz[y] * val[i];
+				else tmp[i] = (n - siz[y]) * val[i];
+			}
+			ma = Max(ma, tmp[i]);
+		}
+		for(LL i = 1;i < n; i++) f[i] += (tmp[i] == ma);
+	}
+	LL Ans = 0;
+	for(LL i = 1;i < n; i++) Ans ^= f[i];
+	printf("%lld", Ans);
+	return 0;
+}

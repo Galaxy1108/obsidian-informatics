@@ -1,0 +1,32 @@
+#include<bits/stdc++.h>
+using namespace std;
+const int dx[2]={1,0},dy[2]={0,1};
+int a[1005][1005],t,n,m,k,q;
+int main() {
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	cin>>t>>n>>m>>k;
+	for(int i=1;i<=k;i++){
+		int x,y;cin>>x>>y;a[x][y]=1;
+	}
+	int q;cin>>q;
+	while(q--){
+		int w,x,y,z;cin>>w>>x>>y;
+		if(w==1)a[x][y]=1;
+		else{
+			cin>>z;
+			int now=0,nowp=(x!=0);
+			while(x<n&&y<n&&now<z){
+				if(a[x][y])nowp^=1,++now;
+				if(now==z)break;
+				x+=dx[nowp],y+=dy[nowp];
+			}
+			if(now<z){
+				if(x==n)cout<<n+1<<' '<<y<<endl;
+				else cout<<x<<' '<<m+1<<endl;
+			}
+			else cout<<x<<' '<<y<<endl;
+		}
+	}
+	return 0;
+}

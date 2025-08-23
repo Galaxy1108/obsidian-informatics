@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define LOG(FMT...) fprintf(stderr, FMT)
+
+const int N = 200005;
+const int mod = 998244353;
+
+int n, m, task;
+int a[N], s[N], wt[N];
+
+void Add(int &x, int y) {
+	if ((x += y) >= mod) {
+		x -= mod;
+	}
+}
+
+void query() {
+	int mxv = 0;
+	for (int i = 1; i <= n; ++i) {
+		if (a[i] > mxv) {
+			mxv = a[i];
+		}
+	}
+	int k;
+	for (k = 1; k <= n; ++k) {
+		s[k] = s[k - 1] + a[k];
+		if (s[k] >= mxv) {
+			break;
+		}
+	}
+	int res = 0;
+	while (k) {
+		Add(res, wt[k]);
+		mxv -= a[k];
+		while (k && s[k - 1] >= mxv) {
+			--k;
+		}
+	}
+	printf("%d\n", res);
+}
+
+int main() {
+	freopen("imperishable.in", "r", stdin);
+	freopen("imperishable.out", "w", stdout);
+	scanf("%d%d", &task, &n);
+	// LOG("%d %d\n", task, n);
+	wt[0] = 1;
+	for (int i = 1; i <= n; ++i) {
+		wt[i] = wt[i - 1] * 2;
+		if (wt[i] >= mod) {
+			wt[i] -= mod;
+		}
+	}
+	for (int i = 1; i <= n; ++i) {
+		scanf("%d", a + i);
+	}
+	query();
+	scanf("%d", &m);
+	int x, y;
+	while (m--) {
+		scanf("%d%d", &x, &y);
+		a[x] = y;
+		query();
+	}
+	return 0;
+}

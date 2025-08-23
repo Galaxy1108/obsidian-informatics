@@ -1,0 +1,97 @@
+#include<bits/stdc++.h>
+#define MAXN 600010
+#define pii pair<int,int>
+#define mp make_pair
+#define pb push_back
+#define fi first
+#define se second
+using namespace std;
+int typ,n,m,K,Q;
+struct Node{int x,y,pre,nxt;}lst[MAXN];
+int hx[MAXN],hy[MAXN],tot=1;
+set<pii>sx[MAXN],sy[MAXN];
+void add(int x,int y){
+	int p=++tot;lst[p].x=x;lst[p].y=y;
+	auto it=sx[x].lower_bound(mp(y,0));
+	lst[p].nxt=it->se;lst[p].pre=lst[it->se].pre;
+	lst[lst[it->se].pre].nxt=p;lst[it->se].pre=p;
+	sx[x].insert(mp(y,p));
+	p=++tot;lst[p].x=x;lst[p].y=y;
+	it=sy[y].lower_bound(mp(x,0));
+	lst[p].nxt=it->se;lst[p].pre=lst[it->se].pre;
+	lst[lst[it->se].pre].nxt=p;lst[it->se].pre=p;
+	sy[y].insert(mp(x,p));
+}
+namespace sub1{
+	int query(int x,int y,int q){
+		int p=(!y?hx[x]:hy[y]);
+		while(q--){
+			p=lst[p].nxt;//cerr<<p<<' '<<lst[p].x<<' '<<lst[p].y<<endl;
+			if(lst[p].x==n+1||lst[p].y==m+1)return p;
+			p^=1;
+		}
+		return p;
+	}
+	void solve(){//cerr<<"000"<<endl;
+		while(Q--){
+			int opt,x,y;scanf("%d%d%d",&opt,&x,&y);//cerr<<opt<<' '<<x<<' '<<y<<endl;
+			if(opt==1)add(x,y);
+			else{
+				int q;scanf("%d",&q);
+				int p=query(x,y,q);//cerr<<p<<endl;
+				printf("%d %d\n",lst[p].x,lst[p].y);
+			}
+		}
+	}
+}
+namespace sub2{
+	vector<int>lx[MAXN],ly[MAXN];
+	void query(int x,int y,vector<int>&vec){
+		int p=(!y?hx[x]:hy[y]);
+		while(true){
+			p=lst[p].nxt;vec.pb(p);
+			if(lst[p].x==n+1||lst[p].y==m+1)return;
+			p^=1;
+		}
+	}
+	void solve(){
+		for(int i=1;i<=n;i++)query(i,0,lx[i]);
+		for(int j=1;j<=m;j++)query(0,j,ly[j]);
+		while(Q--){
+			int opt,x,y,q;scanf("%d%d%d%d",&opt,&x,&y,&q);
+			if(!y){
+				int sz=lx[x].size(),p=lx[x][min(sz,q)-1];
+				printf("%d %d\n",lst[p].x,lst[p].y);
+			}else{
+				int sz=ly[y].size(),p=ly[y][min(sz,q)-1];
+				printf("%d %d\n",lst[p].x,lst[p].y);
+			}
+		}
+	}
+}
+signed main(){
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	scanf("%d%d%d%d",&typ,&n,&m,&K);
+	for(int i=1;i<=n;i++){
+		int p=++tot,q=++tot;
+		lst[p].x=lst[q].x=i;lst[p].y=0;lst[q].y=m+1;
+		lst[p].nxt=q;lst[q].pre=p;hx[i]=p;
+		sx[i].insert(mp(0,p));sx[i].insert(mp(m+1,q));
+	}
+	for(int i=1;i<=m;i++){
+		int p=++tot,q=++tot;
+		lst[p].y=lst[q].y=i;lst[p].x=0;lst[q].x=n+1;
+		lst[p].nxt=q;lst[q].pre=p;hy[i]=p;
+		sy[i].insert(mp(0,p));sy[i].insert(mp(n+1,q));
+	}
+	for(int i=1;i<=K;i++){
+		int x,y;scanf("%d%d",&x,&y);
+		add(x,y);
+	}scanf("%d",&Q);
+	if(typ==0||typ==2)
+		sub1::solve();
+	else if(typ==1)
+		sub2::solve();
+	return 0;
+}

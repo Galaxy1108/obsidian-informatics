@@ -1,0 +1,101 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+void setio(string s) {
+	freopen((s + ".in").c_str(), "r", stdin);
+	freopen((s + ".out").c_str(), "w", stdout);
+	cin.tie(0)->sync_with_stdio(0), cout.tie(0);
+#ifdef LOCAL
+	atexit([](){ system("grep VmPeak /proc/$PPID/status > /dev/tty"); });
+#endif
+}
+
+#define F(i, a, b) for (int i = (a), i##end = (b); i <= i##end; i++)
+#define R(i, a, b) for (int i = (a), i##end = (b); i >= i##end; i--)
+#define edge(i, u, x) for (int i = head[x], u = e[i].v; i; u = e[i = e[i].nxt].v)
+#define mp make_pair
+#define fi first
+#define se second
+
+using ll = long long;
+const int N = 10000100;
+int n, u[N], v[N], w[N];
+ll w1[N], w2[N];
+pair<ll, int> x[N << 1];
+
+struct edge {
+	int v, nxt;
+} e[N];
+int head[N], cnt = 1;
+void add(int u, int v) {
+	e[++cnt] = edge{v, head[u]}, head[u] = cnt;
+}
+
+int nxt[N];
+int getnxt(int x) { return nxt[x] == x ? x : nxt[x] = getnxt(nxt[x]); }
+
+int lowbit(int x) { return x & (-x); }
+int b[N];
+void modify(int x) {
+	for (; x <= n; x += lowbit(x)) b[x]++;
+}
+int qry(int x) {
+	int ans = 0;
+	for (; x; x ^= lowbit(x)) ans += b[x];
+	return ans;
+}
+int query(int l, int r) { return qry(r) - qry(l - 1); }
+
+void cover(int l, int r) {
+	while ((l = getnxt(l)) <= r)
+		modify(l), nxt[l] = getnxt(l + 1);
+}
+
+int dfn[N], sz[N], tot;
+void dfs(int x) {
+	dfn[x] = ++tot, sz[x] = 1;
+	edge(i, v, x)
+		dfs(v), sz[x] += sz[v];
+}
+
+int res[N];
+
+int main() {
+	setio("treeq");
+	cin >> n;
+	F(i, 1, n + 1) nxt[i] = i;
+	F(i, 1, n - 1) cin >> u[i] >> w[i], v[i] = i + 1, add(u[i], v[i]);
+	dfs(1);
+	F(i, 1, n - 1) {
+		if (sz[u[i]] > sz[v[i]]) swap(u[i], v[i]);
+		w2[i] = 1ll * w[i] * sz[u[i]];
+		w1[i] = 1ll * w[i] * (n - sz[u[i]]);
+		x[i] = mp(w1[i], i), x[i + n - 1] = mp(w2[i], i + n);
+	}
+	sort(x + 1, x + n * 2 - 1, greater<>());
+	int sum = 0;
+	for (int i = 1, j = 1; i <= n * 2 - 2; i++) {
+		for (; j <= n * 2 - 2 && x[j].fi > x[i].fi; j++) {
+			int y = x[j].se;
+			if (y < n) {
+				cover(dfn[u[y]], dfn[u[y]] + sz[u[y]] - 1);
+			} else {
+				y -= n;
+				cover(1, dfn[u[y]] - 1);
+				cover(dfn[u[y]] + sz[u[y]], n);
+			}
+		}
+		int y = x[i].se, ans = 0;
+		if (y < n) {
+			res[y] += query(dfn[u[y]], dfn[u[y]] + sz[u[y]] - 1);
+		} else {
+			y -= n;
+			res[y] += query(1, dfn[u[y]] - 1);
+			res[y] += query(dfn[u[y]] + sz[u[y]], n);
+		}
+	}
+	F(i, 1, n - 1) {
+		sum ^= n - res[i];
+	}
+	cout << sum << endl;
+}

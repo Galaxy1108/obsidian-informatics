@@ -1,0 +1,133 @@
+#include<stdio.h>
+#include<cmath>
+#include<iostream>
+#include<cstring>
+#include<string>
+#include<algorithm>
+#include<cstdio>
+#include<vector>
+#include<queue>
+#include<vector>
+#include <cctype>
+#include<bitset>
+#define M 998244353
+using namespace std;
+namespace FastIO {
+  char buf[1<<21], *p1=buf, *p2=buf;
+  inline int getch (void) {
+    return p1==p2&&(p2=(p1=buf)+fread(buf,1,1<<21,stdin),p1==p2)?EOF:*p1++;
+  }
+  inline int read (void) {
+    int x = 0, f = 1, ch = getch();
+    while(!isdigit(ch)) {
+      if(ch == '-') f = -f;
+      ch = getch();
+    }
+    while(isdigit(ch)) {
+      x = x * 10 + ch - '0';
+      ch = getch();
+    }
+    return x * f;
+  }
+  char buf2[1<<21], buf3[25];
+  int tp_l, buf2_l=-1;
+  inline void flush (void) {
+    fwrite (buf2, 1, buf2_l+1, stdout), buf2_l=-1;
+  }
+  inline void print (int x, char ch=10) {
+    if(buf2_l>(1<<20)) flush();
+    if(x<0) buf2[++buf2_l]='-', x=-x;
+    do buf3[++tp_l]=x%10+48;
+    while(x/=10);
+    do buf2[++buf2_l]=buf3[tp_l];
+    while(--tp_l);
+    buf2[++buf2_l] = ch;
+  }
+}
+using FastIO::read;
+using FastIO::print;
+int n,a[200005];
+int ksm(long long n1,int n2){
+  long long res=1;
+  while(n2){
+    if(n2&1)res=(res*n1)%M;
+    n1=(n1*n1)%M;
+    n2/=2;
+  }
+  return res;
+}
+int ans=0,ma,id,sum,la;
+int main(){
+  freopen("imperishable.in","r",stdin);
+  freopen("imperishable.out","w",stdout);
+  int Num;
+  scanf("%d",&Num);
+  scanf("%d",&n);
+  for(int i=1;i<=n;i++){
+    scanf("%d",&a[i]);
+  }
+  ma=0,id=0;
+  for(int i=n;i>=1;i--){
+    if(a[i]>=ma){
+      ma=a[i];
+      id=i;
+      continue;
+    }
+  }
+  sum=0,la=0;
+  for(int i=1;i<=id;i++){
+    la=i;
+    sum+=a[i];
+    if(sum>=ma)break;
+  }
+  if(la==id)ans=(ans+ksm(2,id))%M;
+  else {
+    for(int i=1;i<=la;i++){
+      ans=(ans+ksm(2,i))%M;
+    }
+    for(int i=la-1;i>=1;i--){
+      if(sum-a[i]>=ma){
+        sum-=a[i];
+        ans=(ans-ksm(2,i)+M)%M;
+      }
+    }
+  }
+  printf("%d\n",ans);
+  int q;
+  scanf("%d",&q);
+  while(q--){
+    ans=0;
+    int x,y;
+    scanf("%d%d",&x,&y);
+    a[x]=y;
+    ma=0,id=0;
+  for(int i=n;i>=1;i--){
+    if(a[i]>=ma){
+      ma=a[i];
+      id=i;
+      continue;
+    }
+  }
+  int sum=0,la=0;
+  for(int i=1;i<=id;i++){
+    la=i;
+    sum+=a[i];
+    if(sum>=ma)break;
+  }
+  if(la==id)ans=(ans+ksm(2,id))%M;
+  else {
+    for(int i=1;i<=la;i++){
+      ans=(ans+ksm(2,i))%M;
+    }
+    for(int i=la-1;i>=1;i--){
+      if(sum-a[i]>=ma){
+        sum-=a[i];
+        ans=(ans-ksm(2,i)+M)%M;
+      }
+    }
+  }
+  printf("%d\n",ans);
+  }
+  FastIO::flush();
+  return 0;
+}

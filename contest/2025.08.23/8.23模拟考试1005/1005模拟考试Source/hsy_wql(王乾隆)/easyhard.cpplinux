@@ -1,0 +1,106 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long int ll;
+const int maxn = 2e5 + 20;
+ll n, m, p, dp[305][305][305], c[305][305];
+// dp[i][j][k]，长度为 n 的序列，有 m 次操作，现在 1 的个数为 k 时的方案数
+inline ll ksm(ll a, ll b, ll p) {
+    a %= p; ll ls = 1;
+    while (b) {
+        if (b & 1)ls = (ls * a) % p;
+        a = (a * a) % p;
+        b >>= 1;
+    }
+}
+void get() {
+    int d = max(n, m);
+    c[1][1] = 1, c[2][1] = 1, c[2][2] = 1;
+    for (int i = 3; i <= d; i++) {
+        for (int j = 1; j <= d; j++) {
+            c[i][j] = c[i - 1][j - 1] + c[i - 1][j];
+        }
+    }
+}
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(); cout.tie();
+    cin >> n >> m >> p;
+    get(); dp[1][1][0] = 1;
+    dp[1][1][1] = 2;
+    dp[1][1][2] = 1;
+    for (int i = 2; i <= n; i++) {
+        for (int j = 0; j <= 2; j++)dp[i][1][j] = c[i][j];
+    }
+    for (int i = 1; i <= m; i++) {
+        for (int j = 0; j <= i * 2; j++) {
+            if (!dp[1][i][j])dp[1][i][j] = dp[1][i - 1][j] * 2 % p;
+        }
+    }
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+            for (int k = 0; k <= i; k++) {
+                if (k <= i - 1) { dp[i][j][k] = dp[i - 1][j][k] % p; continue; }
+                dp[i][j][k] += dp[i][j - 1][k] * 2 % p;
+                if (k - 1 >= 0)dp[i][j][k] += dp[i][j - 1][k - 1] % p;
+                if (k + 1 <= i)dp[i][j][k] += dp[i][j - 1][k + 1] % p;
+                dp[i][j][k] %= p;
+            }
+        }
+    }
+    ll ans = 0;
+    for (int i = 1; i <= n; i++)ans += dp[n][m][i] % p;
+    cout << ans % p << "\n";
+    return 0;
+}using namespace std;
+typedef long long int ll;
+const int maxn = 2e5 + 20;
+ll n, m, p, dp[305][305][305], c[305][305];
+// dp[i][j][k]，长度为 n 的序列，有 m 次操作，现在 1 的个数为 k 时的方案数
+inline ll ksm(ll a, ll b, ll p) {
+    a %= p; ll ls = 1;
+    while (b) {
+        if (b & 1)ls = (ls * a) % p;
+        a = (a * a) % p;
+        b >>= 1;
+    }
+}
+void get() {
+    int d = max(n, m);
+    c[1][1] = 1, c[2][1] = 1, c[2][2] = 1;
+    for (int i = 3; i <= d; i++) {
+        for (int j = 1; j <= d; j++) {
+            c[i][j] = c[i - 1][j - 1] + c[i - 1][j];
+        }
+    }
+}
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(); cout.tie();
+    cin >> n >> m >> p;
+    get(); dp[1][1][0] = 1;
+    dp[1][1][1] = 2;
+    dp[1][1][2] = 1;
+    for (int i = 2; i <= n; i++) {
+        for (int j = 0; j <= 2; j++)dp[i][1][j] = c[i][j];
+    }
+    for (int i = 1; i <= m; i++) {
+        for (int j = 0; j <= i * 2; j++) {
+            if (!dp[1][i][j])dp[1][i][j] = dp[1][i - 1][j] * 2 % p;
+        }
+    }
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+            for (int k = 0; k <= i; k++) {
+                if (k <= i - 1) { dp[i][j][k] = dp[i - 1][j][k] % p; continue; }
+                dp[i][j][k] += dp[i][j - 1][k] * 2 % p;
+                if (k - 1 >= 0)dp[i][j][k] += dp[i][j - 1][k - 1] % p;
+                if (k + 1 <= i)dp[i][j][k] += dp[i][j - 1][k + 1] % p;
+                dp[i][j][k] %= p;
+            }
+        }
+    }
+    ll ans = 0;
+    for (int i = 1; i <= n; i++)ans += dp[n][m][i] % p;
+    cout << ans % p << "\n";
+    return 0;
+}

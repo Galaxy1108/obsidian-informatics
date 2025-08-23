@@ -1,0 +1,59 @@
+#include <algorithm>
+#include <iostream>
+#include <cstring>
+#include <cstdio>
+#include <vector>
+
+#define File(a) freopen(a".in", "r", stdin), freopen(a".out", "w", stdout)
+
+using std::pair;
+using std::make_pair;
+
+#define pii pair<int, int>
+#define mp make_pair
+
+using ll = long long;
+const int inf = 1e9;
+const ll infll = 0ll + 1e18;
+
+#define int long long
+const int N = 2e5 + 5;
+const int mod = 998244353;
+
+int testid, n, q, a[N], pw[N], s[N], ans;
+
+inline int solve() {
+  int ss = 0, ret = 0, maxn = 0, tag = 0;
+  for (int i = 1; i <= n; i ++) 
+    s[i] = s[i - 1] + a[i], maxn = std::max(maxn, a[i]);
+  for (int i = 1; i <= n; i ++) {
+    ss += a[i];
+    (ret += pw[i]) %= mod;
+    tag = i;
+    if (ss >= maxn) break;
+  }
+  for (int i = tag; i >= 1; i --)
+    if (ss - a[i] >= maxn) {
+      ss -= a[i];
+      ret -= pw[i];
+      ret = (ret % mod + mod) % mod;
+    }
+  return ret;
+}
+
+signed main(void) {
+  File("imperishable");
+  std::cin >> testid >> n;
+  pw[0] = 1;
+  for (int i = 1; i < N; i ++)
+    pw[i] = 1ll * pw[i - 1] * 2 % mod;
+  for (int i = 1; i <= n; i ++) scanf("%lld", &a[i]);
+  printf("%lld\n", solve());
+  std::cin >> q;
+  for (int test = 1, pos, num; test <= q; test ++) {
+    scanf("%lld %lld", &pos, &num);
+    a[pos] = num;
+    printf("%lld\n", solve());
+  }
+  return 0;
+}

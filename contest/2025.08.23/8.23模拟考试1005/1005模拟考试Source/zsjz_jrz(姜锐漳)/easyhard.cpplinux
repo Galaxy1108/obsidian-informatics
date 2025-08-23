@@ -1,0 +1,39 @@
+#include<bits/stdc++.h>
+using namespace std;
+int f[3005][3005][2];
+int n,m,p;
+void add(int &x,int y){if ((x+=y)>=p) x-=p;}
+int main(){
+    freopen("easyhard.in","r",stdin);
+    freopen("easyhard.out","w",stdout);
+    scanf("%d%d%d",&n,&m,&p);
+    for (int x=0;x<=n;++x) f[0][x][!x]=1;
+    for (int i=0;i<m;++i)
+        for (int x=0;x<=n;++x){
+            //ww
+            if (x>0){
+                add(f[i+1][x-1][x==1],f[i][x][0]),
+                add(f[i+1][x-1][1],f[i][x][1]);
+            }
+            //wb
+            if (x>0){
+                add(f[i+1][x][x==1],f[i][x][0]);
+                add(f[i+1][x][1],f[i][x][1]);
+            }
+            //bw
+            if (x<n){
+                add(f[i+1][x][0],f[i][x][0]);
+                add(f[i+1][x][1],f[i][x][1]);
+            }
+            //bb
+            if (x<n){
+                add(f[i+1][x+1][0],f[i][x][0]);
+                add(f[i+1][x+1][1],f[i][x][1]);
+            }
+        }
+    int ans=0;
+    for (int x=0;x<=n;++x)
+        add(ans,f[m][x][1]);
+    printf("%d\n",ans);
+    return 0;
+}

@@ -1,0 +1,46 @@
+#pragma GCC optimize(2)
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long LL;
+template <typename T> inline void read(T &FF) {
+    int RR = 1; FF = 0; char CH = getchar();
+    for(; !isdigit(CH); CH = getchar()) if(CH == '-') RR = -RR;
+    for(; isdigit(CH); CH = getchar()) FF = FF * 10 + CH - 48;
+    FF *= RR;
+}
+inline void file(string str) {
+    freopen((str + ".in").c_str(), "r", stdin);
+    freopen((str + ".out").c_str(), "w", stdout);
+}
+const int N = 5e4 + 10;
+set<int> s[2][N];
+int main() {
+    file("corridor");
+	int tp, n, m, k; read(tp), read(n), read(m), read(k);
+	for(int i = 1; i <= n; i++) s[0][i].insert(m + 1);
+	for(int i = 1; i <= m; i++) s[1][i].insert(n + 1);
+	for(int i = 1; i <= k; i++) {
+		int x, y; read(x), read(y);
+		s[0][x].insert(y), s[1][y].insert(x);
+	}
+	int q; read(q);
+	for(int i = 1; i <= q; i++) {
+		int op; read(op);
+		if(op == 1) {
+			int x, y; read(x), read(y);
+			s[0][x].insert(y), s[1][y].insert(x);
+		}
+		else {
+			int x, y, q, f; read(x), read(y), read(q);
+			if(x == 0) f = 1; else f = 0;
+			for(int j = 1; j <= q; j++) {
+				if(f == 0) y = *s[0][x].upper_bound(y);
+				else x = *s[1][y].upper_bound(x);
+				f ^= 1;
+				if(x > n || y > m) break;
+			}
+			cout << x << " " << y << '\n';
+		}
+	}
+    return 0;
+}

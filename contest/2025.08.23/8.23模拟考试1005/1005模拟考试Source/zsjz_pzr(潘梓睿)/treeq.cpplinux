@@ -1,0 +1,52 @@
+#include<bits/stdc++.h>
+#define N 2000000
+#define ll long long
+using namespace std;
+int n,fa[N],head[N],nxt[N],to[N],root[N],
+tot,dev[N],dfs[N],key[N],s[N],ans;
+ll w[N],mx[N],x,y;
+map<ll,ll>a;
+vector<int>b[N],c[N];
+void link(int x,int y){nxt[++tot]=head[x];head[x]=tot;to[tot]=y;}
+void dg(int k){dev[k]=1;dfs[k]=++tot;key[tot]=k;
+	for(int i=head[k];i;i=nxt[i]){
+		dg(to[i]);dev[k]+=dev[to[i]];
+		mx[k]=max(mx[k],w[to[i]]*dev[to[i]]);
+	}
+}
+void find(int k,ll mm){
+	mx[k]=max(mx[k],mm);
+	for(int i=head[k];i;i=nxt[i])
+	find(to[i],max(mm,w[to[i]]*(n-dev[to[i]])));
+}
+int main(){
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	scanf("%d",&n);
+	for(int i=2;i<=n;i++){
+		scanf("%d",&fa[i]);link(fa[i],i);
+		scanf("%lld",&w[i]);
+	}tot=0;dg(1);find(1,0ll);tot=0;
+	for(int i=2;i<=n;i++){
+		x=w[i]*dev[i];y=w[i]*(n-dev[i]);
+		b[dfs[i]+dev[i]-1].emplace_back(i);
+		c[dfs[i]+dev[i]-1].emplace_back(y);
+		b[dfs[i]-1].emplace_back(-i);
+		c[dfs[i]-1].emplace_back(y);
+		b[dfs[i]-1].emplace_back(i);
+		c[dfs[i]-1].emplace_back(x);
+		b[n].emplace_back(i);
+		c[n].emplace_back(x);
+		b[dfs[i]+dev[i]-1].emplace_back(-i);
+		c[dfs[i]+dev[i]-1].emplace_back(x);
+	}
+	for(int i=1;i<=n;i++){
+		a[mx[key[i]]]++;
+		for(int j=0;j<b[i].size();j++){
+			if(b[i][j]>0)s[b[i][j]]+=a[c[i][j]];
+			else s[-b[i][j]]-=a[c[i][j]];
+		}
+	}
+	for(int i=1;i<=n;i++)ans^=s[i];
+	printf("%d",ans);
+}

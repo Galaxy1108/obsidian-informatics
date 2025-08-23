@@ -1,0 +1,67 @@
+/*
+dfs暴力 
+*/
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define ull unsigned long long
+const double eps = 0.000001;
+inline int read()
+{
+	int x=0,f=1;
+	char ch = getchar();
+	while (ch > '9' || ch < '0')
+		{
+			if (ch == '-')
+				f = -1;
+			ch = getchar();
+		}
+	while (ch <= '9' && ch >= '0')
+		{
+			x = x * 10 + ch - 48;
+			ch = getchar();
+		}
+	return x*f;
+}
+inline void write(int x)
+{
+	if (x < 0)
+		{
+			putchar('-');
+			x = -x;
+		}
+	if (x > 9)
+		write(x/10);
+	putchar(x%10+'0');
+}
+int n,m,mod,ans;
+void dfs(int white,int black,int tot)
+{
+	if (tot == m+1)
+		{
+			++ans;
+			ans %= mod;
+			return;
+		}
+	if (white > 0)//00
+		dfs(white-1,black+1,tot+1);
+	if (white > 0)//01
+		dfs(white,black,tot+1);
+	if (black > 0)//10
+		dfs(white,black,tot+1);
+	if (black > 0)//11
+		dfs(white+1,black-1,tot+1);
+}
+int main()
+{
+	//freopen("testdata.txt","r",stdin);
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	n = read();
+	m = read();
+	mod = read();
+	for (int i=0;i<=n;++i)
+		dfs(i,n-i,1);
+	printf("%d",ans);
+	return 0;
+}

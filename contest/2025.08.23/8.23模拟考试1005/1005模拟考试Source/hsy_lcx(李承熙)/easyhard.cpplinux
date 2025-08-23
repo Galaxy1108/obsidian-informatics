@@ -1,0 +1,59 @@
+#include<bits/stdc++.h>
+using namespace std;
+inline int qread()
+{
+	int a=0;char ch=getchar();
+	while(ch>'9'||ch<'0'){ch=getchar();}
+	while(ch>='0'&&ch<='9'){(a*=10)+=(ch^48);ch=getchar();}
+	return a;
+}
+int n,m,p,ans;
+long long dp[3010][3010];
+inline long long qpow(long long x,int y)
+{
+	long long cx=1;
+	while(y)
+	{
+		if(y&1)(cx*=x)%=p;
+		(x*=x)%=p;
+		y>>=1;
+	}
+	return cx;
+}
+int main()
+{
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	n=qread();
+	m=qread();
+	p=qread();
+	if(n==1)
+	{
+		cout<<qpow(2,m+1)%p;
+		return 0;
+	}
+	ans=qpow(2,(m<<1));
+	if(n<m)
+	{
+		dp[0][0]=1;
+		for(int i=1;i<=m;++i)
+		{
+			for(int j=1;j<=i;++j)
+			{
+				dp[i][j]=((dp[i-1][j]*3)%p+dp[i-1][j-1])%p;
+			}
+		}
+		for(int i=n+1;i<=m;++i)
+		{
+			ans-=(dp[m][i]<<1);
+			while(ans<0)ans+=p;
+			for(int j=i;j<=m;++j)
+			{
+				ans-=(qpow(3,m-j)<<1)%p;
+				while(ans<0)ans+=p;
+			}
+		}
+	}
+	cout<<ans;
+	return 0;
+}

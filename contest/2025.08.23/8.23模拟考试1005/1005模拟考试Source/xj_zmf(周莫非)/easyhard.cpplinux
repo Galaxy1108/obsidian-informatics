@@ -1,0 +1,73 @@
+/*
+    长弓背负，仙女月鹫，
+	梦中徐来，长夜悠悠。
+	今宵共君，夜赏囃子，
+	盼君速归，长夜悠悠。
+	睡意袭我，眼阖梦徭，
+	睡意袭我，意归襁褓。
+	手扶卓揭，仙女水狃，
+	盼君速归，长夜悠悠。
+	今宵共君，戏于西楼，
+	盼君速归，长夜悠悠。
+	睡意袭我，涟锜池留，
+	睡意袭我，意归海角。
+					                  ——《ever17》
+*/
+
+/*
+	『月正笑，地正润潮，星正舞，风正凉。』
+*/
+
+/*
+	『长夜伴浪破晓梦，梦晓破浪伴夜长。』
+*/
+
+//#pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,tune=native")
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+inline int read()
+{
+	int sum = 0, nega = 1;
+	char ch = getchar();
+	while (ch > '9'||ch < '0')
+	{
+	    if (ch == '-') nega = -1;
+		ch = getchar();
+	}
+	while (ch <= '9' && ch >= '0') sum = sum * 10 + ch - '0', ch = getchar();
+	return sum * nega;
+}
+const int N = 6009;
+int n, m, dp[2][2][N], p, ans;
+inline void add(int &x, int y) {x = (x + y) % p; return ;}
+signed main()
+{
+	freopen("easyhard.in", "r", stdin);
+	freopen("easyhard.out", "w", stdout);
+	n = read(), m = read(), p = read();
+	for (int i = 0; i <= n; i++)
+	{
+		memset(dp, 0, sizeof(dp));
+		if(!i) dp[0][1][i] = 1;
+		else dp[0][0][i] = 1;
+		for (int j = 1; j <= m; j++) 
+		{
+			int now = (j & 1), lst = (now ^ 1), v;
+			for (int k = 0; k <= n; k++)
+				for (int p0 = 0; p0 < 2; p0++) dp[now][p0][k] = 0;
+			for (int k = 0; k <= n; k++) 
+				for (int p0 = 0; p0 < 2; p0++) 
+					if(dp[lst][p0][k])
+					{
+						v = dp[lst][p0][k];
+						if(k < n) add(dp[now][p0][k], v), add(dp[now][p0][k + 1], v);
+						if(k == 1) add(dp[now][1][k], v), add(dp[now][1][k - 1], v);
+						if(k > 1) add(dp[now][p0][k], v), add(dp[now][p0][k - 1], v); 
+					}
+		}
+		for (int k = 0; k <= n; k++) add(ans, dp[(m & 1)][1][k]);
+	}
+	cout << ans << endl;
+	return 0;
+}

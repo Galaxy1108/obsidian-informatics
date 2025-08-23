@@ -1,0 +1,21 @@
+#include<bits/stdc++.h>
+using namespace std;
+long long n,m,p;
+long long ans=1;
+int main()
+{
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);\
+	cin>>n>>m>>p;
+	if(n==1)
+	{
+		for(int i=1;i<=m+1;i++)
+		 ans=((ans%p)*2)%p;
+	}
+	else
+	{
+		for(int i=1;i<=m+n;i++)
+			 ans=((ans%p)*2)%p;
+	}
+	cout<<ans<<endl;
+} 

@@ -1,0 +1,82 @@
+#pragma GCC optimize("O2")
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long LL;
+const int NUM=1000005;
+int read()
+{
+    int x=0,f=1;
+    char c=getchar();
+    while(c<'0'||c>'9')
+	{
+        if(c=='-') f=-1;
+		c=getchar();
+	}
+    while(c>='0'&&c<='9') x=(x<<3)+(x<<1)+c-'0',c=getchar();
+    return x*f;
+}
+int n,num,ans[NUM],cnt,head[NUM];
+LL val[NUM],siz[NUM],siz2[NUM],w[NUM],lst[NUM];
+priority_queue<pair<LL,pair<int,int> > > q;
+queue<pair<LL,pair<int,int> > > q2;
+struct edge
+{
+    int next,to,id;
+}e[NUM];
+void add_edge(int from,int to,int id)
+{
+    e[++num].next=head[from];
+    e[num].to=to,e[num].id=id;
+    head[from]=num;
+}
+void dfs(int u)
+{
+    int v;
+    siz[u]=1;
+    for(int i=head[u];i;i=e[i].next)
+    {
+        v=e[i].to,dfs(v),siz[u]+=siz[v];
+        val[e[i].id]=siz[v]*w[e[i].id];
+        q.push(make_pair(val[e[i].id],make_pair(e[i].id,0)));
+    }
+}
+void dfs2(int u)
+{
+    int v;
+    LL m_val;
+    pair<LL,pair<int,int> > a=q.top();
+    while(a.second.second!=lst[a.second.first]) q.pop(),a=q.top();
+    while(a.first==q.top().first&&!q.empty()) q2.push(q.top()),q.pop();
+    while(!q2.empty()) ans[q2.front().second.first]++,q.push(q2.front()),q2.pop();
+    for(int i=head[u];i;i=e[i].next)
+    {
+        v=e[i].to;
+        siz2[u]=siz[1]-siz[v];
+        siz2[v]=siz[1];
+        lst[e[i].id]=++cnt;
+        val[e[i].id]=siz2[u]*w[e[i].id];
+        q.push(make_pair(val[e[i].id],make_pair(e[i].id,lst[e[i].id])));
+        dfs2(v);
+        lst[e[i].id]=++cnt;
+        val[e[i].id]=siz[v]*w[e[i].id];
+        q.push(make_pair(val[e[i].id],make_pair(e[i].id,lst[e[i].id])));
+    }
+}
+int main()
+{
+    freopen("treeq.in","r",stdin);
+    freopen("treeq.out","w",stdout);
+    int time=clock();
+    n=read();
+    for(int i=1;i<n;i++)
+    {
+        add_edge(read(),i+1,i);
+        w[i]=read();
+    }
+    dfs(1);
+    siz2[1]=siz[1];
+    dfs2(1);
+    for(int i=1;i<n;i++) ans[0]^=ans[i];
+    printf("%d",ans[0]);
+    printf("\n%d",clock()-time);
+}

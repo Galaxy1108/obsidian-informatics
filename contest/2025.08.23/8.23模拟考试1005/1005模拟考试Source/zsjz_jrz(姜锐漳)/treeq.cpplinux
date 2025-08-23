@@ -1,0 +1,66 @@
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+namespace IO{
+    const int siz=1<<22;
+    char a[siz],*ia=a+siz,*ea=a+siz;
+    int p[105],l=0;
+    inline char gc(){if (ia==ea) fread(a,1,siz,stdin),ia=a;return *ia++;}
+    inline int read(){
+        int x=0;char t=gc();
+        for (;t<'0' || t>'9';t=gc());
+        for (;'0'<=t && t<='9';t=gc()) x=x*10+t-'0';
+        return x;
+    }
+}
+using IO::read;
+const int N=1e7+5;
+int fa[N],siz[N],dfn[N],tmp[N],w[N],t1[N],t2[N],t3[N];
+ll f[N],pre[N],suf[N],mpre[N],msuf[N],mi[N];
+int n,cnt=0;
+int main(){
+    freopen("treeq.in","r",stdin);
+    freopen("treeq.out","w",stdout);
+    n=read();
+    for (int i=2;i<=n;++i) fa[i]=read(),w[i]=read();
+    for (int i=n;i>1;--i) siz[fa[i]]+=++siz[i];++siz[1];
+    tmp[1]=dfn[1]=1;
+    for (int i=2;i<=n;++i){
+        tmp[i]=dfn[i]=tmp[fa[i]]+1;
+        tmp[fa[i]]+=siz[i];
+    }
+    for (int i=1;i<=n;++i) t1[dfn[i]]=dfn[fa[i]],t2[dfn[i]]=w[i],t3[dfn[i]]=siz[i];
+    for (int i=1;i<=n;++i) fa[i]=t1[i],w[i]=t2[i],siz[i]=t3[i];
+    for (int i=2;i<=n;++i){
+        mi[i]=1e18;
+        f[i]=max(f[fa[i]],1ll*w[i]*(n-siz[i]));
+        pre[i-1]=1ll*w[i]*siz[i];
+        suf[i+siz[i]]=max(suf[i+siz[i]],1ll*w[i]*siz[i]);
+    }
+    for (int i=1;i<=n;++i) suf[i]=max(suf[i],suf[i-1]);
+    for (int i=n;i>=1;--i) pre[i]=max(pre[i],pre[i+1]);
+    for (int i=1;i<=n;++i) f[i]=max(f[i],max(pre[i],suf[i])),t1[i]=t2[i]=t3[i]=0;
+    mpre[0]=1e18;
+    for (int i=1;i<=n;++i){
+        if (f[i]<mpre[i-1]) mpre[i]=f[i],t1[i]=1;
+        else mpre[i]=mpre[i-1],t1[i]=t1[i-1]+(mpre[i-1]==f[i]);
+    }
+    msuf[n+1]=1e18;
+    for (int i=n;i>=1;--i){
+        if (f[i]<msuf[i+1]) msuf[i]=f[i],t2[i]=1;
+        else msuf[i]=msuf[i+1],t2[i]=t2[i+1]+(msuf[i+1]==f[i]);
+    }
+    for (int i=n;i>1;--i){
+        if (f[i]<mi[i]) mi[i]=f[i],t3[i]=1;
+        else t3[i]+=(f[i]==mi[i]);
+        if (mi[i]<mi[fa[i]]) mi[fa[i]]=mi[i],t3[fa[i]]=t3[i];
+        else t3[fa[i]]+=(mi[i]==mi[fa[i]]?t3[i]:0);
+    }
+    int ans=0;
+    for (int i=2;i<=n;++i){
+        int temp=(mpre[i-1]==1ll*w[i]*siz[i]?t1[i-1]:0)+(msuf[i+siz[i]]==1ll*w[i]*siz[i]?t2[i+siz[i]]:0)+(mi[i]==1ll*w[i]*(n-siz[i])?t3[i]:0);
+        ans^=temp;
+    }
+    printf("%d\n",ans);
+    return 0;
+}

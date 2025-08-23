@@ -1,0 +1,25 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+int p,n,m,ans=1;
+signed main()
+{
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	cin>>n>>m>>p;
+	for(int i=1;i<=n+m;i++)
+	{
+		ans*=2;
+		ans%=p;
+	}
+	if(n>=m)
+	{
+		ans=1;
+		for(int i=1;i<=m;i++)
+		{
+			ans*=4;
+			ans%=p; 
+		}	
+	} 
+	cout<<ans;
+}

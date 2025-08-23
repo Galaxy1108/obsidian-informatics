@@ -1,0 +1,32 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int mod;
+void add(int &x, int y) { if ((x += y - mod) < 0) x += mod; }
+
+const int N = 3e3;
+
+int n, m;
+int f[N + 5][N * 2 + 5], g[N + 5][N * 2 + 5];
+int ans;
+
+int main() {
+  freopen("easyhard.in", "r", stdin), freopen("easyhard.out", "w", stdout);
+  scanf("%d%d%d", &n, &m, &mod);
+  for (int i = 1; i <= n; ++i) f[0][i] = 1;
+  g[0][0] = 1;
+  for (int i = 0; i < m; ++i)
+    for (int j = 0; j <= n + i; ++j) {
+      if (f[i][j]) {
+        if (j > 0) add((j == 1 ? g : f)[i + 1][j], f[i][j]), add((j == 1 ? g : f)[i + 1][j - 1], f[i][j]);
+        if (j < n) add(f[i + 1][j], f[i][j]), add(f[i + 1][j + 1], f[i][j]);
+      }
+      if (g[i][j]) {
+        if (j > 0) add(g[i + 1][j], g[i][j]), add(g[i + 1][j - 1], g[i][j]);
+        if (j < n) add(g[i + 1][j], g[i][j]), add(g[i + 1][j + 1], g[i][j]);
+      }
+    }
+  ans = accumulate(g[m], g[m] + n + m + 1, 0ULL) % mod;
+  printf("%d\n", ans);
+}

@@ -1,0 +1,121 @@
+#include<stdio.h>
+#include<vector>
+#include<cstring>
+#include<algorithm>
+using namespace std;
+inline char gc()
+{
+	static char buf[1<<20],*p1=buf,*p2=buf;
+	return p1==p2&&(p2=(p1=buf)+fread(buf,1,1<<20,stdin),p1==p2)?EOF:*p1++;
+}
+inline int read()
+{
+	int x=0;
+	char ch=gc();
+	while(ch<'0'||ch>'9')
+	{
+		ch=gc();
+	}
+	while(ch>='0'&&ch<='9')
+	{
+		x=x*10+ch-'0';
+		ch=gc();
+	}
+	return x;
+}
+int lgn,n,a[2000010],A[2000010];
+inline int lowbit(int x)
+{
+	return x&(-x);
+}
+inline void add(int x,int v)
+{
+	for(;x<=(n<<1);a[x]+=v,x+=lowbit(x));
+}
+inline int query(int x)
+{
+	int ret=0;
+	for(;x;ret+=a[x],x^=lowbit(x));
+	return ret;
+}
+inline void Add(int x,int v)
+{
+	for(;x<=(n<<1);A[x]+=v,x+=lowbit(x));
+}
+inline int query()
+{
+	int p=0;
+	for(int i=lgn+1;i>=0;i--)
+	{
+		if(!A[p|(1<<i)])
+		{
+			p|=1<<i;
+		}
+	}
+	return (n<<1)-p;
+}
+int size[1000010],id[2000010],ans[2000010];
+vector<pair<pair<int,int>,int> > e[1000010];
+pair<long long,int> w[2000010];
+void dfs(int now)
+{
+	size[now]=1;
+	for(int i=0;i<e[now].size();i++)
+	{
+		int t=e[now][i].first.first;
+		dfs(t);
+		w[e[now][i].second]=make_pair((long long)size[t]*
+		e[now][i].first.second,e[now][i].second);
+		w[e[now][i].second+n]=make_pair((long long)(n-size[t])*
+		e[now][i].first.second,e[now][i].second+n);
+		size[now]+=size[t];
+	}
+}
+void dfs2(int now)
+{
+	for(int i=0;i<e[now].size();i++)
+	{
+		int t=e[now][i].first.first;
+		int ID=e[now][i].second;
+		Add((n<<1)-id[ID]+1,-1),Add((n<<1)-id[ID+n]+1,1);
+		int v=query(id[ID]),p=query(),v2=query(id[ID+n]);
+		int q=lower_bound(w+1,w+p,make_pair(w[p].first,0))-w;
+		add(q,1),add(p+1,-1);
+		dfs2(t);
+		Add((n<<1)-id[ID]+1,1),Add((n<<1)-id[ID+n]+1,-1);
+		ans[id[ID]]=v-query(id[ID]);
+		ans[id[ID+n]]=query(id[ID+n])-v2;
+	}
+}
+int main()
+{
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	lgn=__lg(n=read());
+	for(int i=1,x=2,y,z;i<n;i++,x++)
+	{
+		y=read(),z=read();
+		e[y].push_back(make_pair(make_pair(x,z),i));
+	}
+	dfs(1);
+	sort(w+1,w+(n<<1)+1);
+	for(int i=1;i<=(n<<1);i++)
+	{
+		id[w[i].second]=i;
+	}
+	for(int i=1;i<n;i++)
+	{
+		Add((n<<1)-id[i]+1,1);
+	}
+	int p=query();
+	int q=lower_bound(w+1,w+p,make_pair(w[p].first,0))-w;
+	add(q,1),add(p+1,-1);
+	dfs2(1);
+	int Ans=0;
+	for(int i=1;i<n;i++)
+	{
+		Ans^=ans[id[i]]+query(id[i])+ans[id[n+i]];
+	}
+	printf("%d\n",Ans);
+	return 0;
+}

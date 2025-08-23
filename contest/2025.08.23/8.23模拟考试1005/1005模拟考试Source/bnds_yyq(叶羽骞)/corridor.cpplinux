@@ -1,0 +1,62 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+#define int long long
+#define MAXN 105
+int type,n,m,k,q,X,Y;
+int a[MAXN][MAXN] = {0};
+
+void work( int x , int y , int t ){
+	int dir = 0;
+	if( y == 0 ) dir = 1;
+	while( true ){
+		if( dir == 0 ){
+			x ++;
+			if( x > n )
+				break;
+			if( a[x][y] ){
+				dir = 1;
+				if( !--t ) break;
+			}
+		}
+		else{
+			y ++;
+			if( y > m )
+				break;
+			if( a[x][y] ){
+				dir = 0;
+				if( !--t ) break;
+			}
+		}
+	}
+	X = x;
+	Y = y;
+	return;
+}
+
+signed main(){
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	scanf("%lld%lld%lld%lld",&type,&n,&m,&k);
+	for( int i = 1 ; i <= k ; i ++ ){
+		int x,y;
+		scanf("%lld%lld",&x,&y);
+		a[x][y] = 1;
+	}
+	scanf("%lld",&q);
+	for( int i = 1 ; i <= q ; i ++ ){
+		int w,x,y,t;
+		scanf("%lld%lld%lld",&w,&x,&y);
+		if( w == 1 ){
+			a[x][y] = 1;
+		}
+		if( w == 2 ){
+			scanf("%lld",&t);
+			work( x , y , t );
+			printf("%lld %lld\n",X,Y);
+		}
+	}
+	fclose(stdin);
+	fclose(stdout);
+	return 0;
+}

@@ -1,0 +1,109 @@
+#include<iostream>
+#include<cstdio>
+using namespace std;
+#define fo(i,a,b) for(int i=a;i<=b;++i)
+#define fod(i,a,b) for(int i=a;i>=b;--i)
+#define LL long long
+#define min(a,b) (a<b?a:b)
+#define max(a,b) (a>b?a:b)
+const int Mxdt=100000; 
+inline char gc(){
+	static char buf[Mxdt],*p1=buf,*p2=buf;
+	return p1==p2&&(p2=(p1=buf)+fread(buf,1,Mxdt,stdin),p1==p2)?EOF:*p1++;
+}
+inline int read(){
+	int t=0,f=0;char v=gc();
+	while(v<'0')f|=(v=='-'),v=gc();
+	while(v>='0')t=(t<<3)+(t<<1)+v-48,v=gc();
+	return f?-t:t;
+}
+int nex[10000011];
+int n,fa[10000011];
+int c[10000011],head[10000011];
+int f[10000011],sz[10000011],h[10000011],h2[10000011];
+LL g[10000011],g2[10000011],g3[10000011];
+void dfs(int x){
+	g[x]=g2[x]=g3[x]=-1;
+	sz[x]=1;
+	for(int i=head[x];i!=0;i=nex[i]){
+		dfs(i);
+		sz[x]+=sz[i];
+		LL w=max((LL)sz[i]*c[i],g3[i]);
+		if(w>g3[x]){
+			g2[x]=g3[x],g3[x]=w;
+		}
+		else g2[x]=max(g2[x],w);
+	}
+}
+void dfs2(int x){
+	h[x]=1;
+	for(int i=head[x];i!=0;i=nex[i]){
+		if(g3[x]==max((LL)sz[i]*c[i],g3[i])){
+			g[i]=max(g[i],max(g2[x],g[x]));
+		}
+		else g[i]=max(g[i],max(g3[x],g[x]));
+		g[i]=max(g[i],(LL)(n-sz[i])*c[i]);
+		dfs2(i);
+	}
+	g[x]=max(g[x],g3[x]);
+	for(int i=head[x];i!=0;i=nex[i]){
+		if(g[i]==g[x]){
+			h[x]+=h[i];
+		}
+		if((LL)(n-sz[i])*c[i]==g[i]){
+			f[i]+=h[i];
+		}
+	}
+}
+void dfs3(int x){
+	for(int i=head[x];i!=0;i=nex[i]){
+		if(g[i]==g[x])h2[i]=h2[x];
+		dfs3(i);
+		if((LL)sz[i]*c[i]==g[x]){
+			f[i]+=h2[x];
+			if(g[x]==g[i])f[i]-=h[i];
+		}
+	}
+}
+int h7=0,bz[100011];
+void dfs4(int x){
+	bz[x]=h7;
+	for(int i=head[x];i!=0;i=nex[i]){
+		dfs4(i);
+	}
+}
+int main(){
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	n=read();
+	fo(i,2,n){
+		fa[i]=read();
+		c[i]=read();
+		nex[i]=head[fa[i]],head[fa[i]]=i;
+	}
+	dfs(1);
+	dfs2(1);
+	if(n<=5000){
+		fo(i,2,n){
+			f[i]=0;
+			h7=i+n;
+			dfs4(i);
+			fo(j,1,n){
+				if(bz[j]==i+n){
+					if((LL)(n-sz[i])*c[i]==g[j])++f[i];
+				}
+				else{
+					if((LL)sz[i]*c[i]==g[j])++f[i];
+				}
+			}
+		}
+	}
+	else{
+		fo(i,1,n)h2[i]=h[i];
+		dfs3(1);
+	}
+	int ans=0;
+	fo(i,2,n)ans^=f[i];
+	printf("%d",ans);
+	return 0;
+}

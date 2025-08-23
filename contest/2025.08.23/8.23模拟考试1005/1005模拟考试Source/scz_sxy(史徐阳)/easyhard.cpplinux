@@ -1,0 +1,34 @@
+#include<bits/stdc++.h>
+typedef long long LL;
+const int MN = 3005;
+int N, M, Mod;
+int f[2][MN], g[2][MN], Ans;
+int main() {
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	scanf("%d%d%d", &N, &M, &Mod);
+	int o = 0;
+	for (int i = 1; i <= N; ++i) f[o][i] = 1;
+	g[o][0] = 1;
+	for (int i = 1; i <= M; ++i) {
+		o ^= 1;
+		for (int j = 0; j <= N; ++j) f[o][j] = g[o][j] = 0;
+		for (int j = 0; j <= N; ++j) {
+			if (j) {
+				f[o][j] = (f[o][j] + f[o ^ 1][j - 1]) % Mod;
+				g[o][j] = ((LL)g[o][j] + g[o ^ 1][j - 1] + g[o ^ 1][j]) % Mod;
+				if (j == 1) g[o][j] = (g[o][j] + f[o ^ 1][j]) % Mod;
+				else f[o][j] = (f[o][j] + f[o ^ 1][j]) % Mod;
+			}
+			if (j < N) {
+				g[o][j] = ((LL)g[o][j] + g[o ^ 1][j + 1] + g[o ^ 1][j]) % Mod;
+				if (!j) g[o][j] = (g[o][j] + f[o ^ 1][j + 1]) % Mod;
+				else f[o][j] = ((LL)f[o][j] + f[o ^ 1][j + 1] + f[o ^ 1][j]) % Mod;
+			}
+		}
+	}
+	for (int j = 0; j <= N; ++j) Ans = (Ans + g[o][j]) % Mod;
+	printf("%d\n", Ans);
+	return 0;
+}
+

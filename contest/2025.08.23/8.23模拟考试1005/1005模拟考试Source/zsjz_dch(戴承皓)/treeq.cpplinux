@@ -1,0 +1,106 @@
+#include <cstdio>
+#include <iostream>
+#include <vector>
+#define LL long long
+using namespace std;
+template <typename T>
+inline void read(T &x) {
+	x = 0; int f = 0; char ch = getchar();
+	for(; !isdigit(ch); ch = getchar()) if(ch == '-') f = 1;
+	for(; isdigit(ch); ch = getchar()) x = (x << 3) + (x << 1) + (ch ^ 48);
+	if(f) x = ~x + 1;
+}
+const int N = 1e6 + 10;
+int fa[N], n, xo;
+LL w[N];
+vector<int> G[N];
+struct Edge {
+	int from, to, nxt;
+	LL w;
+}e[10010];
+int tot, la[5010];
+inline void add(int u, int v, int w) {e[++tot] = (Edge){u, v, la[u], w}, la[u] = tot;}
+int ans[N], sz[N];
+int pre[N], suf[N];
+LL a[N], b[N];
+int dfs(int k, int fa) {
+	int res = 1;
+	for(int i = la[k], v; i; i = e[i].nxt) {
+		v = e[i].to;
+		if(v == fa) continue;
+		sz[i] = dfs(v, k);
+		res += sz[i];
+	}
+	return res;
+}
+int main() {
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	read(n);
+	bool flag1 = true, flag2 = true, flag3 = true;
+	for(int i = 2, u, v; i <= n; ++i) {
+		read(fa[i]), read(w[i]);
+		G[fa[i]].emplace_back(i);
+		if(w[i] != 1) flag1 = false;
+		if(fa[i] != i - 1) flag2 = false;
+		if(fa[i] != 1) flag3 = false;
+	}
+	if(n <= 5000) {
+		for(int i = 1; i <= n; ++i) for(auto j : G[i]) add(i, j, w[j]), add(j, i, w[j]);
+		for(int i = 1; i <= n; ++i) {
+			LL mx = 0;
+			int id;
+			for(int j = 1; j <= tot; ++j) sz[j] = 0;
+			dfs(i, 0);
+			for(int j = 1; j <= tot; ++j) {
+				if(1ll * sz[j] * e[j].w > mx) {
+					id = j;
+					mx = sz[j] * e[j].w;
+				}
+			}
+			++ans[min(e[id].from, e[id].to)];
+		}
+		for(int i = 2; i <= n; ++i) xo ^= ans[i];
+		printf("%d\n",xo);
+	}
+	else if(flag1) {
+		for(int i = n; i >= 1; --i) ++sz[i], sz[fa[i]] += sz[i];
+		for(int i = 1; i <= n; ++i) {
+			int id = 0;
+			for(auto j : G[i]) 
+				if(sz[j] >= sz[id]) id = j;
+			if(n - sz[i] > sz[id]) id = i;
+			++ans[id];
+		}
+		for(int i = 2; i <= n; ++i) xo ^= ans[i];
+		printf("%d\n",xo);
+	}
+	else if(flag2) {
+		for(int i = 1; i <= n; ++i) a[i] = (i - 1) * w[i], b[i] = (n - i + 1) * w[i];
+		for(int i = 1; i <= n; ++i) {
+			if(a[i] > a[pre[i - 1]]) pre[i] = i;
+			else pre[i] = pre[i - 1];
+		}
+		for(int i = n; i >= 1; --i) {
+			if(b[i] > b[suf[i + 1]]) suf[i] = i;
+			else suf[i] = suf[i + 1];
+		}
+		for(int i = 1; i <= n; ++i) {
+			if(a[pre[i]] >= b[suf[i + 1]]) ++ans[pre[i]];
+			if(b[suf[i + 1] >= a[pre[i]]]) ++ans[suf[i + 1]];
+		}
+		for(int i = 2; i <= n; ++i) xo ^= ans[i];
+		printf("%d\n",xo);
+	}
+	else if(flag3) {
+		int id = 0;
+		for(int i = 2; i <= n; ++i) if(w[i] > w[id]) id = i;
+		++ans[id];
+		for(int i = 2; i <= n; ++i) {
+			if((n - 1) * w[i] <= w[id]) ++ans[i];
+			if((n - 1) * w[i] >= w[id]) ++ans[i];
+		}
+		for(int i = 2; i <= n; ++i) xo ^= ans[i];
+		printf("%d\n",ans);
+	}
+}

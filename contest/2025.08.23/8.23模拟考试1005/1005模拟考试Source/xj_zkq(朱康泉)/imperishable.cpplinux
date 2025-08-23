@@ -1,0 +1,67 @@
+#include<bits/stdc++.h>
+const long long mod=998244353;
+using namespace std;
+long long n,q,a[2000005],b[2000005],l=1,j,k,p,ans;
+priority_queue<pair<long long,long long> >q1;
+inline long long read()
+{
+	long long x=0,f=1;char ch=getchar();
+	while (ch<'0'||ch>'9'){if (ch=='-') f=-1;ch=getchar();}
+	while (ch>='0'&&ch<='9'){x=x*10+ch-48;ch=getchar();}
+	return x*f;
+}
+int main(){
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	read(),n=read();
+	for(int i=1;i<=n;i++){
+		q1.push((pair<long long,long long>){a[i]=read(),i});
+	}
+	for(int i=1;i<=n;i++){
+		l*=2;
+		l%=mod;
+		b[i]=l;
+	}
+	l=0;
+	for(int i=1;i<=n;i++){
+		k=max(a[i],k);
+		while(a[i]>l){
+			l+=a[++j];
+		}
+	}
+	p=l;
+	for(int i=j;i>0;i--){
+		if(p-a[i]>=k){
+			p-=a[i];
+		}else{
+			ans+=b[i];
+		}
+	}
+	printf("%lld\n",ans%mod);
+	q=read();
+	while(q--){
+		ans=0;
+		long long x=read(),y=read();
+		if(x<=j){
+			l+=y-a[x];
+		}
+		q1.push({y,x});
+		a[x]=y;
+		pair<long long,long long>p1=q1.top();
+		while(p1.first!=a[p1.second]){
+			q1.pop();
+			p1=q1.top();
+		}
+		while(l<p1.first)l+=a[++j];
+		while(l-a[j]>=p1.first)l-=a[j--];
+		p=l;
+		for(int i=j;i>0;i--){
+			if(p-a[i]>=p1.first){
+				p-=a[i];
+			}else{
+				ans+=b[i];
+			}
+		}
+		printf("%lld\n",ans%mod);
+	}
+}

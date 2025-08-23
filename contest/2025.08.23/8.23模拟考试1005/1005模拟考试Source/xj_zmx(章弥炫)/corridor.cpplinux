@@ -1,0 +1,92 @@
+#include<bits/stdc++.h>
+using namespace std;
+long long a,b,c,type,lim=300000,o,h[500001],id[500001],cnt,v[500001],op,q,w,e,cnn,cc;
+struct p{long long q,w;}m[500001];
+vector<long long> qu1[500001],qu2[500001];
+vector<long long> ve[500001];
+struct pp{long long q,w;}l[1000001];
+void add(long long qq,long long ww){l[++o].q=ww,l[o].w=h[qq],h[qq]=o;}
+void dfs(long long qq,long long ww)
+{
+	if(qq>lim) id[qq]=cnt;
+	v[qq]=1;ve[cnt].push_back(qq);
+	for(int i=h[qq];i;i=l[i].w) if(l[i].q!=ww) dfs(l[i].q,qq);
+}
+int main()
+{
+//	freopen("corridor.in","r",stdin);
+//	freopen("corridor.out","w",stdout);
+	scanf("%lld%lld%lld%lld",&type,&a,&b,&c);cnn=c;
+	for(int i=1;i<=c;i++) scanf("%lld%lld",&m[i].q,&m[i].w),qu1[m[i].q].push_back(i),qu2[m[i].w].push_back(i);
+	for(int i=1;i<=a;i++)
+	{
+		if(!qu1[i].size())
+		{
+			add(lim+i,lim+a+i),add(lim+a+i,lim+i);
+			continue;
+		}
+		add(lim+i,qu1[i][0]*2-1);add(qu1[i][0]*2-1,lim+i);
+		add(lim+a+i,qu1[i][qu1[i].size()-1]*2);add(qu1[i][qu1[i].size()-1]*2,lim+a+i);
+		for(int j=0;j+1<qu1[i].size();j++) add(qu1[i][j]*2,qu1[i][j+1]*2-1),add(qu1[i][j+1]*2-1,qu1[i][j]*2);
+	}
+	for(int i=1;i<=b;i++)
+	{
+		if(!qu2[i].size())
+		{
+			add(lim+a*2+i,lim+a*2+b+i),add(lim+a*2+b+i,lim+a*2+i);
+			continue;
+		}
+		add(lim+a*2+i,qu2[i][0]*2);add(qu2[i][0]*2,lim+a*2+i);
+		add(lim+a*2+b+i,qu2[i][qu2[i].size()-1]*2-1);add(qu2[i][qu2[i].size()-1]*2-1,lim+a*2+b+i);
+		for(int j=0;j+1<qu2[i].size();j++) add(qu2[i][j]*2-1,qu2[i][j+1]*2),add(qu2[i][j+1]*2,qu2[i][j]*2-1);
+	}scanf("%lld",&cc);
+	if(type==1)
+	{
+		for(int i=lim+1;i<=lim+a*2+b*2;i++)
+		{
+			if(!v[i])
+			{
+				id[i]=++cnt;
+				dfs(i,0);
+			}
+		} 
+		for(int i=1;i<=cc;i++)
+		{
+			scanf("%lld%lld%lld%lld",&op,&q,&w,&e);
+			if(q==0)
+			{
+				long long tt=lim+a*2+w;
+				if(ve[id[tt]].size()>e+2)
+				{
+					long long hh=ve[id[tt]][e+1]/2;
+					printf("%lld %lld\n",m[hh].q,m[hh].w);
+				}
+				else
+				{
+					long long hh=ve[id[tt]][ve[id[tt]].size()-1];
+					if(hh<=lim+a*2) printf("%lld %lld\n",hh-lim-a,b+1);
+					else printf("%lld %lld\n",a+1,hh-lim-a*2-b);
+				}
+			}
+			else
+			{
+				long long tt=lim+q;
+				if(ve[id[tt]].size()>e+1)
+				{
+					long long hh=ve[id[tt]][e]/2;
+					printf("%lld %lld\n",m[hh].q,m[hh].w);
+				}
+				else
+				{
+					long long hh=ve[id[tt]][ve[id[tt]].size()-1];
+					if(hh<=lim+a*2) printf("%lld %lld\n",hh-lim-a,b+1);
+					else printf("%lld %lld\n",a+1,hh-lim-a*2-b);
+				}
+			}
+		}
+	}
+	else
+	{
+	}
+	return 0;
+}

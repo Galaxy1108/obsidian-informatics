@@ -1,0 +1,62 @@
+#include <cstdio>
+#include <iostream>
+#include <tr1/unordered_map>
+#define IN inline
+using namespace std;
+
+template <typename T>
+IN void read(T &x) {
+	x = 0; char ch = getchar(); int f = 0;
+	for(; !isdigit(ch); f = (ch == '-' ? 1 : f), ch = getchar());
+	for(; isdigit(ch); x = (x<<3)+(x<<1)+(ch^48), ch = getchar());
+	if (f) x = ~x + 1;
+}
+
+const int N = 3005;
+int n, m, P, f[N][N];
+IN void Add(int &x, int y){if ((x += y - P) < 0) x += P;}
+
+typedef long long LL;
+IN int fpow(int x, int y) {
+	int s = 1;
+	for(; y; y >>= 1, x = (LL)x * x % P) if (y & 1) s = (LL)s * x % P;
+	return s;
+}
+
+int ans;
+tr1::unordered_map<int, int> vis;
+void dfs(int pos, int x, int s) {
+	if (pos > m) {
+		if (!vis[s]) vis[s] = 1, ++ans;
+		return;
+	}
+	int y = n - x;
+	if (!x) dfs(pos + 1, x, (s<<2)+2), dfs(pos + 1, x + 1, (s<<2)+3);
+	else if (!y) dfs(pos + 1, x, (s<<2)+1), dfs(pos + 1, x - 1, (s<<2));
+	else dfs(pos + 1, x, (s<<2)+2), dfs(pos + 1, x + 1, (s<<2)+3), dfs(pos + 1, x, (s<<2)+1), dfs(pos + 1, x - 1, (s<<2));
+}
+
+int main() {
+	freopen("easyhard.in", "r", stdin);
+	freopen("easyhard.out", "w", stdout);
+	read(n), read(m), read(P);
+	if (m <= 10) {
+		for(int i = 0; i <= n; i++) dfs(1, i, 0);
+		printf("%d\n", ans % P);
+		return 0;
+	}
+	else if (n >= m) return printf("%d\n", fpow(2, m * 2)), 0;
+	for(int x = 0; x <= n; x++) f[0][x] = 1;
+	for(int i = 0; i < m; i++) {
+		for(int x = 0; x <= n; x++)
+		if (f[i][x]) {
+			int y = n - x;
+			if (!x) Add(f[i + 1][x], f[i][x]), Add(f[i + 1][x + 1], f[i][x]);
+			else if (!y) Add(f[i + 1][x], f[i][x]), Add(f[i + 1][x - 1], f[i][x]);
+			else Add(f[i + 1][x], f[i][x] * 2 % P), Add(f[i + 1][x - 1], f[i][x]), Add(f[i + 1][x + 1], f[i][x]);
+		}
+	}
+	int ans = 0;
+	for(int x = 0; x <= n; x++) Add(ans, f[m][x]);
+	printf("%d\n", ans);
+}

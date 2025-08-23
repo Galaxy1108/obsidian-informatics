@@ -1,0 +1,49 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef pair<int,int> pii;
+typedef long long ll;
+typedef vector<pii> vpii;
+const int N = 1e7+5;
+int f[N][2],sz[N],cnt[N];
+ll m[N];
+vpii e[N];
+void dfs(int u,int f)
+{
+	ll ma = 0;
+	sz[u] = 1;
+	for(int i = 0;i < e[u].size();i++){
+		if(e[u][i].first == f)continue;
+		dfs(e[u][i].first,u);
+		sz[u] += sz[e[u][i].first];
+		if((ll)sz[e[u][i].first]*e[u][i].second > ma)ma = (ll)sz[e[u][i].first]*e[u][i].second;
+	}
+	m[u] = ma;
+}
+void dfs2(int u,int f,int w)
+{
+	if((ll)(sz[1]-sz[u])*w > m[u])cnt[u]++;
+	else for(auto i:e[u])if((ll)sz[i.first]*i.second == m[u] && i.first != f)cnt[i.first]++;
+	for(auto i:e[u]){
+		if(i.first == f)continue;
+		dfs2(i.first,u,i.second);
+	}
+}
+int main()
+{
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	int n;
+	cin >> n;
+	for(int i = 1;i < n;i++){
+		int u,v,w;
+		cin >> u >> v >> w;
+		e[u].push_back({v,w});
+		e[v].push_back({u,w});
+	}
+	dfs(1,0);
+	dfs2(1,0,0);
+	int ans = 0;
+	for(int i = 2;i <= n;i++)ans ^= cnt[i];
+	cout << ans;
+	return 0;
+}

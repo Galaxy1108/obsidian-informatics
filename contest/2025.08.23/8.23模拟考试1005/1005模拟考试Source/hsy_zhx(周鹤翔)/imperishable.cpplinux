@@ -1,0 +1,50 @@
+#include <bits/stdc++.h> 
+using namespace std; 
+inline long long read() {
+	long long s = 0; char ch = getchar(); 
+	while(ch <  '0' || ch >  '9') ch = getchar(); 
+	while(ch >= '0' && ch <= '9') s = s * 10 + (ch ^ 48), ch = getchar(); 
+	return s; 
+}
+const int p = 998244353; 
+long long ksm(long long di, long long zhi) {
+	if(zhi == 1) return di; 
+	if(zhi > 1) {
+		if(zhi & 1) return di * ksm(di * di % p, zhi / 2) % p; 
+		else return ksm(di * di % p, zhi / 2) % p; 
+	}
+}
+int num, n, q; 
+int cnt[100010]; 
+const int maxn = 2e5 + 10; 
+long long work(){
+	int bg, mx = -1; 
+	for(int i = 1; i <= n; ++i) if(mx < cnt[i]) mx = cnt[i], bg = i; 
+	return ksm(2ll, bg * 1ll); 
+}
+int main() {
+	freopen("imperishable.in" , "r", stdin ); 
+	freopen("imperishable.out", "w", stdout); 
+	cin >> num >> n; 
+//	int a[n + 1]; 
+	for(int i = 1; i <= n; ++i) {
+		cin >> cnt[i]; 
+	}
+	cin >> q; 
+	if(n == 1 && q == 0) {
+		cout << "2" << endl; 
+		return 0; 
+	}
+	else {
+		int bg, mx = -1; 
+		for(int i = 1; i <= n; ++i) if(mx < cnt[i]) mx = cnt[i], bg = i; 
+		cout << ksm(2ll, bg * 1ll) << endl; 
+		for(int i = 1; i <= q; ++i) {
+			int x, y; 
+			cin >> x >> y; 
+			cnt[x] = y; 
+			cout << work() << endl; 
+		}
+	}
+	return 0; 
+}

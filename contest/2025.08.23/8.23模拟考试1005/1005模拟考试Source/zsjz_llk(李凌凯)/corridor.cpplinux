@@ -1,0 +1,179 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define Fo(i,a,b) for(int i=a;i<=b;i++)
+#define Fd(i,a,b) for(int i=a;i>=b;i--)
+#define N 50010
+#define K 250010
+
+namespace IO{
+	const int sz=1<<22;
+	char a[sz+5],b[sz+5],*p1=a,*p2=a,*t=b,p[105];
+	inline char gc(){
+		return p1==p2?(p2=(p1=a)+fread(a,1,sz,stdin),p1==p2?EOF:*p1++):*p1++;
+	}
+	template<class T>void read(T&x){
+		x=0;char c=gc();
+		for(;c<'0'||c>'9';c=gc());
+		for(;c>='0'&&c<='9';c=gc())x=x*10+(c-'0');
+	}
+	inline void flush(){fwrite(b,1,t-b,stdout),t=b;}
+	inline void pc(char x){*t++=x;if(t-b==sz)flush();}
+	template<class T>void write(T x,char c='\n'){
+		if(x==0)pc('0');int t=0;
+		for(;x;x/=10)p[++t]=x%10+'0';
+		for(;t;--t)pc(p[t]);pc(c);
+	}
+	struct F{~F(){flush();}}f;
+}
+using IO::read;
+using IO::write;
+
+unordered_map<int,pair<int,int>>A0[N],A1[N];
+unordered_map<int,int>num[N];
+int tp,n,m,k,T,Right[K],Down[K],cnt,id[K][2];
+int Mx0[N],Mx1[N],lst0[N][2],lst1[N][2];
+set<int>s0[N],s1[N];
+
+void sub1(){
+	Fo(i,1,n){
+		int x,y,fx,ti=0;
+		x=i;y=0;fx=1;ti=0;
+		while(1){
+			Mx0[i]=ti;
+			A0[i][ti]=make_pair(x,y);
+			if(!fx){
+				if(Down[num[x][y]]){
+					int t=Down[num[x][y]];
+					x=id[t][0];y=id[t][1];fx=1;ti++;
+				}else{
+					x=n+1;
+					lst0[i][0]=x;lst0[i][1]=y;
+					break;
+				}
+			}else{
+				if(Right[num[x][y]]){
+					int t=Right[num[x][y]];
+					x=id[t][0];y=id[t][1];fx=0;ti++;
+				}else{
+					y=m+1;
+					lst0[i][0]=x;lst0[i][1]=y;
+					break;
+				}
+			}
+		}
+	}
+	Fo(i,1,m){
+		int x,y,fx,ti=0;
+		x=0;y=i;fx=0;ti=0;
+		while(1){
+			Mx1[i]=ti;
+			A1[i][ti]=make_pair(x,y);
+			if(!fx){
+				if(Down[num[x][y]]){
+					int t=Down[num[x][y]];
+					x=id[t][0];y=id[t][1];fx=1;ti++;
+				}else{
+					x=n+1;
+					lst1[i][0]=x;lst1[i][1]=y;
+					break;
+				}
+			}else{
+				if(Right[num[x][y]]){
+					int t=Right[num[x][y]];
+					x=id[t][0];y=id[t][1];fx=0;ti++;
+				}else{
+					y=m+1;
+					lst1[i][0]=x;lst1[i][1]=y;
+					break;
+				}
+			}
+		}
+	}
+	while(T--){
+		int op;
+		read(op);
+		int x,y,q,fx,ti=0;
+		read(x);read(y);read(q);
+		if(x==0){
+			if(q>Mx1[y])printf("%d %d\n",lst1[y][0],lst1[y][1]);
+			else printf("%d %d\n",A1[y][q].first,A1[y][q].second);
+		}else{
+			if(q>Mx0[x])printf("%d %d\n",lst0[x][0],lst0[x][1]);
+			else printf("%d %d\n",A0[x][q].first,A0[x][q].second);
+		}
+	}
+}
+
+void sub2(){
+	while(T--){
+		int op;
+		read(op);
+		if(op==1){
+			int x,y;
+			read(x);read(y);
+			num[x][y]=++cnt;
+			id[cnt][0]=x;id[cnt][1]=y;
+			set<int>::iterator it;
+			it=s0[x].upper_bound(y);
+			if(it!=s0[x].end())Right[cnt]=num[x][*it];
+			if(it!=s0[x].begin())it--,Right[num[x][*it]]=cnt;
+			s0[x].insert(y);
+			it=s1[y].upper_bound(x);
+			if(it!=s1[y].end())Down[cnt]=num[*it][y];
+			if(it!=s1[y].begin())it--,Down[num[*it][y]]=cnt;
+			s1[y].insert(x);
+		}else{
+			int x,y,q,fx,ti=0;
+			read(x);read(y);read(q);
+			fx=(x==0?0:1);
+			while(ti<q){
+				if(!fx){
+					if(Down[num[x][y]]){
+						int t=Down[num[x][y]];
+						x=id[t][0];y=id[t][1];fx=1;ti++;
+					}else{x=n+1;break;}
+				}else{
+					if(Right[num[x][y]]){
+						int t=Right[num[x][y]];
+						x=id[t][0];y=id[t][1];fx=0;ti++;
+					}else{y=m+1;break;}
+				}
+			}
+			printf("%d %d\n",x,y);
+		}
+	}
+}
+
+int main(){
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	read(tp);read(n);read(m);read(k);
+	Fo(i,1,k){
+		int x,y;
+		read(x);read(y);
+		num[x][y]=++cnt;
+		id[cnt][0]=x;id[cnt][1]=y;
+		s0[x].insert(y);
+		s1[y].insert(x);
+	}
+	Fo(i,1,n)s0[i].insert(0),num[i][0]=++cnt;
+	Fo(i,1,m)s1[i].insert(0),num[0][i]=++cnt;
+	Fo(i,1,n){
+		int lst=-1;
+		for(auto it=s0[i].begin();it!=s0[i].end();it++){
+			if(lst!=-1)Right[lst]=num[i][*it];
+			lst=num[i][*it];
+		}
+	}
+	Fo(i,1,m){
+		int lst=-1;
+		for(auto it=s1[i].begin();it!=s1[i].end();it++){
+			if(lst!=-1)Down[lst]=num[*it][i];
+			lst=num[*it][i];
+		}
+	}
+	read(T);
+	if(tp==1){sub1();return 0;}
+	sub2();
+	return 0;
+}

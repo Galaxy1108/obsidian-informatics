@@ -1,0 +1,54 @@
+#include<bits/stdc++.h>
+#define south 0
+#define east 1
+using namespace std;
+int tp,n,m,k,x,y,q,w,dir;
+set<int> h[55555],l[55555];
+int main(){
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	scanf("%d%d%d%d",&tp,&n,&m,&k);
+	for(int i=1;i<=k;i++){
+		scanf("%d%d",&x,&y);
+		h[x].insert(y);
+		l[y].insert(x);
+	}
+	for(int i=1;i<=n;i++){
+		h[i].insert(m+1);
+	}
+	for(int i=1;i<=m;i++){
+		l[i].insert(n+1);
+	}
+	set<int,int>::iterator it;
+	scanf("%d",&q);
+	for(int i=1;i<=q;i++){
+		scanf("%d",&tp);
+		if(tp==1){
+			scanf("%d%d",&x,&y);
+			h[x].insert(y);
+			l[y].insert(x);
+		}
+		else{
+			scanf("%d%d%d",&x,&y,&w);
+			if(x==0) dir=south;
+			else if(y==0) dir=east;
+			for(int j=1;j<=w;j++){
+				if(x==n+1||y==m+1){
+					break;
+				}
+				if(dir==south){
+					it=l[y].upper_bound(x);
+					x=*it;
+					dir=east;
+				}
+				else{
+					it=h[x].upper_bound(y);
+					y=*it;
+					dir=south;
+				}
+			}
+			printf("%d %d\n",x,y); 
+		}
+	}
+	return 0;
+}

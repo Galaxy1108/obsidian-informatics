@@ -1,0 +1,56 @@
+#include <algorithm>
+#include <iostream>
+#include <cstring>
+#include <cstdio>
+#include <vector>
+
+#define File(a) freopen(a".in", "r", stdin), freopen(a".out", "w", stdout)
+
+using std::pair;
+using std::make_pair;
+
+#define pii pair<int, int>
+#define mp make_pair
+
+using ll = long long;
+const int inf = 1e9;
+const ll infll = 0ll + 1e18;
+
+const int N = 3005;
+
+int n, m, mod, f[3][N][N], tag;
+
+signed main(void) {
+  File("easyhard");
+  std::cin >> n >> m >> mod;
+  f[0][0][0] = 1;
+  if (n > 100) while(1);
+  for (int i = 1; i <= m; i ++, tag = 1 - tag) {
+    for (int wh = 0; wh <= n; wh ++)
+      for (int x = 0; x <= wh; x ++) f[1 - tag][wh][x] = 0;
+    for (int wh = 0; wh <= n; wh ++) {
+      for (int x = 0; x <= wh; x ++) {
+        if (x) {
+          (f[1 - tag][wh][x - 1] += f[tag][wh][x]) %= mod;
+          (f[1 - tag][wh][x] += f[tag][wh][x]) %= mod;
+        } else {
+          (f[1 - tag][wh + 1][x] += f[tag][wh][x]) %= mod;
+          (f[1 - tag][wh + 1][x + 1] += f[tag][wh][x]) %= mod;
+        }
+        if (x < wh) {
+          (f[1 - tag][wh][x] += f[tag][wh][x]) %= mod;
+          (f[1 - tag][wh][x + 1] += f[tag][wh][x]) %= mod;
+        } else {
+          (f[1 - tag][wh + 1][x] += f[tag][wh][x]) %= mod;
+          (f[1 - tag][wh + 1][x + 1] += f[tag][wh][x]) %= mod;
+        }
+      }
+    }
+  }
+  int ans = 0;
+  for (int i = 0; i <= n; i ++)
+    for (int j = 0; j <= i; j ++) 
+      ans = (ans + f[m & 1][i][j]) % mod;
+  std::cout << ans << std::endl;
+  return 0;
+}

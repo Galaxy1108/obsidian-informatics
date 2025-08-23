@@ -1,0 +1,81 @@
+#include<bits/stdc++.h>
+using namespace std;
+int n,m,p,ans;
+int f[3010],g[3010];
+int main(){
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	scanf("%d%d%d",&n,&m,&p);
+	for(int i=0;i<=n;i++)
+	{
+		int j=n-i;
+		f[i]=1;
+	}
+	for(int k=1;k<=m;k++)
+	{
+		if(k%2==1)
+		{
+			
+			for(int i=0;i<=n;i++)
+			{g[i]=0;
+				if(i!=0)
+				g[i]+=f[i];
+				g[i]%=p;
+				
+				if(i!=n)
+				g[i]+=f[i];
+				g[i]%=p;
+			
+				if(i>0)
+				g[i]+=f[i-1];
+				if(i<n)
+				g[i]+=f[i+1];
+				g[i]%=p;				
+			}
+
+			if(k==m)
+			{
+				for(int i=0;i<=n;i++)
+				{
+					ans+=g[i];
+			//		printf("i=%d\n",g[i]);
+					ans%=p;
+				}
+			}	
+		}
+		else
+		{
+			
+			for(int i=0;i<=n;i++)
+			{f[i]=0;
+				if(i!=0)
+				f[i]+=g[i];
+				f[i]%=p;
+				
+				if(i!=n)
+				f[i]+=g[i];
+				f[i]%=p;
+			
+				if(i!=0)
+				f[i]+=g[i-1];
+				
+				if(i!=n)
+				f[i]+=g[i+1];
+				
+				f[i]%=p;				
+			}
+			
+			if(k==m)
+			{
+				for(int i=0;i<=n;i++)
+				{
+					ans+=f[i];
+				//	printf(" %d %d\n",f[i],g[i]);
+					ans%=p;
+				}
+			}	
+		}
+	}
+	printf("%d",ans%p);
+	return 0;
+}

@@ -1,0 +1,20 @@
+#include<bits/stdc++.h>
+using namespace std;
+int n,m,p,x,y,c[3010][3010];
+long long ans,mi[3010];
+int main(){
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout); 
+	scanf("%d%d%d",&n,&m,&p);n--;m--;
+	c[0][0]=1;mi[0]=1;
+	for(int i=1;i<=m;i++){
+		c[i][0]=1;mi[i]=mi[i-1]*2%p;
+		for(int j=1;j<=m;j++)
+		c[i][j]=(c[i-1][j-1]+c[i-1][j])%p;
+	}
+	for(int i=0;i<=m;i++)
+	for(int j=0;j<=m-i;j++)
+	if(max(j,(m-i-j))<=n)
+	ans=(ans+1ll*mi[i]*c[m][i]%p*c[m-i][j])%p;
+	ans=ans*4%p;printf("%lld",ans);
+}

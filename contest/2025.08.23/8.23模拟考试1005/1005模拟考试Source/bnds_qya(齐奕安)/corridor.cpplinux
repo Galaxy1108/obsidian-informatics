@@ -1,0 +1,51 @@
+#include <cstdio>
+using namespace std;
+int type,n,m,k,Q;
+bool mp[105][105];
+void dfs(int x,int y,int l,bool d){
+	if (x==n+1 || y==m+1 || l==0){
+		printf("%d %d\n",x,y);
+		return;
+	}
+	if (d==true){
+		if (mp[x+1][y])
+			dfs(x+1,y,l-1,false);
+		else
+			dfs(x+1,y,l,true);
+	}
+	else{
+		if (mp[x][y+1])
+			dfs(x,y+1,l-1,true);
+		else
+			dfs(x,y+1,l,false);
+	}
+	return;
+}
+int main(){
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	scanf("%d%d%d%d",&type,&n,&m,&k);
+	for (int i=1;i<=k;i++){
+		int x,y;
+		scanf("%d%d",&x,&y);
+		mp[x][y]=true;
+	}
+	scanf("%d",&Q);
+	while (Q--){
+		int w;
+		scanf("%d",&w);
+		if (w==1){
+			int x,y;
+			scanf("%d%d",&x,&y);
+			mp[x][y]=true;
+		}
+		else{
+			int x,y,q;
+			scanf("%d%d%d",&x,&y,&q);
+			dfs(x,y,q,(x==0));
+		}
+	}
+	fclose(stdin);
+	fclose(stdout);
+	return 0;
+}

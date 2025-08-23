@@ -1,0 +1,42 @@
+#include<cstdio>
+const int N=2005;
+bool a[N][N];
+int t,n,m,k,q;
+inline void solve(int x,int y,int d,int num)
+{
+	int cnt=0;
+	while(1)
+	{
+		if(!d) ++x;
+		else ++y;
+		if(a[x][y]) d^=1,++cnt;
+		if(x>n||y>m||cnt>=num) break;
+	}
+	printf("%d %d\n",x,y);
+}
+int main()
+{
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	scanf("%d%d%d%d",&t,&n,&m,&k);
+	while(k--)
+	{
+		int x,y;
+		scanf("%d%d",&x,&y);
+		a[x][y]=true;
+	}
+	scanf("%d",&q);
+	while(q--)
+	{
+		int opt,x,y,z;
+		scanf("%d%d%d",&opt,&x,&y);
+		if(opt==1) a[x][y]=1;
+		else
+		{
+			scanf("%d",&z);
+			if(!x) solve(0,y,0,z);
+			else solve(x,0,1,z);
+		}
+	}
+	return 0;
+}

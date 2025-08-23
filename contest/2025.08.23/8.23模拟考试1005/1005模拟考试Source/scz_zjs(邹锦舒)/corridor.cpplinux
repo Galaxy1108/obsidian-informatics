@@ -1,0 +1,100 @@
+#include<bits/stdc++.h>
+using namespace std;
+map <pair<int,int>,bool> a;
+int n,m;
+int ansx,ansy;
+void dfs(int x,int y,int step,int twx){//1东 2西 3北 4南 
+//	cout<<x<<" "<<y<<" "<<step<<" "<<twx<<endl;
+	if(a.find( make_pair(x,y) )!=a.end()){
+		if(step-1==0) {
+			ansx=x;
+			ansy=y;
+			return ;
+		}
+		//dfs(x,y,step-1,5-twx);
+		if(twx==1) {
+			dfs(x+1,y,step-1,4);
+		}
+		if(twx==2) {
+			dfs(x-1,y,step-1,3);
+		}
+		if(twx==3) {
+			dfs(x,y-1,step-1,2);
+		}
+		if(twx==4) {
+			dfs(x,y+1,step-1,1);
+		}
+	}
+	else{
+		if(twx==1) {
+			if(y>=m-1){
+				ansx=x;
+				ansy=m+1;
+				return ;
+			}
+			else dfs(x,y+1,step,1);
+		}
+		if(twx==2) {
+			if(y<=1){
+				ansx=x;
+				ansy=0;
+				return ;
+			}
+			else dfs(x,y-1,step,2);
+		}
+		if(twx==4) {
+			if(x>=n-1){
+				ansx=n+1;
+				ansy=y;
+				return ;
+			}
+			else dfs(x+1,y,step,4);
+		}
+		if(twx==3) {
+			if(x<=1){
+				ansx=0;
+				ansy=m+1;
+				return ;
+			}
+			else dfs(x-1,y,step,3);
+		}
+	}
+	
+}
+int main(){
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	int type,k;
+	scanf("%d%d%d%d",&type,&n,&m,&k);
+	for(int i=1;i<=k;i++){
+		int x1,y1;
+		scanf("%d%d",&x1,&y1);
+	 	a.insert(make_pair(make_pair(x1,y1),1)); 
+	}
+	int q1;
+	scanf("%d",&q1);
+	while(q1--){
+		int w;
+		scanf("%d",&w);
+		if(w==1){
+			int x,y;
+			scanf("%d%d",&x,&y);
+			a.insert(make_pair(make_pair(x,y),1)); 
+		}
+		else{
+			int x,y,q,tw;
+			scanf("%d%d%d",&x,&y,&q);
+			if(x==0){
+				x=1;
+				tw=4;
+			}
+			else{
+				y=1;
+				tw=1;
+			}
+			dfs(x,y,q,tw);
+			printf("%d %d\n",ansx,ansy);
+		}
+	}
+	return 0;
+}

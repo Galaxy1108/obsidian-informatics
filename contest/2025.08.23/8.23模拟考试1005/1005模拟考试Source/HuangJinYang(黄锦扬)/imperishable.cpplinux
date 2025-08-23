@@ -1,0 +1,99 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define lc x<<1
+#define rc x<<1|1
+const int MX=2e5+7,INF=0x3f3f3f3f;
+const int MOD=998244353;
+struct node{
+	int l,r,sum,maxn;
+}s[MX<<2];
+int a[MX],ans=INF,tans;
+void upd(int x){
+	s[x].sum=s[lc].sum+s[rc].sum;
+	s[x].maxn=max(s[lc].maxn,s[rc].maxn);
+}
+void build(int x,int l,int r){
+	s[x].l=l,s[x].r=r;
+	if(l==r)s[x].sum=s[x].maxn=a[l];
+	else{
+		int mid=l+r>>1;
+		build(lc,l,mid);
+		build(rc,mid+1,r); 
+		upd(x);
+	}
+}
+void modify(int x,int k,int v){
+	if(s[x].l==s[x].r)s[x].sum=s[x].maxn=v,a[s[x].l]=v;
+	else{
+		int mid=s[x].l+s[x].r>>1;
+		if(k<=mid)modify(lc,k,v);
+		else modify(rc,k,v);
+		upd(x);
+	}
+}
+void query(int x,int sum,int maxn){
+	if(s[x].l==s[x].r)return;
+	int lsum=s[lc].sum,dmaxn=max(maxn,s[rc].maxn)-sum-lsum;
+	//cout<<x<<' '<<s[x].l<<' '<<s[x].r<<' '<<lsum<<' '<<dmaxn<<' '<<sum<<endl;
+	if(dmaxn<=0)ans=s[lc].r,tans=dmaxn,query(lc,sum,max(maxn,s[rc].maxn));
+	else query(rc,sum+s[lc].sum,maxn);
+}
+
+bool cmp(pair<int,int > x,pair<int,int > y){
+	return x.second<y.second;
+}
+map<int,int  > st;
+int max_ele(){
+	auto it=max_element(st.begin(),st.end(),cmp);
+	return it->first;	
+}
+int ksm(int a,int b){
+	long long ret=1;
+	while(b){
+		if(b&1)ret=ret*a%MOD;
+		a=1ll*a*a%MOD;
+		b>>=1;
+	}
+	return int(ret);
+}
+void work(){
+	ans=INF;
+	query(1,0,0);
+	int k=max_ele();
+	if(ans>=k)printf("%d\n",ksm(2,k));
+	else {
+		//printf("%d %d WYX GOD\n",tans,ans);
+		int ret=ksm(2,ans);
+		for(int i=ans-1;i>=1;i--){
+			if(a[i]+tans>0)ret=(ret+ksm(2,i))%MOD;
+			else tans+=a[i];
+		} 
+		printf("%d\n",ret);
+	}
+}
+namespace INPUT_SPACE{
+	const int S=(1<<20)+5;char B[S],*H,*T;inline int gc() { if(H==T) T=(H=B)+fread(B,1,S,stdin);return (H==T)?EOF:*H++; }
+	int inn() { int x,ch;while((ch=gc())<'0'||ch>'9');x=ch^'0';while((ch=gc())>='0'&&ch<='9') x=x*10+(ch^'0');return x; }
+}using INPUT_SPACE::inn;
+int main(){
+	freopen("imperishable2.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	int T,n,q;
+	T=inn();
+	n=inn();
+	for(int i=1;i<=n;i++)st[i]=a[i]=inn();
+//	for(int i=1;i<=n;i++)printf("%d ",a[i]);
+//	printf("LQY GOD\n");
+	build(1,1,n);
+	work();
+	q=inn();
+	for(int i=1;i<=q;i++){
+		int x,v;
+		x=inn(),v=inn();
+	//	printf("%d %d ZCH GOD\n",x,v);
+		modify(1,x,v);
+		st[x]=v;
+		work();
+	}
+	return 0;
+}

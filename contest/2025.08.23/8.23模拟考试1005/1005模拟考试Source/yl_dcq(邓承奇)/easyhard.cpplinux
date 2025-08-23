@@ -1,0 +1,41 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int n, m, p;
+
+namespace Sub1 {
+int f[1005][1005];
+inline void add(int &a, int b) { (a += b) %= p; }
+inline int sub(int a, int b) { return (a - b + p) % p; }
+
+inline int solve(int n) {
+    memset(f, 0, sizeof f);
+    for (int i = 0; i <= n; ++i) f[0][i] = 1;
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j <= n; ++j) {
+            // white -> black
+            if (j) add(f[i + 1][j], f[i][j]);
+            // black -> white
+            if (n - j) add(f[i + 1][j], f[i][j]);
+            // white -> white
+            if (j) add(f[i + 1][j - 1], f[i][j]);
+            // black -> black
+            if (n - j) add(f[i + 1][j + 1], f[i][j]);
+        }
+    }
+    int ans = 0;
+    for (int i = 0; i <= n; ++i) add(ans, f[m][i]);
+    return ans;
+}
+
+inline void main() { cout << sub(solve(n), solve(n - 1)) << endl; }
+}  // namespace Sub1
+
+int main() {
+    freopen("easyhard.in", "r", stdin);
+    freopen("easyhard.out", "w", stdout);
+    cin >> n >> m >> p;
+    Sub1::main();
+    return 0;
+}

@@ -1,0 +1,217 @@
+#include <cstdio>
+#include <algorithm>
+using namespace std;
+const int NR = 2e5;
+const long long mod = 998244353;
+int num,n,q;
+long long a[NR + 5],trs[NR * 4 + 5],trmx[NR * 4 + 5],pw2[NR + 5];
+inline int read()
+{
+	int x = 0;
+	char ch = getchar();
+	while (ch < '0' || ch > '9')
+		ch = getchar();
+	while (ch >= '0' && ch <= '9')
+	{
+		x = (x << 3) + (x << 1) + (ch ^ 48);
+		ch = getchar();
+	}
+	return x;
+}
+inline long long readll()
+{
+	long long x = 0;
+	char ch = getchar();
+	while (ch < '0' || ch > '9')
+		ch = getchar();
+	while (ch >= '0' && ch <= '9')
+	{
+		x = (x << 3) + (x << 1) + (ch ^ 48);
+		ch = getchar();
+	}
+	return x;
+}
+inline void write(long long x)
+{
+	if (x > 9)
+		write(x / 10);
+	putchar(x % 10 + '0');
+	return;
+}
+inline void pushup(int p)
+{
+	trs[p] = trs[p << 1] + trs[p << 1 | 1];
+	trmx[p] = max(trmx[p << 1],trmx[p << 1 | 1]);
+	return;
+}
+inline void build(int p,int l,int r)
+{
+	if (l == r)
+	{
+		trs[p] = a[l];
+		trmx[p] = a[l];
+	}
+	else
+	{
+		int mid = (l + r) >> 1;
+		build(p << 1,l,mid);
+		build(p << 1 | 1,mid + 1,r);
+		pushup(p);
+	}
+	return;
+}
+inline void upd(int p,int l,int r,int u,long long v)
+{
+	if (l == r)
+	{
+		trs[p] = v;
+		trmx[p] = v;
+	}
+	else
+	{
+		int mid = (l + r) >> 1;
+		if (u <= mid)
+			upd(p << 1,l,mid,u,v);
+		else
+			upd(p << 1 | 1,mid + 1,r,u,v);
+		pushup(p);
+	}
+	return;
+}
+inline long long qrys(int p,int l,int r,int u,int v)
+{
+	if (l >= u && r <= v)
+		return trs[p];
+	else
+	{
+		int mid = (l + r) >> 1;
+		long long res = 0;
+		if (u <= mid)
+			res += qrys(p << 1,l,mid,u,v);
+		if (v >= mid + 1)
+			res += qrys(p << 1 | 1,mid + 1,r,u,v);
+		return res;
+	}
+}
+inline long long qrymx(int p,int l,int r,int u,int v)
+{
+	if (u > v)
+		return 0;
+	if (l >= u && r <= v)
+		return trmx[p];
+	else
+	{
+		int mid = (l + r) >> 1;
+		long long res = 0;
+		if (u <= mid)
+			res = max(res,qrymx(p << 1,l,mid,u,v));
+		if (v >= mid + 1)
+			res = max(res,qrymx(p << 1 | 1,mid + 1,r,u,v));
+		return res;
+	}
+}
+inline int find(int l,int r,int p,long long s)
+{
+	if (l < r)
+	{
+		int mid = (l + r) >> 1;
+		long long x = qrys(1,1,n,p,mid),y = qrymx(1,1,n,mid + 1,n);
+		if (x + s >= y)
+			return min(find(l,mid,p,s),mid);
+		else
+			return find(mid + 1,r,p,s);
+	}
+	else
+	{
+		if (l == r && qrys(1,1,n,p,l) + s >= qrymx(1,1,n,l + 1,n))
+			return l;
+		else
+			return n;
+	}
+}
+int main()
+{
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	num = read();
+	n = read();
+	for (int i = 1;i <= n;i++)
+		a[i] = readll();
+	build(1,1,n);
+	pw2[0] = 1;
+	for (int i = 1;i <= n;i++)
+		pw2[i] = pw2[i - 1] * 2 % mod;
+	long long t = 0,ans = 0;
+	for (int j = 1;j <= n;j++)
+	{
+		while (j < n && a[j] == 0)
+			j++;
+		if (a[j] != 0)
+		{
+			int k = find(j,n,j,t);
+			if (k == n)
+			{
+				ans = (ans + pw2[n]) % mod;
+				break;
+			}
+			else
+			{
+				if (k == j)
+				{
+					ans = (ans + pw2[j]) % mod;
+					break;
+				}
+				else
+				{
+					ans = (ans + pw2[j]) % mod;
+					t += a[j];
+					j = k - 1;
+				}
+			}
+		}
+	}
+	write(ans);
+	putchar('\n');
+	q = read();
+	for (int i = 1;i <= q;i++)
+	{
+		int x = read();
+		long long y = readll(),res = 0,tmp = 0;
+		a[x] = y;
+		upd(1,1,n,x,y);
+		for (int j = 1;j <= n;j++)
+		{
+			while (j < n && a[j] == 0)
+				j++;
+			if (a[j] != 0)
+			{
+				int k = find(j,n,j,tmp);
+				//printf("%d %lld %lld\n",k,res,tmp);
+				if (k == n)
+				{
+					res = (res + pw2[n]) % mod;
+					break;
+				}
+				else
+				{
+					if (k == j)
+					{
+						res = (res + pw2[j]) % mod;
+						break;
+					}
+					else
+					{
+						res = (res + pw2[j]) % mod;
+						tmp += a[j];
+						j = k - 1;
+					}
+				}
+			}
+			else
+				break;
+		}
+		write(res);
+		putchar('\n');
+	}
+	return 0;
+}

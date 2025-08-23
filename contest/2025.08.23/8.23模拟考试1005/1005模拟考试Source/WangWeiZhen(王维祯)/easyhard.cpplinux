@@ -1,0 +1,68 @@
+#include<iostream>
+#include<vector>
+#include<set>
+using namespace std;
+int n,m,f[3002][3002],a[6002];
+set<vector<int>> s;
+int dfs(int u,int v)
+{
+	if(u>m)
+	{
+		vector<int> t;
+		for(int i=1;i<=2*m;i++)
+			t.push_back(a[i]);
+		s.insert(t);
+		return 0;
+	}
+	if(v>0)
+	{
+		a[2*u-1]=1;
+		a[2*u]=1;
+		dfs(u+1,v-1);
+		a[2*u]=0;
+		dfs(u+1,v);
+	}
+	if(v<n)
+	{
+		a[2*u-1]=0;
+		a[2*u]=1;
+		dfs(u+1,v);
+		a[2*u]=0;
+		dfs(u+1,v+1);
+	 } 
+}
+int main()
+{
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	int p;
+	cin>>n>>m>>p;
+	if(n>=m)
+	{
+		long long ans=1;
+		for(int i=1;i<=m;i++)
+			ans=ans*4%p;
+		cout<<ans;
+		return 0;
+	}
+	if(n==1)
+	{
+		long long ans=1;
+		for(int i=1;i<=m+1;i++)
+			ans=ans*4%p;
+		cout<<ans;
+		return 0;
+	}
+	if(n==2)
+	{
+		long long x=8,y=8;
+		for(int i=1;i<m-1;i++)
+			x=x*2%p,y=(y*3%p+x)%p;
+		cout<<(x+y)%p;
+		return 0;
+	}
+	for(int i=0;i<=n;i++)
+		dfs(1,i);
+	cout<<s.size();
+	return 0;
+}

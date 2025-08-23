@@ -1,0 +1,31 @@
+#include <cstdio>
+#include <iostream>
+#define IN inline
+using namespace std;
+
+template <typename T>
+IN void read(T &x) {
+	x = 0; char ch = getchar(); int f = 0;
+	for(; !isdigit(ch); f = (ch == '-' ? 1 : f), ch = getchar());
+	for(; isdigit(ch); x = (x<<3)+(x<<1)+(ch^48), ch = getchar());
+	if (f) x = ~x + 1;
+}
+
+const int N = 1e7 + 5;
+int n, fa[N], w[N], deg[N];
+
+int main() {
+	freopen("treeq.in", "r", stdin);
+	freopen("treeq.out", "w", stdout);
+	read(n);
+	int bz = 1;
+	for(int i = 2; i <= n; i++)
+		read(fa[i]), read(w[i]), ++deg[i], ++deg[fa[i]], bz &= (w[i] == 1);
+	if (bz) {
+		int s = 0;
+		for(int i = 1; i <= n; i++) s += (deg[i] == 1);
+		printf("%d\n", ((s & 1) ? n - 1 : 0));
+		return 0;
+	}
+	printf("%d\n", (n&1));
+}

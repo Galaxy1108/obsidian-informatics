@@ -1,0 +1,64 @@
+#include <cstdio>
+using namespace std;
+const int N = 200100;
+int num, n, q, ans, a[N], t[N][20];
+inline void dg(int now, int p) {
+	if (a[now] == 0 && now <= n) {
+		dg(now + 1, 1);
+		return;
+	}
+	if (now > n) {
+		int an(0);
+		for (int i(1) ; t[i][0] ; ++i) {
+			int mx(0), m(0);
+			for (int j(1) ; j <= n ; ++j)
+				if (t[i][j] > mx)
+					mx = t[i][j], m = j;
+			an += (1 << m);
+		}
+		if (an < ans)ans = an;
+	}
+	else {
+		int i(p);
+		for (; t[i][0] ; ++i) {
+			--a[now];++t[i][0];
+			++t[i][now];
+			dg(now, i);
+			++a[now];--t[i][0];
+			--t[i][now];
+		}
+		--a[now];
+		t[i][0] = t[i][now] = 1;
+		dg(now, i);
+		t[i][0] = t[i][now] = 0;
+		++a[now];
+	}
+}
+inline int read() {
+	int an(0), ch(getchar());
+	for (; ch < 48 || ch > 57 ; ch = getchar());
+	for (; ch > 47 && ch < 58 ; ch = getchar())
+		an = (an << 3) + (an << 1) + (ch ^ 48);
+	return an;
+}
+int main() {
+	freopen("imperishable.in", "r", stdin);
+	freopen("imperishable.out", "w", stdout);
+	num = read();n = read();
+	for (int i(1) ; i <= n ; ++i)
+		a[0] += a[i] = read();
+	if (a[0] <= 10) {
+		ans = 1e9;dg(1, 1);
+		printf("%d\n", ans);
+		q = read();
+		while (q--) {
+			int x, y;
+			x = read();y = read();
+			a[x] = y;
+			ans = 1e9;dg(1, 1);
+			printf("%d\n", ans);
+		}
+	}
+	fclose(stdin);fclose(stdout);
+	return 0;
+}

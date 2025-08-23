@@ -1,0 +1,41 @@
+#include<cstdio>
+const int MOD=998244353,N=200010;
+int p[N];
+int a[N],n;
+bool ch[N];
+long long pre[N],suf[N];
+inline void Add(int &x,int y){if((x+=y)>=MOD) x-=MOD;}
+//O(n^2q)
+inline void solve()
+{
+	int ans=0;
+	for(int i=1;i<=n;++i) ch[i]=true;
+	for(int i=n;i>=1;--i)
+	{
+		ch[i]=false;
+		for(int j=1;j<=n;++j) pre[j]=pre[j-1]+(ch[j]?a[j]:0);
+		for(int j=n;j>=1;--j) suf[j]=suf[j+1]+(ch[j]?a[j]-1:0);
+		bool flag=true;
+		for(int j=i;j<=n;++j)
+			if(!ch[j]&&pre[j-1]+suf[j+1]<a[j]){flag=false;break;}
+		if(!flag) ch[i]=true,Add(ans,p[i]);
+	}
+	printf("%d\n",ans);
+}
+int main()
+{
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	int T,q;
+	scanf("%d%d",&T,&n),p[0]=1;
+	for(int i=1;i<=n;++i) scanf("%d",&a[i]),p[i]=(p[i-1]<<1)%MOD;
+	solve();
+	scanf("%d",&q);
+	while(q--)
+	{
+		int x,y;
+		scanf("%d%d",&x,&y);
+		a[x]=y,solve();
+	}
+	return 0;
+}

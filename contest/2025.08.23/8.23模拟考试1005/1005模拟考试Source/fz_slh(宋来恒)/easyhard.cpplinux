@@ -1,0 +1,65 @@
+#include <cstdio>
+#include <iostream>
+#include <algorithm>
+#include <cstring>
+#include <queue>
+using namespace std;
+#define fi first
+#define sc second
+#define mkp make_pair
+#define pii pair<int,int>
+typedef long long ll;
+const int N=3005,M=5005,K=35,oo=1e9+5;
+inline int read() {
+    int x=0,flag=0;char ch=getchar();
+    while(ch<'0'||ch>'9') {flag|=(ch=='-');ch=getchar();}
+    while('0'<=ch&&ch<='9') {x=(x<<3)+(x<<1)+ch-'0';ch=getchar();}
+    return flag?-x:x;
+}
+inline int mx(int x,int y) {return x>y?x:y;}
+inline int mn(int x,int y) {return x<y?x:y;}
+inline void swp(int &x,int &y) {x^=y^=x^=y;}
+inline int as(int x) {return x>0?x:-x;}
+
+int n,m,mod,f[N][N],g[N][N],dp[N],pw[N],C[N][N];
+inline void prep() {
+    C[0][0]=1;
+    for(int i=1;i<=m;++i) {
+        C[i][0]=C[i][i]=1;
+        for(int j=1;j<i;++j)
+            C[i][j]=(C[i-1][j-1]+C[i-1][j])%mod;
+    }
+    pw[0]=1;
+    for(int i=1;i<=m;++i) pw[i]=2ll*pw[i-1]%mod;
+    f[0][0]=1;
+    for(int i=1;i<=m;++i)
+        for(int j=0;j<i;++j) {
+            f[i][j]=(f[i][j]+f[i-1][j])%mod;
+            if(j) f[i][j]=(f[i][j]+f[i][j-1])%mod;
+        }
+    for(int i=1;i<=m;++i) f[i][i]=f[i][i-1];
+    for(int i=1;i<=m;++i) {
+        for(int j=1;j<=i;++j)
+            if(j!=i-j)g[i][j]=(g[i][j-1]+f[j][i-j])%mod;
+    }
+}
+int main() {
+    freopen("easyhard.in","r",stdin);
+    freopen("easyhard.out","w",stdout);
+    n=read();m=read();mod=read();
+    prep();
+    dp[0]=1;
+    for(int i=1;i<=mn(m-1,(n-1)*2);++i)
+        for(int j=1;2*j<=i;++j)
+            dp[i]=(dp[i]+2ll*dp[i-2*j]*f[j][j])%mod;
+    int ans=0;
+    for(int i=mn(m-1,(n-1)*2);i>=0;--i) {
+        for(int j=1;j<=i;++j)
+            dp[i]=(dp[i]+2ll*dp[i-j]*g[j][mn(n-1-(i-j)/2,j)])%mod;
+        // printf("%d\n",dp[i]);
+        ans=(ans+1ll*pw[m-1-i]*dp[i]%mod*C[m-1][i])%mod;
+    }
+    ans=4ll*ans%mod;
+    printf("%d\n",ans);
+    return 0;
+}

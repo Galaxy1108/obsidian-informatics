@@ -1,0 +1,84 @@
+#include<bits/stdc++.h>
+#define IT set<int>::iterator
+using namespace std;
+const int N=200005;
+
+namespace io{
+	const int SIZE=(1<<21)+1;
+	char ibuf[SIZE],*iS,*iT,obuf[SIZE],*oS=obuf,*oT=oS+SIZE-1,c,qu[55]; int qr;
+	#define gc() (iS==iT?(iT=(iS=ibuf)+fread(ibuf,1,SIZE,stdin),(iS==iT?EOF:*iS++)):*iS++)
+	inline void flush(){
+		fwrite(obuf,1,oS-obuf,stdout);
+		oS=obuf;
+	}
+	inline void putc(char x){
+		*oS++=x;
+		if(oS==oT) flush();
+	}
+	template <class I>
+	inline void read(I &x){
+		int ff=1;
+		for(c=gc();c<'0'||c>'9';c=gc()) if(c=='-') ff=-1;
+		for(x=0;c<='9'&&c>='0';c=gc()) x=x*10+(c&15);
+		x*=ff;
+	}
+	template <class I>
+	inline void print(I x){
+		if(!x) putc('0'); if(x<0) putc('-'),x=-x;
+		while(x) qu[++qr]=x%10+'0',x/=10;
+		while(qr) putc(qu[qr--]);
+	}
+}
+using io::read; using io::putc; using io::print;
+
+int typ,n,m,k,q;
+set<int>a[N],b[N];
+
+void solve(int opt,int x,int y,int l){
+	for(int i=1;i<=l;i++){
+    	if((i^opt)&1){
+    		IT it = b[y].upper_bound(x);
+    		if(it == b[y].end()){
+    			print(n+1),putc(' '),print(y),putc('\n');
+    			return;
+    		}
+    		x = *it;
+    	}
+    	else{
+    		IT it = a[x].upper_bound(y);
+    		if(it == a[x].end()){
+    			print(x),putc(' '),print(m+1),putc('\n');
+    			return;
+    		}
+    		y = *it;
+    	}
+    }
+    print(x); putc(' '); print(y); putc('\n');
+}
+
+main(){
+	freopen("corridor.in","r",stdin); freopen("corridor.out","w",stdout);
+    read(typ); read(n); read(m); read(k);
+    for(int i=1;i<=k;i++){
+    	int x,y; read(x); read(y);
+    	a[x].insert(y); b[y].insert(x);
+    }
+    read(q);
+    while(q--){
+    	int opt,x,y,l;
+    	read(opt);
+    	if(opt==1){
+    		read(x); read(y);
+    		a[x].insert(y); b[y].insert(x);
+    		continue;
+    	}
+    	read(x); read(y); read(l);
+    	if(x==0){
+    		solve(0,x,y,l);
+    	}
+    	else{
+    		solve(1,x,y,l);
+    	}
+    }
+	io::flush();
+}

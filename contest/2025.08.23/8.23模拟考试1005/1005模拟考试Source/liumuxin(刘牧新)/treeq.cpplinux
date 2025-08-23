@@ -1,0 +1,63 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+struct edge {
+	int v, w, fail;
+	edge() {}
+	edge(int a, int b, int c) {
+		v = a;
+		w = b;
+		fail = c;
+	}
+}e[404040];
+int head[404040], len;
+void add(int a, int b, int c) {
+	e[len] = edge(b, c, head[a]);
+	head[a] = len++;
+}
+int siz[5050], n;
+int f[5050];
+vector<pair<int, int> > V;
+map<pair<int, int>, int> M;
+void dfs(int x, int las) {
+	siz[x] = 1;
+	for(int i = head[x]; ~i; i = e[i].fail) {
+		if(e[i].v == las) continue;
+		dfs(e[i].v, x);
+		siz[x] += siz[e[i].v];
+	}
+	for(int i = head[x]; ~i; i = e[i].fail) {
+		if(e[i].v == las) continue;
+		V.push_back(make_pair(siz[e[i].v] * e[i].w, M[make_pair(x, e[i].v)]));
+	}
+}
+signed main() {
+	freopen("treeq.in", "r", stdin);
+	freopen("treeq.out", "w", stdout);
+	memset(head, -1, sizeof(head));
+	cin >> n;
+	for(int i = 1; i < n; i++) {
+		int x, y, z;
+		cin >> x >> y >> z;
+		add(x, y, z);
+		add(y, x, z);
+		M[make_pair(x, y)] = M[make_pair(y, x)] = i;
+	}
+	for(int i = 1; i <= n; i++) {
+		V.clear();
+		dfs(i, -1);
+		sort(V.begin(), V.end());
+		int MAX = V[V.size() - 1].first;
+		int now = V.size() - 1;
+		while(now >= 0 && V[now].first == MAX) {
+			f[V[now].second]++;
+			now--;
+		}
+	}
+	int ans = 0;
+	for(int i = 1; i <= n; i++) {
+		ans ^= f[i];
+	}
+	cout << ans << endl;
+	return 0;
+}

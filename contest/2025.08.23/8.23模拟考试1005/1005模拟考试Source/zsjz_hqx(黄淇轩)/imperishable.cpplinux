@@ -1,0 +1,49 @@
+#include<cstdio>
+#include<vector>
+#include<cstring>
+#include<algorithm>
+using namespace std;
+const int N=200010,FSIZE=1<<26,mo=998244353;
+int n,q,a[N],p2[N],sum;
+char BuF[FSIZE],*InF=BuF;
+template<typename T>void read(T &x){
+    for(;48>*InF||*InF>57;++InF);
+    for(x=0;47<*InF&&*InF<58;x=x*10+(*InF++^48));
+}
+void cmin(int &x,int y){
+    if(y>=mo) y-=mo;
+    if(x>y) x=y;
+}
+void get(){
+    int t=sum,need=0,match=0,ans=0;
+    for(int i=n;i;--i){
+        if((t-=a[i])+match<a[i]||t<need){
+            match+=a[i];
+            need-=a[i];
+            if((ans+=p2[i])>=mo) ans-=mo;
+        }else need=max(need,a[i]);
+    }
+    printf("%d\n",ans);
+}
+int main(){
+    freopen("imperishable.in","r",stdin);
+    freopen("imperishable.out","w",stdout);
+    fread(BuF,1,FSIZE,stdin);
+    read(n);read(n);
+    for(int i=p2[0]=1;i<=n;++i)
+        if((p2[i]=p2[i-1]<<1)>=mo) p2[i]-=mo;
+    for(int i=1;i<=n;++i){
+        read(a[i]);
+        sum+=a[i];
+    }
+    get();
+    read(q);
+    for(int i=1,x;i<=q;++i){
+        read(x);sum-=a[x];
+        read(a[x]);sum+=a[x];
+        get();
+    }
+    fclose(stdin);
+    fclose(stdout);
+    return(0);
+}

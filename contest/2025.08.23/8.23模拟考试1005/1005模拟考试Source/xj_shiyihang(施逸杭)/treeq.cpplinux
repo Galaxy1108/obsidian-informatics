@@ -1,0 +1,131 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define ull unsigned long long
+#define l(x) x<<1
+#define r(x) x<<1|1
+const ll SIZE = 1000005;
+const ll mod = 998244353;
+ll n, tot;
+ll head[SIZE], ver[SIZE*2], nxt[SIZE*2], edge[SIZE*2];
+ll ans[SIZE], size[SIZE];
+ll MAX;
+
+inline ll rd(){
+	ll f = 1, x = 0;
+	char ch = getchar();
+	while(ch < '0' || ch > '9'){
+		if(ch == '-') f = -1;
+		ch = getchar();
+	}
+	while(ch >= '0' && ch <= '9'){
+		x = (x << 1) + (x << 3) + (ch ^ 48);
+		ch = getchar();
+	}
+	return f*x;
+}
+
+void add(ll x, ll y, ll val){
+	ver[++tot] = y, nxt[tot] = head[x];
+	head[x] = tot, edge[tot] = val;	
+}
+
+void dfs1(ll x, ll fa, ll fr){
+	size[x] = 1; ll Max = 0;
+	for(ll i = head[x]; i; i = nxt[i]){
+		ll y = ver[i];
+		if(y == fa) continue;
+		dfs1(y, x, i/2);
+		size[x] += size[y];
+		Max = max(Max, size[y]);
+	}	
+	if(Max < n-size[x]) ans[fr]++;
+	else if(Max > n-size[x]){
+		for(ll i = head[x]; i; i = nxt[i]){
+			ll y = ver[i];
+			if(y == fa) continue;
+			if(size[y] == Max) ans[i/2]++;
+		}	
+	}
+	else{
+		ans[fr]++;
+		for(ll i = head[x]; i; i = nxt[i]){
+			ll y = ver[i];
+			if(y == fa) continue;
+			if(size[y] == Max) ans[i/2]++;
+		}	
+	}
+}
+
+void solve1(){
+	dfs1(1, 0, 0);
+	ll jl = 0;
+	for(ll i = 1; i < n; i++){
+		jl ^= ans[i];
+//		cout << ans[i] << endl;
+	}
+	printf("%lld", jl);
+}
+
+void dfs2(ll x, ll fa){
+	size[x] = 1;
+	for(ll i = head[x]; i; i = nxt[i]){
+		ll y = ver[i];
+		if(y == fa) continue;
+		dfs2(y, x);
+		size[x] += size[y];
+		MAX = max(MAX, size[y] * edge[i]);
+	}
+}
+
+void dfs3(ll x, ll fa){
+	for(ll i = head[x]; i; i = nxt[i]){
+		ll y = ver[i];
+		if(y == fa) continue;
+		dfs3(y, x);
+		if(size[y] * edge[i] == MAX) ans[i/2]++;
+	}
+}
+
+void solve2(){
+	MAX = 0; ll jl = 0;
+	for(ll i = 1; i <= n; i++){
+		MAX = 0;
+		dfs2(i, 0); dfs3(i, 0);
+	}
+	for(ll i = 1; i < n; i++){
+		jl ^= ans[i];
+//		cout << ans[i] << endl;
+	}
+	printf("%lld", jl);
+}
+
+int main(){
+	freopen("treeq.in", "r", stdin);
+	freopen("treeq.out", "w", stdout);
+	n = rd();
+	bool ff = 1; tot = 1;
+	for(ll i = 2; i <= n; i++){
+		ll x = rd(), y = i, val = rd();
+		add(x, y, val); add(y, x, val);
+		if(val != 1) ff = 0;
+	}
+	if(ff) solve1(); //3~4
+	else{
+		solve2();//n^2
+	}
+	return 0;
+}
+
+/*
+9
+1 2 1
+2 3 1
+2 4 1
+4 5 1
+4 6 1
+1 7 1
+4 8 1
+8 9 1
+*/
+

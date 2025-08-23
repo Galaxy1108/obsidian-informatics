@@ -1,0 +1,58 @@
+#include <bits/stdc++.h>
+#define maxN 110
+#define LL long long
+using namespace std;
+bool mp[maxN][maxN];
+int read ()
+{
+	int x = 0, Fu = 1;
+	char c = getchar();
+	while(c < '0' || c > '9')
+	{
+		if(c == '-') Fu = -1;
+		c = getchar();
+	}
+	while(c >= '0' && c <= '9')
+	{
+		x = x * 10 + (c - '0');
+		c = getchar();
+	}
+	return x * Fu;
+}
+int Min (int x, int y) { return x < y ? x : y; }
+int Max (int x, int y) { return x > y ? x : y; }
+int main ()
+{
+	freopen("corridor.in", "r", stdin);
+	freopen("corridor.out", "w", stdout);
+	read(); int n = read(), m = read(), k = read();
+	for(int i = 1;i <= k; i++)
+	{
+		int x = read(), y = read();
+		mp[x][y] = true;
+	}
+	int Q = read();
+	while(Q--)
+	{
+		int opt = read();
+		if(opt == 1)
+		{
+			int x = read(), y = read();
+			mp[x][y] = true;
+		}
+		else
+		{
+			int x = read(), y = read(), q = read();
+			int dir = (!x) ? 0 : 1, cnt = 0;
+			x += (!x), y += (!y);
+			while(cnt < q && (x >= 1 && x <= n && y >= 1 && y <= m))
+			{
+				if(mp[x][y]) dir = 1 - dir, cnt++;
+				if(cnt == q) break;
+				(!dir) ? x++ : y++;
+			}
+			printf("%d %d\n", x, y);
+		}
+	}
+	return 0;
+}

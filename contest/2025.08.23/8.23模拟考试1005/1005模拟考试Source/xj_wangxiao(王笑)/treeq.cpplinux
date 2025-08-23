@@ -1,0 +1,95 @@
+//我是废物，我爱贺题！！！
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define f(i,x,y,z) for(long long i=x;i<=y;i+=z)
+#define fd(i,x,y,z) for(long long i=x;i>=y;i-=z)
+const ll SIZ=1e7+5;
+ll n;
+ll mx,mxnm;
+ll siz[SIZ];
+ll a[SIZ];
+ll ot[SIZ];
+ll ans=0;
+ll tot=0;
+ll head[SIZ*2],ver[SIZ*2],eg[SIZ*2],nxt[SIZ*2],edg[SIZ*2];
+void add(ll x,ll y,ll z,ll w){
+	ver[++tot]=y,eg[tot]=z,edg[tot]=w;
+	nxt[tot]=head[x],head[x]=tot;
+}
+void dfs1(ll now,ll last){
+	siz[now]=1;
+	for(ll i=head[now];i;i=nxt[i]){
+		ll yyy=ver[i];
+		if(yyy!=last){
+			dfs1(yyy,now);
+			siz[now]+=siz[yyy];
+			a[edg[i]]+=siz[yyy]*eg[i];
+		}
+	}
+}
+void dfs2(ll now,ll last){
+	ll kkk=siz[now];
+	for(ll i=head[now];i;i=nxt[i]){
+		ll yyy=ver[i];
+		if(yyy!=last){
+			ll ooo=siz[yyy],ppp=a[edg[i]];
+			siz[now]=n-siz[yyy];
+			siz[yyy]=n;
+			a[edg[i]]=siz[now]*eg[i];
+			ll mx=0;
+			// f(j,1,n-1,1){
+				// printf("%lld ",a[j]);
+			// }
+			// printf("\n");
+			f(j,1,n-1,1){
+				mx=max(mx,a[j]);
+			}
+			f(j,1,n-1,1){
+				if(a[j]==mx){
+					ot[j]++;
+				}
+				
+			}
+			dfs2(yyy,now);
+			siz[now]=kkk;
+			siz[yyy]=ooo;
+			a[edg[i]]=ppp;
+		}
+	}
+}
+int main(){
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	scanf("%lld",&n);
+	f(i,1,n-1,1){
+		ll xx,yy,zz;
+		scanf("%lld%lld",&yy,&zz);
+		xx=i+1;
+		add(xx,yy,zz,i);
+		add(yy,xx,zz,i);
+	}
+	dfs1(1,0);
+	dfs2(1,0);
+	ll mx=0;
+	// f(j,1,n-1,1){
+		// printf("%lld ",a[j]);
+	// }
+	// printf("\n");
+	f(j,1,n-1,1){
+		mx=max(mx,a[j]);
+	}
+	f(j,1,n-1,1){
+		if(a[j]==mx){
+			ot[j]++;
+		}
+	}
+	// f(i,1,n-1,1){
+		// printf("%lld ",ot[i]);
+	// }
+	f(i,1,n-1,1){
+		ans=ans^ot[i];
+	}
+	printf("%lld\n",ans);
+	return 0;
+}

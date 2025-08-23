@@ -1,0 +1,53 @@
+#include<bits/stdc++.h>
+const int maxn=3e3+3;
+using namespace std;
+template<typename T>inline void read(T &x){
+	x=0;int f=1;char c=getchar();
+	for(;!isdigit(c);c=getchar())if(c=='-')f=-1;
+	for(;isdigit(c);c=getchar())x=(x<<3)+(x<<1)+(c^48);
+	x*=f;
+}
+int n,m,p;
+int f[maxn*2][2*maxn];
+int main(){
+//	freopen("easyhard.in","r",stdin);
+//	freopen("easyhard.txt","w",stdout);
+	read(n);read(m);read(p);
+	int ans=0;
+	f[0][0]=1;
+	for(int k=0;k<=n;k++){//0的数量 
+		int a=n-k;//1的数量 
+		for(int i=1;i<=2*m;i++){//第i次操作 
+			for(int j=0;j<=i;j++){//共有j次操作取0  
+				int b=i-j;
+				//取完时还剩k+i/2-j个0；
+				if(j-1==(k+i/2)){//取完0 
+					f[i][j]+=f[i-1][j];
+					f[i][j]%=p;
+//					cout<<i<<" "<<j<<" "<<f[i][j]<<endl; 
+					continue;
+				}
+//				if(b-1==(a+i/2)){//取完1 
+//					f[i][j]+=f[i-1][j-1];
+//					f[i][j]%=p;
+//					cout<<i<<" "<<j<<" "<<f[i][j]<<endl; 
+//					continue;
+//				}
+//				if(j==0||j==i){
+//					f[i][j]=1;
+//					cout<<i<<" "<<j<<" "<<f[i][j]<<endl; 
+//					continue;
+//				}
+				f[i][j]+=(f[i-1][j]+f[i-1][j-1])%p;
+				f[i][j]%=p;
+//				cout<<i<<" "<<j<<" "<<f[i][j]<<endl;
+			}
+		}
+	}
+	for(int i=0;i<=m*2;i++){
+		ans+=f[n*2][i];
+		ans%=p;
+	}
+	printf("%d",ans);
+	return 0;
+}

@@ -1,0 +1,40 @@
+#include<bits/stdc++.h>
+#define int long long
+using namespace std;
+const int NR=1e5+5;
+int n,m,mod;
+int dp[2][NR][2];//要走第i步，走完还剩j个黑球 
+signed main(){
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	cin >> n >> m >> mod;
+	int id=0;
+	for(int i=1;i<=n;i++) dp[id][i][0]=1;
+	dp[id][0][1]=1;
+	for(int i=1;i<=m;i++){
+		id^=1;
+		for(int j=0;j<=n;j++) dp[id][j][0]=dp[id][j][1]=0;
+		for(int j=0;j<=n;j++){
+			if(j>0){
+				dp[id][j][0]=(dp[id][j][0]+dp[id^1][j-1][0])%mod;
+				dp[id][j][1]=(dp[id][j][1]+dp[id^1][j][1]+dp[id^1][j-1][1])%mod;
+				if(j==1) dp[id][j][1]=(dp[id][j][1]+dp[id^1][j][0])%mod;
+				else dp[id][j][0]=(dp[id][j][0]+dp[id^1][j][0])%mod;
+			}
+			if(j<n){
+				dp[id][j][1]=(dp[id][j][1]+dp[id^1][j+1][1]+dp[id^1][j][1])%mod;
+				if(j==0) dp[id][j][1]=(dp[id][j][1]+dp[id^1][j+1][0])%mod;
+				else dp[id][j][0]=(dp[id][j][0]+dp[id^1][j+1][0]+dp[id^1][j][0])%mod;
+			}
+		}
+	}
+	int ans=0;
+	for(int i=0;i<=n;i++) ans=(ans+dp[id][i][1])%mod;
+	cout << ans << '\n';
+	return 0;
+}
+/*
+两种操作情况
+1.把一个球取反
+2.完全不变 
+*/

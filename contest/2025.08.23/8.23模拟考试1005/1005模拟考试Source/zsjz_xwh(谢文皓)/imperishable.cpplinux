@@ -1,0 +1,125 @@
+#include<bits/stdc++.h>
+using namespace std;
+int i,j,n,m,k,l,o,p;
+#define max(a,b) ((a>b)?(a):(b))
+#define mid (le+ri>>1)
+const int mo=998244353;
+int cm[200005],sum[200005];
+int a[200005],sgt[800005][3];
+inline void mot(int le,int ri,int w,int num,int wz)
+{
+	if (le==ri) 
+	{
+		sgt[w][0]=num;
+		sgt[w][1]=wz;
+		sgt[w][2]=num;
+		return ;
+	}
+	if (wz<=mid) mot(le,mid,w*2,num,wz);
+	else mot(mid+1,ri,w*2+1,num,wz);
+	if (sgt[w*2][0]>=sgt[w*2+1][0]) sgt[w][0]=sgt[w*2][0],sgt[w][1]=sgt[w*2][1];
+	else sgt[w][0]=sgt[w*2+1][0],sgt[w][1]=sgt[w*2+1][1];
+	sgt[w][2]=sgt[w*2][2]+sgt[w*2+1][2];
+}
+inline void find(int le,int ri,int ml,int mr,int w)
+{
+	if (ml>mr) return;
+	if (le==ml&&ri==mr)
+	{
+		if (sgt[w][0]>o) o=sgt[w][0],p=sgt[w][1];
+		return ;
+	}
+	if (mr<=mid) find(le,mid,ml,mr,w*2);
+	else 
+	{
+		if (mid<ml) find(mid+1,ri,ml,mr,w*2+1);
+		else
+		{
+			find(le,mid,ml,mid,w*2);
+			find(mid+1,ri,mid+1,mr,w*2+1);
+		}
+	}
+}
+inline int fs(int le,int ri,int ml,int mr,int w)
+{
+	if (ml>mr) return 0;
+	if (le==ml&&ri==mr) return sgt[w][2];
+	if (mr<=mid) return fs(le,mid,ml,mr,w*2);
+	else if (mid<ml) return fs(mid+1,ri,ml,mr,w*2+1);
+	else return fs(le,mid,ml,mid,w*2)+fs(mid+1,ri,mid+1,mr,w*2+1);
+}
+inline int read()
+{
+	int f(1),x(0);
+	char ch=getchar();
+	while (!isdigit(ch)) {if (ch=='-') f*=-1;ch=getchar();}
+	while (isdigit(ch)) x=(x<<1)+(x<<3)+ch-'0',ch=getchar();
+	return f*x;
+}
+inline void writ(int x)
+{
+	if (x<0) putchar('-'),x=-x;
+	if (x/10) writ(x/10);
+	putchar((char)(x%10+'0'));
+}
+inline void write(int x)
+{
+	if (x!=0) writ(x);
+	else putchar('0');
+	putchar('\n');
+}
+int main()
+{
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	n=read(),n=read();
+	cm[0]=1;
+	for (i=1;i<=n;i++) a[i]=read(),mot(0,n,1,a[i],i);
+	for (i=1;i<=n;i++) cm[i]=cm[i-1]*2%mo;
+	m=read();
+	o=p=0,find(0,n,0,n,1);
+	int maxi(p),ans(0),now(1),s(0),bh(0);
+	while (now!=maxi&&fs(0,n,0,maxi-1,1)-s>=a[maxi])
+	{
+		o=p=0;
+		find(0,n,now+(s!=fs(0,n,0,now-1,1)),maxi-1,1);
+		int tot=a[maxi]-a[p];
+		while (tot&&now!=maxi)
+		{
+			int x=fs(0,n,0,now,1);
+			tot-=x-s,s=x;
+			if (tot<0) s+=tot,tot=0;
+			else ans=(ans+cm[now++])%mo;
+		}
+		o=p=0;
+		find(0,n,now+(s!=fs(0,n,0,now-1,1)),maxi-1,1);
+		maxi=p;
+	}
+	if (now<=maxi) ans=(ans+cm[maxi])%mo;
+	write(ans);
+	while (m--)
+	{
+		o=read(),p=read();
+		mot(0,n,1,p,o),a[o]=p;
+		o=p=0,find(0,n,0,n,1);
+		int maxi(p),ans(0),now(1),s(0),bh(0);
+		while (now!=maxi&&fs(0,n,0,maxi-1,1)-s>=a[maxi])
+		{
+			o=p=0;
+			find(0,n,now+(s!=fs(0,n,0,now-1,1)),maxi-1,1);
+			int tot=a[maxi]-a[p];
+			while (tot&&now!=maxi)
+			{
+				int x=fs(0,n,0,now,1);
+				tot-=x-s,s=x;
+				if (tot<0) s+=tot,tot=0;
+				else ans=(ans+cm[now++])%mo;
+			}
+			o=p=0;
+			find(0,n,now+(s!=fs(0,n,0,now-1,1)),maxi-1,1);
+			maxi=p;
+		}
+		if (now<=maxi) ans=(ans+cm[maxi])%mo;
+		write(ans);
+	}
+}

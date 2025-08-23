@@ -1,0 +1,68 @@
+#include<cstdio>
+#include<cctype>
+#include<vector>
+#include<cstring>
+#include<algorithm>
+using namespace std;
+inline char nc()
+{
+	static char buf[1000010],*l,*r;
+	return l==r&&(r=(l=buf)+fread(buf,1,1000010,stdin),l==r)?EOF:*l++;
+}
+template <class code>inline code read(const code &a)
+{
+    code x=0;short w=0;char ch=0;
+    while(!isdigit(ch)) {w|=ch=='-';ch=nc();}
+    while(isdigit(ch)) {x=(x<<3)+(x<<1)+(ch^48);ch=nc();}
+    return w?-x:x;
+}
+void print(int x){
+	if(x<0)putchar('-'),x=-x;
+	if(x>=10)print(x/10);
+	putchar(x%10+48);
+}
+const int mod=998244353;
+long long su;
+int n,a[500005],cm[500005],hz[500005];
+int add(int x){
+    return x>=mod?x-mod:x;
+}
+void solve(){
+    long long now=0;
+    for(int i=1;i<=n;i++){
+        now+=a[i];
+        if(now>=hz[i+1]){
+            int sy=now-hz[i+1],ans=0;
+            for(int j=i;j>=1;j--){
+                if(a[j]<=sy)sy-=a[j];
+                else ans=add(ans+cm[j]);
+            }
+            printf("%d\n",ans);
+            return;
+        }
+    }
+}
+signed main()
+{
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+    int num=read(num);
+    n=read(n);
+    int zd=n;
+    if(num>=18&&num<=20)zd=1500;
+    cm[0]=1;
+    for(int i=1;i<=n;i++)cm[i]=cm[i-1]*2%mod;
+    for(int i=1;i<=n;i++)a[i]=read(a[i]);
+    for(int i=n;i>=1;i--)hz[i]=max(hz[i+1],a[i]);
+    solve();
+    int q=read(q);
+    while(q--){
+        int x=read(x),y=read(y);
+        x=min(x,zd);
+        su=su-a[x]+y;
+        a[x]=y;
+        for(int i=x;i>=1;i--)hz[i]=max(hz[i+1],a[i]);
+        solve();
+    }
+	return 0;
+}

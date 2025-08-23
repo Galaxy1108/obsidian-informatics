@@ -1,0 +1,38 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+#define MAXN 3005
+#define int long long
+int dp[MAXN][MAXN] = {0};//dp[i][j]表示进行完i次操作后盒中有j个白球时的答案 
+int n,m,p; 
+
+int work( int n ){
+	memset( dp , 0 , sizeof( dp ) );
+	for( int i = 0 ; i <= n ; i ++ ) dp[0][i] = 1;
+	for( int i = 0 ; i <= m ; i ++ ){
+		for( int j = 0 ; j <= n ; j ++ ){
+			if( j > 0 ){
+				dp[i + 1][j] = ( dp[i + 1][j] + dp[i][j] ) % p;
+				dp[i + 1][j - 1] = ( dp[i + 1][j - 1] + dp[i][j] ) % p;
+			}
+			if( n - j > 0 ){
+				dp[i + 1][j] = ( dp[i + 1][j] + dp[i][j] ) % p;
+				dp[i + 1][j + 1] = ( dp[i + 1][j + 1] + dp[i][j] ) % p;
+			}
+		}
+	}
+	int ans = 0;
+	for( int i = 0 ; i <= n ; i ++ )
+		ans = ( ans + dp[m][i] ) % p;
+	return ans;
+}
+
+signed main(){
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	scanf("%lld%lld%lld",&n,&m,&p);
+	printf("%lld\n",( work( n ) - work( n - 1 ) + p ) % p);
+	fclose(stdin);
+	fclose(stdout);
+	return 0;
+}

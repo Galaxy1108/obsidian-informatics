@@ -1,0 +1,129 @@
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+namespace IO{
+    const int siz=1<<22;
+    char a[siz],b[siz],*ia=a+siz,*ea=a+siz,*ib=b,*eb=b+siz;
+    int p[105],l=0;
+    inline char gc(){if (ia==ea) fread(a,1,siz,stdin),ia=a;return *ia++;}
+    inline void flush(){fwrite(b,1,ib-b,stdout);ib=b;}
+    inline void pc(char c){if (ib==eb) flush();*ib++=c;}
+    inline int read(){
+        char t=gc();int x=0;
+        for (;t<'0' || t>'9';t=gc());
+        for (;'0'<=t && t<='9';t=gc()) x=x*10+t-'0';
+        return x;
+    }
+    inline void write(int x,char ed='\n'){
+        if (!x) pc('0');
+        for (;x;x/=10) p[++l]=x%10;
+        for (;l;--l) pc(p[l]+'0');pc(ed);
+    }
+    struct F{~F(){flush();}}f;
+}
+using IO::read;
+using IO::write;
+const int mod=998244353,N=2e5+5;
+int a[N],mi[N];
+int Num,n,q;
+inline void add(int &x,int y){if ((x+=y)>=mod) x-=mod;}
+inline void sub(int &x,int y){if ((x-=y)<0) x+=mod;}
+inline int MOD(int x){return x>=mod?x-mod:x;}
+namespace sub1{
+    int calc(){
+        int res=0,sum=0,mx=0,it=0;
+        for (int i=1;i<=n;++i) mx=max(mx,a[i]);
+        while (sum<mx) ++it,sum+=a[it],add(res,mi[it]);
+        for (;it>=1;--it) if (sum-a[it]>=mx) sum-=a[it],sub(res,mi[it]);
+        return res;
+    }
+    void main(){
+        write(calc());
+        for (int x,y;q;--q){
+            x=read();y=read();
+            a[x]=y;write(calc());
+        }
+    }
+}
+namespace sub2{
+    ll sum[4*N];
+    int Mi[4*N],Mx[4*N];
+    void build(int x,int l,int r){
+        if (l==r){
+            sum[x]=Mi[x]=Mx[x]=a[l];
+            return;
+        }
+        int mid=(l+r)>>1;
+        build(x<<1,l,mid);
+        build(x<<1|1,mid+1,r);
+        sum[x]=sum[x<<1]+sum[x<<1|1];
+        Mi[x]=min(Mi[x<<1],Mi[x<<1|1]);
+        Mx[x]=max(Mx[x<<1],Mx[x<<1|1]);
+    }
+    int m_pos,m_val;
+    void update(int x,int l,int r){
+        if (l==r){
+            sum[x]=Mi[x]=Mx[x]=m_val;
+            return;
+        }
+        int mid=(l+r)>>1;
+        if (m_pos<=mid) update(x<<1,l,mid);
+        else update(x<<1|1,mid+1,r);
+        sum[x]=sum[x<<1]+sum[x<<1|1];
+        Mi[x]=min(Mi[x<<1],Mi[x<<1|1]);
+        Mx[x]=max(Mx[x<<1],Mx[x<<1|1]);
+    }
+    int q_sum,q_ans;
+    void process(int x,int l,int r){
+        if (q_sum-sum[x]>=Mx[1]){
+            q_sum-=sum[x];
+            sub(q_ans,MOD(mi[r+1]-mi[l]+mod));
+            return;
+        }
+        if (l==r || q_sum-Mi[x]<Mx[1]) return;
+        int mid=(l+r)>>1;
+        process(x<<1|1,mid+1,r);
+        process(x<<1,l,mid);
+    }
+    void query(int x,int l,int r){
+        if (l==r){
+            q_sum+=sum[x];
+            add(q_ans,mi[l]);
+            return;
+        }
+        int mid=(l+r)>>1;
+        if (q_sum+sum[x<<1]<Mx[1]){
+            q_sum+=sum[x<<1];
+            add(q_ans,MOD(mi[mid+1]-mi[l]+mod));
+            query(x<<1|1,mid+1,r);
+            process(x<<1,l,mid);
+        }
+        else{
+            query(x<<1,l,mid);
+        }
+    }
+    int calc(){
+        q_sum=q_ans=0;
+        query(1,1,n);
+        return q_ans;
+    }
+    void main(){
+        build(1,1,n);
+        write(calc());
+        for (;q;--q){
+            m_pos=read(),m_val=read();
+            update(1,1,n);
+            write(calc());
+        }
+    }
+}
+int main(){
+    freopen("imperishable.in","r",stdin);
+    freopen("imperishable.out","w",stdout);
+    Num=read();n=read();mi[0]=1;
+    for (int i=1;i<=n;++i) a[i]=read(),mi[i]=MOD(mi[i-1]<<1);
+    mi[n+1]=MOD(mi[n]<<1);
+    q=read();
+    if (n<=1e4) return sub1::main(),0;
+    return sub2::main(),0;
+}

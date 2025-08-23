@@ -1,0 +1,50 @@
+#include <bits/stdc++.h>
+#define int long long
+#pragma GCC optimize("Ofast", "inline", "-ffast-math")
+#pragma GCC target("avx,sse2,sse3,sse4,mmx")
+using namespace std;
+const int mod=998244353;
+int n,q,a[200005],sum[200005];
+int qpow[200005];
+int ask() {
+	int cnt=0,f=0,mx=0,k=0;
+	for(int i=1; i<=n; ++i) if(a[i]>mx) mx=a[i],k=i;
+	for(int i=1; i<=n; ++i) {
+		cnt+=a[i];
+		if(cnt>=mx) {
+			f=i;
+			break;
+		}
+	}
+	if(f==k) return qpow[k];
+	int ans=qpow[f];
+	cnt-=mx;
+	for(int i=f-1; i; --i) {
+		if(cnt>=a[i]) {
+			cnt-=a[i];
+		} else {
+			ans+=qpow[i];
+		}
+	}
+	return ans%mod;
+}
+signed main() {
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	scanf("%lld%lld",&n,&n);
+	qpow[0]=1;
+	for(int i=1; i<=n; ++i) {
+		qpow[i]=qpow[i-1]<<1;
+		if(qpow[i]>mod) qpow[i]-=mod;
+	}
+	for(int i=1; i<=n; ++i)  scanf("%lld",a+i);
+	scanf("%lld",&q);
+	printf("%lld\n",ask());
+	while(q--) {
+		int x,y;
+		scanf("%lld%lld",&x,&y);
+		a[x]=y;
+		printf("%lld\n",ask());
+	}
+	return 0;
+}

@@ -1,0 +1,63 @@
+#include<bits/stdc++.h>
+using namespace std;
+const int N=2005;
+int mapp[N][N];
+int q; 
+int n,m,k,type;
+void dfs(int i,int j,int dir,int c) 
+{
+	if(c==q) 
+	{
+		cout<<i<<" "<<j<<endl;
+		return ;
+	}
+	if(i>n||j>m) 
+	{
+		cout<<i<<" "<<j<<endl;
+		return ;
+	 } 
+	if(dir==1)
+	{
+		if(mapp[i-1][j]==1) dfs(i-1,j,4,c+1);
+		else dfs(i-1,j,1,c) ;
+	} 
+	if(dir==2) 
+	{
+		if(mapp[i][j+1]==1) dfs(i,j+1,3,c+1);
+		else dfs(i,j+1,2,c) ;
+	} 
+	if(dir==3) 
+	{
+		if(mapp[i+1][j]==1) dfs(i+1,j,2,c+1);
+		else dfs(i+1,j,3,c) ;
+	}
+	if(dir==4)
+	{
+		if(mapp[i][j-1]==1) dfs(i,j-1,4,c+1);
+		else dfs(i,j-1,1,c) ;
+	}
+}
+int main()
+{
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	type,n,m,k; cin>>type>>n>>m>>k; 
+	for(int i=1;i<=k;i++)
+	{
+		int x,y; cin>>x>>y;
+		 mapp[x][y]=1;
+	}
+	int Q; cin>>Q;
+	for(int i=1;i<=Q;i++) 
+	{
+		int w; cin>>w;
+		if(w==1) {int x,y; cin>>x>>y; mapp[x][y]=1; }	
+		else 
+		{
+			int x,y; cin>>x>>y>>q;
+			if(x==0) dfs(x,y,3,0);
+			else dfs(x,y,2,0);
+		}
+	}
+	return 0;
+ }

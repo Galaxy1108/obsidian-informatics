@@ -1,0 +1,101 @@
+#include<bits/stdc++.h>
+#define fo(i,a,b) for(int i=a;i<=b;++i)
+#define fd(i,a,b) for(int i=a;i>=b;--i)
+using namespace std;
+const int M=2e5, N=M+10, mod=998244353;
+typedef long long ll;
+int n,T,Max,a[N],mi[N];
+int tr_Max[N<<2],tr_val[N<<2],tr_Min[N<<2];
+ll tr_sum[N<<2];
+inline int add(int a,int b){return a+b>=mod?a+b-mod:a+b;}
+inline int dec(int a,int b){return a>=b?a-b:a-b+mod;}
+struct node{
+	int x,v;ll s;
+	inline friend node operator+(node a,node b){return (node){a.x,add(a.v,b.v),a.s+b.s};}
+};
+#define ls (t<<1)
+#define rs (t<<1|1)
+void build(int t,int l,int r){
+	if(l==r){
+		tr_Max[t]=tr_Min[t]=tr_sum[t]=a[l];
+		tr_val[t]=mi[l];
+		return;
+	}
+	int mid=l+r>>1;
+	build(ls,l,mid);build(rs,mid+1,r);
+	tr_Max[t]=max(tr_Max[ls],tr_Max[rs]);
+	tr_Min[t]=min(tr_Min[ls],tr_Min[rs]);
+	tr_val[t]=add(tr_val[ls],tr_val[rs]);
+	tr_sum[t]=tr_sum[ls]+tr_sum[rs];
+}
+void modify(int t,int l,int r,int x,int v){
+	if(l==r){
+		tr_val[t]=mi[l];;
+		tr_Max[t]=tr_Min[t]=tr_sum[t]=v;
+		return;
+	}
+	int mid=l+r>>1;
+	if(x<=mid)modify(ls,l,mid,x,v);
+	else modify(rs,mid+1,r,x,v);
+	tr_Max[t]=max(tr_Max[ls],tr_Max[rs]);
+	tr_Min[t]=min(tr_Min[ls],tr_Min[rs]);
+	tr_val[t]=add(tr_val[ls],tr_val[rs]);
+	tr_sum[t]=tr_sum[ls]+tr_sum[rs];
+}
+node query(int t,int l,int r,int v){
+	if(l==r)return (node){l,tr_val[t],tr_sum[t]};
+	int mid=l+r>>1;
+	if(tr_sum[ls]==v)return (node){mid,tr_val[ls],tr_sum[ls]};
+	if(tr_sum[ls]>v)return query(ls,l,mid,v);
+	return query(rs,mid+1,r,v-tr_sum[ls])+(node){0,tr_val[ls],tr_sum[ls]};
+}
+node query1(int t,int l,int r,int R,int v){
+	if(tr_Min[t]>v)return (node){0,0,0};
+	if(l==r)return (node){l,tr_val[t],tr_sum[t]};
+	int mid=l+r>>1;
+	if(R<=mid || tr_Min[rs]>v)return query1(ls,l,mid,R,v);
+	node ret=query1(rs,mid+1,r,R,v);
+	if(!ret.x)return query1(ls,l,mid,R,v);
+	ret=ret+(node){0,tr_val[ls],tr_sum[ls]};
+	return ret;
+}
+#undef ls
+#undef rs
+int solve(){
+	int R=n,sum=0;
+	ll v=tr_Max[1];
+	while(1){
+		node ret=query(1,1,n,v);
+		ll v1=ret.s-v;R=ret.x;
+		sum=add(sum , ret.v);
+		node ret1=query1(1,1,n,R,v1);
+		if(!ret1.x)return sum;
+		R=ret1.x;v-=(ret.s-ret1.s);
+		sum=dec(sum , ret1.v);
+		// puts("1");
+	}
+	// puts("2");
+}
+int main(){
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	scanf("%d",&n);
+	scanf("%d",&n);
+	mi[0]=1;
+	fo(i,1,n)mi[i]=add(mi[i-1],mi[i-1]);
+	fo(i,1,n){
+		scanf("%d",&a[i]);
+	}
+	build(1,1,n);
+	printf("%d\n",solve());
+	scanf("%d",&T);
+	while(T--){
+		int x,y;
+		scanf("%d%d",&x,&y);
+		a[x]=y;
+		modify(1,1,n,x,y);
+		printf("%d\n",solve());
+	}
+
+	return 0;
+}

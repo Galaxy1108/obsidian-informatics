@@ -1,0 +1,51 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+ll read(){
+	ll xx = 0, yy = 1; char ch = getchar();
+	while(ch < '0' || ch > '9'){
+		if (ch == '-')yy = -1;
+		else yy = 1;
+		ch = getchar();
+	}
+	while(ch >= '0' && ch <= '9'){
+		xx = xx * 10 + ch - '0'; ch = getchar();
+	}
+	return xx * yy;
+}
+ll n, m, p, ans;
+ll work(ll x, ll y, ll t){
+	if (t < 1)return 1;
+	ll ret = 0;
+	if (x > 0){
+		ret += work(x - 1, y + 1, t - 1);
+		ret %= p;
+		ll s = work(x, y, t - 1);
+		ret += s;
+		if (y > 0)ret += s;
+		ret %= p;
+	}
+	if (y > 0){
+		ret += work(x + 1, y - 1, t - 1);
+		ret %= p;
+		if (x < 1){
+			ret += work(x, y, t - 1);
+			ret %= p;
+		}
+	}
+	return ret;
+}
+int main(){
+	freopen("easyhard.in", "r", stdin);
+	freopen("easyhard.out", "w", stdout);
+	n = read(); m = read(); p = read();
+	for (int i = 0; i < (n + 1)/ 2; ++i){
+		ans += work(i, n - i, m); ans %= p; 
+	}
+	ans *= 2; ans %= p;
+	if (n % 2 == 0){
+		ans += work(n / 2, n / 2, m); ans %= p;
+	}
+	printf("%lld\n", ans);
+	return 0;
+}

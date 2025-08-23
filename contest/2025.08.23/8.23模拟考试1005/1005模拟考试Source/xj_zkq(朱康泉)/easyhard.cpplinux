@@ -1,0 +1,47 @@
+#include <bits/stdc++.h>
+using namespace std;
+long long n,m,p,dp[305][305][305],a[3005];
+int main() {
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	scanf("%lld%lld%lld",&n,&m,&p);
+	for(int i=0;i<=n;i++){
+		for(int j=0;j<=n;j++)
+		dp[j][0][i]=1;
+	}
+	for(int k=1;k<=n;k++){
+		for(int i=0;i<m;i++){
+			for(int j=0;j<=k;j++){
+				if(j!=0){
+					dp[k][i+1][j]+=dp[k][i][j];
+					dp[k][i+1][j-1]+=dp[k][i][j];
+					dp[k][i+1][j]%=p;
+					dp[k][i+1][j-1]%=p;
+				}
+				if(j!=k){
+					dp[k][i+1][j]+=dp[k][i][j];
+					dp[k][i+1][j+1]+=dp[k][i][j];
+					dp[k][i+1][j]%=p;
+					dp[k][i+1][j+1]%=p;
+				}
+			}
+		}
+	}
+	for(int i=0;i<=n;i++){
+		for(int j=0;j<=i;j++){
+			a[i]+=dp[i][m][j];
+		}
+		a[i]%=p;
+	}
+	for(int i=2;i<=n;i++){
+		for(int j=1;j<i;j++){
+			a[i]-=a[j]*(i-j+1);
+		}
+	}
+	for(int i=1;i<=n;i++){
+		a[i]+=a[i-1];
+	}
+	printf("%lld",((a[n]%p)+p)%p);
+	return 0;
+}
+//30 30 1919

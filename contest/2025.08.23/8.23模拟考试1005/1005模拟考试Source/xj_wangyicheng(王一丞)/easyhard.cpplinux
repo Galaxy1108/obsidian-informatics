@@ -1,0 +1,61 @@
+#include<bits/stdc++.h>
+using namespace std;
+int n,m,p;
+long long ans,c1,c2,c3,t1,t2,t3;
+int main()
+{
+	cin>>n>>m>>p;
+	c1=c2=c3=1;
+	for(int i=1;i<m;i++)
+	{
+		if(n>=4)
+		{
+			t3=(c3+c2+c2)%p;
+			t2=(c1+c2+c3)%p;
+			t1=(c1+c2)%p;
+			c1=t1;
+			c2=t2;
+			c3=t3;	
+		}
+		else if(n==3)
+		{
+			t1=(c1+c2)%p;
+			t2=(c1+c2+c2)%p;
+			c1=t1;
+			c2=t2;
+		}
+		else if(n==2)
+		{
+			t1=(c1+c2)%p;
+			t2=(c1+c1+c2)%p;
+			c1=t1;
+			c2=t2;
+		}
+		else
+		{
+			c1=(c1*2)%p;
+		}
+	}
+	if(n>=4)
+	{
+		ans=(2*c1+2*c1+4*c2+4*c2)%p;
+		for(int i=0;i<n-3;i++)
+		{
+			ans=(ans+(4*c3))%p;
+		}
+	}
+	else if(n==3)
+	{
+		ans=(2*c1+2*c1+4*c2+4*c2)%p;
+	}
+	else if(n==2)
+	{
+		ans=(2*c1+2*c1+4*c2)%p;
+	}
+	else
+	{
+		ans=(2*c1+2*c1)%p;
+	}
+	cout<<ans<<endl;
+	return 0;
+}

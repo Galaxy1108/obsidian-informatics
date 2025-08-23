@@ -1,0 +1,26 @@
+#include<bits/stdc++.h>
+#define LL long long
+using namespace std;
+int read(){
+	int x=0,f=1;
+	char ch=getchar();
+	while(!isdigit(ch)){if(ch=='-')f=-1;ch=getchar();}
+	while(isdigit(ch)){x=x*10-'0'+ch;ch=getchar();}
+	return x*f;
+}
+int main(){
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	int n=read(),m=read(),p=read();
+	
+	m+=n;
+	int ans=1;
+	while(m--){
+		ans<<=1;
+		ans%=p;
+	}
+
+	printf("%d\n",ans);
+	return 0;
+}
+

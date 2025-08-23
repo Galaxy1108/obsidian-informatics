@@ -1,0 +1,97 @@
+#include<bits/stdc++.h>
+using namespace std;
+long long n,m,p;
+long long ans=0;
+long long b,w;
+struct code{bool flg=0;};
+map<string,code>mp;
+void dfs(long long dep,string st){
+	if(dep>m){
+		if(mp[st].flg==0){
+			mp[st].flg=1;
+			ans++;
+			ans%=p;
+		}
+		return;
+	}
+	if(b>0){
+		b--;
+		w++;
+		dfs(dep+1,st+"11");
+		b++;
+		w--;
+		dfs(dep+1,st+"10");
+	}
+	if(w>0){
+		w--;
+		b++;
+		dfs(dep+1,st+"00");
+		w++;
+		b--;
+		dfs(dep+1,st+"01");
+	}
+}
+long long qw[3010][3010];
+int solve(int black,int b,string st){
+	if(qw[black][b]!=0){
+		
+	} 
+	if(b==0){
+		if(mp[st].flg==0){
+			mp[st].flg=1;
+			qw[black][b]=1;
+		}
+		return qw[black][b];
+	} 
+	long long temp=0;
+	if(black!=0){
+		temp+=solve(black,b-1,"10"+st);
+		temp%=p;
+		temp+=solve(black-1,b-1,"00"+st);
+		temp%=p;
+	}
+	if(black!=n){
+		temp+=solve(black+1,b-1,"11"+st);
+		temp%=p;
+		temp+=solve(black,b-1,"01"+st);
+		temp%=p;
+	}
+	temp%=p;
+	qw[black][b]=temp;
+	return qw[black][b];
+}
+
+int main(){
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	cin>>n>>m>>p;
+	memset(qw,0,sizeof(qw));
+	if(n*m<=200){
+		for(long long i=0;i<=n;i++){
+			b=i,w=n-i;
+			dfs(1,"");
+		}
+		ans%=p;
+		cout<<ans<<endl;
+		return 0;
+	}
+	
+	ans=0;
+//	for(int i=0;i<=n;i++){
+//		for(int j=0;j<=m;j++){
+//			solve(i,j);
+//		}
+//	}
+	for(int i=0;i<=n;i++){
+		ans+=solve(i,m,"");
+		ans%=p;
+	}
+	for(long long i=0;i<=n;i++){
+		for(long long j=0;j<=m;j++){
+			cout<<qw[i][j]<<' ';
+		}
+		cout<<endl;
+	}
+	cout<<ans<<endl;
+	return 0;
+}

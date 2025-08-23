@@ -1,0 +1,87 @@
+#include<iostream>
+#include<cstdio>
+#include<cstdlib>
+#include<cstring>
+#include<cmath>
+#include<algorithm>
+using namespace std;
+int read()
+{
+	char x=getchar();int v=0,bj=1;
+	while((x!='-')&&(x<'0'||x>'9'))x=getchar();
+	if(x=='-')
+	{
+		bj=-1;
+		x=getchar();
+	}
+	while(!(x<'0'||x>'9'))
+	v=(v<<1)+(v<<3)+x-'0',x=getchar();
+	return v*bj;
+}
+const int N=1e6+5;
+int st[2*N][5],sum[N],bj[N],d[5005][505],tot,head[N],f[N],w[N],c[N],ans[N];
+void make(int s,int t,int w)
+{
+	st[++tot][1]=t;
+	st[tot][2]=head[s];
+	st[tot][3]=w;
+	head[s]=tot;
+}
+void dfs(int x,int fa)
+{
+	sum[x]=1;
+	bj[x]=1;
+	for(int i=head[x];i;i=st[i][2])
+	if(st[i][1]!=fa)
+	{
+		dfs(st[i][1],x);
+		sum[x]+=sum[st[i][1]];
+	}
+}
+int main()
+{
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	int n=read();
+	for(int i=1;i<n;i++)
+	{
+		f[i]=read(),w[i]=read();
+		make(f[i],i,w[i]);
+		make(i,f[i],w[i]);
+	}
+	for(int i=1;i<n;i++)
+	{
+		memset(bj,0,sizeof(bj));
+		dfs(i,f[i]);
+		for(int j=1;j<=n;j++)
+		{
+			if(bj[j])
+			{
+				if(c[j]<(n-sum[i])*w[i])
+				{
+					c[j]=(n-sum[i])*w[i];
+					d[j][d[j][0]=1]=i;
+				}else
+				if(c[j]==(n-sum[i])*w[i])d[j][++d[j][0]]=i;
+			}else
+			{
+				if(c[j]<sum[i]*w[i])
+				{
+					c[j]=sum[i]*w[i];
+					d[j][d[j][0]=1]=i;
+				}else
+				if(c[j]==sum[i]*w[i])d[j][++d[j][0]]=i;
+			}
+		}
+	}
+	for(int i=1;i<=n;i++)
+	{
+		for(int j=1;j<=d[i][0];j++)
+		{
+			ans[d[i][j]]++;
+		}
+	}
+	int anss=0;
+	for(int i=1;i<n;i++)anss^=ans[i];
+	printf("%d",anss);
+}

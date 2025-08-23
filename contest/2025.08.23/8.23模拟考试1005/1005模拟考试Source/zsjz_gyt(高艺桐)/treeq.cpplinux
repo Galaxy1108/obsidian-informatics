@@ -1,0 +1,95 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define N 1000002
+#define fo(i, l, r) for (int i = (l), ed = (r); i <= ed; i ++)
+#define fd(i, l, r) for (int i = (l), ed = (r); i >= ed; i --)
+#define pb push_back
+#define mp make_pair
+#define fi first
+#define se second
+#define INF 2147483647 //9223372036854775807
+template <typename T> void gi(T &s){
+	s = 0;
+	int b = 1;
+	char ch = getchar();
+	while (ch < '0' || ch > '9') b *= (ch == '-') ? (-1) : 1, ch = getchar();
+	while (ch >= '0' && ch <= '9') s = s * 10 + ch - '0', ch = getchar();
+	s *= b;
+}
+map < ll, int > M;
+int n, last[N], tot, fa[N], dfn[N], size[N], f[N];
+ll s0[N], s1[N], ss[N], w[N];
+struct Edge{
+	int to, next, v;
+} e[N];
+struct Ask{
+	ll x;
+	int p, fr;
+};
+vector < Ask > Q[N];
+
+void add(int x, int y, int z){
+	e[++ tot] = (Edge) {y, last[x], z};
+	last[x] = tot;
+}
+
+void dg(int x){
+	dfn[x] = ++ tot;
+	size[x] = 1;
+	for (int i = last[x]; i; i = e[i].next){
+		dg(e[i].to);
+		size[x] += size[e[i].to];
+	}
+}
+
+void dg2(int x, ll s){
+	s = max(s, w[x] * (n - size[x]));
+	ss[x] = s;
+	for (int i = last[x]; i; i = e[i].next){
+		dg2(e[i].to, s);
+	}
+}
+
+int main(){
+	freopen("treeq.in", "r", stdin);
+	freopen("treeq.out", "w", stdout);
+	gi(n);
+	fo (i, 2, n) gi(fa[i]), gi(w[i]), add(fa[i], i, w[i]);
+	tot = 0;
+	dg(1);
+	dg2(1, 0);
+	fo (j, 2, n){
+		int i = dfn[j];
+		s0[dfn[i - 1]] = max(s0[dfn[i - 1]], w[i] * size[i]);
+		s1[dfn[i + size[i]]] = max(s1[dfn[i + size[i]]], w[i] * size[i]);
+	}
+	fo (j, 1, n){
+		int i = dfn[j];
+		s1[i] = max(s1[i], s1[dfn[i - 1]]);
+		ss[i] = max(ss[i], s1[i]);
+	}
+	fd (j, n, 1){
+		int i = dfn[j];
+		s0[i] = max(s0[i], s0[dfn[i + 1]]);
+		ss[i] = max(ss[i], s0[i]);
+	}
+	fo (j, 2, n){
+		int i = dfn[j];
+		Q[dfn[n]].pb((Ask) {w[i] * size[i], 1, i});
+		Q[dfn[j + size[i] - 1]].pb((Ask) {w[i] * size[i], -1, i});
+		Q[dfn[j - 1]].pb((Ask) {w[i] * size[i], 1, i});
+		Q[dfn[j + size[i] - 1]].pb((Ask) {w[i] * (n - size[i]), 1, i});
+		Q[dfn[j - 1]].pb((Ask) {w[i] * (n - size[i]), -1, i});
+	}
+	fo (j, 1, n){
+		int i = dfn[j];
+		M[ss[i]] ++;
+		for (auto k : Q[i]){
+			f[k.fr] = (f[k.fr] + k.p * M[k.x]);
+		}
+	}
+	int ans = 0;
+	fo (i, 1, n) ans = ans ^ f[i];
+	printf("%d", ans);
+}

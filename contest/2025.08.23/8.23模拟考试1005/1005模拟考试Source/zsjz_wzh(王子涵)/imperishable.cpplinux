@@ -1,0 +1,44 @@
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+const int N = 200010, P = 998244353;
+int Num, n, q;
+int pw[N], a[N];
+ll sum[N];
+int query() {
+    int res = 0, mx = 0;
+    ll tot = 0;
+    for (int i = n; i; --i) {
+        if (tot + sum[i - 1] >= max(mx, a[i])) {
+            mx = max(mx, a[i]);
+            continue;
+        }
+        tot += a[i];
+        res += pw[i];
+        if (res >= P)
+            res -= P;
+    }
+    return res;
+}
+int main() {
+    freopen("imperishable.in", "r", stdin);
+    freopen("imperishable.out", "w", stdout);
+    scanf("%d%d", &Num, &n);
+    pw[0] = 1;
+    for (int i = 1; i <= n; ++i) {
+        scanf("%d", &a[i]);
+        pw[i] = pw[i - 1] * 2ll % P;
+        sum[i] = sum[i - 1] + a[i];
+    }
+    printf("%d\n", query());
+    scanf("%d", &q);
+    while (q--) {
+        int x, y;
+        scanf("%d%d", &x, &y);
+        a[x] = y;
+        for (int i = 1; i <= n; ++i)
+            sum[i] = sum[i - 1] + a[i];
+        printf("%d\n", query());
+    }
+    return 0;
+}

@@ -1,0 +1,70 @@
+#include<iostream>
+#include<cstdio>
+#include<cstdlib>
+#include<cstring>
+#include<cmath>
+#include<algorithm>
+using namespace std;
+int read()
+{
+	char x=getchar();int v=0,bj=1;
+	while((x!='-')&&(x<'0'||x>'9'))x=getchar();
+	if(x=='-')
+	{
+		bj=-1;
+		x=getchar();
+	}
+	while(!(x<'0'||x>'9'))
+	v=(v<<1)+(v<<3)+x-'0',x=getchar();
+	return v*bj;
+}
+const int N=505;
+int a[N][N];
+int main()
+{
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	int type=read(),n=read(),m=read(),k=read();
+	for(int i=1;i<=k;i++)
+	{
+		int s=read(),t=read();
+		a[s][t]=1;
+	}
+	int q=read();
+	while(q--)
+	{
+		int w=read();
+		if(w==1)
+		{
+			int s=read(),t=read();
+			a[s][t]=1;
+		}else
+		{
+			int s=read(),t=read(),q=read(),fx1=0,fx2=0;
+			if(s==0)fx1=1;
+			else fx2=1;
+			while(q)
+			{
+				while((s+fx1>0&&s+fx1<=n)&&(t+fx2>0&&t+fx2<=m))
+				{
+					s+=fx1,t+=fx2;
+					if(a[s][t]==1)
+					{
+						swap(fx1,fx2);
+						q--;
+						if(q==0)
+						{
+							printf("%d %d\n",s,t);
+							break;
+						}
+					}
+				}
+				if(s+fx1>n||t+fx2>m)
+				{
+					printf("%d %d\n",s+fx1,t+fx2);
+					break;
+				}
+			}
+		}
+	}
+} 

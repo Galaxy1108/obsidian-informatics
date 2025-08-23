@@ -1,0 +1,28 @@
+#include<bits/stdc++.h>
+using namespace std;
+long long f[3001][3001];
+int main()
+{
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	int n,m;
+	long long MOD;
+	cin>>n>>m>>MOD;
+	f[0][0]=1;
+	f[0][1]=1;
+	for (int i=1;i<m;i++)
+	{
+		for (int j=1;j<=2*i;j++)
+		{
+			int x=2*i-j,y=j-1;
+			if (y-i+2<=n&&y+x-2*i<=n-3) f[i][y+2]=(f[i][y+2]+f[i-1][y])%MOD;
+			if (x-i+2<=n&&y+x-2*i<=n-3) f[i][y]=(f[i][y]+f[i-1][y])%MOD;
+			f[i][y+1]=(f[i][y+1]+f[i-1][y]*2)%MOD;
+		}
+	}
+	long long ans=0;
+	for (int i=1;i<=2*m;i++)
+		ans=(ans+f[m-1][i-1]*2)%MOD;
+	cout<<ans;
+	return 0;
+}

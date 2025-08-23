@@ -1,0 +1,136 @@
+/*
+2022/10/5联考T3 Ginger 的无向无环联通图
+题意:
+给定一棵树，带边权w[i]
+每条边i对于一个点j有个值a[i][j],
+设c[i][j]为j与其他n-1个点的路径有多少条经过边i
+a[i][j]=c[i][j]*w[i]
+一条边i在点j事最优的，当且仅当a[i][j]>=a[k][j]
+设f(i)为i在多少点上是最优的
+输出f(i)的异或和
+n<=1e7;
+
+
+不会
+
+*/
+
+#include<bits/stdc++.h>
+using namespace std;
+//#define int long long
+#define ll long long
+#define fo(i,a,b) for(int i=a;i<=b;i++)
+#define fr(i,a,b) for(int i=a;i>=b;i--)
+#define py puts("Yes")
+#define pn puts("No")
+#define pt puts("")
+#define fe(i,u) for(int i=head[u];i;i=e[i].next)
+#define wt(x) write(x),puts("")
+#define tx printf("fds")
+#define mp make_pair
+#define fi first
+#define se second
+inline int read(){
+	int x=0,k=1;
+	char ch=getchar();
+	while(ch<'0'||ch>'9'){
+		if(ch=='-') k=-1;
+		ch=getchar();
+	}
+	while(ch>='0'&&ch<='9'){
+		x=(x<<1)+(x<<3)+ch-48;
+		ch=getchar();
+	}
+	return x*k;
+}
+void write(int x){
+	if(x<0){
+		x=-x;
+		putchar('-');
+	}
+	if(x>9) write(x/10);
+	putchar(x%10+'0');
+}
+int power(int x,int y,int mod){
+	int num=1;
+	while(y){
+		if(y&1) num=(num*x)%mod;
+		x=x*x%mod;
+		y>>=1;
+	}
+	return num;
+}
+int mul(int x,int y,int mod){
+	int num=0;
+	while(y){
+		if(y&1) num=(num+x)%mod;
+		x=(x+x)%mod;
+		y>>=1;
+	}
+	return num;
+}
+const int N=1e6+7,mod=998244353;
+int n,m,t,tot,cnt,maxx;
+int a[N],head[N],f[N],Size[N],ans[N];
+struct lll{
+	int to,next,val;
+}e[N];
+void add(int u,int v,int val){
+	e[++tot].to=v;
+	e[tot].val=val;
+	e[tot].next=head[u];
+	head[u]=tot;
+}
+void dfs(int u,int fa){
+	Size[u]=1;
+	for(int i=head[u];i;i=e[i].next){
+		int v=e[i].to;
+		if(v==fa) continue;
+		dfs(v,u);
+		f[(i+1)/2]=Size[v]*e[i].val;
+		maxx=max(maxx,f[(i+1)/2]);
+		Size[u]+=Size[v];
+	}
+}
+void subtask(){
+	fo(i,1,n){
+		maxx=0;
+		dfs(i,0);
+		fo(j,1,n-1){
+			if(f[j]==maxx) ans[j]++;
+		}
+	}
+	int p=0;
+	fo(i,1,n-1) p^=ans[i];
+	wt(p);
+	exit(0);
+}
+void subtask2(){
+	
+}
+void subtask3(){
+	
+}
+signed main(){
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	n=read();
+	int fl=1,fl1=1,fl2=1;
+	fo(i,2,n){
+		int x=read(),z=read();
+		if(x!=i-1) fl1=0;
+		if(x!=1) fl2=0;
+		add(x,i,z);
+		add(i,x,z);
+	}
+	if(n<=5000){
+		subtask();
+	}
+	else if(fl1){
+		subtask2();
+	}
+	else if(fl2){
+		subtask3();
+	}
+	return 0;
+}

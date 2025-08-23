@@ -1,0 +1,99 @@
+#include <cstdio>
+#include <cstring>
+#include <cctype>
+#include <vector>
+#include <algorithm>
+#define ls(x) x<<1
+#define rs(x) x<<1|1
+using namespace std;
+inline int read (void) {
+    int x = 0, f = 1, ch = getchar();
+    while(!isdigit(ch)) { if(ch == '-') f = -f; ch = getchar(); }
+    while(isdigit(ch)) { x = x * 10 + ch - '0'; ch = getchar(); }
+    return x * f;
+}
+const int N=1e6+5;
+int n,c[N*4],head[N],k,dfn[N],o,size[N],sum,ans;
+long long tr[N*4];
+struct Node{
+    int nex,to,w;
+}e[N];
+void add(int u,int v,int w){
+    e[++k].to=v;
+    e[k].nex=head[u];
+    e[k].w=w;
+    head[u]=k;
+}
+void ins(int l,int r,int x,int ll,int rr,long long w){
+    if(l>=ll&&r<=rr){
+        tr[x]=max(tr[x],w);
+        return ;
+    }
+    int mid=(l+r)>>1;
+    tr[ls(x)]=max(tr[ls(x)],tr[x]);
+    tr[rs(x)]=max(tr[rs(x)],tr[x]);
+    if(mid>=ll) ins(l,mid,ls(x),ll,rr,w);
+    if(mid+1<=rr) ins(mid+1,r,rs(x),ll,rr,w);
+}
+void dfs(int u){
+    size[u]=1;dfn[u]=++o;
+    for (int i=head[u];i;i=e[i].nex){
+        int v=e[i].to;
+        long long w=e[i].w;
+        dfs(v);
+        size[u]+=size[v];
+        ins(1,n,1,dfn[v],dfn[v]+size[v]-1,w*(n-size[v]));
+        if(dfn[v]>1) ins(1,n,1,1,dfn[v]-1,w*size[v]);
+        if(dfn[v]+size[v]-1<n) ins(1,n,1,dfn[v]+size[v],n,w*size[v]);
+    }
+}
+void build(int l,int r,int x){
+    if(l==r) {
+        // printf("114 %d %d\n",l,tr[x]);
+        c[x]=1;
+        return ;
+    }
+    int mid=(l+r)>>1;
+    tr[ls(x)]=max(tr[ls(x)],tr[x]);
+    tr[rs(x)]=max(tr[rs(x)],tr[x]);
+    build(l,mid,ls(x));
+    build(mid+1,r,rs(x));
+    tr[x]=min(tr[ls(x)],tr[rs(x)]);
+    if(tr[x]==tr[ls(x)]) c[x]+=c[ls(x)];
+    if(tr[x]==tr[rs(x)]) c[x]+=c[rs(x)];
+}
+void ask(int l,int r,int x,int ll,int rr,int w){
+    if(l>=ll&&r<=rr){
+        if(tr[x]==w) ans+=c[x];
+        return ;
+    }
+    int mid=(l+r)>>1;
+    if(mid>=ll) ask(l,mid,ls(x),ll,rr,w);
+    if(mid+1<=rr) ask(mid+1,r,rs(x),ll,rr,w);
+}
+void dfs1(int u){
+    for (int i=head[u];i;i=e[i].nex){
+        int v=e[i].to,w=e[i].w;
+        dfs1(v);
+        ans=0;
+        ask(1,n,1,dfn[v],dfn[v]+size[v]-1,w*(n-size[v]));
+        if(dfn[v]>1) ask(1,n,1,1,dfn[v]-1,w*size[v]);
+        if(dfn[v]+size[v]-1<n) ask(1,n,1,dfn[v]+size[v],n,w*size[v]);
+        // printf("%d %d\n",i,ans);
+        sum^=ans;
+    }
+}
+int main (void) {
+    freopen("treeq.in", "r", stdin);
+    freopen("treeq.out", "w", stdout);
+    n=read();
+    for (int i=2;i<=n;i++){
+        int f=read(),w=read();
+        add(f,i,w);
+    }
+    dfs(1);
+    build(1,n,1);
+    dfs1(1);
+    printf("%d\n",sum);
+    return 0;
+}

@@ -1,0 +1,41 @@
+#include<bits/stdc++.h>
+#define LL long long
+using namespace std;
+int read(){
+	int x=0,f=1;
+	char ch=getchar();
+	while(!isdigit(ch)){if(ch=='-')f=-1;ch=getchar();}
+	while(isdigit(ch)){x=x*10-'0'+ch;ch=getchar();}
+	return x*f;
+}
+const int N = 2e5+10;
+const int MOD = 998244353;
+int a[N];
+int calc(int x){
+	int ans=1;
+	while(x--){ans<<1;ans%=MOD;}
+	return ans;
+}
+int main(){
+	int num=read();
+	int n=read();
+	for(int i=1;i<=n;i++)a[i]=read();
+	int q=read();
+	if(num>=18&&num<=20){
+		int now;
+		for(int i=1;i<=n;i++){
+			if(a[i]){now=i;break;}
+		}
+		printf("%d\n",calc(now));
+		while(q--){
+			int x=read(),y=read();
+			a[x]=y;
+			for(int i=1;i<=n;i++){
+				if(a[i]){now=i;break;}
+			}
+			printf("%d\n",calc(now));
+		}
+	}
+	return 0;
+}
+

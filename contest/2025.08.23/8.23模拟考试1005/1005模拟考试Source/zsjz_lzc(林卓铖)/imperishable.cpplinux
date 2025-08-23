@@ -1,0 +1,102 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+using ll = long long;
+
+const int mod = 998244353;
+void add(int &x, int y) { if ((x += y - mod) < 0) x += mod; }
+
+const int N = 2e5;
+
+int n, q;
+int pw[N + 5];
+int a[N + 5];
+
+struct SegmentTree {
+  #define ls (u << 1)
+  #define rs (ls | 1)
+  struct node {
+    int max;
+    ll sum, val;
+    node(int max = 0, ll sum = 0, ll val = 0): max(max), sum(sum), val(val) {}
+    node operator+(const node &o) const {
+      return node(::max(max, o.max), sum + o.sum, ::min(val - o.max, sum + o.val));
+    }
+  } seg[N * 4 + 5];
+  void pushUp(int u) { seg[u] = seg[ls] + seg[rs]; }
+  void insert(int x, int k, int u, int tl, int tr) {
+    if (tl == tr) { seg[u].sum = seg[u].max = seg[u].val = k; return ; }
+    int mid = (tl + tr) >> 1;
+    if (x <= mid) insert(x, k, ls, tl, mid);
+    else insert(x, k, rs, mid + 1, tr);
+    pushUp(u);
+  }
+  int queryMax(int l, int r, int u, int tl, int tr) {
+    if (l <= tl && tr <= r) return seg[u].max;
+    int mid = (tl + tr) >> 1;
+    int ret = 0;
+    if (l <= mid) ret = max(ret, queryMax(l, r, ls, tl, mid));
+    if (r > mid) ret = max(ret, queryMax(l, r, rs, mid + 1, tr));
+    return ret;
+  }
+  ll querySum(int l, int r, int u, int tl, int tr) {
+    if (l <= tl && tr <= r) return seg[u].sum;
+    int mid = (tl + tr) >> 1;
+    ll ret = 0;
+    if (l <= mid) ret += querySum(l, r, ls, tl, mid);
+    if (r > mid) ret += querySum(l, r, rs, mid + 1, tr);
+    return ret;
+  }
+  node queryVal(int l, int r, int u, int tl, int tr) {
+    if (l <= tl && tr <= r) return seg[u];
+    int mid = (tl + tr) >> 1;
+    if (l <= mid && r > mid) return queryVal(l, r, ls, tl, mid) + queryVal(l, r, rs, mid + 1, tr);
+    if (l <= mid) return queryVal(l, r, ls, tl, mid);
+    return queryVal(l, r, rs, mid + 1, tr);
+  }
+  // minimum k in [1, r] such that \sum_{i=1}^k a_i < \max_{i=k+1}^r a_i
+  pair<int, node> queryPos(int r, ll lsum, int rmax, int u, int tl, int tr) {
+    if (tr <= r && lsum + seg[u].val - rmax < 0) return {0, seg[u]};
+    if (tl == tr) return {tl, seg[u]};
+    int mid = (tl + tr) >> 1;
+    if (r > mid) {
+      auto tmp = queryPos(r, seg[ls].sum + lsum, rmax, rs, mid + 1, tr);
+      if (tmp.first) return tmp;
+      return queryPos(r, lsum, max(rmax, tmp.second.max), ls, tl, mid);
+    }
+    return queryPos(r, lsum, rmax, ls, tl, mid);
+  }
+  // minimum k in [1, r] such that \sum_{i=k}^r a_i 
+  pair<int, node> querySecondPos(int r, ll rsum, int k, int u, int tl, int tr) { return {0, 0}; }
+  #undef ls
+  #undef rs
+} seg;
+
+ll sum[N + 5];
+int suf[N + 5];
+
+int solve() {
+  int ret = 0;
+  for (int i = 1; i <= n; ++i) sum[i] = sum[i - 1] + a[i];
+  for (int i = n; i; --i) suf[i] = max(suf[i + 1], a[i]);
+  ll cur = 0;
+  for (int i = n; i; --i) {
+    for (; i > 1 && sum[i - 1] + cur >= suf[i]; --i);
+    add(ret, pw[i]), cur += a[i];
+  }
+  return ret;
+}
+
+int main() {
+  freopen("imperishable.in", "r", stdin), freopen("imperishable.out", "w", stdout);
+  scanf("%*d%d", &n);
+  pw[0] = 1;
+  for (int i = 1; i <= n; ++i) scanf("%d", a + i), add(pw[i] = pw[i - 1], pw[i - 1]);
+  printf("%d\n", solve());
+  for (scanf("%d", &q); q; --q) {
+    int x, y;
+    scanf("%d%d", &x, &y), a[x] = y;
+    printf("%d\n", solve());
+  }
+}

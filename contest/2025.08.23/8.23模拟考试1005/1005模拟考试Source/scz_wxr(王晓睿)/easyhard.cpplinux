@@ -1,0 +1,23 @@
+#include <bits/stdc++.h>
+using namespace std;
+long long n,m,p;
+long long f[3005][3005];
+long long ans;
+int main(){
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.in","w",stdout);
+	cin>>n>>m>>p;
+	for(int i=0;i<=n;i++) f[i][0]=1;
+	for(int j=1;j<=m;j++){
+		for(int i=0;i<=n;i++){
+			if(i>0) f[i][j]=(f[i][j]+f[i-1][j-1])%p;
+			if(i<n) f[i][j]=(f[i][j]+f[i+1][j-1])%p;
+			if(i>0) f[i][j]=(f[i][j]+f[i][j-1])%p;
+			if(i<n) f[i][j]=(f[i][j]+f[i][j-1])%p;
+			//cout<<"black ："<<i<<' '<<"white : "<<n-i<<' '<<f[i][j]<<endl;
+		}
+	}
+	for(int i=0;i<=n;i++) ans=(ans+f[i][m])%p;
+	cout<<ans<<endl;
+	return 0;
+}

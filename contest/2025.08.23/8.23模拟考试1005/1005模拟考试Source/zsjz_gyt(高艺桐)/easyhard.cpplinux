@@ -1,0 +1,42 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define N 3002
+#define fo(i, l, r) for (int i = (l), ed = (r); i <= ed; i ++)
+#define fd(i, l, r) for (int i = (l), ed = (r); i >= ed; i --)
+#define pb push_back
+#define mp make_pair
+#define fi first
+#define se second
+#define INF 2147483647 //9223372036854775807
+template <typename T> void gi(T &s){
+	s = 0;
+	int b = 1;
+	char ch = getchar();
+	while (ch < '0' || ch > '9') b *= (ch == '-') ? (-1) : 1, ch = getchar();
+	while (ch >= '0' && ch <= '9') s = s * 10 + ch - '0', ch = getchar();
+	s *= b;
+}
+int n, m, P, f[2][N << 1][2][2], ans;
+int main(){
+	freopen("easyhard.in", "r", stdin);
+	freopen("easyhard.out", "w", stdout);
+	gi(n), gi(m), gi(P);
+	f[0][n][0][0] = 1;
+	fo (i, 0, m - 1){
+		int x = i & 1;
+		fo (j, 0, n * 2) 
+			fo (k, 0, 1) fo (l, 0, 1){
+				if (!f[x][j][k][l] || n - j + k > n || j - n + l > n || k + l > n) continue;
+				(f[x ^ 1][j][k][l | 1] += f[x][j][k][l]) %= P;
+				(f[x ^ 1][j][k | 1][l] += f[x][j][k][l]) %= P;
+				if (l + j + 1 - n <= n) (f[x ^ 1][j + 1][k | 1][l & 0] += f[x][j][k][l]) %= P;
+				if (k + n - j + 1 <= n && j) (f[x ^ 1][j - 1][k & 0][l | 1] += f[x][j][k][l]) %= P;
+				f[x][j][k][l] = 0;
+			}
+	}
+	fo (j, 0, n * 2) fo (k, 0, 1) fo (l, 0, 1){
+		if (n - j + k <= n && j - n + l <= n && k + l <= n) (ans += f[m & 1][j][k][l]) %= P;
+	}
+	printf("%d", ans);
+}

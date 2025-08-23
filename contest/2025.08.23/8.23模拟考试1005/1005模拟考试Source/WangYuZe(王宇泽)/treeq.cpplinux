@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <algorithm>
+#include <cstring>
+#include <iostream>
+using namespace std;
+
+typedef long long LL;
+
+inline char gc() {
+	static char buf[1 << 20], *p1 = buf, *p2 = buf;
+	return p1 == p2 && (p2 = (p1 = buf) + fread(buf, 1, 1 << 20, stdin), p1 == p2) ? EOF : *p1++;
+}
+
+inline int read() {
+	int ret = 0; char ch = gc();
+	while ((ch < '0' || ch > '9') && ch != EOF) ch = gc();
+	while (ch >= '0' && ch <= '9') ret = ret * 10 + (ch - '0'), ch = gc();
+	return ret;
+}
+
+const int NR = 1e6 + 10;
+
+int n;
+int ans[NR];
+int sz[NR];
+int pw[NR];
+LL mxv;
+bool flag1 = 1;
+
+int ecnt = 0, first[NR];
+struct Edge {
+	int to, nxt, w, id;
+} e[NR * 2];
+
+void addE(int u, int v, int w, int id) {
+	e[++ecnt] = {v, first[u], w, id};
+	first[u] = ecnt;
+}
+
+void dfs1(int now, int fou) {
+	sz[now] = 1;
+	for (int i = first[now]; i; i = e[i].nxt) {
+		int t = e[i].to;
+		if (t == fou) continue;
+		dfs1(t, now);
+		sz[now] += sz[t];
+		mxv = max(mxv, 1ll * sz[t] * e[i].w);
+	}
+}
+
+void dfs2(int now, int fou) {
+	for (int i = first[now]; i; i = e[i].nxt) {
+		int t = e[i].to;
+		if (t == fou) continue;
+		dfs2(t, now);
+		if (1ll * sz[t] * e[i].w == mxv) ans[e[i].id]++;
+	}
+}
+
+void dfs(int now, int fou, int fid, int fsz) {
+	int mx = fsz;
+	for (int i = first[now]; i; i = e[i].nxt) {
+		int t = e[i].to;
+		if (t == fou) continue;
+		mx = max(mx, sz[t]), dfs(t, now, e[i].id, fsz + sz[now] - sz[t]);
+	}
+	if (mx == fsz) ans[fid]++;
+	for (int i = first[now]; i; i = e[i].nxt) {
+		int t = e[i].to;
+		if (t == fou) continue;
+		if (mx == sz[t]) ans[e[i].id]++;
+	}
+}
+
+int main()
+{
+#ifdef WYZ
+	freopen("1.in", "r", stdin);
+	freopen("1.out", "w", stdout);
+#else
+	freopen("treeq.in", "r", stdin);
+	freopen("treeq.out", "w", stdout);
+#endif
+	ios::sync_with_stdio(0);
+	
+	n = read();
+	for (int i = 2; i <= n; i++) {
+		int u = read(), w = read();
+		addE(u, i, w, i - 1), addE(i, u, w, i - 1);
+		pw[i] = w;
+		if (w != 1) flag1 = 0;
+	}
+
+	if (flag1) {
+		dfs1(1, 0), dfs(1, 0, 0, 0);
+	} else {
+		for (int i = 1; i <= n; i++) {
+			mxv = 0;
+			dfs1(i, 0), dfs2(i, 0);
+		}
+	}
+
+	int sum = 0;
+	for (int i = 1; i < n; i++) sum ^= ans[i];
+	cout << sum << '\n';
+
+	return 0;
+}

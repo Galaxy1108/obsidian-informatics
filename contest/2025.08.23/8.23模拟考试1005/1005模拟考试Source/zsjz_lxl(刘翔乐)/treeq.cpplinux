@@ -1,0 +1,163 @@
+#if IN_LOCAL
+import local;
+#endif // IN_LOCAL
+#include<array>
+#include<iostream>
+using namespace std;
+#if !IN_LOCAL
+#include<fstream>
+ifstream fin("treeq.in");
+ofstream fout("treeq.out");
+#define cin fin
+#define cout fout
+#endif // !IN_LOCAL
+using ull = unsigned long long;
+inline constexpr void UpdateMax(unsigned& pos, const unsigned val)
+{
+	if (pos < val)
+	{
+		pos = val;
+	}
+	return;
+}
+char buffer[268435456];
+const char* p_buffer = buffer;
+inline unsigned ReadU()
+{
+	for (; *p_buffer < '0'; ++p_buffer);
+	unsigned ans = *p_buffer ^ '0';
+	for (; *(++p_buffer) >= '0'; ans = ans * 10 + *p_buffer - '0');
+	return ans;
+}
+unsigned n, edg[1000001], siz[1000001], father[1000001], father_w[1000001], que[1000001], f[1000001];
+ull out[1000001];
+array<ull, 3> maxi_a[1000001];
+struct Edge
+{
+	unsigned dest, next, w;
+}edg_info[2000002];
+constexpr unsigned& que_1 = que[1], & siz_1 = siz[1], & edg_1 = edg[1];
+inline void Link(const unsigned from, const unsigned to, const unsigned w)
+{
+	static unsigned edge_counter = 1;
+	edg_info[++edge_counter].next = edg[from];
+	edg_info[edg[from] = edge_counter].dest = to;
+	edg_info[edge_counter].w = w;
+	return;
+}
+inline void Update(array<ull, 3>& pos, const ull val)
+{
+	if (pos[0] < val)
+	{
+		pos[2] = pos[1];
+		pos[1] = pos[0];
+		pos[0] = val;
+	}
+	else if (pos[1] < val)
+	{
+		pos[2] = pos[1];
+		pos[1] = val;
+	}
+	else if (pos[2] < val)
+	{
+		pos[2] = val;
+	}
+	return;
+}
+inline void DFS(const unsigned pos, const unsigned father, const unsigned it, const ull w)
+{
+	f[it] += (maxi_a[pos][0] == w);
+	for (unsigned i = edg[pos]; i; i = edg_info[i].next)
+	{
+		if (father != edg_info[i].dest)
+		{
+			DFS(edg_info[i].dest, pos, it, w);
+		}
+	}
+	return;
+}
+int main()
+{
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	cin.read(buffer, 268435456);
+	n = ReadU();
+	bool w_is_one = 1, is_flower = 1;
+	for (unsigned i = 2; i <= n; ++i)
+	{
+		const unsigned f = ReadU(), w = ReadU();
+		Link(f, i, w);
+		Link(i, f, w);
+		w_is_one &= (w == 1);
+		is_flower &= (f == 1);
+	}
+	que_1 = 1;
+	for (unsigned head = 1, tail = 1; head <= tail;)
+	{
+		const unsigned pos = que[head++];
+		for (unsigned i = edg[pos]; i; i = edg_info[i].next)
+		{
+			if (edg_info[i].dest != father[pos])
+			{
+				father[que[++tail] = edg_info[i].dest] = pos;
+				father_w[edg_info[i].dest] = edg_info[i].w;
+			}
+		}
+	}
+	siz_1 = 1;
+	for (unsigned i = n; i > 1; --i)
+	{
+		const unsigned pos = que[i];
+		siz[father[pos]] += (++siz[pos]);
+		Update(maxi_a[father[pos]], maxi_a[pos][0]);
+		Update(maxi_a[father[pos]], static_cast<ull>(father_w[pos]) * siz[pos]);
+	}
+	for (unsigned i = 1; i <= n; ++i)
+	{
+		const unsigned pos = que[i];
+		const ull real_maxi = max(out[pos], maxi_a[pos][0]);
+		for (unsigned j = edg[pos]; j; j = edg_info[j].next)
+		{
+			const unsigned to = edg_info[j].dest;
+			if (to != father[pos])
+			{
+				const ull t = static_cast<ull>(father_w[to]) * siz[to];
+				out[to] = max(max(out[pos], static_cast<ull>(n - siz[to]) * edg_info[j].w),
+					maxi_a[pos][(maxi_a[pos][0] == maxi_a[to][0] || maxi_a[pos][0] == t) ? 1 + (maxi_a[pos][1] == maxi_a[to][0] || maxi_a[pos][0] == t) : 0]);
+			}
+		}
+		maxi_a[pos][0] = real_maxi;
+	}
+	if (w_is_one)
+	{
+		for (unsigned i = 1; i <= n; ++i)
+		{
+			for (unsigned j = edg[i]; j; f[j / 2] += (maxi_a[i][0] == static_cast<ull>(edg_info[j].dest == father[i] ? n - siz[i] : siz[j]) * edg_info[j].w), j = edg_info[j].next);
+		}
+	}
+	else if (is_flower)
+	{
+		unsigned maxi_w = 0;
+		for (unsigned i = edg_1; i; UpdateMax(maxi_w, edg_info[i].w), i = edg_info[i].next);
+		for (unsigned i = edg_1; i; f[i / 2] = (edg_info[i].w == maxi_w ? 2 + (maxi_w >= n) : (maxi_w <= n)), i = edg_info[i].next);
+	}
+	else
+	{
+		for (unsigned i = 2; i <= n; ++i)
+		{
+			for (unsigned j = edg[i]; j; j = edg_info[j].next)
+			{
+				if (father[i] == edg_info[j].dest)
+				{
+					DFS(edg_info[j].dest, i, j / 2, static_cast<ull>(siz[i]) * edg_info[j].w);
+					DFS(i, edg_info[j].dest, j / 2, static_cast<ull>(n - siz[i]) * edg_info[j].w);
+				}
+			}
+		}
+	}
+	unsigned ans = 0;
+	for (unsigned i = 1; i < n; ans ^= f[i++]);
+	cout << ans;
+	return 0;
+}

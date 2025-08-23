@@ -1,0 +1,47 @@
+#include <iostream>
+#include <cstdio>
+#define ll long long
+#define mod 998244353
+using namespace std;
+int read(){
+	int x=0;
+	char ch=getchar();
+	while(ch<'0'||ch>'9')ch=getchar();
+	while(ch>='0'&&ch<='9')x=x*10+ch-'0',ch=getchar();
+	return x;
+}
+void inc(int &x,int y){
+	x+=y;
+	if (x>=mod)x-=mod;
+	return;
+}
+int type,n,a[200005],q,x,y;
+ll sum[200005];
+int pow_2[200005];
+int ask(){
+	int ans=0;
+	ll val=1e18;
+	for (int i=n;i>=1;i--){
+		if (a[i]>val||a[i]>sum[i-1])inc(ans,pow_2[i]);
+		else val=min(sum[i-1],val)-a[i];
+	}
+	return ans;
+}
+int main(){
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	type=read();
+	n=read();
+	for (int i=1;i<=n;i++)a[i]=read(),sum[i]=sum[i-1]+a[i];
+	pow_2[0]=1;
+	for (int i=1;i<=n;i++)pow_2[i]=pow_2[i-1]*2%mod;
+	printf("%d\n",ask());
+	q=read();
+	while(q--){
+		x=read(),y=read();
+		a[x]=y;
+		for (int i=1;i<=n;i++)sum[i]=sum[i-1]+a[i];
+		printf("%d\n",ask());
+	}
+	return 0;
+}

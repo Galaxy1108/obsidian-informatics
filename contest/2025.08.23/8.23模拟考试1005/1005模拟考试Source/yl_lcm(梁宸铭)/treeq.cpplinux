@@ -1,0 +1,127 @@
+#include<bits/stdc++.h>
+#define ll long long    
+#define ull unsigned long long
+#define db double
+#define ldb long double
+#define pb push_back
+#define mp make_pair
+#define pii pair<int, int>
+#define FR first
+#define SE second
+using namespace std;
+inline int read() {
+    int x = 0; bool op = 0;
+    char c = getchar();
+    while(!isdigit(c))op |= (c == '-'), c = getchar();
+    while(isdigit(c))x = (x << 1) + (x << 3) + (c ^ 48), c = getchar();
+    return op ? -x : x;
+}
+const int N = 1e6 + 10;
+int n;
+struct Node {
+    int id, v, w;
+    Node() {}
+    Node(int id, int v, int w):id(id), v(v), w(w) {}
+};
+vector<Node> G[N];
+namespace S1 {
+    int sz[N];
+    ll f[N], g[N], h[N], p[N][2];
+    void dfs1(int u, int fa) {
+        sz[u] = 1;
+        for(auto e : G[u]) {
+            int v = e.v, w = e.w;
+            if(v == fa)continue;
+            dfs1(v, u);
+            p[v][0] = 1ll * w * sz[v]; p[v][1] = 1ll * w * (n - sz[v]);
+            f[u] = max(f[u], max(f[v], 1ll * w * sz[v]));
+            sz[u] += sz[v];
+        }
+        return ;
+    }
+    void dfs2(int u, int fa) {
+        // printf("%d\n", u);
+        int cnt = 0;
+        static ll pre[N], suf[N];
+        static int s[N], val[N];
+        for(auto e : G[u]) {
+            int v = e.v, w = e.w;
+            if(v == fa)continue;
+            s[++cnt] = v; val[cnt] = w;
+        }
+        pre[0] = suf[cnt + 1] = 0;
+        for(int i = 1; i <= cnt; i++) {
+            ll w = max(f[s[i]], 1ll * sz[s[i]] * val[i]);
+            pre[i] = max(pre[i - 1], w);
+        }
+        for(int i = cnt; i; i--) {
+            ll w = max(f[s[i]], 1ll * sz[s[i]] * val[i]);
+            suf[i] = max(suf[i + 1], w);
+        }
+        for(int i = 1; i <= cnt; i++) {
+            int v = s[i], w = val[i];
+            g[v] = max(g[u], max(pre[i - 1], suf[i + 1]));
+            g[v] = max(g[v], 1ll * w * (n - sz[v]));
+        }
+        for(auto e : G[u]) {
+            int v = e.v, w = e.w;
+            if(v == fa)continue;
+            dfs2(v, u);
+        }
+        return ;
+    }
+    int tot;
+    ll lsh[N * 3];
+    void disc() {
+        sort(lsh + 1, lsh + 1 + tot);
+        int siz = unique(lsh + 1, lsh + 1 + tot) - (lsh + 1);
+        for(int i = 1; i <= n; i++) {
+            h[i] = lower_bound(lsh + 1, lsh + 1 + siz, h[i]) - lsh;
+            p[i][0] = lower_bound(lsh + 1, lsh + 1 + siz, p[i][0]) - lsh;
+            p[i][1] = lower_bound(lsh + 1, lsh + 1 + siz, p[i][1]) - lsh;
+        }
+        return ;
+    }
+    int buc[N * 3], ans[N];
+    void dfs3(int u, int fa) {
+        buc[h[u]]++;
+        for(auto e : G[u]) {
+            int v = e.v, id = e.id;
+            if(v == fa)continue;
+            int t0 = buc[p[v][0]], t1 = buc[p[v][1]];
+            dfs3(v, u);
+            ans[id] += buc[p[v][1]] - t1; 
+            ans[id] -= buc[p[v][0]] - t0;
+        }
+        return ;
+    }
+    void MAIN() {
+        dfs1(1, 0); 
+        g[1] = 0; dfs2(1, 0);
+        for(int i = 1; i <= n; i++)h[i] = max(f[i], g[i]);
+        for(int i = 1; i <= n; i++)lsh[++tot] = h[i];
+        for(int i = 1; i <= n; i++) {
+            lsh[++tot] = p[i][0]; lsh[++tot] = p[i][1];
+        }
+        disc(); 
+        dfs3(1, 0);
+        for(int i = 2; i <= n; i++)ans[i - 1] += buc[p[i][0]];
+        int res = 0;
+        for(int i = 1; i < n; i++)res ^= ans[i];
+        printf("%d\n", res);
+        return ;
+    }
+};
+int main() { 
+    freopen("treeq.in", "r", stdin);
+    freopen("treeq.out", "w", stdout);
+    n = read();
+    for(int i = 2; i <= n; i++) {
+        int u = read(), w = read();
+        G[i].pb(Node(i - 1, u, w)); G[u].pb(Node(i - 1, i, w));
+        // printf("e:%d %d\n", u, i);
+    }
+    // bf::MAIN();
+    S1::MAIN();
+    return 0;
+}

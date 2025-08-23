@@ -1,0 +1,105 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define Fo(i,a,b) for(int i=a;i<=b;i++)
+#define Fd(i,a,b) for(int i=a;i>=b;i--)
+#define mo 998244353
+#define LL long long
+#define N 200010
+#define ls x<<1
+#define rs (x<<1)|1
+#define inf 2147483647
+
+namespace IO{
+	const int sz=1<<22;
+	char a[sz+5],b[sz+5],*p1=a,*p2=a,*t=b,p[105];
+	inline char gc(){
+		return p1==p2?(p2=(p1=a)+fread(a,1,sz,stdin),p1==p2?EOF:*p1++):*p1++;
+	}
+	template<class T>void read(T&x){
+		x=0;char c=gc();
+		for(;c<'0'||c>'9';c=gc());
+		for(;c>='0'&&c<='9';c=gc())x=x*10+(c-'0');
+	}
+	inline void flush(){fwrite(b,1,t-b,stdout),t=b;}
+	inline void pc(char x){*t++=x;if(t-b==sz)flush();}
+	template<class T>void write(T x,char c='\n'){
+		if(x==0)pc('0');int t=0;
+		for(;x;x/=10)p[++t]=x%10+'0';
+		for(;t;--t)pc(p[t]);pc(c);
+	}
+	struct F{~F(){flush();}}f;
+}
+using IO::read;
+using IO::write;
+
+int mod(int x){return x>=mo?x-mo:x;}
+
+int Num,n,q,a[N],mi[N];
+struct tree{
+	LL sum[N*4];
+	int Max[N*4],pos[N*4];
+	void change(int x,int l,int r,int p,int val){
+		if(l==r){sum[x]=Max[x]=val;return;}
+		int mid=l+r>>1;
+		p<=mid?change(ls,l,mid,p,val):change(rs,mid+1,r,p,val);
+		sum[x]=sum[ls]+sum[rs];
+		pos[x]=(Max[rs]>=Max[ls]?pos[rs]:pos[ls]);
+		Max[x]=max(Max[ls],Max[rs]);
+	}
+	void build(int x,int l,int r){
+		if(l==r){sum[x]=Max[x]=a[l];pos[x]=l;return;}
+		int mid=l+r>>1;
+		build(ls,l,mid);build(rs,mid+1,r);
+		sum[x]=sum[ls]+sum[rs];
+		pos[x]=(Max[rs]>=Max[ls]?pos[rs]:pos[ls]);
+		Max[x]=max(Max[ls],Max[rs]);
+	}
+	int query(int x,int l,int r,int ll,int rr){
+		if(r<ll||l>rr)return 0;
+		if(l>=ll&&r<=rr)return sum[x];
+		int mid=l+r>>1;
+		return query(ls,l,mid,ll,rr)+query(rs,mid+1,r,ll,rr);
+	}
+	int find(int x,int l,int r,int p,int k){
+		if(l==r)return (a[l]>=k?l:inf);
+		int mid=l+r>>1;
+		if(r<=p){
+			if(sum[ls]>=k)return find(ls,l,mid,p,k);
+			return find(rs,mid+1,r,p,k-sum[ls]);
+		}
+		if(p<=mid)return find(ls,l,mid,p,k);
+		if(sum[ls]>=k)return find(ls,l,mid,p,k);
+		return find(rs,mid+1,r,p,k-sum[ls]);
+	}
+}t;
+
+void solve(){
+	int wh=t.pos[1];
+	int w=t.find(1,1,n,wh-1,a[wh]);
+	if(w==inf){write(mi[wh]);return;}
+	int st=t.query(1,1,n,1,w);
+	int res=mod(mi[w+1]-2+mo);
+	Fd(i,w-1,1)if(st-a[i]>=a[wh])st-=a[i],res=mod(res-mi[i]+mo);
+	write(res);
+}
+
+int main(){
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	mi[0]=1;
+	Fo(i,1,N-10)mi[i]=mod(mi[i-1]+mi[i-1]);
+	read(Num);
+	read(n);
+	Fo(i,1,n)read(a[i]);
+	t.build(1,1,n);
+	read(q);
+	solve();
+	while(q--){
+		int x,y;
+		read(x);read(y);
+		t.change(1,1,n,x,y);
+		a[x]=y;
+		solve();
+	}
+	return 0;
+}

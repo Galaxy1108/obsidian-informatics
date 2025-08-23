@@ -1,0 +1,70 @@
+#include<bits/stdc++.h>
+using namespace std;
+long long n,m,p,ans,cnt,dp[3006][3006][2];
+long long ksm(long long x,long long y){
+	long long z=1;
+	while(y){
+		if(y%2){
+			z=z*x%p;
+		}
+		x=x*x%p;
+		y/=2;
+	}
+	return z;
+}
+int main(){
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	scanf("%lld%lld%lld",&n,&m,&p);
+//	p=1e9+7;
+	if(n>=m){
+		printf("%lld",ksm(2,2*m));
+		return 0;
+	}
+	for(int i=1;i<=n;i++){
+		dp[0][i][0]=1;
+	}
+	dp[0][0][1]=1;
+	for(int i=1;i<=m;i++){
+		for(int j=0;j<=n;j++){
+			if(j){
+				if(j==1){
+					dp[i][j-1][1]+=dp[i-1][j][0];
+					dp[i][j-1][1]%=p;
+				}
+				else{
+					dp[i][j-1][0]+=dp[i-1][j][0];
+					dp[i][j-1][0]%=p;
+				}
+				dp[i][j-1][1]+=dp[i-1][j][1];
+				dp[i][j-1][1]%=p;
+				if(j==1){
+					dp[i][j][1]+=dp[i-1][j][0];
+					dp[i][j][1]%=p;
+				}
+				else{
+					dp[i][j][0]+=dp[i-1][j][0];
+					dp[i][j][0]%=p;
+				}
+				dp[i][j][1]+=dp[i-1][j][1];
+				dp[i][j][1]%=p;
+			}
+			if(j+1<=n){
+				dp[i][j+1][0]+=dp[i-1][j][0];
+				dp[i][j+1][0]%=p;
+				dp[i][j+1][1]+=dp[i-1][j][1];
+				dp[i][j+1][1]%=p;
+				dp[i][j][0]+=dp[i-1][j][0];
+				dp[i][j][0]%=p;
+				dp[i][j][1]+=dp[i-1][j][1];
+				dp[i][j][1]%=p;
+			}
+		}
+	}
+	for(int i=0;i<=n;i++){
+		ans+=dp[m][i][1];
+		ans%=p;
+	}
+	printf("%lld",ans);
+	return 0;
+}

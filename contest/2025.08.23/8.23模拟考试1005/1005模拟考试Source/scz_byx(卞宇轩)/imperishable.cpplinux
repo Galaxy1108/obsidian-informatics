@@ -1,0 +1,41 @@
+#include<bits/stdc++.h>
+#define F(i,x,y) for(int i=(x);i<=(y);i++)
+using namespace std;
+int n,a[100];
+bool check(int x)
+{
+	int s=0;
+	F(i,1,n)
+	{
+		if((1<<(i-1))&x)s+=a[i];
+		else if(s<a[i])return 0;
+	}
+	return 1;
+}
+void work()
+{
+	F(i,1,(1<<n)-1)
+		if(check(i))
+		{
+			cout<<i*2<<endl;
+			return;
+		}
+}
+int main()
+{
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	cin>>n>>n;
+	F(i,1,n)cin>>a[i]; 
+	work();
+	int q;
+	cin>>q;
+	while(q--)
+	{
+		int x,y;
+		cin>>x>>y; 
+		a[x]=y;
+		work();
+	}
+	return 0;
+}

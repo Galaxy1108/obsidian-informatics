@@ -1,0 +1,92 @@
+#include <cstdio>
+#include <algorithm>
+using namespace std;
+int n,m;
+long long p,dp[7][6005],ans = 0;
+inline int read()
+{
+	int x = 0;
+	char ch = getchar();
+	while (ch < '0' || ch > '9')
+		ch = getchar();
+	while (ch >= '0' && ch <= '9')
+	{
+		x = (x << 3) + (x << 1) + (ch ^ 48);
+		ch = getchar();
+	}
+	return x;
+}
+inline long long readll()
+{
+	long long x = 0;
+	char ch = getchar();
+	while (ch < '0' || ch > '9')
+		ch = getchar();
+	while (ch >= '0' && ch <= '9')
+	{
+		x = (x << 3) + (x << 1) + (ch ^ 48);
+		ch = getchar();
+	}
+	return x;
+}
+inline void write(long long x)
+{
+	if (x > 9)
+		write(x / 10);
+	putchar(x % 10 + '0');
+	return;
+}
+inline long long ksm(int x)
+{
+	if (x == 0)
+		return 1;
+	else
+	{
+		long long res = ksm(x >> 1);
+		res = res * res % p;
+		if (x & 1)
+			res = res * 2 % p;
+		return res;
+	}
+}
+int main()
+{
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	n = read();
+	m = read();
+	p = readll();
+	if (p == 1)
+		write(0);
+	else
+	{
+		dp[1][0] = 1;
+		for (int i = 1;i <= m * 2;i++)
+		{
+			int tmp = min(i,n + 1);
+			if (i & 1)
+			{
+				for (int j = 0;j <= tmp;j++)
+				{
+					dp[0][j] = 0;
+					if (j >= 1)
+						dp[0][j] = (dp[0][j] + dp[1][j - 1]) % p;
+					dp[0][j] = (dp[0][j] + dp[1][j]) % p;
+				}
+				ans = (ans + dp[0][n + 1] * ksm(m * 2 - i + 1) % p) % p;
+			}
+			else
+			{
+				for (int j = 0;j <= tmp;j++)
+				{
+					dp[1][j] = 0;
+					dp[1][j] = (dp[1][j] + dp[0][j]) % p;
+					dp[1][j] = (dp[1][j] + dp[0][j + 1]) % p;
+				}
+			}
+		}
+		ans = ans * 2 % p;
+		write((ksm(m * 2) - ans + p) % p);
+	}
+	return 0;
+}

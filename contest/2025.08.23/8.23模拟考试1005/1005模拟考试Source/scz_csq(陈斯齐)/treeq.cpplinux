@@ -1,0 +1,12 @@
+#include<bits/stdc++.h>
+using namespace std;
+int main()
+{
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	int n; cin>>n;
+	int ans=0;
+	for(int i=1;i<n;i++) ans=ans^1;
+	cout<<ans<<endl;
+	return 0;
+ }

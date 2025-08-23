@@ -1,0 +1,85 @@
+#include <bits/stdc++.h>
+
+inline void file () {
+	freopen("imperishable.in", "r", stdin);
+	freopen("imperishable.out", "w", stdout);
+}
+
+template <class T> inline T min (T x, T y) { return x < y ? x : y; }
+template <class T> inline T max (T x, T y) { return x > y ? x : y; }
+template <class T> inline void updMin (T &x, T y) { x = min(x, y); }
+template <class T> inline void updMax (T &x, T y) { x = max(x, y); }
+
+const int N = 3005;
+int Num, n, q;
+int a[N];
+
+int main () {
+	
+	file();
+	std::ios::sync_with_stdio(0);
+	std::cin.tie(nullptr);
+	std::cout.tie(nullptr);
+	
+	std::cin >> Num;
+	std::cin >> n;
+	for(int i = 1; i <= n; ++ i) {
+		std::cin >> a[i];
+	}
+	
+	int mx = 0;
+	for(int i = 1; i <= n; ++ i) {
+		updMax(mx, a[i]);
+	}
+	
+//	std::cerr << "mx = " << mx << '\n';
+	
+	std::function <int()> calc = [&]() -> int {
+		int len = std::min(n, mx);
+		int all = (1 << len) - 1;
+//		std::cerr << "len = " << len << '\n';
+		
+		for(int s = 1; s <= all; ++ s) {
+//			std::cerr << "s = " << s << '\n';
+			bool ok = 1;
+			int sum = 0;
+			
+			for(int i = 1; i <= len; ++ i) {
+				if((s >> i - 1) & 1) {
+					sum += a[i] - 1;
+				}
+			}
+			
+			for(int i = 1; i <= n; ++ i) {
+				if(i <= len && ((s >> i - 1) & 1)) {
+					sum ++ ;
+				} else if(a[i] > sum) {
+					ok = 0;
+					break;
+				}
+			}
+			
+			if(ok) {
+				return s << 1;
+			}
+		}
+		
+		assert(false);
+		return -1;
+	};
+	
+	std::cout << calc() << '\n';
+	
+	std::cin >> q;
+	while(q -- ) {
+		int p, v;
+		std::cin >> p >> v;
+		
+		a[p] = v;
+		updMax(mx, v);
+		
+		std::cout << calc() << '\n';
+	}
+	
+	return 0;
+}

@@ -1,0 +1,31 @@
+#include <bits/stdc++.h>
+using namespace std;
+int n,m,p;
+int dp[505][505][505];
+//记忆化搜索  60pts 
+long long dfs(int pos,int w,int left){
+	if(dp[pos][w][left]!=0)return dp[pos][w][left];
+	if(pos>=m){
+		return dp[pos][w][left]=1;
+	}
+	int b=n-left-w;
+	long long ans=0;
+	if(w>=1)ans+=dfs(pos+1,w-1,left);//11
+	else if(left>=1)ans+=dfs(pos+1,w,left-1);
+	ans%=p;
+	if(b>=1)ans+=dfs(pos+1,w+1,left);//00
+	else if(left>=1)ans+=dfs(pos+1,w+1,left-1);
+	ans%=p;
+	if(w>=1)ans+=dfs(pos+1,w,left);//10
+	else if(left>=1)ans+=dfs(pos+1,w+1,left-1);
+	ans%=p;
+	if(b>=1)ans+=dfs(pos+1,w,left);//01
+	else if(left>=1)ans+=dfs(pos+1,w,left-1);
+	return dp[pos][w][left]=ans%p;
+}
+int main(){
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	cin>>n>>m>>p;
+	cout<<dfs(0,0,n)<<" ";
+} 

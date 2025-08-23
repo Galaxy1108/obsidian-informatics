@@ -1,0 +1,141 @@
+#include<map>
+#include<ctime>
+#include<cstdio>
+#include<random>
+#include<cstring>
+#include<algorithm>
+using namespace std;
+using uni=unsigned;
+using ll=long long;
+using db=double;
+const int N=150010,FSIZE=1<<26;
+int n,m,k,q,sze,num,is[N+N];
+struct node{
+    int data,x,y,fa,l,r,sz;
+    uni key;
+}a[N+N];
+map<int,int> r[N],c[N];
+mt19937 rnd(time(0));
+char BuF[FSIZE],*InF=BuF;
+template<typename T>void read(T &x){
+    for(;48>*InF||*InF>57;++InF);
+    for(x=0;47<*InF&&*InF<58;x=x*10+(*InF++^48));
+}
+int newp(int k,int x,int y){
+    a[++sze]={k,x,y,0,0,0,1,rnd()};
+    return(sze);
+}
+void update(int x){
+    a[x].fa=0;
+    a[x].sz=a[a[x].l].sz+a[a[x].r].sz+1;
+    if(a[x].l) a[a[x].l].fa=x;
+    if(a[x].r) a[a[x].r].fa=x;
+}
+int merge(int x,int y){
+    if(!x||!y) return(x|y);
+    if(a[x].key<a[y].key){
+        a[x].r=merge(a[x].r,y);
+        update(x);
+        return(x);
+    }else{
+        a[y].l=merge(x,a[y].l);
+        update(y);
+        return(y);
+    }
+}
+void split(int rt,int k,int &rx,int &ry){
+    if(!rt){
+        rx=ry=0;
+        return;
+    }
+    if(a[a[rt].l].sz+1<=k)
+        split(a[rx=rt].r,k-a[a[rt].l].sz-1,a[rt].r,ry);
+    else
+        split(a[ry=rt].l,k,rx,a[rt].l);
+    update(rt);
+}
+pair<int,int> find(int x){
+    x=is[x];
+    int re=0;
+    for(re+=a[a[x].l].sz+1;a[x].fa;x=a[x].fa)
+        if(a[a[x].fa].r==x) re+=a[a[a[x].fa].l].sz+1;
+    return(make_pair(x,re));
+}
+int get(int r,int k){
+    for(;1;){
+        if(a[a[r].l].sz+1==k) return(r);
+        if(a[a[r].l].sz>=k) r=a[r].l;
+        else{
+            k-=a[a[r].l].sz+1;
+            r=a[r].r;
+        }
+    }
+}
+void add(int num,int x,int y){
+    auto ta=c[y].lower_bound(x),tb=c[y].upper_bound(x),
+        tc=r[x].lower_bound(y),td=r[x].upper_bound(y);
+    int up=ta!=c[y].begin()&&c[y].size()?(--ta)->second:0,
+        dp=tb!=c[y].end()?tb->second:0,
+        lp=tc!=r[x].begin()&&r[x].size()?(--tc)->second:0,
+        rp=td!=r[x].end()?td->second:0,
+        pa=is[num]=newp(num,x,y),pb=is[num+N]=newp(num+N,x,y),
+        ur=0,dr=0,lr=0,rr=0;
+    if(up&&dp){
+        auto t=find(up+N);
+        split(t.first,t.second,ur,dr);
+    }else{
+        ur=find(up+N).first;
+        dr=find(dp).first;
+    }
+    if(lp&&rp){
+        auto t=find(lp);
+        split(t.first,t.second,lr,rr);
+    }else{
+        lr=find(lp).first;
+        rr=find(rp+N).first;
+    }
+    if(ur&&rr) merge(merge(ur,pa),rr);
+    else if(ur) merge(ur,pa);
+    else if(rr) merge(pa,rr);
+    if(lr&&dr) merge(merge(lr,pb),dr);
+    else if(lr) merge(lr,pb);
+    else if(dr) merge(pb,dr);
+    r[x][y]=num;
+    c[y][x]=num;
+}
+int main(){
+    freopen("corridor.in","r",stdin);
+    freopen("corridor.out","w",stdout);
+    fread(BuF,1,FSIZE,stdin);
+    read(n);read(n);read(m);read(k);
+    for(int i=1,x,y;i<=k;++i){
+        read(x);read(y);
+        add(++num,x,y);
+    }
+    read(q);
+    for(int i=1,w,x,y,d;i<=q;++i){
+        read(w);read(x);read(y);
+        if(w==1) add(++num,x,y);
+        else{
+            read(d);
+            int rt=x?r[x].size()?find(r[x].begin()->second+N).first:0:
+                    c[y].size()?find(c[y].begin()->second).first:0;
+            if(!rt){
+                if(x) printf("%d %d\n",x,m+1);
+                else printf("%d %d\n",n+1,y);
+                continue;
+            }
+            if(d>a[rt].sz){
+                int p=get(rt,a[rt].sz);
+                if(a[p].data<N) printf("%d %d\n",a[p].x,m+1);
+                else printf("%d %d\n",n+1,a[p].y);
+            }else{
+                int p=get(rt,d);
+                printf("%d %d\n",a[p].x,a[p].y);
+            }
+        }
+    }
+    fclose(stdin);
+    fclose(stdout);
+    return(0);
+}

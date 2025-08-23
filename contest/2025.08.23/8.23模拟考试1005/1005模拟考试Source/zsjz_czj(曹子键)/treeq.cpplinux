@@ -1,0 +1,81 @@
+#include<iostream>
+#include<cstdio>
+#include<cmath>
+#include<algorithm>
+#include<map>
+#define R register
+using namespace std;
+const int N=5e6+5;
+int cnt,n,u[N],size[N],map2[N],rdfn[N],last[N],l[N],mapbj[N],f[N];
+long long w[N],mapw[N],a[N],intr[N],outr[N],outr2[N];
+int sum;
+map<long long,int>jl;
+void ad(int u,int v){map2[++sum]=v;last[sum]=l[u];l[u]=sum;}
+void dg(int x,int fa)
+{
+//	dfn[x]=++cnt;
+	rdfn[++cnt]=x;size[x]=1;
+	for (int i=l[x];i;i=last[i])
+		if (fa!=map2[i]) dg(map2[i],x),size[x]+=size[map2[i]];
+}
+void dg2(int x,long long s)
+{
+	a[x]=s;long long max1=0,max2=0;
+	for (int i=l[x];i;i=last[i])
+		if (outr2[map2[i]]>max1) max2=max1,max1=outr2[map2[i]];
+		else if (outr2[map2[i]]>max2) max2=outr2[map2[i]];
+	a[x]=max(a[x],max1);
+	for (int i=l[x];i;i=last[i])
+		if (outr2[map2[i]]==max1) dg2(map2[i],max(s,max(max2,intr[map2[i]])));
+		else dg2(map2[i],max(s,max(max1,intr[map2[i]])));
+	l[x]=0;
+}
+void dg3(int x,int fa)
+{
+	outr2[x]=outr[x];
+	for (int i=l[x];i;i=last[i])
+		if (map2[i]!=fa)
+		{
+			dg3(map2[i],x);outr2[x]=max(outr2[map2[i]],outr2[x]);
+		}
+}
+void ad2(int v,int u,long long w,int bj)
+{
+	map2[++sum]=v;last[sum]=l[u];l[u]=sum;mapw[sum]=w;mapbj[sum]=bj;
+}
+long long read()
+{
+	long long res=0;char ch=getchar();
+	while (ch<'0'||ch>'9') ch=getchar();
+	while (ch>='0'&&ch<='9') res=(res<<3)+(res<<1)+ch-'0',ch=getchar();
+	return res;
+}
+int main()
+{
+	freopen("treeq.in","r",stdin);freopen("treeq.out","w",stdout);
+	scanf("%d",&n);
+	for (int i=2;i<=n;++i) u[i]=read(),w[i]=read(),ad(u[i],i);
+	dg(1,1);
+	for (int i=2;i<=n;++i)
+	{
+		intr[i]=(long long)(n-size[i])*w[i];
+		outr[i]=(long long)size[i]*w[i];
+	}
+	dg3(1,1);
+	dg2(1,0);
+	sum=0;
+	for (int i=2;i<=n;++i)
+	{
+		ad2(i,i-1,outr[rdfn[i]],1);ad2(i,i-1,intr[rdfn[i]],-1);ad2(i,i+size[rdfn[i]]-1,intr[rdfn[i]],1);ad2(i,i+size[rdfn[i]]-1,outr[rdfn[i]],-1);ad2(i,n,outr[rdfn[i]],1);
+	}
+	for (int i=1;i<=n;++i)
+	{
+		jl[a[i]]++;
+		for (int j=l[i];j;j=last[j])
+			f[map2[j]]+=jl[mapw[j]]*mapbj[j];
+	}
+	int ans=0;
+	for (int i=1;i<=n;++i) ans^=f[i];
+	printf("%d",ans);
+	return 0;
+}

@@ -1,0 +1,39 @@
+#include<bits/stdc++.h>
+using namespace std;
+const int mod=998244353;
+inline int qread()
+{
+	int a=0;char ch=getchar();
+	while(ch>'9'||ch<'0'){ch=getchar();}
+	while(ch>='0'&&ch<='9'){(a*=10)+=(ch^48);ch=getchar();}
+	return a;
+}
+int NUM,n,a[200010],q,x,y;
+long long qp[200010]; 
+inline void Q()
+{
+	
+	return ;
+}
+int main()
+{
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	NUM=qread();
+	n=qread();
+	for(int i=1;i<=n;++i)
+	{
+		a[i]=qread();
+		qp[i]=(qp[i-1]<<1)%mod;
+	} 
+	Q();
+	q=qread();
+	while(q--)
+	{
+		x=qread();
+		y=qread();
+		a[x]=y;
+		Q(); 
+	}
+	return 0;
+}

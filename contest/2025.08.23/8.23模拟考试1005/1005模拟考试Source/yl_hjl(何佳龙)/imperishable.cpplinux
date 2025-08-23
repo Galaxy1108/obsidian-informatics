@@ -1,0 +1,78 @@
+#include<bits/stdc++.h>
+#define db double
+#define int ll 
+#define ll long long
+#define ull unsigned long long
+#define pb push_back
+#define mp make_pair
+#define pii pair<int, int>
+#define fi first
+#define se second
+#define ls k*2
+#define rs k*2+1 
+using namespace std;
+inline int read(){
+	register int x=0,f=1;
+	register char ch=getchar();
+	while(ch<'0'||ch>'9'){if(ch=='-')f=-1;ch=getchar();}
+	while(ch>='0'&&ch<='9'){x=x*10+ch-'0';ch=getchar();}
+	return x*f;
+}
+inline void write(register int x){
+	if(x<0){putchar('-');x=-x;}
+	if(x>9)write(x/10);
+	putchar(x%10+'0');
+}
+const int N=2e5+5,mod=998244353;
+int n,m,pw[N],a[N],f[5005][5005],sum[5005];
+namespace Brute{
+    int solve(){
+        int ans=0,sum=0,h=0;
+        for(int i=1;i<=n;i++)sum+=a[i];
+        for(int i=n;i>=1;i--){
+            if(sum-a[i]>=max(h,a[i])){
+                sum-=a[i];h=max(h,a[i]);
+                (ans+=pw[i])%=mod;
+            }
+        }
+        return ((pw[n+1]-2-ans)%mod+mod)%mod;
+    }
+    void main(){
+        write(solve());puts("");
+        m=read();
+        for(int i=1;i<=m;i++){
+            int x=read(),y=read();a[x]=y;
+            write(solve());puts("");
+        }
+    }
+}
+int solve(){
+    memset(f,0x7f,sizeof f);f[0][0]=0;
+    for(int i=1;i<=n;i++){
+        sum[i]=sum[i-1]+a[i];
+        for(int j=0;j<=sum[i];j++){
+            if(j>=a[i])f[i][j]=min(f[i][j],f[i-1][j]);
+            if(j+a[i]<=sum[i])f[i][j+a[i]]=min(f[i][j+a[i]],f[i-1][j]+pw[i]);
+        }
+    }
+    int ans=0x7f7f7f7f;
+    for(int i=0;i<=sum[n];i++)ans=min(ans,f[n][i]);
+    return ans;
+}
+signed main(){   
+ 	freopen("imperishable.in","r",stdin);
+ 	freopen("imperishable.out","w",stdout);
+    int Num=read();
+    n=read();
+    pw[0]=1;for(int i=1;i<=50000;i++)(pw[i]=pw[i-1]<<1)%mod;
+    for(int i=1;i<=n;i++)a[i]=read();
+    //if(n<=10000){Brute::main();return 0;}
+    write(solve());puts("");
+    m=read();
+    for(int i=1;i<=m;i++){
+        int x=read(),y=read();a[x]=y;
+        write(solve());puts("");
+    }
+//  printf("\nTIME:%lf\n",(double)clock()/CLOCKS_PER_SEC);
+	return 0;
+}

@@ -1,0 +1,136 @@
+/*
+O(nq)跑路
+1~16
+64pts?
+*/
+//#pragma GCC optimize(2)
+//#pragma GCC optimize("Ofast","inline","-ffast-math")
+//#pragma GCC target("avx")
+#include <bits/stdc++.h>
+using namespace std;
+#define gtc getchar()
+#define ptc(x) putchar(x)
+#define il inline
+#define re register
+#define ll long long
+#define rd read()
+#define rdl readl()
+il int read(){re int x=0;re bool f=0;re char c=gtc;while(c<'0'||c>'9'){if(c=='-')f=1;c=gtc;}while(c>='0'&&c<='9')x=(x<<1)+(x<<3)+(c^48),c=gtc;return f?-x:x;}
+il ll readl(){re ll x=0;re bool f=0;re char c=gtc;while(c<'0'||c>'9'){if(c=='-')f=1;c=gtc;}while(c>='0'&&c<='9')x=(x<<1)+(x<<3)+(c^48),c=gtc;return f?-x:x;}
+il void wt(re ll x){if(x>9)wt(x/10);ptc(x%10+48);}
+il void wrt(re ll x){if(x<0)ptc('-'),x=-x;wt(x);}
+
+const int N=50010;
+const int M=998244353;
+int a[N];
+int b[200010];
+int s[200010];
+//bool f[N];
+
+il int max(re int x,re int y){
+	if(x>y)return x;
+	return y;
+}
+
+il int mod(re ll x){
+	if(x<0) x+=M;
+	if(x>=M)x-=M;
+	return x;
+}
+
+il void init(){
+	re const int n=200005;
+	b[0]=1;
+	re int i=1;
+	for(re int kn=n-8;i<=kn;i+=8){
+		b[i]=((1ll*b[i-1])<<1)%M;
+		b[i+1]=((1ll*b[i])<<1)%M;
+		b[i+2]=((1ll*b[i])<<2)%M;
+		b[i+3]=((1ll*b[i])<<3)%M;
+		b[i+4]=((1ll*b[i])<<4)%M;
+		b[i+5]=((1ll*b[i])<<5)%M;
+		b[i+6]=((1ll*b[i])<<6)%M;
+		b[i+7]=((1ll*b[i])<<7)%M;
+	}
+	for(;i<=n;i++){
+		b[i]=((1ll*b[i-1])<<1)%M;
+	}
+}
+
+il int chose(re int n,re int mx){
+	re int ans=0;
+	re int res=0;
+	re int i;
+	for(i=1;i<=n;i++){
+		if(res>=mx) break;
+		res+=a[i];//f[i]=1;
+		ans=mod(1ll*ans+b[i]);
+	}
+//	for(re int j=i;j<=n;j++) f[j]=0;
+//	i--;
+	for(re int j=i-1;j>=1;j--){
+		if(res==mx)break;
+		if(res-mx>=a[j]){
+			res-=a[j];//f[j]=0;
+			ans=mod(1ll*ans-b[j]);
+		}
+	}
+	return ans;
+}
+
+//il void check(re int n){
+//	ptc('*');
+//	for(re int i=1;i<=n;i++){
+//		if(f[i])wrt(i),ptc(' ');
+//	}puts("");
+//}
+
+signed main(){
+	
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	
+	re int subtask=rd;
+	re int n=rd;
+	re int mx=0;
+	for(re int i=1;i<=n;i++) a[i]=rd,mx=max(mx,a[i]),s[a[i]]++;
+	
+	init();
+	
+//	re int kkksc03=0;
+	re int k=chose(n,mx);
+	wrt(k),ptc('\n');
+//	check(n);
+	
+	re int q=rd;
+	while(q--){
+		re int x=rd,y=rd;
+//		if(abs(kkksc03-621)<4){
+//			wrt(x),ptc(','),wrt(y),ptc('\n');
+//			ptc(':'),wrt(mx),ptc(';'),cout<<f[x],ptc('\n');
+//		}
+		s[a[x]]--;
+		a[x]=y;
+		s[y]++;
+//		re bool _=0;
+		if(y>mx) mx=y;//,_=1;
+		else if(s[mx]==0){
+			for(re int i=mx-1;i>=1;i--)
+				if(s[i]>0){mx=i;break;}
+//			_=1;
+		}
+//		if(abs(kkksc03-621)<4){
+//			ptc(':'),wrt(mx),ptc(';'),cout<<f[x],ptc('\n');
+//			k=chose(n,mx);
+//			ptc(':'),wrt(mx),ptc(';'),cout<<f[x],ptc('\n');
+//		}
+	/*	if(f[x]||_) 本来觉得可以剪枝但挂了*/
+		k=chose(n,mx);
+//		kkksc03++;
+//		printf("%5d ",kkksc03);
+		wrt(k),ptc('\n');
+//		check(n);
+	}
+	
+	return 0;
+}

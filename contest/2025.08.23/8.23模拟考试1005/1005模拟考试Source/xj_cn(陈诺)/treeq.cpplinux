@@ -1,0 +1,75 @@
+//回家？我没有家可以回，我没有退路。
+#include<bits/stdc++.h>
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
+#pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,tune=native")
+using namespace std;
+#define ll long long
+char buf[1<<21],*p1=buf,*p2=buf;
+#define getchar() (p1==p2&&(p2=(p1=buf)+fread(buf,1,1<<21,stdin),p1==p2)?EOF:*p1++)
+inline int read()
+{
+	int s=0;
+	char ch=getchar();
+	while(ch<'0'||ch>'9') ch=getchar();
+	while(ch>='0'&&ch<='9') s*=10,s+=ch^48,ch=getchar();
+	return s;
+}
+const int N=1e7+3;
+int fa[N],val[N],sz[N];
+int nxt[N],head[N];
+int n,rt,cnt,in[N],out[N];
+struct node{ll ans;int c;}f[N],pre[N],suf[N];
+inline node merge(const node&x,const node&y)
+{return x.ans<y.ans?x:(node){y.ans,y.c+(x.ans==y.ans?x.c:0)};}
+inline void dfs(int x,int lst,ll V)
+{
+	sz[x]=n-sz[x],V=max(V,1ll*sz[x]*val[x]),
+	in[x]=++cnt,pre[cnt]=suf[cnt]=f[x]=(node){V,1};
+	for(int y=head[x]; y; y=nxt[y])
+		if(y!=lst) dfs(y,x,V),f[x]=merge(f[x],f[y]);
+	if(fa[x]&&fa[x]!=lst)
+		dfs(fa[x],x,V),f[x]=merge(f[x],f[fa[x]]);
+	sz[x]=n-sz[x],out[x]=cnt;
+	return ;
+}
+signed main()
+{
+#ifndef local
+	freopen("treeq.in","r",stdin),
+	freopen("treeq.out","w",stdout);
+#endif
+	n=read();
+	for(int i=2; i<=n; ++i)
+		fa[i]=read(),val[i]=read(),
+		nxt[i]=head[fa[i]],head[fa[i]]=i;
+	for(int i=n; i>1; --i)
+		sz[fa[i]]+=(++sz[i]);
+	sz[0]=N;
+	for(int i=1; i<=n; ++i) 
+		if(sz[i]>=((n+1)>>1)&&sz[i]<sz[rt]) rt=i;
+	vector<int> A;
+	for(int i=rt; i; i=fa[i]) A.push_back(i);
+	int As=A.size();
+	for(int i=As-2; i>=0; --i)
+		sz[A[i+1]]=n-sz[A[i]],val[A[i+1]]=val[A[i]];
+	sz[rt]=n,val[rt]=0;
+	ll MX=0;
+	for(int i=1; i<=n; ++i) MX=max(MX,1ll*sz[i]*val[i]);
+	dfs(rt,0,MX);
+	int sum=0;
+	for(int i=2; i<=n; ++i) pre[i]=merge(pre[i],pre[i-1]);
+	for(int i=n-1; i>=1; --i) suf[i]=merge(suf[i],suf[i+1]);
+	for(int i=1; i<=n; ++i)
+	{
+		int cur=0;
+		if(pre[in[i]-1].ans==1ll*sz[i]*val[i])
+			cur+=pre[in[i]-1].c;
+		if(f[i].ans==1ll*(n-sz[i])*val[i]) cur+=f[i].c;
+		if(suf[out[i]+1].ans==1ll*sz[i]*val[i])
+			cur+=suf[out[i]+1].c;
+		sum^=cur;
+	}
+	printf("%d\n",sum);
+	return 0;
+}

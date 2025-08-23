@@ -1,0 +1,69 @@
+#include <bits/stdc++.h>
+#define int long long
+using namespace std;
+const int N(200100),P(998244353);
+int Type,n,q,maxi,a[N],bs[N];
+inline int read(){
+	int FF=0,RR=1;
+	char ch=getchar();
+	for(;!isdigit(ch);ch=getchar())
+		if(ch=='-')
+			RR=-1;
+	for(;isdigit(ch);ch=getchar())
+		FF=(FF<<1)+(FF<<3)+ch-48;
+	return FF*RR;
+}
+int calc(){
+	int s=0,i=1,ans=1;
+	for(;i<maxi&&s<a[maxi];i++)
+		s+=a[i],ans=(ans+bs[i])%P;
+	if(s<a[maxi])
+		return bs[maxi];
+	else{
+		while(i--)
+			if(s-a[i]>=a[maxi]){
+				ans=((ans-bs[i])%P+P)%P;
+				s-=a[i];
+			}
+		return ans;
+	}
+}
+void maxi_calc(){
+	maxi=0;
+	for(int i=1;i<=n;i++)
+		if(a[i]>a[maxi])
+			maxi=i;
+}
+signed main(){
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	Type=read(),n=read();
+	bs[0]=1;
+	for(int i=1;i<=n;i++)
+		bs[i]=bs[i-1]*2%P;
+	for(int i=1;i<=n;i++)
+		a[i]=read();
+	int lastans;
+	maxi_calc();
+	printf("%lld\n",lastans=calc());
+	q=read();
+	for(int i=1,x,y;i<=q;i++){
+		x=read(),y=read();
+		if(y>a[maxi]||(y==a[maxi]&&x<maxi)){
+			a[x]=y,maxi=x;
+			printf("%lld\n",lastans=calc());
+		}
+		else if(x==maxi&&y<a[x]){
+			a[x]=y,maxi_calc();
+			printf("%lld\n",lastans=calc());
+		}
+		else{
+			a[x]=y;
+			if(x>maxi)
+				printf("%lld\n",lastans);
+			else
+				printf("%lld\n",lastans=calc());
+		} 
+	}
+	return 0;
+}

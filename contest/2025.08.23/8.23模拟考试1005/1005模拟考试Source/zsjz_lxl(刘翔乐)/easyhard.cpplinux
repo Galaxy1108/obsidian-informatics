@@ -1,0 +1,56 @@
+#if IN_LOCAL
+import local;
+#endif // IN_LOCAL
+#include<cstring>
+#include<iostream>
+using namespace std;
+#if !IN_LOCAL
+#include<fstream>
+ifstream fin("easyhard.in");
+ofstream fout("easyhard.out");
+#define cin fin
+#define cout fout
+#endif // !IN_LOCAL
+#define SC(a, b) static_cast<a>(b)
+constexpr const size_t sizeof_unsigned = sizeof(unsigned);
+unsigned mod;
+inline void UpdateInc(unsigned& pos, const unsigned val)
+{
+	if ((pos += val) >= mod)
+	{
+		pos -= mod;
+	}
+	return;
+}
+unsigned n, m, f[6006], g[6006];
+constexpr unsigned* const gP1 = g + 1;
+inline unsigned F(const unsigned lower, const unsigned upper)
+{
+	memset(f, 0, sizeof(f));
+	f[lower] = 1;
+	const unsigned l = upper + lower;
+	const size_t cpy_siz = SC(size_t, l - 1) * sizeof_unsigned;
+	for (unsigned i = 1; i <= m; ++i)
+	{
+		memcpy(gP1, f, cpy_siz);
+		for (unsigned j = 2; j <= l; UpdateInc(g[j - 1], f[j]), ++j);
+		memcpy(f, gP1, cpy_siz);
+		f[l] = 0;
+		for (unsigned j = 1; j < l; UpdateInc(f[j + 1], g[j]), ++j);
+	}
+	unsigned long long ans = 0;
+	for (unsigned i = 0; i <= l; ans += f[i++]);
+	return ans % mod;
+}
+int main()
+{
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	cin >> n >> m >> mod;
+	unsigned long long ans = 0;
+	for (unsigned i = 0; i <= n; ans += F(i + 1, n - i + 1), ++i);
+	for (unsigned i = 0; i < n; ans -= F(i, n - i + 1), ++i);
+	cout << SC(unsigned, (ans + SC(unsigned long long, mod * 4) * mod) % mod);
+	return 0;
+}

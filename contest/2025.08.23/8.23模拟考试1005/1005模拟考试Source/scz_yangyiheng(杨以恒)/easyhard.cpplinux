@@ -1,0 +1,51 @@
+#include<bits/stdc++.h>
+using namespace std;
+int n,m,p;
+int work(int mc)
+{
+	long long ans=1;
+	mc*=2;
+	long long c=pow(2,20);
+	c%=p;
+	for(int i=1;i<=mc/1000;i++)
+	{
+		for(int j=1;j<=50;j++)
+		{
+			ans*=c;
+			ans%=p;
+		}
+	}
+	for(int i=1;i<=mc%1000/100;i++)
+	{
+		for(int j=1;j<=5;j++)
+		{
+			ans*=c;
+			ans%=p;
+		}
+	}
+	for(int i=1;i<=mc%100/10;i++)
+	{
+		ans*=(1024%p);
+		ans%=p;
+	}
+	c=pow(2,mc%10);
+	c%=p;
+	ans*=c;
+	ans%=p;
+	return ans;
+}
+int main()
+{
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	cin>>n>>m>>p;
+	if(n!=1)
+	{
+		cout<<work(m)<<endl;
+	}
+	else
+	{
+		cout<<work(m)/2<<endl;
+	}
+	return 0;
+}

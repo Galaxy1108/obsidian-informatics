@@ -1,0 +1,48 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+int n,m,t,maxx=INT_MIN;
+int a[200002],r[200002];
+int main(){
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	int T;
+	cin>>T;
+	cin>>n;
+	int x=1;
+	for(int i=1;i<=n;i++){
+		scanf("%d",&a[i]);	
+		x*=2;
+		x%=998244353;
+		r[i]=(r[i-1]+x)%998244353;
+		maxx=max(a[i],maxx);
+		cout<<r[i]<<' '; 
+	} 
+	cin>>m;
+	int sum=0,l=0; 
+	while(sum<maxx){
+		l++;
+		sum+=a[l];
+	}
+	cout<<r[l]<<endl; 
+	for(int i=1;i<=m;i++){
+		int x,y;
+		cin>>x>>y;	
+		if(x<=l){
+			sum=0,l=0; 
+			while(sum<maxx){
+				l++;
+				sum+=a[l];
+			}
+		} 
+		if(y>maxx){
+			sum=0,l=0; 
+			while(sum<maxx){
+				l++;
+				sum+=a[l];
+			}
+		}
+		cout<<r[l]<<endl;
+	}
+	return 0;
+}

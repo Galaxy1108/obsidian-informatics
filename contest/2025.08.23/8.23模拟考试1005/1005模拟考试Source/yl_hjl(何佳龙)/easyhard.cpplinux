@@ -1,0 +1,54 @@
+#include<bits/stdc++.h>
+#define db double
+#define ll long long
+#define ull unsigned long long
+#define pb push_back
+#define mp make_pair
+#define pii pair<int, int>
+#define fi first
+#define se second
+#define ls k*2
+#define rs k*2+1 
+using namespace std;
+inline int read(){
+	register int x=0,f=1;
+	register char ch=getchar();
+	while(ch<'0'||ch>'9'){if(ch=='-')f=-1;ch=getchar();}
+	while(ch>='0'&&ch<='9'){x=x*10+ch-'0';ch=getchar();}
+	return x*f;
+}
+inline void write(register int x){
+	if(x<0){putchar('-');x=-x;}
+	if(x>9)write(x/10);
+	putchar(x%10+'0');
+}
+const int N=6e3+5;
+int n,m,mod,f[2][N],g[2][N],ans;
+signed main(){   
+ 	freopen("easyhard.in","r",stdin);
+ 	freopen("easyhard.out","w",stdout);
+    n=read();m=read();mod=read();
+    for(int i=0;i<=n;i++)if((i&1)==(n&1))f[0][n+i]=f[0][n-i]=g[0][n+i]=g[0][n-i]=1;
+    for(int i=1;i<=2*m;i++){
+        int p=i&1,q=p^1;
+        for(int j=0;j<=2*n;j++){
+            f[p][j]=0;
+            if(j>0)(f[p][j]+=f[q][j-1])%=mod;
+            if(j<2*n)(f[p][j]+=f[q][j+1])%=mod;
+        }
+        //for(int j=0;j<=2*n;j++)cout<<f[i][j]<<' ';cout<<"\n";
+    }
+    for(int i=1;i<=2*m;i++){
+        int p=i&1,q=p^1;
+        for(int j=0;j<=2*n;j++){
+            g[p][j]=0;
+            if(j>1)(g[p][j]+=g[q][j-1])%=mod;
+            if(j<2*n-1)(g[p][j]+=g[q][j+1])%=mod;
+        }
+        //for(int j=0;j<=2*n;j++)cout<<f[i][j]<<' ';cout<<"\n";
+    }
+    for(int i=0;i<=2*n;i++)(ans+=f[(2*m)&1][i]-g[(2*m)&1][i])%=mod;
+    cout<<(ans+mod)%mod;
+//  printf("\nTIME:%lf\n",(double)clock()/CLOCKS_PER_SEC);
+	return 0;
+}

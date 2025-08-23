@@ -1,0 +1,61 @@
+#include<bits/stdc++.h>
+#define LL long long
+#define RG register
+#define U(x, y, z) for(RG int x = y; x <= z; ++x)
+#define D(x, y, z) for(RG int x = y; x >= z; --x)
+using namespace std;
+void read(){}
+template<typename _Tp, typename... _Tps>
+void read(_Tp &x, _Tps &...Ar) {
+	x = 0; char ch = getchar(); bool flg = 0;
+	for (; !isdigit(ch); ch = getchar()) flg |= (ch == '-');
+	for (; isdigit(ch); ch = getchar()) x = (x << 1) + (x << 3) + (ch ^ 48);
+	if (flg) x = -x;
+	read(Ar...);	
+}
+inline char Getchar(){ char ch; for (ch = getchar(); !isalpha(ch); ch = getchar()); return ch;}
+template <typename T> inline void write(T n){ char ch[60]; bool f = 1; int cnt = 0; if (n < 0) f = 0, n = -n; do{ch[++cnt] = char(n % 10 + 48); n /= 10; }while(n); if (f == 0) putchar('-'); for (; cnt; cnt--) putchar(ch[cnt]);}
+template <typename T> inline void writeln(T n){write(n); putchar('\n');}
+template <typename T> inline void writesp(T n){write(n); putchar(' ');}
+template <typename T> inline void chkmin(T &x, T y){x = x < y ? x : y;}
+template <typename T> inline void chkmax(T &x, T y){x = x > y ? x : y;}
+template <typename T> inline T Min(T x, T y){return x < y ? x : y;}
+template <typename T> inline T Max(T x, T y){return x > y ? x : y;}
+inline void readstr(string &s) { s = ""; static char c = getchar(); while (isspace(c)) c = getchar(); while (!isspace(c)) s = s + c, c = getchar();}
+inline void FO(string s){freopen((s + ".in").c_str(), "r", stdin); freopen((s + ".out").c_str(), "w", stdout);}
+
+const int N = 3e3 + 10;
+int f[N][N][2];
+int n, m, p;
+
+#define update(x, y) (x = (x + y >= p) ? (x + y - p) : (x + y))
+
+int main(){
+	FO("easyhard");
+	read(n, m, p);
+	f[0][0][1] = 1;
+	U(i, 1, m) f[0][i][0] = 1;
+	U(i, 0, m - 1) {
+		U(j, 0, n) {
+			if (j - 1 >= 0) {
+				if (j == 1) update(f[i + 1][j - 1][1], f[i][j][0]);
+				else update(f[i + 1][j - 1][0], f[i][j][0]);
+				update(f[i + 1][j - 1][1], f[i][j][1]);
+				if (j == 1) update(f[i + 1][j][1], f[i][j][0]);
+				else update(f[i + 1][j][0], f[i][j][0]);
+				update(f[i + 1][j][1], f[i][j][1]);
+			}
+			if (j < n) {
+				update(f[i + 1][j + 1][1], f[i][j][1]);
+				update(f[i + 1][j][1], f[i][j][1]);
+				update(f[i + 1][j + 1][0], f[i][j][0]);
+				update(f[i + 1][j][0], f[i][j][0]);
+			}
+		}
+	}
+	LL ans = 0;
+	U(i, 0, n) update(ans, f[m][i][1]);
+	writeln(ans);
+	return 0;
+}
+/*1000 3000 1000000007*/

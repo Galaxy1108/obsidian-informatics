@@ -1,0 +1,42 @@
+#include <bits/stdc++.h>
+using namespace std;
+int a[2005][2005],n,m,k,q;
+int op,x,y,z;
+void dfs(int x,int y,int v,int k){
+	if(a[x][y]==1)v^=1,k++;
+	if(k==z||x>n||y>m){
+		printf("%d %d\n",x,y);
+		return;
+	}
+	if(v){
+		dfs(x+1,y,v,k);
+	}else{
+		dfs(x,y+1,v,k);
+	}
+}
+int main() {
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	scanf("%d%d%d%d",&n,&n,&m,&k);
+	for(int i=0;i<k;i++){
+		int x,y;
+		scanf("%d%d",&x,&y);
+		a[x][y]=1;
+	}
+	scanf("%d",&q);
+	while(q--){
+		scanf("%d%d%d",&op,&x,&y);
+		if(op==1){
+			a[x][y]=1;
+		}
+		else{
+			scanf("%d",&z);
+			if(x==0){
+				dfs(x,y,1,0);
+			}else{
+				dfs(x,y,0,0);
+			}
+		}
+	}
+	return 0;
+}

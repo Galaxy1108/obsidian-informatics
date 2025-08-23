@@ -1,0 +1,82 @@
+#if IN_LOCAL
+import local;
+#endif // IN_LOCAL
+#include<set>
+#include<utility>
+#include<iostream>
+using namespace std;
+#if !IN_LOCAL
+#include<fstream>
+ifstream fin("corridor.in");
+ofstream fout("corridor.out");
+#define cin fin
+#define cout fout
+#endif // !IN_LOCAL
+pair<set<pair<int, int>>::iterator, set<pair<int, int>>::iterator> iter[150051];
+set<pair<int, int>> row[50005], col[50005];
+int main()
+{
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int type, n, m, K;
+	cin >> type >> n >> m >> K;
+	for (int i = 1; i <= K; ++i)
+	{
+		int x, y;
+		cin >> x >> y;
+		iter[i].first = col[x].emplace(y, i).first;
+		iter[i].second = row[y].emplace(x, i).first;
+	}
+	int Q;
+	cin >> Q;
+	for (int i = 1; i <= Q; ++i)
+	{
+		int w;
+		cin >> w;
+		if (w == 1)
+		{
+			int x, y;
+			cin >> x >> y;
+			++K;
+			iter[K].first = col[x].emplace(y, K).first;
+			iter[K].second = row[y].emplace(x, K).first;
+		}
+		else
+		{
+			int x, y, q;
+			cin >> x >> y >> q;
+			bool status = x;
+			set<pair<int, int>>::iterator it = (status ? col[x].begin() : row[y].begin());
+			for (; q && it != (status ? col[x] : row[y]).end(); --q, status = !status, ++it)
+			{
+				if (status)
+				{
+					y = it->first;
+					it = iter[it->second].second;
+				}
+				else
+				{
+					x = it->first;
+					it = iter[it->second].first;
+				}
+			}
+			if (q)
+			{
+				if (status)
+				{
+					cout << x << ' ' << (m + 1) << '\n';
+				}
+				else
+				{
+					cout << (n + 1) << ' ' << y << '\n';
+				}
+			}
+			else
+			{
+				cout << x << ' ' << y << '\n';
+			}
+		}
+	}
+	return 0;
+}

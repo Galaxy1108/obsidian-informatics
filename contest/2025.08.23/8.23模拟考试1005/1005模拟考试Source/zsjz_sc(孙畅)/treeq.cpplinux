@@ -1,0 +1,99 @@
+#include <bits/stdc++.h>
+#define fo(i,a,b) for(int i=a;i<=b;++i)
+#define fd(i,a,b) for(int i=a;i>=b;--i)
+#define max(a,b) ((a)>(b)?(a):(b))
+#define min(a,b) ((a)<(b)?(a):(b))
+#define N 10000005
+#define LL long long
+using namespace std;
+inline int read()
+{
+	int X=0,w=0;char ch=0;
+	while(!isdigit(ch))w|=ch=='-',ch=getchar();
+	while(isdigit(ch))X=(X<<3)+(X<<1)+(ch^48),ch=getchar();
+	return w?-X:X;
+}
+int he[N],la[N+N],ne[N+N],id[N+N],w[N],an[N],tot=0,sz[N],tp[N];
+void lb(int x,int y,int z)
+{
+	ne[++tot]=he[x];
+	la[he[x]=tot]=y;
+	id[tot]=z;
+}
+void pre(int x,int fa)
+{
+	sz[x]=1;
+	for(int ii=he[x];ii;ii=ne[ii])
+	{
+		int xx=la[ii];
+		if(xx==fa)continue;
+		tp[xx]=id[ii];
+		pre(xx,x);
+		sz[x]+=sz[xx];
+	}
+}
+void dfs(int x,int fa)
+{
+	int mx=0;
+	for(int ii=he[x];ii;ii=ne[ii])mx=max(mx,sz[la[ii]]);
+	for(int ii=he[x];ii;ii=ne[ii])if(mx==sz[la[ii]])an[id[ii]]++;
+	for(int ii=he[x];ii;ii=ne[ii])
+	{
+		int xx=la[ii];
+		if(xx==fa)continue;
+		swap(sz[x],sz[xx]);
+		sz[x]=sz[xx]-sz[x];
+		dfs(xx,x);
+		swap(sz[x],sz[xx]);
+	}
+}
+int main()
+{
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	int n=read(),mx=0,wz;
+	bool bz=0,bz1=0;
+	fo(i,1,n-1)
+	{
+		int x=read();
+		w[i]=read();
+		mx=max(mx,w[i]);
+		bz|=(x!=1);
+		bz1|=(w[i]!=1);
+		lb(x,i+1,i);
+		lb(i+1,x,i);
+	}
+	if(!bz)
+	{
+		int ad=1;
+		fo(i,1,n-1)
+		{
+			if(1ll*w[i]*(n-1)<=mx)ad++;
+			if(1ll*w[i]*(n-1)>=mx)an[i]++;
+		}
+		int ans=0;
+		fo(i,1,n-1)ans^=((w[i]==mx)+an[i]);
+		printf("%d",ans);
+		return 0;
+	}
+	if(!bz1)
+	{
+		pre(1,0);
+		dfs(1,0);
+		int ans=0;
+		fo(i,1,n-1)ans^=an[i];
+		printf("%d",ans);
+		return 0;
+	}
+	fo(i,1,n)
+	{
+		pre(i,0);
+		LL mx=0;
+		fo(j,1,n)if(i!=j)mx=max(mx,1ll*sz[j]*w[tp[j]]);
+		fo(j,1,n)if(i!=j&&mx==1ll*sz[j]*w[tp[j]])an[tp[j]]++;
+	}
+	int ans=0;
+	fo(i,1,n-1)ans^=an[i];
+	printf("%d",ans);
+	return 0;
+}

@@ -1,0 +1,64 @@
+#include<cstdio>
+using namespace std;
+#define ll long long
+const int N=2e5+5,mod=998244353;
+int a[N],mn[N];
+ll sum[N];
+int redd(){
+	int xx=0,fl=1;char ch=getchar();
+	while((ch<'0'||ch>'9')&&ch!='-')ch=getchar();
+	if(ch=='-'){ch=getchar();fl=-1;}
+	for(;ch>='0'&&ch<='9';ch=getchar())
+		xx=(xx<<3)+(xx<<1)+ch-'0';
+	return xx*fl;
+}
+int minn(int x,int y){
+	return x<y?x:y;
+}
+int maxx(int x,int y){
+	return x>y?x:y;
+}
+int ksm(int x,int y){
+	int res=1;
+	while(y){
+		if(y&1)res=1ll*res*x%mod;
+		x=1ll*x*x%mod;
+		y>>=1;
+	}
+	return res;
+}
+int main(){
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	int num,n,q,x,y,mx,ans;
+	num=redd();n=redd();
+	for(int i=1;i<=n;i++)a[i]=redd();
+	ans=0;mx=0;
+	for(int i=1;i<=n;i++){
+		mn[i]=minn(mn[i-1],a[i]);
+		mx=maxx(mx,a[i]);
+		sum[i]=sum[i-1]+a[i];
+	}
+	for(int i=n;i>=1&&mx>0;i--)if(sum[i-1]<mx){
+		ans=(ans+ksm(2,i))%mod;
+		mx-=a[i];
+	}
+	printf("%d\n",ans);
+	q=redd();
+	while(q--){
+		x=redd();y=redd();
+		a[x]=y;
+		ans=0;mx=0;
+		for(int i=1;i<=n;i++){
+			mn[i]=minn(mn[i-1],a[i]);
+			mx=maxx(mx,a[i]);
+			sum[i]=sum[i-1]+a[i];
+		}
+		for(int i=n;i>=1&&mx>0;i--)if(sum[i-1]<mx){
+			ans=(ans+ksm(2,i))%mod;
+			mx-=a[i];
+		}
+		printf("%d\n",ans);
+	}
+	return 0;
+}

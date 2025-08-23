@@ -1,0 +1,79 @@
+#include<bits/stdc++.h>
+#define int long long
+#define MAXN 1000010
+using namespace std;
+int read(){
+	int ret=0,fl=1;char ch=getchar();
+	while(ch<'0'||ch>'9'){if(ch=='-')fl=-1;ch=getchar();}
+	while(ch>='0'&&ch<='9')ret=ret*10+ch-'0',ch=getchar();
+	return ret*fl;
+}
+int n,ans[MAXN];
+struct Node{int to,nxt,val,id;}Edge[MAXN<<1];
+int Head[MAXN],cnt_Edge;
+void Add_Edge(int u,int v,int w,int id){
+	Edge[++cnt_Edge]=(Node){v,Head[u],w,id};
+	Head[u]=cnt_Edge;
+}
+int val[MAXN<<1],id[MAXN<<1];
+int sz[MAXN],dfn[MAXN],to[MAXN],tot;
+void dfs(int u,int fa){
+	sz[u]=1;dfn[u]=++tot;//cerr<<"dfn:"<<tot<<' '<<u<<endl;
+	for(int i=Head[u];i;i=Edge[i].nxt){
+		int v=Edge[i].to;if(v==fa)continue;
+		dfs(v,u);sz[u]+=sz[v];
+		int id=Edge[i].id,w=Edge[i].val;
+		val[id<<1]=w*(n-sz[v]);val[id<<1|1]=w*sz[v];
+		to[id]=v;
+	}
+}
+int f[MAXN],g[MAXN],pos[MAXN];
+int get(int x){return f[x]==x?x:f[x]=get(f[x]);}
+bool cmp1(int x,int y){return val[x]>val[y];}
+bool cmp2(int x,int y){return g[x]>g[y];}
+int t[MAXN];
+int lowbit(int x){return x&(-x);}
+void update(int x,int y){for(;x<=n;x+=lowbit(x))t[x]+=y;}
+int query(int x){int ret=0;for(;x;x-=lowbit(x))ret+=t[x];return ret;}
+int query(int l,int r){return query(r)-query(l-1);}
+signed main(){
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	n=read();
+	for(int i=1;i<n;i++){
+		int u=read(),v=read(),w=read();
+		Add_Edge(u,v,w,i);Add_Edge(v,u,w,i);
+	}
+	dfs(1,0);
+	for(int i=2;i<2*n;i++)id[i]=i;
+	sort(id+2,id+2*n,cmp1);
+	for(int i=1;i<=n+1;i++)f[i]=i;
+	for(int i=2;i<2*n;i++){
+		int v=to[id[i]>>1],w=val[id[i]];//cerr<<id[i]<<' '<<w<<endl;
+		if(id[i]&1){
+			for(int j=get(1);j<dfn[v];j=get(j))
+				g[j]=w,f[j]=j+1;//,cerr<<j<<' ';
+			for(int j=get(dfn[v]+sz[v]);j<=n;j=get(j))
+				g[j]=w,f[j]=j+1;//,cerr<<j<<' ';
+		}else{
+			for(int j=get(dfn[v]);j<dfn[v]+sz[v];j=get(j))
+				g[j]=w,f[j]=j+1;//,cerr<<j<<' ';
+		}//cerr<<"000"<<endl;
+	}
+	for(int i=1;i<=n;i++)pos[i]=i;//,cerr<<i<<' '<<g[i]<<endl;
+	sort(pos+1,pos+n+1,cmp2);
+	for(int l=1,r,p=2;l<=n;l=r+1){
+		for(r=l;r<n&&g[pos[r+1]]==g[pos[l]];r++);
+		for(int i=l;i<=r;i++)update(pos[i],1);
+		for(;p<2*n&&val[id[p]]==g[pos[l]];p++){
+			int v=to[id[p]>>1];
+			if(id[p]&1)ans[id[p]>>1]+=query(1,dfn[v]-1)+query(dfn[v]+sz[v],n);
+			else ans[id[p]>>1]+=query(dfn[v],dfn[v]+sz[v]-1);
+		}
+		for(int i=l;i<=r;i++)update(pos[i],-1);
+	}
+	int sum=0;
+	for(int i=1;i<n;i++)sum^=ans[i];//,cerr<<ans[i]<<endl;
+	printf("%lld",sum);
+	return 0;
+}

@@ -1,0 +1,21 @@
+#include<bits/stdc++.h>
+#define LL long long 
+using namespace std;
+LL n,m,k,S=998244353;
+
+LL ksm(LL u,LL v)
+{
+	u%=S;
+	if (!v) return 1;
+	if (v==1) return u;
+	if (v%2==0) return ksm(u*u%S,v/2);
+	return u*ksm(u*u%S,v/2)%S;
+}
+
+int main()
+{
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	scanf("%lld%lld%lld",&m,&n,&k);
+	printf("%lld",ksm(2,k));
+}

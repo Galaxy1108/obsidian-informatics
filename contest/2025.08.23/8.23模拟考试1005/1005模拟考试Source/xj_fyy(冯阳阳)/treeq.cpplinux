@@ -1,0 +1,63 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define N 1000005
+#define int long long
+#define getchar() (p1==p2&&(p2=(p1=buf)+fread(buf,1,1<<20,stdin),p1==p2)?EOF:*p1++)
+char buf[1<<20],*p1=buf,*p2=buf;
+int read(){
+    int w=0,f=1;
+    char c=' ';
+    while(c<'0'||c>'9')c=getchar(),f=c=='-'?-1:f;
+    while(c>='0'&&c<='9')w=w*10+c-48,c=getchar();
+    return w*f;
+}
+const int inf=2e18;
+int n,fa[N],w[N],sz[N],f[N],t[N],pre[N],suf[N],ans;
+vector<int>e[N];
+pair<int,int>p3[N],p4[N],pr[N],sf[N];
+pair<int,int>operator+(pair<int,int>x,pair<int,int>y){
+	return x.first==y.first?make_pair(x.first,x.second+y.second):min(x,y);
+}
+signed main(){
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	n=read();
+	for(int i=2;i<=n;i++)
+		fa[i]=read(),w[i]=read(),e[fa[i]].emplace_back(i);
+	for(int u=n,ft;u>0;u--)
+		ft=fa[u],sz[ft]+=(++sz[u]),f[ft]=max(f[ft],max(f[u],1ll*w[u]*sz[u]));
+	for(int u=1;u<=n;u++){
+		t[u]=max(t[u],1ll*w[u]*(n-sz[u]));
+		if(e[u].empty())continue;
+		int siz=e[u].size();
+		for(int i=0;i<siz;i++)
+			pre[i]=max(i?pre[i-1]:0,max(f[e[u][i]],w[e[u][i]]*sz[e[u][i]]));
+		for(int i=siz-1;i>=0;i--)
+			suf[i]=max(i!=siz-1?suf[i+1]:0,max(f[e[u][i]],w[e[u][i]]*sz[e[u][i]]));
+		for(int i=0;i<siz;i++)
+			t[e[u][i]]=max(t[u],max(i?pre[i-1]:0,i!=siz-1?suf[i+1]:0));
+	}
+	for(int i=1;i<=n;i++)
+		f[i]=max(f[i],t[i]),p3[i]=p4[i]={inf,0};
+	for(int u=n,ft;u>0;u--)
+		ft=fa[u],p3[u]=p3[u]+make_pair(f[u],1ll),p3[ft]=p3[ft]+p3[u];
+	for(int u=1;u<=n;u++){
+		if(e[u].empty())continue;
+		int siz=e[u].size();
+		pr[0]=p4[u]+make_pair(f[u],1),sf[siz-1]={inf,0};
+		for(int i=1;i<siz;i++)
+			pr[i]=pr[i-1]+p3[e[u][i-1]];
+		for(int i=siz-2;i>=0;i--)
+			sf[i]=sf[i+1]+p3[e[u][i+1]];
+		for(int i=0;i<siz;i++)
+			p4[e[u][i]]=pr[i]+sf[i];
+	}
+	for(int i=2;i<=n;i++){
+		int now=0;
+		if(p3[i].first==w[i]*(n-sz[i]))now+=p3[i].second;
+		if(p4[i].first==w[i]*sz[i])now+=p4[i].second;
+		ans^=now;
+	}
+	printf("%lld\n",ans);
+	return 0;
+}

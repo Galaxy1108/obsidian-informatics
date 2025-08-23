@@ -1,0 +1,32 @@
+#include <set>
+#include <cstdio>
+#include <cstring>
+using namespace std;
+int n,m,k,q,typ;set<int> str[50011],stc[50011];
+int main()
+{
+	freopen("corridor.in","r",stdin);freopen("corridor.out","w",stdout);
+	scanf("%d%d%d%d",&typ,&n,&m,&k);for(int i=1;i<=n;++i)str[i].insert(m+1);for(int i=1;i<=m;++i)stc[i].insert(n+1);
+	for(int i=1;i<=k;++i){int x,y;scanf("%d%d",&x,&y);str[x].insert(y);stc[y].insert(x);}
+	scanf("%d",&q);while(q--)
+	{
+		int w,x,y;scanf("%d%d%d",&w,&x,&y);
+		if(w==1)
+		{
+			str[x].insert(y);stc[y].insert(x);
+		}
+		else
+		{
+			scanf("%d",&k);int cr=x,cc=y;bool dir=0;
+			if(cr==0)dir=1;else dir=0;
+			for(int i=1;i<=k;++i)
+			{
+				if(dir)cr=*stc[cc].upper_bound(cr);
+				else cc=*str[cr].upper_bound(cc);dir^=1;
+				if(cr>n||cc>m)break;
+			}
+			printf("%d %d\n",cr,cc);
+		}
+	}
+	fclose(stdin);fclose(stdout);return 0;
+}

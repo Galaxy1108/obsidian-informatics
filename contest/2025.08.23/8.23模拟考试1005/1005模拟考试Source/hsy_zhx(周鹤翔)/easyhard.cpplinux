@@ -1,0 +1,40 @@
+inline long long read() {
+	long long s = 0; char ch = getchar(); 
+	while(ch <  '0' || ch >  '9') ch = getchar(); 
+	while(ch >= '0' && ch <= '9') s = s * 10 + (ch ^ 48), ch = getchar(); 
+	return s; 
+}
+long long p; 
+long long ksm(long long di, long long zhi) {
+	if(zhi == 1) return di; 
+	if(zhi > 1) {
+		if(zhi & 1) return di * ksm(di * di % p, zhi / 2) % p; 
+		else return ksm(di * di % p, zhi / 2) % p; 
+	}
+}
+long long n, m;
+long long ans; 
+int a[1000]; 
+long long dp[3010][3010]; 
+int sb, sh; 
+int main() {
+	freopen("easyhard.in" , "r", stdin ); 
+	freopen("easyhard.out", "w", stdout); 
+	cin >> n >> m >> p; 
+	for(int i = 0; i <= n; ++i) dp[i][0] = 1; 
+	for(int i = 1; i <= m; ++i) {
+		for(int j = 0; j <= n; ++j) {
+			if(j > 0) {
+				dp[j][i] = (dp[j][i] + dp[j][i - 1]) % p; //1, 0
+				dp[j - 1][i] = (dp[j - 1][i] + dp[j][i - 1]) % p; // 1, 1
+			}
+			if(j < n) {
+				dp[j][i] = (dp[j][i] + dp[j][i - 1]) % p; //0, 1
+				dp[j + 1][i] = (dp[j + 1][i] + dp[j][i - 1]) % p; //0, 0
+			}
+		}
+	}
+	for(int i = 0; i <= n; ++i) ans = (ans + dp[i][m]) % p; 
+	cout << ans << endl; 
+	return 0; 
+} 

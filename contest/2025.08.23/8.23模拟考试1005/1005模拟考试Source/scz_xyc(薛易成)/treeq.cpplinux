@@ -1,0 +1,168 @@
+#include<bits/stdc++.h>
+using namespace std;
+namespace FAST_IO
+{
+	template<typename T> void read(T &a)
+	{
+		a=0;
+		T f=1;
+		char c=getchar();
+		while(!isdigit(c))
+		{
+			if(c=='-')
+			{
+				f=-1;
+			}
+			c=getchar();
+		}
+		while(isdigit(c))
+		{
+			a=a*10+c-'0';
+			c=getchar();
+		}
+		a=a*f;
+	}
+	template <typename T> void write(T a)
+	{
+		if(a<0)
+		{
+			a=-a;
+			putchar('-');
+		}
+		if(a>9)
+		{
+			write(a/10);
+		}
+		putchar(a%10+'0');
+	}
+	template <typename T> void writeln(T a)
+	{
+		write(a);
+		puts("");
+	}
+	template <typename T> void writespace(T a)
+	{
+		write(a);
+		putchar(' ');
+	}
+}
+const int maxn=1e6+10;
+int n,myans;
+vector<pair<int,int> > g[maxn]; 
+long long maxt[maxn];
+multiset<long long> mst;
+multiset<long long> temp;
+long long sz[maxn];
+int dfn[maxn],zz;
+vector<int> gg[maxn];
+void dfs(int now,int from)
+{
+	zz++;
+	dfn[now]=zz;
+	sz[now]=1;
+	for(int i=0;i<g[now].size();i++)
+	{
+		int to=g[now][i].first,len=g[now][i].second;
+		if(to==from)
+		{
+			continue;
+		}
+		dfs(to,now);
+		sz[now]+=sz[to];
+		mst.insert(sz[to]*len);
+	}
+}
+void solve(int now,int from)
+{
+	long long tmp=0;
+	if(mst.size())
+	{
+		multiset<long long>::iterator it=mst.end();
+		it--;
+		long long tt=*it;
+		tmp=max(tmp,tt);
+	}
+	if(temp.size())
+	{
+		multiset<long long>::iterator it=temp.end();
+		it--;
+		long long tt=*it;
+		tmp=max(tmp,tt);		
+	}
+	maxt[now]=tmp;
+	for(int i=0;i<g[now].size();i++)
+	{
+		int to=g[now][i].first,len=g[now][i].second;
+		if(to==from)
+		{
+			continue;
+		}
+		mst.erase(sz[to]*len);
+		temp.insert((n-sz[to])*len);
+		solve(to,now);
+		temp.erase((n-sz[to])*len);
+		mst.insert(sz[to]*len);
+	}	
+}
+map<long long,int> mp1;
+map<long long,int> mp2;
+int cnt;
+int ask(int l,int r,long long num)
+{
+	if(!mp1[num])
+	{
+		return 0;
+	}
+	int rnum=mp1[num];
+	int ans=upper_bound(gg[rnum].begin(),gg[rnum].end(),r)-lower_bound(gg[rnum].begin(),gg[rnum].end(),l);
+	return ans;
+}
+void rsolve(int now,int from)
+{
+	for(int i=0;i<g[now].size();i++)
+	{
+		int to=g[now][i].first,len=g[now][i].second;
+		if(to==from)
+		{
+			continue;
+		}
+		int tmpcnt=ask(dfn[to],dfn[to]+sz[to]-1,(n-sz[to])*len);
+		tmpcnt+=mp2[sz[to]*len]-ask(dfn[to],dfn[to]+sz[to]-1,sz[to]*len);
+		myans^=tmpcnt;
+		rsolve(to,now);
+	}	
+}
+int main()
+{
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	FAST_IO::read(n);
+	if(n>1e6)
+	{
+		puts("0");
+		return 0;
+	}
+	for(int i=1;i<n;i++)
+	{
+		int u,v,w;
+		FAST_IO::read(u);
+		FAST_IO::read(v);
+		FAST_IO::read(w);
+		g[u].push_back(make_pair(v,w));
+		g[v].push_back(make_pair(u,w));
+	}
+	dfs(1,0);
+	solve(1,0);//找到最大值
+	//在子树内，查询某个值出现次数
+	for(int i=1;i<=n;i++)
+	{
+		mp2[maxt[i]]++;
+		if(!mp1[maxt[i]])
+		{
+			mp1[maxt[i]]=++cnt;
+		}
+		gg[mp1[maxt[i]]].push_back(dfn[i]);
+	}
+	rsolve(1,0);
+	FAST_IO::write(myans);
+}

@@ -1,0 +1,65 @@
+#include<bits/stdc++.h>
+#define ll long long
+using namespace std;
+inline int read(){
+	int s=0;
+	char ch=getchar();
+	while(ch<'0'||ch>'9')ch=getchar();
+	while(ch>='0'&&ch<='9')s=(s<<3)+(s<<1)+(ch^48),ch=getchar();
+	return s;
+}
+const int N=10005001;
+int n;
+int cnt,ver[N<<1],nxt[N<<1],h[N],w[N<<1];
+void add_edge(int x,int y,int z){
+	cnt++;
+	ver[cnt]=y;
+	w[cnt]=z;
+	nxt[cnt]=h[x];
+	h[x]=cnt;
+}
+ll maxn;
+int siz[N],ans[N];
+void dfs(int x,int fa){
+	siz[x]=1;
+	for(int i=h[x];i;i=nxt[i]){
+		int y=ver[i];
+		if(y!=fa){
+			dfs(y,x);
+			maxn=max(maxn,1ll*siz[y]*w[i]);
+			siz[x]+=siz[y];
+		}
+	}
+}
+void dfs1(int x,int fa){
+	for(int i=h[x];i;i=nxt[i]){
+		int y=ver[i];
+		if(y!=fa){
+			dfs1(y,x);
+			if(maxn==1ll*siz[y]*w[i]){
+				ans[i]++;
+			}
+		}
+	}
+}
+int main(){
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	n=read();
+	for(int i=1;i<n;i++){
+		int y=read(),z=read();
+		add_edge(i+1,y,z);
+		add_edge(y,i+1,z);
+	}
+	for(int i=1;i<=n;i++){
+		maxn=0;
+		dfs(i,0);
+		dfs1(i,0);
+	}
+	int res=0;
+	for(int i=1;i<=(n<<1);i++){
+		if(ans[i])res=res^ans[i];
+	}
+	cout<<res<<endl;
+	return 0;
+}

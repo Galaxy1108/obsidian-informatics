@@ -1,0 +1,112 @@
+
+
+#include <cstdio>
+#include <cstring>
+
+using namespace std;
+
+struct Edge {
+    int a;
+    int b;
+    int w;
+};
+
+int N;
+int typ;
+Edge E[1000009];
+int c;
+int h[2000009];
+int nxt[2000009];
+int to[2000009];
+int w[2000009];
+int idx;
+int a[5009][5009];
+int siz[5009];
+int dep[5009];
+int f[1000009];
+int res;
+
+inline int Add (int a, int b, int c) {
+    nxt[idx] = h[a], to[idx] = b, w[idx] = c, h[a] = idx++;
+}
+
+void In () {
+    int f;
+    int w;
+    bool flg = true;
+    bool flgg = true;
+    bool flggg = true;
+
+    freopen("treeq.in", "r", stdin);
+    memset(h, -1, sizeof(h));
+    scanf("%d", &N);
+    for (int i = 1; i < N; i++) {
+        scanf("%d%d", &f, &w), E[++c] = {f, i, w}, Add(f, i, w), Add(i, f, w);
+        if (f ^ 1) flg = false;
+        if (w ^ 1) flgg = false;
+        if (f != i - 1) flggg = false;
+    }
+    if (N <= 5000) typ = 1;
+    if (flgg) typ = 2;
+    if (flggg) typ = 3;
+    if (flg) typ = 4;
+}
+
+void Dfs (int x, int p) {
+    int v;
+
+    siz[x] = 1, dep[x] = dep[p] + 1;
+    for (int e = h[x]; ~e; e = nxt[e]) {
+        v = to[e];
+        if (v == p) continue;
+        Dfs(v, x);
+        siz[x] += siz[v];
+    }
+}
+
+inline int Min (int a, int b) {
+    return a < b ? a : b;
+}
+
+void Solve () {
+    int mn;
+
+    if (typ < 2) {
+        Dfs(1, 0);
+        for (int i = 1; i <= c; i++)
+            for (int j = 1; j <= N; j++) {
+                if (dep[j] >= dep[E[i].b]) a[i][j] = E[i].w * (N - siz[E[i].b]);
+                else a[i][j] = E[i].w * siz[E[i].b];
+            }
+        for (int j = 1; j <= N; j++) {
+            mn = 1e9;
+            for (int i = 1; i <= c; i++) mn = Min(mn, a[i][j]);
+            for (int i = 1; i <= c; i++)
+                if (a[i][j] == mn) f[i]++;
+        }
+    }
+    else if (typ == 2) {
+
+    }
+    else if (typ == 3) {
+
+    }
+    else {
+
+    }
+    for (int i = 1; i <= c; i++) res ^= f[i];
+}
+
+void Out () {
+    freopen("treeq.out", "w", stdout);
+    printf("%d\n", res);
+}
+
+int main () {
+
+    In();
+    Solve();
+    Out();
+
+    return 0;
+}

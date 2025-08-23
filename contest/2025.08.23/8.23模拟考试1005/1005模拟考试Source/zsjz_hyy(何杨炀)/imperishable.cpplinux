@@ -1,0 +1,31 @@
+#include<cstdio>
+#include<algorithm>
+#define LL long long
+using namespace std;
+const int N = 2e5 + 5, P = 998244353;
+int id, n, Q; LL pw[N], a[N]; 
+
+int main()
+{
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	scanf("%d%d",&id,&n), pw[0] = 1; LL sum = 0;
+	for (int i = 1; i <= n; i++) scanf("%lld",&a[i]), sum += a[i];
+	for (int i = 1; i <= n + 1; i++) pw[i] = pw[i - 1] * 2LL % P;
+	scanf("%d",&Q);
+	LL mx = 0, s = sum, ans = pw[n + 1] - 2LL;
+	for (int i = n; i >= 1; i--) 
+		if (s - mx >= a[i] + max(a[i] - mx, 0LL))
+			mx = max(mx, a[i]), s -= a[i], ans = (ans - pw[i] + P) % P; 
+
+	printf("%lld\n",ans);
+	for (int i = 1,q,p; i <= Q; i++)
+	{
+		scanf("%d%d",&q,&p), sum -= a[q], sum += p, a[q] = p;
+		mx = 0, s = sum, ans = pw[n + 1] - 2;
+		for (int j = n; j >= 1; j--)
+			if (s - mx >= a[j] + max(a[j] - mx, 0LL))
+				mx = max(mx, a[j]), s -= a[j], ans = (ans - pw[j] + P) % P; 
+		printf("%lld\n",ans);
+	}
+}

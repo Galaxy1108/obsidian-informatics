@@ -1,0 +1,55 @@
+#include <bits/stdc++.h>
+using namespace std;
+const int maxn=2e5+10;
+const int mod=998244353;
+inline int read()
+{
+	int x=0,f=1;char c=getchar();
+	while(!isdigit(c)) {if(c=='-') f=-1;c=getchar();}
+	while(isdigit(c)) {x=x*10+(c^48);c=getchar();}
+	return x*f;
+}
+int a[maxn],tmp[maxn],n,Num,q;
+long long ans;
+inline long long ksm(long long w,int k)
+{
+	long long ans=1;
+	while(k)
+	{
+		if(k&1) ans=ans*w%mod;
+		w=w*w%mod;
+	    k=k>>1;
+	}
+	return ans;
+}
+inline void work()
+{
+	ans=0;
+	int pos=1,tmpn=n;
+    for(int i=1;i<=n;i++) tmp[i]=a[i];
+	while(1)
+	{
+		while(tmp[pos]==0&&pos<=n) pos++;
+		if(pos>tmpn) break ;
+		int minl=0;
+		for(int i=tmpn;i>pos;--i)
+		{
+			if(tmp[i]<=tmp[pos]+minl) tmp[i]=minl;
+			else {minl=tmp[i]-tmp[pos];tmp[i]-=tmp[pos];}
+			if(tmp[i]==0&&tmpn==i) tmpn--;
+		}
+		tmp[pos]=0;ans=(ans+ksm(2LL,pos))%mod;pos++;
+	}
+	printf("%lld\n",ans);
+}
+int main()
+{
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	Num=read();
+	n=read();
+	for(int i=1;i<=n;i++) a[i]=read();
+	work();q=read();
+	while(q--) a[read()]=read(),work();
+	return 0;
+}

@@ -1,0 +1,47 @@
+#include <bits/stdc++.h>
+using namespace std;
+const int MAXN = 5100;
+
+int n;
+int fa[MAXN], w[MAXN];
+int sum[MAXN], f[MAXN];
+vector<int> son[MAXN];
+bitset<MAXN> ss[MAXN];
+int a[MAXN][MAXN], maxa[MAXN];
+void dfs(int u) {
+	sum[u] = 1;
+	ss[u][u] = 1;
+	for(auto v : son[u]) {
+		dfs(v);
+		sum[u] += sum[v];
+		ss[u] |= ss[v];
+	}
+}
+int main() {
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	scanf("%d", &n);
+	if(n > 5000) return 0;
+	for(int i = 2; i <= n; i++) {
+		scanf("%d%d", &fa[i], &w[i]);
+		son[fa[i]].push_back(i);
+	}
+	dfs(1);
+	for(int i = 2; i <= n; i++)
+		for(int j = 1; j <= n; j++) {
+			if(ss[i][j]) a[i][j] = w[i] * (n - sum[i]);
+			else a[i][j] = w[i] * sum[i];
+		}
+	for(int j = 1; j <= n; j++) {
+		for(int i = 2; i <= n; i++)
+			maxa[j] = max(maxa[j], a[i][j]);
+		for(int i = 2; i <= n; i++)
+			if(a[i][j] == maxa[j])
+				f[i]++;
+	}
+	int ans = 0;
+	for(int i = 2; i <= n; i++)
+		ans ^= f[i];
+	printf("%d", ans);
+	return 0;
+}

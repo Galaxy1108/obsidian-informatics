@@ -1,0 +1,52 @@
+#include<stdio.h>
+#include<set>
+#define N 200001
+#define mod 998244353
+using namespace std;
+inline char nc()
+{
+	static char buf[99999],*l,*r;
+	return l==r&&(r=(l=buf)+fread(buf,1,99999,stdin),l==r)?EOF:*l++;
+}
+inline void read(int&x)
+{
+	char c=nc();for(;c<'0'||'9'<c;c=nc());
+	for(x=0;'0'<=c&&c<='9';x=(x<<3)+(x<<1)+(c^48),c=nc());
+}
+struct node
+{
+	int u,v;
+	inline node(const int&x,const int&y){u=x;v=y;}
+	inline bool operator<(const node&kkk)const
+		{return u^kkk.u?u>kkk.u:v<kkk.v;}
+};
+int n,m,a[N],tre[N<<2],pw[N];long long szsz[N];set<node>s;
+inline void e(int i,const int&x){for(;i<=n;szsz[i]+=x,i+=i&-i);}
+inline long long q(int i)
+	{long long ans=0;for(;i;ans+=szsz[i],i&=i-1);return ans;}
+inline int pr()
+{
+	int i=s.begin()->v,ans1=pw[i],ans2=0;long long w=q(i-1)-a[i];
+	if(w<0)return ans1;
+	for(int j=i-1;j;--j)
+		if(w>=a[j])w-=a[j];
+		else ans2+=pw[j]-mod,ans2>>31&&(ans2+=mod);
+	return ans2;
+}
+main()
+{
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	read(n);read(n);pw[0]=1;
+	for(int i=1;i<=n;pw[i]=pw[i-1]<<1,pw[i]>mod&&(pw[i]-=mod),++i)
+		read(a[i]),e(i,a[i]),s.emplace(a[i],i);
+	printf("%d\n",pr());
+	read(m);
+	for(int u,v;m--;printf("%d\n",pr()))
+	{
+		read(u);read(v);
+		e(u,v-a[u]);
+		s.erase((node){a[u],u});
+		s.emplace(a[u]=v,u);
+	}
+}

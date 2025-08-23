@@ -1,0 +1,116 @@
+#include <bits/stdc++.h>
+#define fo(i,a,b) for(int i=a;i<=b;++i)
+#define fd(i,a,b) for(int i=a;i>=b;--i)
+#define max(a,b) ((a)>(b)?(a):(b))
+#define min(a,b) ((a)<(b)?(a):(b))
+#define k1 k<<1
+#define k2 (k1)+1
+#define mo 998244353
+using namespace std;
+inline int read()
+{
+	int X=0,w=0;char ch=0;
+	while(!isdigit(ch))w|=ch=='-',ch=getchar();
+	while(isdigit(ch))X=(X<<3)+(X<<1)+(ch^48),ch=getchar();
+	return w?-X:X;
+}
+#define N 1000005
+int tmn[N],tr[N],tmx[N],a[N],mi[N];
+void modify(int l,int r,int k,int x,int v)
+{
+	if(l==r)return tmn[k]=tr[k]=v,tmx[k]=l,void();
+	int mid=l+r>>1;
+	if(mid>=x)modify(l,mid,k1,x,v);
+	else modify(mid+1,r,k2,x,v);
+	tmn[k]=min(tmn[k1],tmn[k2]);
+	tmx[k]=(a[tmx[k1]]>=a[tmx[k2]]?tmx[k1]:tmx[k2]);
+	tr[k]=min(tr[k1]+tr[k2],10000000);
+}
+int qsum(int l,int r,int k,int x,int y)
+{
+	if(l>=x&&r<=y)return tr[k];
+	int mid=l+r>>1,ret=0;
+	if(mid>=x)ret=qsum(l,mid,k1,x,y);
+	if(mid<y)ret+=qsum(mid+1,r,k2,x,y);
+	return min(ret,10000000);
+}
+int qmn(int l,int r,int k,int x,int y)
+{
+	if(l>=x&&r<=y)return tmn[k];
+	int mid=l+r>>1;
+	if(mid>=y)return qmn(l,mid,k1,x,y);
+	if(mid<x)return qmn(mid+1,r,k2,x,y);
+	int r1=qmn(l,mid,k1,x,y),r2=qmn(mid+1,r,k2,x,y);
+	return min(r1,r2); 
+}
+int lsan=0,lsnum,lssz;
+void cal(int n,int chgx,int chgv)
+{
+	if(lsan)
+	{
+		if(chgx>lsnum&&chgv<=lssz)return printf("%d\n",lsan),void();
+	}
+	int num=tmx[1];
+	lsnum=num;lssz=a[num];
+	int l=1,r=num;
+	while(l<r)
+	{
+		int mid=l+r>>1;
+		if(qsum(1,n,1,1,mid)>=a[num])r=mid;
+		else l=mid+1;
+	}
+	if(l==num)return printf("%d\n",lsan=mi[num]),void();
+	int ans=mi[l+1]-2,sum=qsum(1,n,1,1,l)-a[num];
+	fd(i,l,1)
+	{
+		fd(j,i,max(i-20,1))
+		if(a[j]<=sum)
+		{
+			i=j;break;
+		}
+		if(i<20&&a[i]>sum)break;
+		if(a[i]>sum)
+		{
+			int le=1,ri=i;
+			while(le<ri)
+			{
+				int mid=le+ri+1>>1;
+				if(qmn(1,n,1,mid,i)<=sum)le=mid;
+				else ri=mid-1; 
+			}
+			i=le;
+		}
+		if(a[i]>sum)break;
+		int le=1,ri=i;
+		while(le<ri)
+		{
+			int mid=le+ri>>1;
+			if(qsum(1,n,1,mid,i)<=sum)ri=mid;
+			else le=mid+1;
+		}
+		sum-=qsum(1,n,1,le,i);
+		ans-=mi[i+1]-mi[le];
+		ans+=(ans<0?mo:0);
+		ans-=(ans>=mo?mo:0);
+		i=le;
+	}
+	printf("%d\n",lsan=ans);
+}
+int main()
+{
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	read();mi[0]=1;
+	int n=read();
+	fo(i,1,n)mi[i]=mi[i-1]*2%mo;
+	fo(i,1,n)a[i]=read(),modify(1,n,1,i,a[i]);
+	cal(n,0,0);
+	int q=read();
+	while(q--)
+	{
+		int x=read();a[x]=read(); 
+		modify(1,n,1,x,a[x]);
+		cal(n,x,a[x]);
+	}
+	return 0;
+}

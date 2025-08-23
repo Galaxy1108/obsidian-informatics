@@ -1,0 +1,60 @@
+#include<bits/stdc++.h>
+using namespace std;
+bool nm[105][105];
+int n,m,k,Q,w,x,y,q;
+int main()
+{
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	cin>>n>>n>>m>>k;
+	for(int i=1;i<=k;i++)
+	{
+		cin>>x>>y;
+		nm[x][y]=true;
+	}
+	cin>>Q;
+	for(int i=1;i<=Q;i++)
+	{
+		cin>>w>>x>>y;
+		if(w==1)
+		{
+			nm[x][y]=true;
+		}
+		else
+		{
+			cin>>q;
+			int s,cnt=0;
+			if(x==0)
+			{
+				x=1;
+				s=0;
+			}
+			else
+			{
+				y=1;
+				s=1;
+			}
+			while(x<=m&&y<=n&&cnt<q)
+			{
+				if(nm[x][y])
+				{
+					s=(s+1)%2;
+					cnt++;
+				}
+				if(cnt<q)
+				{
+					if(s==1)
+					{
+						y++;
+					}
+					else
+					{
+						x++;
+					}
+				}
+			}
+			cout<<x<<' '<<y<<endl;
+		}
+	}
+	return 0;
+}

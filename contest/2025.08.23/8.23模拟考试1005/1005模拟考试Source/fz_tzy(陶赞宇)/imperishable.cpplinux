@@ -1,0 +1,166 @@
+#include<iostream>
+#include<cstdio>
+#include<string>
+#include<cstring>
+#include<vector>
+#include<algorithm>
+using namespace std;
+typedef long long ll;
+const ll mod=998244353;
+const ll N=2e5+5;
+ll Num,pw[N],pres[N];
+ll n,a[N],sa[N];
+ll q,x,y;
+ll Smx[N*4],lazy[N*4];
+ll Amx[N*4],As[N*4];
+
+inline void read(ll &x) 
+{
+	ll f=1;char c;
+	for(x=0,c=getchar();c<'0'||c>'9';c=getchar()) if(c=='-') f=-1;
+	for(;c>='0'&&c<='9';c=getchar()) x=(x<<1)+(x<<3)+(c^48); x*=f;
+} 
+inline void sout(ll x)
+{
+	if(x<0) putchar('-'),x=-x;
+	if(x>9) sout(x/10);
+	putchar(x%10+'0');
+}
+inline ll mn(ll _x,ll _y){return _x<_y?_x:_y;}
+inline ll mx(ll _x,ll _y){return _x>_y?_x:_y;}
+inline ll ab(ll _x){return _x<0?-_x:_x;}
+inline void Spushup(ll x)
+{
+	Smx[x]=mx(Smx[x<<1],Smx[x<<1|1]);
+	return ;
+}
+inline void Spushdown(ll x)
+{
+	if(lazy[x]==0) return ;
+	Smx[x<<1]+=lazy[x];
+	Smx[x<<1|1]+=lazy[x];
+	lazy[x<<1]+=lazy[x];
+	lazy[x<<1|1]+=lazy[x];
+	lazy[x]=0;
+	return ;
+}
+inline void Sbuild(ll x,ll l,ll r)
+{
+	if(l==r) 
+	{
+		Smx[x]=sa[l];lazy[x]=0;
+		return ;
+	}
+	ll mid=l+r>>1;
+	Sbuild(x<<1,l,mid);Sbuild(x<<1|1,mid+1,r);
+	Spushup(x);
+	return ;
+}
+inline void Supdate(ll x,ll l,ll r,ll ql,ll qr,ll v)
+{
+	if(ql<=l&&r<=qr)
+	{
+		lazy[x]+=v;
+		Smx[x]+=v;
+		return ;
+	}
+	ll mid=l+r>>1;
+	Spushdown(x);
+	if(ql<=mid) Supdate(x<<1,l,mid,ql,qr,v);
+	if(qr>mid) Supdate(x<<1|1,mid+1,r,ql,qr,v);
+	Spushup(x);
+	return ;
+}
+inline ll Q(ll x,ll l,ll r,ll val)
+{
+	if(l==r) return l;
+	ll mid=l+r>>1,rest=0;
+	Spushdown(x);
+	if(Smx[x<<1]>=val) rest=Q(x<<1,l,mid,val);
+	else rest=Q(x<<1|1,mid+1,r,val);
+	Spushup(x);
+	return rest;
+}
+
+inline void Apushup(ll x)
+{
+	Amx[x]=mx(Amx[x<<1],Amx[x<<1|1]);
+	As[x]=As[x<<1]+As[x<<1|1];
+	return ;
+}
+inline void Abuild(ll x,ll l,ll r)
+{
+	if(l==r)
+	{
+		As[x]=Amx[x]=a[l];
+		return ;
+	}
+	ll mid=l+r>>1;
+	Abuild(x<<1,l,mid);
+	Abuild(x<<1|1,mid+1,r);
+	Apushup(x);
+	return ;
+}
+inline void Aupdate(ll x,ll l,ll r,ll pos,ll v)
+{
+	if(l==r) 
+	{
+		As[x]=Amx[x]=v;
+		return ;
+	}
+	ll mid=l+r>>1;
+	if(pos<=mid) Aupdate(x<<1,l,mid,pos,v);
+	if(pos>mid) Aupdate(x<<1|1,mid+1,r,pos,v);
+	Apushup(x);
+	return ;
+}
+inline ll Aquery(ll x,ll l,ll r,ll ql,ll qr)
+{
+	if(ql<=l&&r<=qr) return As[x];
+	ll mid=l+r>>1,rest=0;
+	if(ql<=mid) rest+=Aquery(x<<1,l,mid,ql,qr);
+	if(qr>mid) rest+=Aquery(x<<1|1,mid+1,r,ql,qr);
+	return rest;
+}
+inline ll calc(ll R)
+{
+	ll pos=Q(1,1,n,R);
+	if(R==Aquery(1,1,n,1,pos)) return pres[pos];
+	R-=a[pos];
+	if(R<=0) return pw[pos];
+	else return (pw[pos]+calc(R))%mod;
+}
+int main()
+{
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	read(Num);
+	read(n);
+	for(int i=1;i<=n;i++) 
+	{
+		read(a[i]);
+		sa[i]=sa[i-1]+a[i];
+	}
+
+	Sbuild(1,1,n);
+	Abuild(1,1,n);
+
+	pw[0]=1;
+	for(int i=1;i<=n;i++) 
+	{
+		pw[i]=2ll*pw[i-1]%mod;
+		pres[i]=(pres[i-1]+pw[i])%mod;
+	}
+
+	read(q);
+	printf("%lld\n",calc(Amx[1]));
+	while(q--)
+	{
+		read(x);read(y);
+		Supdate(1,1,n,x,n,-a[x]+y);
+		Aupdate(1,1,n,x,y);
+		a[x]=y;
+		printf("%lld\n",calc(Amx[1]));
+	}
+	return 0;	
+}  

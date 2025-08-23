@@ -1,0 +1,140 @@
+#include <bits/stdc++.h>
+#define FOR(i,j,k) for(int i=j; i<=k; ++i)
+#define ROF(i,j,k) for(int i=j; i>=k; --i)
+inline int read (void) {
+  int x = 0, f = 1, ch = getchar();
+  while(!isdigit(ch)) { if(ch == '-') f = -f; ch = getchar(); }
+  while(isdigit(ch)) { x = x * 10 + ch - '0'; ch = getchar(); }
+  return x * f;
+}
+namespace code1 {
+  const int maxn = 50005;
+  const int maxm = 350005;
+  std::vector <std::pair <int, int> > vx[maxn], vy[maxn];
+  int tot, posx[maxm], posy[maxm], pr[maxm], pd[maxm];
+  inline void solve (void) {
+    int n = read(), m = read(), k = read();
+    FOR(i,1,n) {
+      ++ tot; posx[tot] = i, posy[tot] = 0;
+      ++ tot; posx[tot] = i, posy[tot] = m+1;
+      pr[tot-1] = tot;
+      vx[i].push_back(std::make_pair(0, tot-1));
+      vx[i].push_back(std::make_pair(m+1, tot));
+    }
+    FOR(i,1,m) {
+      ++ tot; posx[tot] = 0, posy[tot] = i;
+      ++ tot; posx[tot] = n+1, posy[tot] = i;
+      pd[tot-1] = tot;
+      vy[i].push_back(std::make_pair(0, tot-1));
+      vy[i].push_back(std::make_pair(n+1, tot));
+    }
+    FOR(i,1,k) {
+      int x = read(), y = read();
+      int u = prev(std::lower_bound (vy[y].begin(), vy[y].end(), std::make_pair(x, 0))) -> second, d = std::lower_bound (vy[y].begin(), vy[y].end(), std::make_pair(x, 0)) -> second,
+          l = prev(std::lower_bound (vx[x].begin(), vx[x].end(), std::make_pair(y, 0))) -> second, r = std::lower_bound (vx[x].begin(), vx[x].end(), std::make_pair(y, 0)) -> second;
+      ++ tot; posx[tot] = x, posy[tot] = y;
+      pr[l] = tot, pr[tot] = r, pd[u] = tot, pd[tot] = d;
+      vx[x].insert (std::lower_bound (vx[x].begin(), vx[x].end(), std::make_pair(y, tot)), std::make_pair(y, tot));
+      vy[y].insert (std::lower_bound (vy[y].begin(), vy[y].end(), std::make_pair(x, tot)), std::make_pair(x, tot));
+    }
+    int t = read();
+    while(t--) {
+      int opt = read();
+      if(opt == 1) {
+        int x = read(), y = read();
+        int u = prev(std::lower_bound (vy[y].begin(), vy[y].end(), std::make_pair(x, 0))) -> second, d = std::lower_bound (vy[y].begin(), vy[y].end(), std::make_pair(x, 0)) -> second,
+            l = prev(std::lower_bound (vx[x].begin(), vx[x].end(), std::make_pair(y, 0))) -> second, r = std::lower_bound (vx[x].begin(), vx[x].end(), std::make_pair(y, 0)) -> second;
+        ++ tot; posx[tot] = x, posy[tot] = y;
+        pr[l] = tot, pr[tot] = r, pd[u] = tot, pd[tot] = d;
+        vx[x].insert (std::lower_bound (vx[x].begin(), vx[x].end(), std::make_pair(y, tot)), std::make_pair(y, tot));
+        vy[y].insert (std::lower_bound (vy[y].begin(), vy[y].end(), std::make_pair(x, tot)), std::make_pair(x, tot));
+      } else {
+        int x = read(), y = read(), q = read();
+        if(x == 0) {
+          int p = n * 2 + y * 2 - 1;
+          while(1) {
+            if(!q || !pd[p]) break;
+            p = pd[p]; -- q;
+            if(!q || !pr[p]) break;
+            p = pr[p]; -- q;
+          }
+          printf("%d %d\n", posx[p], posy[p]);
+        } else {
+          int p = x * 2 - 1;
+          while(1) {
+            if(!q || !pr[p]) break;
+            p = pr[p]; -- q;
+            if(!q || !pd[p]) break;
+            p = pd[p]; -- q;
+          }
+          printf("%d %d\n", posx[p], posy[p]);
+        }
+      }
+    }
+  }
+}
+namespace code2 {
+  const int maxn = 50005;
+  const int maxm = 230005;
+  std::vector <std::pair <int, int> > vx[maxn], vy[maxn];
+  int tot, posx[maxm], posy[maxm], pr[maxm], pd[maxm], f[17][maxm], g[17][maxm];
+  inline void solve (void) {
+    int n = read(), m = read(), k = read();
+    FOR(i,1,n) {
+      ++ tot; posx[tot] = i, posy[tot] = 0;
+      ++ tot; posx[tot] = i, posy[tot] = m+1;
+      pr[tot-1] = tot;
+      vx[i].push_back(std::make_pair(0, tot-1));
+      vx[i].push_back(std::make_pair(m+1, tot));
+    }
+    FOR(i,1,m) {
+      ++ tot; posx[tot] = 0, posy[tot] = i;
+      ++ tot; posx[tot] = n+1, posy[tot] = i;
+      pd[tot-1] = tot;
+      vy[i].push_back(std::make_pair(0, tot-1));
+      vy[i].push_back(std::make_pair(n+1, tot));
+    }
+    FOR(i,1,k) {
+      int x = read(), y = read();
+      int u = prev(std::lower_bound (vy[y].begin(), vy[y].end(), std::make_pair(x, 0))) -> second, d = std::lower_bound (vy[y].begin(), vy[y].end(), std::make_pair(x, 0)) -> second,
+          l = prev(std::lower_bound (vx[x].begin(), vx[x].end(), std::make_pair(y, 0))) -> second, r = std::lower_bound (vx[x].begin(), vx[x].end(), std::make_pair(y, 0)) -> second;
+      ++ tot; posx[tot] = x, posy[tot] = y;
+      pr[l] = tot, pr[tot] = r, pd[u] = tot, pd[tot] = d;
+      vx[x].insert (std::lower_bound (vx[x].begin(), vx[x].end(), std::make_pair(y, tot)), std::make_pair(y, tot));
+      vy[y].insert (std::lower_bound (vy[y].begin(), vy[y].end(), std::make_pair(x, tot)), std::make_pair(x, tot));
+    }
+    FOR(j,1,tot) {
+      f[0][j] = pr[j] ? pr[j] : j;
+      g[0][j] = pd[j] ? pd[j] : j;
+    }
+    FOR(j,1,tot) {
+      f[1][j] = g[0][f[0][j]];
+      g[1][j] = f[0][g[0][j]];
+    }
+    FOR(i,2,16) FOR(j,1,tot) {
+      f[i][j] = f[i-1][f[i-1][j]];
+      g[i][j] = g[i-1][g[i-1][j]];
+    }
+    int t = read();
+    while(t--) {
+      read(); int x = read(), y = read(), q = read();
+      if(x == 0) {
+        int p = n * 2 + y * 2 - 1;
+        ROF(i,16,0) if(q>>i&1) p = g[i][p];
+        printf("%d %d\n", posx[p], posy[p]);
+      } else {
+        int p = x * 2 - 1;
+        ROF(i,16,0) if(q>>i&1) p = f[i][p];
+        printf("%d %d\n", posx[p], posy[p]);
+      }
+    }
+  }
+}
+int main (void) {
+  freopen("corridor.in", "r", stdin);
+  freopen("corridor.out", "w", stdout);
+  int type = read();
+  if(type == 1) code2::solve ();
+  else code1::solve ();
+  return 0;
+}

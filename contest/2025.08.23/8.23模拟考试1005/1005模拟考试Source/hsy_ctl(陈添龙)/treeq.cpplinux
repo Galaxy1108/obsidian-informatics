@@ -1,0 +1,106 @@
+#include<bits/stdc++.h>
+#define pc putchar
+#define pb push_back
+#define ll long long
+#define ls(x) (tr[x].l)
+#define rs(x) (tr[x].r)
+#define s(x) (tr[x].sum)
+using namespace std;
+inline int read()
+{
+	int x=0,f=1;char ch=getchar();
+	while(ch<'0'||ch>'9'){f=ch=='-'?-1:f;ch=getchar();}
+	while(ch>='0'&&ch<='9'){x=x*10+(ch^48);ch=getchar();}
+	return x*f;
+}
+void write(int x)
+{
+	if(x<0){x=-x;pc('-');}
+	if(x>9)write(x/10);
+	pc(x%10+48);
+}
+int n,m;
+int c[1000005],ans;
+ll a[1000005],b[1000005];
+struct edge
+{
+	int v,w,nxt;
+}e[2000005];
+int head[1000005],ecnt=1;
+inline void add(int u,int v,int w)
+{
+	e[++ecnt].v=v;e[ecnt].w=w;
+	e[ecnt].nxt=head[u];
+	head[u]=ecnt;
+}
+int dfn[1000005],siz[1000005],tim;
+struct node
+{
+	ll w;int id,r;
+	friend bool operator<(node x,node y)
+		{return x.w<y.w;}
+}stk[3000005];
+vector<node>v[1000005];
+void dfs(int x,int f)
+{
+	siz[x]=1;dfn[x]=++tim;
+	for(int i=head[x];i;i=e[i].nxt)
+	{
+		int y=e[i].v;if(y==f)continue;
+		dfs(y,x);siz[x]+=siz[y];
+		if(dfn[y]>1)v[1].pb({(ll)e[i].w*siz[y],i>>1,dfn[y]-1});
+		v[dfn[y]].pb({(ll)e[i].w*(n-siz[y]),i>>1,dfn[y]+siz[y]-1});
+		if(dfn[y]+siz[y]-1<n)v[dfn[y]+siz[y]].pb({(ll)e[i].w*siz[y],i>>1,n});
+	}
+}
+priority_queue<node>q;
+
+struct val_seg_tree
+{
+	int l,r,sum;
+}tr[30000005];
+int rt[1000005],cnt;
+void modify(int &pos,int l,int r,int k)
+{
+	if(!pos)pos=++cnt; s(pos)++;if(l==r)return;
+	int mid=(l+r)>>1;
+	if(k<=mid)modify(ls(pos),l,mid,k);
+	else modify(rs(pos),mid+1,r,k);
+}
+int query(int pos,int l,int r,int L,int R)
+{
+	if(L<=l&&r<=R)return s(pos);
+	int mid=(l+r)>>1,res=0;
+	if(L<=mid)res+=query(ls(pos),l,mid,L,R);
+	if(R>mid)res+=query(rs(pos),mid+1,r,L,R);
+	return res;
+}
+int main()
+{
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	n=read();
+	for(int i=1;i<n;++i)
+	{
+		int u=read(),v=read(),w=read();
+		add(u,v,w);add(v,u,w);
+	}dfs(1,0);
+	for(int i=1;i<=n;++i)
+	{
+		for(node it:v[i])q.push(it);
+		while(!q.empty()&&q.top().r<i)q.pop();
+		b[i]=a[i]=q.top().w;
+	}sort(b+1,b+n+1);m=unique(b+1,b+n+1)-(b+1);
+	for(int i=1;i<=n;++i)a[i]=lower_bound(b+1,b+m+1,a[i])-b,modify(rt[a[i]],1,n,i);
+	for(int i=1;i<=n;++i)
+		for(node &it:v[i])
+		{
+			int tmp=lower_bound(b+1,b+m+1,it.w)-b;
+			if(b[tmp]!=it.w)continue;
+			int res=query(rt[tmp],1,n,i,it.r);
+			c[it.id]+=res;
+		}
+	for(int i=1;i<n;++i)ans^=c[i];
+	write(ans),pc('\n');
+	return 0;
+}

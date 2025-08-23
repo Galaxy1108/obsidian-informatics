@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <algorithm>
+#include <bits/stl_pair.h>
+using namespace std;
+typedef long long ll;
+const int _(200005), mod(998244353); int n, q, a[_], g[_];
+struct node { int minv, maxv, l, r, s, t, d; long long c; } b[_ << 2];
+// minv, maxv, left, right, powersum, tag, minposition, valuesum
+#define v(p) b[p].minv
+#define mv(p) b[p].maxv
+#define L(p) b[p].l
+#define R(p) b[p].r
+#define s(p) b[p].s
+#define c(p) b[p].c
+#define t(p) b[p].t
+#define d(p) b[p].d
+#define lc p << 1
+#define rc p << 1 | 1
+typedef const int ci;
+#define iv inline void
+#define $ ci p, ci l, ci r
+iv pushup(ci p)
+{
+    v(p) = v(lc) < v(rc) ? v(lc) : v(rc);
+    if (mv(lc) >= mv(rc)) mv(p) = mv(lc), d(p) = d(lc);
+    else mv(p) = mv(rc), d(p) = d(rc);
+    c(p) = c(lc) + c(rc);
+    s(p) = s(lc) + s(rc) <= mod ? s(lc) + s(rc) : s(lc) + s(rc) - mod;
+}
+iv build($)
+{
+    L(p) = l, R(p) = r;
+    if (l == r) { c(p) = v(p) = mv(p) = a[l]; d(p) = l; s(p) = g[l]; return; }
+    const int m(l + r >> 1); build(lc, l, m); build(rc, m + 1, r);
+    pushup(p);
+}
+iv modify(ci p, ci q, int v)
+{
+    if (L(p) == R(p)) { v(p) += v; mv(p) += v; c(p) += v; return; }
+    ci m(L(p) + R(p) >> 1);
+    if (q <= m) modify(lc, q, v); else modify(rc, q, v);
+    pushup(p);
+}
+struct three { int x; long long y; int z; };
+// powersum(s), valuesum(c), minv(v)
+// valueneed, node, valuemade
+inline three query($)
+{
+    if (l <= L(p) && R(p) <= r) return (three){s(p), c(p), v(p)};
+    ci m(L(p) + R(p) >> 1); three x({0, 0, _}), y;
+    if (l <= m) { y = query(lc, l, r); x.x += y.x; x.y += y.y; if (y.z < x.z) x.z = y.z; }
+    if (r > m) { y = query(rc, l, r); x.x += y.x; x.y += y.y; if (y.z < x.z) x.z = y.z; }
+    if (x.x > mod) x.x -= mod; return x;
+}
+inline three reduce(ci l, ci r, ci v)
+{
+    const three x(query(1, l, r));
+    if (x.z > v) return (three){0, 0, 0};
+    else if (x.y <= v) return (three){int(x.y), 0, x.x};
+    ci m(l + r >> 1); const three y(reduce(m + 1, r, v));
+    three z(reduce(l, m, v - y.x));
+    return (three){y.x + z.x, 0, y.z + z.z <= mod ? y.z + z.z : y.z + z.z - mod};
+}
+int main()
+{
+    // freopen("imperishable2.in", "r", stdin);
+    // freopen("imperishable2.out", "w", stdout);
+    scanf("%d%d", &n, &n); g[0] = 1;
+    for (int i(1); i <= n; ++i) scanf("%d", &a[i]), g[i] = (g[i - 1] << 1) % mod;
+    build(1, 1, n); scanf("%d", &q);
+    for (int i(0); i <= q; ++i)
+    {
+        int x, y; if (i) { scanf("%d%d", &x, &y); modify(1, x, y - a[x]); a[x] = y; }
+        y = a[b[1].d]; int l(1), r(b[i].d), q;
+        while (l <= r) {
+            ci m(l + r >> 1);
+            if (query(1, 1, m).y >= y) q = m, r = m - 1; else l = m + 1;
+        } const three e(query(1, 1, q));
+        printf("%d\n", (e.x - reduce(1, q, e.y - y).z + mod) % mod);
+    }
+    return 0;
+}

@@ -1,0 +1,43 @@
+#include <cstdio>
+#include <set>
+using namespace std;
+const int N = 50005;
+int type,n,m,k,Q;
+set<int> e[2][N];
+int main()
+{
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	scanf("%d%d%d%d",&type,&n,&m,&k);
+	for (int i=1,x,y;i<=k;++i)
+		scanf("%d%d",&x,&y),
+		e[0][x].insert(y),
+		e[1][y].insert(x);
+	scanf("%d",&Q);
+	for (int w,x,y,q;Q--;)
+	{
+		scanf("%d%d%d",&w,&x,&y);
+		if (w==2) scanf("%d",&q);
+		if (w==1)
+			e[0][x].insert(y),
+			e[1][y].insert(x);
+		else 
+		{
+			int now=0,las=0,id=0;bool err=0;
+			if (x==0) id=1,now=y;
+			else id=0,now=x;
+			for (int j=1;j<=q;++j)
+			{
+				set<int>::iterator u;
+				u=e[id][now].upper_bound(las);
+				if (u==e[id][now].end())
+					{ err=1;break; }
+				las=now,now=*u,id^=1;
+			}	 if (!err && id) printf("%d %d\n",las,now);
+			else if (!err && !id) printf("%d %d\n",now,las);
+			else if (!id) printf("%d %d\n",now,m+1);
+			else printf("%d %d\n",n+1,now);
+		}
+	}
+	fclose(stdin),fclose(stdout);
+}

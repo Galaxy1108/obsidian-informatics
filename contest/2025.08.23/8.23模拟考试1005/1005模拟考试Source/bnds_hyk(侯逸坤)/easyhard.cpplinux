@@ -1,0 +1,40 @@
+#include<bits/stdc++.h>
+using namespace std;
+int n,m,mod;
+int dp[3005][6005];
+bool check(int x,int y){
+	int B=y,W=2*x-y;
+	int maxn=n+x;
+	if(B>maxn||W>maxn) return false;
+	else return true;
+}
+int main(){
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	cin>>n>>m>>mod;
+	dp[1][2]=1;
+	dp[1][1]=2;
+	dp[1][0]=1;
+	for(int i=1;i<m;i++){
+		for(int j=0;j<=min(2*i,i+n);j++){
+			if(!check(i,j)) continue;
+			if(check(i+1,j)&&(2*i-j<n+i)) dp[i+1][j]+=dp[i][j];
+			if(check(i+1,j+1)){
+				if(j<n+i) dp[i+1][j+1]+=dp[i][j];
+				dp[i+1][j+1]%=mod;
+				if(2*i-j<n+i) dp[i+1][j+1]+=dp[i][j];
+			}
+			if(check(i+1,j+2)&&j<n+i) dp[i+1][j+2]+=dp[i][j];
+			dp[i+1][j]%=mod;
+			dp[i+1][j+1]%=mod;
+			dp[i+1][j+2]%=mod;
+		}
+	}
+	int ans=0;
+	for(int i=0;i<=min(2*m,m+n);i++){
+		ans+=dp[m][i];
+		ans%=mod;
+	}
+	printf("%d\n",ans);
+	return 0;
+}

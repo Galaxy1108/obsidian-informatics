@@ -1,0 +1,37 @@
+#include <bits/stdc++.h>
+using namespace std;
+inline int read(){
+	int x=0,w=1;
+	char ch=getchar();
+	while(ch<'0'||ch>'9'){
+		if(ch=='-') w=-1;
+		ch=getchar();
+	}
+	while(ch>='0'&&ch<='9'){
+		x=x*10+(ch-'0');
+		ch=getchar();
+    }
+	return x*w;
+}
+struct node{
+	int v,w;
+};
+int n,ans;
+vector<node> a[10000121]; 
+int main()
+{
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	n=read();
+	for(int i=1;i<n;i++){
+		int f,w;
+		f=read(),w=read();
+		a[i].push_back(node{f,w});
+		a[f].push_back(node{i,w});
+		if(i==1) ans=w;
+		else ans=ans^w;
+		//cout<<ans<<endl;
+	}
+	cout<<ans<<endl;
+	return 0;
+}

@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define LOG(FMT...) fprintf(stderr, FMT)
+
+#include <algorithm>
+
+using namespace std;
+
+const int N = 3005;
+
+int n, m, mod;
+int f[N][2], g[N][2];
+
+void Add(int &x, int y) {
+	if ((x += y) >= mod) {
+		x -= mod;
+	}
+}
+
+int main() {
+	freopen("easyhard.in", "r", stdin);
+	freopen("easyhard.out", "w", stdout);
+	scanf("%d%d%d", &n, &m, &mod);
+	if (mod == 1) {
+		puts("0");
+		return 0;
+	}
+	for (int i = 0; i <= n; ++i) {
+		f[i][i == 0] = 1;
+	}
+	while (m--) {
+		for (int i = 0; i <= n; ++i) {
+			for (int j = 0; j < 2; ++j) {
+				if (i) {
+					Add(g[i][j || i == 1], f[i][j]);
+					Add(g[i - 1][j || i == 1], f[i][j]);
+				}
+				if (i < n) {
+					Add(g[i][j], f[i][j]);
+					Add(g[i + 1][j], f[i][j]);
+				}
+			}
+		}
+		memcpy(f, g, sizeof f);
+		memset(g, 0, sizeof g);
+		/* for (int i = 0; i <= n; ++i) {
+			for (int j = 0; j <= i; ++j) {
+				if (j) {
+					Add(g[i][j], f[i][j]);
+					Add(g[i][j - 1], f[i][j]);
+				}
+				if (j < i) {
+					Add(g[i][j], f[i][j]);
+					Add(g[i][j + 1], f[i][j]);
+				} else if (j < n) {
+					Add(g[i + 1][j], f[i][j]);
+					Add(g[i + 1][j + 1], f[i][j]);
+				}
+			}
+		}
+		for (int i = 0; i <= n; ++i) {
+			memcpy(f[i], g[i], n + 1 << 2);
+			memset(g[i], 0, n + 1 << 2);
+		} */
+	}
+	int res = 0;
+	for (int j = 0; j <= n; ++j) {
+		Add(res, f[j][1]);
+	}
+	printf("%d\n", res);
+	return 0;
+}

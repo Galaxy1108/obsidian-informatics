@@ -1,0 +1,61 @@
+#include <cstdio>
+#include <algorithm>
+#include <iostream>
+#include <cstring>
+#include <string>
+#include <queue>
+#include <deque>
+#include <cmath>
+#include <vector>
+#include <map>
+#include <stack>
+#include <set>
+#define LL long long
+#define ULL unsigned long long
+#define IT set<int>::iterator
+using namespace std;
+const int MAXN = 10005, MOD = 998244353; //Ô­ÌâµÄMAXN:200005 
+int Num, n, a[MAXN], q, qp[MAXN];
+int read()
+{
+	int x = 0;
+	bool flag = 1;
+	char c = getchar();
+	while(c < '0' || c > '9')
+	{
+		if(c == '-') flag = 0;
+		c = getchar();
+	}
+	while(c >= '0' && c <= '9')
+	{
+		x = (x << 3) + (x << 1) + c - '0';
+		c = getchar();
+	}
+	return flag ? x : ~(x - 1);
+}
+int main()
+{
+	freopen("imperishable.in", "r", stdin);
+	freopen("imperishable.out", "w", stdout);
+	Num = read(), n = read();
+	qp[0] = 1;
+	for(int i = 1; i <= n; ++i)
+	{
+		qp[i] = qp[i - 1] << 1;
+		qp[i] %= MOD;
+	}
+	for(int i = 1; i <= n; ++i)
+		a[i] = read();
+	q = read();
+	for(int i = 1; i <= q; ++i)
+	{
+		int x = read(), y = read();
+		a[x] = y;
+	}
+	if(n == 1)
+	{
+		printf("%d\n", qp[1]);
+		return 0;
+	}
+	return 0;
+}

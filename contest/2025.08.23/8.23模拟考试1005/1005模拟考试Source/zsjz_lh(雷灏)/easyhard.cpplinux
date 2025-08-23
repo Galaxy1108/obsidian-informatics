@@ -1,0 +1,19 @@
+#include<cstdio>
+#define fo(i,x,y) for(int i = x;i <= y;++i)
+using namespace std;
+int n,m,p,ans;
+bool bz[1048576];
+void dg(int x,int A,int S)
+{
+	if(x > m) {ans += (bz[S] == 0),bz[S] = 1;return;}
+	if(A > 0) dg(x + 1,A - 1,S << 2),dg(x + 1,A,S << 2 | 1);
+	if(A < n) dg(x + 1,A,S << 2 | 2),dg(x + 1,A + 1,S << 2 | 3);
+}
+int main()
+{
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	scanf("%d%d%d",&n,&m,&p);
+	fo(i,0,n) dg(1,i,0);
+	printf("%d\n",ans % p);
+}

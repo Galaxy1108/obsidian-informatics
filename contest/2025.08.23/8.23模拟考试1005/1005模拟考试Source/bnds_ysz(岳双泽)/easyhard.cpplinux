@@ -1,0 +1,51 @@
+#include <bits/stdc++.h>
+using namespace std;
+const int N = 3005;
+int f[N][N][2];
+int main() {
+	ios :: sync_with_stdio(0);
+	cin.tie(0), cout.tie(0);
+	freopen("easyhard.in", "r", stdin);
+	freopen("easyhard.out", "w", stdout);
+	int n, m, p;
+	cin >> n >> m >> p;
+	for (int i = 0; i <= n; ++i) {
+		if (i == 0) {
+			f[0][i][1] = 1;
+		} else {
+			f[0][i][0] = 1;
+		}
+	}
+	for (int i = 0; i <= m - 1; ++i) {
+		for (int j = 0; j <= n; ++j) {
+			if (j != 0) {	// 01, 00
+				if (j == 1) {
+					f[i + 1][j - 1][1] += f[i][j][0];
+					f[i + 1][j][1] += f[i][j][0];
+					f[i + 1][j - 1][1] %= p, f[i + 1][j][1] %= p;
+				} else {
+					f[i + 1][j - 1][0] += f[i][j][0];
+					f[i + 1][j][0] += f[i][j][0];
+					f[i + 1][j - 1][0] %= p, f[i + 1][j][0] %= p;
+				}
+				f[i + 1][j - 1][1] += f[i][j][1];
+				f[i + 1][j][1] += f[i][j][1];
+				f[i + 1][j - 1][1] %= p, f[i + 1][j][1] %= p;
+			}
+			if (n - j != 0) {	// 10, 11
+				f[i + 1][j][0] += f[i][j][0];
+				f[i + 1][j][1] += f[i][j][1];
+				f[i + 1][j + 1][0] += f[i][j][0];
+				f[i + 1][j + 1][1] += f[i][j][1];
+				f[i + 1][j][0] %= p, f[i + 1][j][1] %= p, f[i + 1][j + 1][0] %= p, f[i + 1][j + 1][1] %= p;
+			}
+		}
+	}
+	int res = 0;
+	for (int i = 0; i <= n; ++i) {
+		res += f[m][i][1];
+		res %= p;										
+	}
+	cout << res << '\n';
+	return 0;
+}

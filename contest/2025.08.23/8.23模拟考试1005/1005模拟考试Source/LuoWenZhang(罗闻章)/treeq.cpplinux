@@ -1,0 +1,83 @@
+#include<cstdio>
+#include<unordered_set>
+using namespace std;
+#define NR 5005
+struct edge{
+    int v, w, x;
+};
+edge g[NR<<1];
+int head[NR], gsz;
+int hson[NR], sz[NR], fa[NR], faw[NR], top[NR], dfn[NR], id[NR], tot, d[NR];
+int c[NR][NR], mx[NR], f[NR];
+inline void addedge(int u, int v, int w) {
+    g[++gsz] = (edge){v, w, head[u]};
+    head[u] = gsz;
+    g[++gsz] = (edge){u, w, head[v]};
+    head[v] = gsz;
+}
+int dfs(int u, int f, int depth) {
+    fa[u] = f;
+    d[u] = depth++;
+    int &szu = sz[u] = 1, hsz = 0, &uh = hson[u];
+    for (int i = head[u]; i; i = g[i].x) {
+        int &v = g[i].v;
+        if (v == f) {faw[u] = g[i].w;continue;}
+        szu += dfs(v, u, depth);
+        if (sz[v] > hsz) hsz = sz[uh = v];
+    }
+    return szu;
+}
+void dfs2(int u, int f, int t) {
+    top[u] = t;
+    id[dfn[u] = ++tot] = u;
+	if (hson[u]) {
+		dfs2(hson[u], u, t);
+		for (int i = head[u]; i; i = g[i].x) {
+			int v = g[i].v;
+			if (v != hson[u] && v != f) dfs2(v, u, v);
+		}
+	}
+}
+int lca(int u, int v) {
+	while (top[u] != top[v]) {
+		if (d[top[u]] > d[top[v]])
+			u = fa[top[u]];
+		else
+			v = fa[top[v]];
+	}
+	return d[u] > d[v] ? v : u;
+}
+int main() {
+    freopen("treeq.in", "r", stdin);
+    freopen("treeq.out", "w", stdout);
+    int n;
+    scanf("%d", &n);
+    for (int i = 1; i < n; ++i) {
+        int u, v, w;
+        scanf("%d%d%d", &u, &v, &w);
+        addedge(u, v, w);
+    }
+    dfs(1, 0, 0);
+    dfs2(1, 0, 1);
+    int szall = sz[1];
+    for (int i = 2; i <= n; ++i) {
+        int szcur = sz[i], szoth = szall - szcur;
+        int sons = szoth*faw[i], others = szcur*faw[i];
+        for (int j = 1; j <= n; ++j) {
+            if (dfn[i] <= j && j < dfn[i] + sz[i])
+                c[i][j] = sons;
+            else c[i][j] = others;
+            mx[j] = max(mx[j], c[i][j]);
+        }
+    }
+    for (int j = 1; j <= n; ++j) {
+        int mxj = mx[j];
+        for (int i = 2; i <= n; ++i) {
+            if (mxj == c[i][j]) ++f[i];
+        }
+    }
+    int ans = 0;
+    for (int i = 2; i <= n; ++i) ans ^= f[i];
+    printf("%d\n", ans);
+    return 0;
+}

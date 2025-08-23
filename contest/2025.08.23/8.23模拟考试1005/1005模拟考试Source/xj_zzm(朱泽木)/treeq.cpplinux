@@ -1,0 +1,80 @@
+#include<bits/stdc++.h>
+#define ll long long
+#define pb push_back
+#define mp make_pair
+#define pii pair<int,int>
+#define x first
+#define y second
+#define WT int TT=read();while(TT--)
+//#define getchar() (p1==p2&&(p2=(p1=buf)+fread(buf,1,1<<21,stdin),p1==p2)?EOF:*p1++)
+using namespace std;
+
+//char buf[1<<20],*p1=buf,*p2=buf,obuf[1<<20],*O=obuf;
+inline int read()
+{
+    char c=getchar();int x=0;bool f=0;
+    for(;!isdigit(c);c=getchar())f^=!(c^45);
+    for(;isdigit(c);c=getchar())x=(x<<1)+(x<<3)+(c^48);
+    if(f)x=-x;return x;
+}
+inline void ckmax(ll &a,ll b){a=(a>b?a:b);}
+inline void ckmin(int &a,int b){a=(a<b?a:b);}
+
+const int M=1e6+10;
+int fa[M],w[M],sz[M],n,res,dfn[M],ans[M],cnt[M];
+ll f[M],g[M],pre[M],suf[M];
+vector<int>e[M];
+
+inline ll max(ll a,ll b){return a>b?a:b;}
+
+signed main()
+{
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	n=read();dfn[1]=1;
+	for (int i=2;i<=n;i++)fa[i]=read(),w[i]=read(),e[fa[i]].pb(i);
+//	cerr<<clock()<<'\n';
+	for (int i=n;i>=2;i--)
+	{
+		sz[i]++,sz[fa[i]]+=sz[i];
+		ckmax(f[fa[i]],max(f[i],1ll*w[i]*sz[i]));
+	}
+	for (int i=1;i<=n;i++)
+	{
+		int SZ=(int)(e[i].size());int Cnt=dfn[i]+1;
+		for (int j=0;j<SZ;j++)pre[j+1]=max(pre[j],max(f[e[i][j]],1ll*w[e[i][j]]*sz[e[i][j]])),dfn[e[i][j]]=Cnt,Cnt+=sz[e[i][j]];
+		suf[SZ+1]=0;ckmax(f[i],g[i]);
+		for (int j=SZ-1;j>=0;j--)suf[j+1]=max(suf[j+2],max(f[e[i][j]],1ll*w[e[i][j]]*sz[e[i][j]]));
+		for (int j=0;j<SZ;j++)g[e[i][j]]=max(max(g[i],1ll*w[e[i][j]]*(n-sz[e[i][j]])),max(pre[j],suf[j+2]));
+		g[i]=f[i],cnt[i]=1;
+	}
+	for (int i=n;i>=2;i--)
+	{
+		if (g[i]<g[fa[i]])g[fa[i]]=g[i],cnt[fa[i]]=cnt[i];
+		else if (g[i]==g[fa[i]])cnt[fa[i]]+=cnt[i];
+		if (g[i]==1ll*w[i]*(n-sz[i]))ans[i]=cnt[i];
+		pre[dfn[i]]=suf[dfn[i]]=f[i];
+	}
+	pre[dfn[1]]=suf[dfn[1]]=f[1];cnt[1]=1;
+	for (int i=2;i<=n;i++)
+		if (pre[i]==pre[i-1])cnt[i]=cnt[i-1]+1;
+		else if (pre[i]<pre[i-1]) cnt[i]=1;
+		else pre[i]=pre[i-1],cnt[i]=cnt[i-1];
+//	for (int i=1;i<=n;i++)cerr<<f[i]<<(i==n?'\n':' ');
+//	for (int i=2;i<=n;i++)cerr<<ans[i]<<(i==n?'\n':' ');
+	for (int i=2;i<=n;i++)if (pre[dfn[i]-1]==1ll*w[i]*sz[i])ans[i]+=cnt[dfn[i]-1];
+	cnt[n]=1;
+	for (int i=n-1;i>=1;i--)
+		if (suf[i]==suf[i+1])cnt[i]=cnt[i+1]+1;
+		else if (suf[i]<suf[i+1])cnt[i]=1;
+		else suf[i]=suf[i+1],cnt[i]=cnt[i+1];
+	for (int i=2;i<=n;i++)
+	{
+		if (suf[dfn[i]+sz[i]]==1ll*w[i]*sz[i])ans[i]+=cnt[dfn[i]+sz[i]];
+		res^=ans[i];
+//		cerr<<ans[i]<<' ';
+	}
+	cout<<res<<'\n';
+//	cerr<<clock()<<'\n';
+	return 0;
+}

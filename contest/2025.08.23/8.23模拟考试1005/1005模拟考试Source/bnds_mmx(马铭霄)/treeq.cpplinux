@@ -1,0 +1,97 @@
+#include<bits/stdc++.h>
+using namespace std;
+const int N=1e6+5;
+const int M=5e3+5;
+struct node
+{
+	int to;
+	long long w;
+	int id;
+};
+long long d[M],hv[M],w[N];
+int f[N],fa[N];
+vector<node> v[N];
+void dfs(int x,int lst)
+{
+	hv[x]=1;
+	for(int i=0;i<v[x].size();i++)
+	{
+		if(v[x][i].to!=lst)
+		{
+			dfs(v[x][i].to,x);
+			d[v[x][i].id]=hv[v[x][i].to];
+			hv[x]+=hv[v[x][i].to];
+		}
+	}
+}
+void dfs2(int x,int lst)
+{
+	hv[x]=1;
+	for(int i=0;i<v[x].size();i++)
+	{
+		if(v[x][i].to!=lst)
+		{
+			dfs2(v[x][i].to,x);
+			hv[x]+=hv[v[x][i].to];
+		}
+	}
+}
+int main()
+{
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	int n;
+	cin>>n;
+	long long z;
+	int fla=0,flb=0,flc=0;
+	for(int i=2;i<=n;i++)
+	{
+		scanf("%d%lld",&fa[i],&z);
+		if(z>1)fla=1;
+		if(fa[i]!=i-1)flb=1;
+		if(fa[i]!=1)flc=1;
+		w[i-1]=z;
+		v[fa[i]].push_back((node){i,z,i-1});
+		v[i].push_back((node){fa[i],z,i-1});
+	}
+	if(n<=5000)
+	{
+		long long mx;
+		for(int i=1;i<=n;i++)
+		{
+			mx=0;
+			memset(d,0,sizeof(d));
+			dfs(i,0);
+			for(int j=1;j<n;j++)d[j]*=w[j];
+			for(int j=1;j<n;j++)mx=max(mx,d[j]);
+			for(int j=1;j<n;j++)if(d[j]==mx)f[j]++;
+		}
+		int xr=0;
+		for(int i=1;i<n;i++)xr^=f[i];
+		cout<<xr<<endl;
+	}
+	else if(!fla)
+	{
+		long long mx=0;
+		dfs2(1,0);
+		for(int i=1;i<=n;i++)
+		{
+			if(v[i].size())
+			{
+				mx=0;
+				for(int j=0;j<v[i].size();j++)mx=max(mx,hv[v[i][j].to]);
+				for(int j=0;j<v[i].size();j++)if(hv[v[i][j].to]==mx)f[v[i][j].id]++;
+			}
+		}
+		int xr=0;
+		for(int i=1;i<n;i++)xr^=f[i];
+		cout<<xr<<endl;
+	}
+	else if(!flb)
+	{
+	}
+	else if(!flc)
+	{
+	}
+	return 0;
+}

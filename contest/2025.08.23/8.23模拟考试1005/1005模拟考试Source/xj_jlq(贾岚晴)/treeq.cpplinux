@@ -1,0 +1,79 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long
+inline ll read(){
+	ll x=0,f=1;char ch=getchar();
+	while(ch<'0'||ch>'9'){if(ch=='-')f=-1;ch=getchar();}
+	while(ch>='0'&&ch<='9')x=(x<<3)+(x<<1)+ch-'0',ch=getchar();
+	return x*f;
+}
+const ll N=1000010,INF=0x3f3f3f3f3f3f3f3f;
+ll n,a[N],s[N],u[N],v[N],w[N],f[N],res,ans,pre[N],suf[N];
+ll head[N],ver[N<<1],nxt[N<<1],tot,edge[N<<1],id[N<<1];
+void add(ll x,ll y,ll z,ll p){
+	ver[++tot]=y,id[tot]=p,edge[tot]=z,nxt[tot]=head[x],head[x]=tot;
+}
+void dfs(ll x,ll fa){
+	s[x]=1;
+	for(ll i=head[x];i;i=nxt[i]){
+		ll y=ver[i],z=edge[i],p=id[i];
+		if(y==fa)continue;
+		dfs(y,x),s[x]+=s[y],a[p]=z*s[y];
+	}
+}
+void work1(){
+	memset(f,0,sizeof(f)),ans=0;
+	for(ll i=1,x,y,z;i<n;i++)
+		x=read(),y=read(),z=read(),
+		add(x,y,z,i),add(y,x,z,i);
+	for(ll i=1;i<=n;i++){
+		memset(a,0,sizeof(a));
+		memset(s,0,sizeof(s));
+		dfs(i,0),res=0;
+		for(ll i=1;i<n;i++)res=max(res,a[i]);
+		for(ll i=1;i<n;i++)f[i]+=a[i]==res;
+	}
+	for(ll i=1;i<n;i++)ans^=f[i];
+	printf("%lld\n",ans);
+}
+void work3(){
+	memset(f,0,sizeof(f));
+	ans=res=0,dfs(n,0),pre[n]=INF;
+	for(ll i=1;i<n;i++)pre[i]=max(pre[i-1],a[i]);
+	for(ll i=1;i<n;i++);
+}
+void work4(){
+	memset(f,0,sizeof(f));
+	ans=res=0,dfs(1,0);ll cnt=0;
+	for(ll i=1;i<n;i++)res=max(res,a[i]);
+	for(ll i=1;i<n;i++)f[i]+=a[i]==res;
+	for(ll i=1;i<n;i++)
+		if(w[i]*(n-1ll)>=res)f[i]++;else cnt++;
+	for(ll i=1;i<n;i++)
+		if(a[i]==res)f[i]+=n-cnt-1ll;
+	for(ll i=1;i<n;i++)ans^=f[i];
+	printf("%lld\n",ans);
+}
+void work234(){
+	ll tag4=1,tag3=1,tag2=1;
+	for(ll i=1;i<n;i++)
+		u[i]=read(),v[i]=read(),w[i]=read(),
+		add(u[i],v[i],w[i],i),add(v[i],u[i],w[i],i);
+	for(ll i=1;i<n;i++)if(u[i]^1)tag4=0;
+	if(tag4)work4();
+	else{
+		for(ll i=1;i<n;i++)
+			if((u[i]^i)||(v[i]^(i+1)))tag3=0;
+		if(tag3)work1();
+		else if(1)work1();
+		else work3();
+	}
+}
+int main(){
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	n=read();
+	if(n<=5000)work1();
+	else work234();
+	return 0;
+}

@@ -1,0 +1,101 @@
+// #pragma GCC optimize("O3")
+// // #pragma GCC optimize("Ofast")
+// #pragma GCC optimize("unroll-loops")
+// #pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,tune=native")
+#include <bits/stdc++.h>
+using namespace std;
+
+#define PB emplace_back
+#define int long long
+#define ll long long
+#define vi vector<int>
+#define siz(a) ((int)((a).size()))
+#define rep(i, a, b) for (int i = (a); i <= (b); ++i)
+#define per(i, a, b) for (int i = (a); i >= (b); --i)
+char buf[1<<23],*p1=buf,*p2=buf,obuf[1<<23],*O=obuf;
+#define getchar() (p1==p2&&(p2=(p1=buf)+fread(buf,1,1<<21,stdin),p1==p2)?EOF:*p1++)
+int read() {
+	int x = 0, y = 0;
+	char c = getchar();
+	for (; c < '0' || c > '9'; c = getchar()) y |= (c == '-');
+	for (; c >= '0' && c <= '9'; x = x * 10 + (c ^ 48), c = getchar());
+	return (y ? -x : x);
+}
+
+const int N = 1e6;
+int a, mx1[N + 5], w1[N + 5], mx2[N + 5], w2[N + 5], siz[N + 5], val[N + 5],
+	ans[N + 5], fk[N + 5], head[N + 5], top;
+struct node {
+	int lst, v, w;
+} s[N * 2 + 5];
+unordered_map<int, int> mp;
+
+void add(int n, int m, int k) {
+	s[++top] = (node) {head[n], m, k};
+	head[n] = top;
+}
+
+void upd(int n, int x, int y) {
+	if(x >= w1[n]) {
+		w2[n] = w1[n], mx2[n] = mx1[n];
+		w1[n] = x, mx1[n] = y;
+	}
+}
+
+void dfs(int n, int fa) {
+	siz[n] = 1;
+	for(int i = head[n]; i; i = s[i].lst) {
+		int v = s[i].v, w = s[i].w;
+		if(v == fa) continue;
+		val[v] = w;
+		dfs(v, n);
+		siz[n] += siz[v];
+		upd(n, w1[v], mx1[v]);
+		upd(n, w2[v], mx2[v]);
+		upd(n, w * siz[v], v);
+	}
+}
+void Dfs(int n, int fa) {
+	fk[n] = w1[n];
+	for(int i = head[n]; i; i = s[i].lst) {
+		int v = s[i].v, w = s[i].w;
+		if(v == fa) continue;
+		if(mx1[n] != v) upd(v, w1[n], mx1[n]);
+		if(mx2[n] != v) upd(v, w2[n], mx2[n]);
+		upd(v, w * (a - siz[v]), n);
+		if(mp.count(w * siz[v])) ans[v] += mp[w * siz[v]];
+		if(mp.count(w * (a - siz[v]))) ans[v] += -mp[w * (a - siz[v])];
+		Dfs(v, n);
+		// cnmsb(v, n);
+		if(mp.count(w * siz[v])) ans[v] -= mp[w * siz[v]];
+		if(mp.count(w * (a - siz[v]))) ans[v] -= -mp[w * (a - siz[v])];
+	}
+	++mp[fk[n]];
+}
+
+signed main() {
+	freopen("treeq.in", "r", stdin);
+	freopen("treeq.out", "w", stdout);
+	// ios::sync_with_stdio(0);
+	// cin.tie(0), cout.tie(0);
+	a = read();
+	int x, y;
+	rep(i, 2, a) {
+		x = read(), y = read();
+		add(x, i, y);
+		add(i, x, y);
+	}
+	dfs(1, 0);
+	Dfs(1, 0); 
+	// rep(i, 1, a) cout << fk[i] << endl;
+	// cnmsb(1, 0);
+	// cout << 1.0 * clock() / CLOCKS_PER_SEC << endl;
+	int res = 0;
+	rep(i, 2, a) {
+		if(mp.count(val[i] * siz[i])) ans[i] += mp[val[i] * siz[i]];
+		// cout << ans[i] << endl;
+		res ^= ans[i];
+	}
+	cout << res << endl;
+	return 0;
+}

@@ -1,0 +1,92 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+void setio(string s) {
+	freopen((s + ".in").c_str(), "r", stdin);
+	freopen((s + ".out").c_str(), "w", stdout);
+	cin.tie(0)->sync_with_stdio(0), cout.tie(0);
+#ifdef LOCAL
+	atexit([](){ system("grep VmPeak /proc/$PPID/status > /dev/tty"); });
+#endif
+}
+
+#define F(i, a, b) for (int i = (a), i##end = (b); i <= i##end; i++)
+#define R(i, a, b) for (int i = (a), i##end = (b); i >= i##end; i--)
+
+using ll = int64_t;
+const int N = 200100, M = 998244353;
+int num, n, q, a[N], pw[N];
+
+ll sum[N << 2], pre[N];
+int mx[N << 2], mn[N << 2];
+#define lc p << 1
+#define rc p << 1 | 1
+#define mid ((l + r) >> 1)
+void up(int p) {
+	sum[p] = sum[lc] + sum[rc];
+	mx[p] = max(mx[lc], mx[rc]);
+	mn[p] = min(mn[lc], mn[rc]);
+}
+void build(int l, int r, int p) {
+	if (l == r) { sum[p] = mx[p] = a[l]; return; }
+	build(l, mid, lc), build(mid + 1, r, rc), up(p);
+}
+void modify(int x, int k, int l, int r, int p) {
+	if (x < l || x > r) return;
+	if (l == r) { sum[p] = mx[p] = k; return; }
+	modify(x, k, l, mid, lc), modify(x, k, mid + 1, r, rc), up(p);
+}
+int qmax(int ql, int qr, int l, int r, int p) {
+	if (qr < l || ql > r) return 0;
+	if (ql <= l && qr >= r) return mx[p];
+	return max(qmax(ql, qr, l, mid, lc), qmax(ql, qr, mid + 1, r, rc));
+}
+ll qsum(int ql, int qr, int l, int r, int p) {
+	if (qr < l || ql > r) return 0;
+	if (ql <= l && qr >= r) return sum[p];
+	return qsum(ql, qr, l, mid, lc) + qsum(ql, qr, mid + 1, r, rc);
+}
+int query(int x, ll sl, int mr, int l, int r, int p) {
+	if (x < l || sl >= max(mr, mx[p])) return l - 1;
+	if (l == r) return l;
+	int pos = query(x, sl + sum[lc], mr, mid + 1, r, rc);
+	if (pos > mid) return pos;
+	return query(x, sl, max(mr, mx[rc]), l, mid, lc);
+}
+int find(int x, ll k, int l, int r, int p) {
+	if (x < l || mn[p] > k) return l - 1;
+	if (l == r) return l;
+	int pos = find(x, k, mid + 1, r, rc);
+	if (pos > mid) return pos;
+	return find(x, k, l, mid, lc);
+}
+
+ll s[N];
+int query() {
+	F(i, 1, n) s[i] = s[i - 1] + a[i];
+	ll ans = 0, sum = 0;
+	int x = n, mx = -1e9;
+	while (x) {
+		int y = query(x, sum, mx, 1, n, 1), z = qmax(y + 1, x, 1, n, 1);
+		mx = max(mx, z), sum += s[y];
+		x = max(0, find(y, sum - mx, 1, n, 1) - 1);
+		sum -= s[x], sum += y - x, mx += y - x, ans += pre[y] - pre[x];
+	}
+	return ans % M;
+}
+
+int main() {
+	setio("imperishable");
+	cin >> num >> n;
+	pw[0] = 1;
+	F(i, 1, n) cin >> a[i], pw[i] = 2 * pw[i - 1] % M, pre[i] = pre[i - 1] + pw[i];
+	build(1, n, 1);
+	cin >> q;
+	cout << query() << "\n";
+	F(i, 1, q) {
+		int x, y;
+		cin >> x >> y;
+		a[x] = y, modify(x, y, 1, n, 1);
+		cout << query() << "\n";
+	}
+}

@@ -1,0 +1,55 @@
+#include <cstdio>
+#include <cstring>
+#include <cctype>
+#include <vector>
+#include <algorithm>
+#define int long long
+using namespace std;
+inline int read (void) {
+    int x = 0, f = 1, ch = getchar();
+    while(!isdigit(ch)) { if(ch == '-') f = -f; ch = getchar(); }
+    while(isdigit(ch)) { x = x * 10 + ch - '0'; ch = getchar(); }
+    return x * f;
+}
+const int N=305;
+int n,m,mod,F[N][N*2][N];
+signed main (void) {
+    freopen("easyhard.in", "r", stdin);
+    freopen("easyhard.out", "w", stdout);
+    n=read();m=read();mod=read();
+    F[0][0][0]=1;
+    for (int i=1;i<=m;i++){
+        for (int j=0;j<=i-1;j++){
+            for (int k=0;k<=n;k++){
+                int bl=j,wh=k-bl;
+                if(F[i-1][j][k]==0) continue;
+                if(bl){
+                    F[i][j-1][k]=(F[i][j-1][k]+F[i-1][j][k])%mod;
+                    F[i][j][k]=(F[i][j][k]+F[i-1][j][k])%mod;
+                }
+                else{
+                    if(k<n){
+                        F[i][j+1][k+1]=(F[i][j+1][k+1]+F[i-1][j][k])%mod;
+                        F[i][j][k+1]=(F[i][j][k+1]+F[i-1][j][k])%mod;
+                    }
+                }
+                if(wh){
+                    F[i][j+1][k]=(F[i][j+1][k]+F[i-1][j][k])%mod;
+                    F[i][j][k]=(F[i][j][k]+F[i-1][j][k])%mod;
+                }
+                else{
+                    if(k<n){
+                        F[i][j+1][k+1]=(F[i][j+1][k+1]+F[i-1][j][k])%mod;
+                        F[i][j][k+1]=(F[i][j][k+1]+F[i-1][j][k])%mod;
+                    }
+                }
+            }
+        }
+    }
+    int ans=0;
+    for (int i=0;i<=n;i++){
+        for (int j=0;j<=n;j++) ans=(ans+F[m][i][j])%mod;
+    }
+    printf("%lld\n",ans);
+    return 0;
+}

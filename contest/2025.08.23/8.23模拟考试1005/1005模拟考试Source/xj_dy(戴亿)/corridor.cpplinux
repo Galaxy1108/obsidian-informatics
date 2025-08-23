@@ -1,0 +1,202 @@
+/*
+考虑q极大的时候
+在(x,y)摆家具
+就等于交换了(x,0)和(0,y)两个出发点的最终到达点
+
+用vector pair存下会到达的点
+加入一个点
+将这个点加入vector并交换这后面的所有的点 
+
+那怎么找到这个点对应的出发点呢？
+考虑建立一个索引数组
+Ok先写写看 
+
+那我怎么知道这个点应该插在哪个位置
+找到其中x或y和他相等的最后一个点
+插在他前面 
+
+那么新插入的点到底对应哪个点？
+我不知道
+我只会暴力
+那这必然TLE了罢 
+
+大E了
+一面镜子可以对应2个点
+ 
+*/
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define ull unsigned long long
+const double eps = 0.000001;
+inline int read()
+{
+	int x=0,f=1;
+	char ch = getchar();
+	while (ch > '9' || ch < '0')
+		{
+			if (ch == '-')
+				f = -1;
+			ch = getchar();
+		}
+	while (ch <= '9' && ch >= '0')
+		{
+			x = x * 10 + ch - 48;
+			ch = getchar();
+		}
+	return x*f;
+}
+inline void write(int x)
+{
+	if (x < 0)
+		{
+			putchar('-');
+			x = -x;
+		}
+	if (x > 9)
+		write(x/10);
+	putchar(x%10+'0');
+}
+int type,n,m,k,q;
+int temp1[101000][2],cnt1;
+int temp2[101000][2],cnt2;
+vector<pair<int,int> > st[101000];
+//0-n left n+1-n+m up
+map<pair<int,int>,int> Index1,Index2;
+//1up 2left
+void Get_swap(int a,int b,int x,int y)
+{
+	//a and b (x,y)
+	cnt1 = 0;
+	cnt2 = 0;
+	
+	while ((st[a].back().first != x && st[a].back().second != y) && !st[a].empty())
+		{
+			++cnt1;
+			temp1[cnt1][0] = st[a].back().first;
+			temp1[cnt1][1] = st[a].back().second;
+			st[a].pop_back();
+		}
+	if ((st[a].back().first > x || st[a].back().second > y) && !st[a].empty())
+		{		
+			++cnt1;
+			temp1[cnt1][0] = st[a].back().first;
+			temp1[cnt1][1] = st[a].back().second;
+			st[a].pop_back();
+		}
+		
+	while ((st[b].back().first != x && st[b].back().second != y) && !st[b].empty())
+		{
+			++cnt2;
+			temp2[cnt2][0] = st[b].back().first;
+			temp2[cnt2][1] = st[b].back().second;
+			st[b].pop_back();
+		}
+	if ((st[b].back().first > x || st[b].back().second > y) && !st[b].empty())
+		{
+			++cnt2;
+			temp2[cnt2][0] = st[b].back().first;
+			temp2[cnt2][1] = st[b].back().second;
+			st[b].pop_back();
+		}
+	
+	st[a].push_back(make_pair(x,y));
+	st[b].push_back(make_pair(x,y));
+	
+	for (int i=cnt1;i>=1;--i)
+		st[b].push_back(make_pair(temp1[i][0],temp1[i][1]));
+	for (int i=cnt2;i>=1;--i)
+		st[a].push_back(make_pair(temp2[i][0],temp2[i][1]));
+}
+pair<int,int> Get_point_up(int x,int y)
+{
+	for (int i=x-1;i>=1;--i)
+		if (Index2.find(make_pair(i,y)) != Index2.end())
+			return make_pair(i,y);
+	return make_pair(n+1,y);
+}
+pair<int,int> Get_point_left(int x,int y)
+{
+	for (int i=y-1;i>=1;--i)
+		if (Index1.find(make_pair(x,i)) != Index1.end())
+			return make_pair(x,i);
+	return make_pair(x,m+1);
+}
+void add(int x,int y)
+{
+	int temp1 = Index1[Get_point_up(x,y)];
+	int temp2 = Index2[Get_point_left(x,y)];
+	Index2[make_pair(x,y)] = temp1;
+	Index1[make_pair(x,y)] = temp2;
+	
+	//cout<<temp1<<"?"<<temp2<<endl;
+	
+	Get_swap(temp1,temp2,x,y);
+}
+void test_print(int x)
+{
+	for (int i=0;i<st[x].size();++i)
+		cout<<st[x][i].first<<" "<<st[x][i].second<<endl;
+	cout<<endl;
+}
+int main()
+{
+	//freopen("testdata.txt","r",stdin);
+	//freopen("testout.txt","w",stdout);
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	
+	type = read();
+	n = read();
+	m = read();
+	k = read();
+	
+	for (int i=1;i<=n;++i)
+		{
+			st[i].push_back(make_pair(i,m+1));
+			Index2[make_pair(i,m+1)] = i;
+		}
+	for (int i=1;i<=m;++i)
+		{
+			st[i+n].push_back(make_pair(n+1,i));
+			Index1[make_pair(n+1,i)] = i+n;
+		}
+	//Init
+			
+	for (int i=1;i<=k;++i)
+		{
+			int a,b;
+			a = read();
+			b = read();
+			add(a,b);
+		}
+	q = read();
+	for (int i=1;i<=q;++i)
+		{
+			int op = read();
+			int a = read();
+			int b = read();
+			if (op == 1)
+				add(a,b);
+			else
+				{
+					int p = read()-1;
+					int temp3;
+					if (a == 0)
+						temp3 = n+b;
+					else if (b == 0)
+						temp3 = a;
+					p = min(p,(int)st[temp3].size()-1);
+					printf("%d %d\n",st[temp3][p].first,st[temp3][p].second);
+				}
+				
+			//cout<<"205:\n";
+			//test_print(205);
+			//cout<<"3:\n";
+			//test_print(3);
+			//cout<<"6:\n";
+			//test_print(6);
+			
+		}
+	return 0;
+}

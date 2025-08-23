@@ -1,0 +1,45 @@
+#include<iostream>
+#include<cstdio>
+#include<cstdlib>
+#include<cstring>
+#include<cmath>
+#include<algorithm>
+using namespace std;
+int read()
+{
+	char x=getchar();int v=0,bj=1;
+	while((x!='-')&&(x<'0'||x>'9'))x=getchar();
+	if(x=='-')
+	{
+		bj=-1;
+		x=getchar();
+	}
+	while(!(x<'0'||x>'9'))
+	v=(v<<1)+(v<<3)+x-'0',x=getchar();
+	return v*bj;
+}
+int n,m,mo;
+long long ksm(long long x,int k)
+{
+	long long now=1;
+	while(k)
+	{
+		if(k&1)now=now*x%mo;
+		x=x*x%mo;
+		k>>=1;
+	}
+	return now;
+}
+int main() 
+{
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	n=read();m=read(),mo=read();
+	if(n>=m)
+	{
+		printf("%lld",ksm(2,2*m));
+	}else
+	{
+		printf("%lld",ksm(2,m+n));
+	}
+}

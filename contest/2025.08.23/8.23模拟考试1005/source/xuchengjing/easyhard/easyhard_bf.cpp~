@@ -1,0 +1,17 @@
+#include <cstdio>
+int ans=0;
+int n,m,p;
+void dfs(int wh,int bk,int depth){
+  if(depth==m) ans++;
+  else{
+    if(wh) dfs(wh-1,bk+1,depth+1);
+    dfs(wh,bk,depth+1);
+    dfs(wh,bk,depth+1);
+    if(bk) dfs(wh+1,bk-1,depth+1);
+  }
+}
+int main(){
+  scanf("%d%d",&n,&m);
+  for(int i=0;i<=n;i++) dfs(i,n-i,0);
+  printf("%d\n",ans);
+}

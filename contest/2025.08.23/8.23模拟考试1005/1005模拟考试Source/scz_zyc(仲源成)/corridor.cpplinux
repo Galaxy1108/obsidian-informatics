@@ -1,0 +1,70 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define freall(file) \
+		freopen(file".in","r",stdin);\
+		freopen(file".out","w",stdout);
+int type,n,m,k,tq;
+bool a[20000][20000];
+void dfs(int x,int y,int q)
+{
+	int signals=0;
+	if(x==0)signals=0;
+	else signals=1;
+	x--;
+	y--;
+	/*
+	*towards:1=down 0=right
+	*/
+	int towards_d=1,towards_r=0;
+	if(signals==0)
+		towards_d=1,towards_r=0;
+	else
+	towards_r=1,towards_d=0;
+	while(q>0)
+	{
+		x+=towards_d;
+		y+=towards_r;
+		while((a[x][y]!=1)&&(x!=n)&&(y!=m))
+		{
+//			printf("L%d:%d %d\n",__LINE__,x+1,y+1);
+			x+=towards_d;
+			y+=towards_r;
+		}
+		if((x==n)||(y==m))
+		{
+			printf("%d %d\n",x+1,y+1);
+			return;
+		}
+		q--;
+		towards_d^=1;
+		towards_r^=1;
+	}
+	printf("%d %d\n",x+1,y+1);
+	return;
+}
+int main()
+{
+	freall("corridor");
+	scanf("%d %d %d %d",&type,&n,&m,&k);
+	for(int i=0;i<k;i++)
+	{
+		int x,y;
+		scanf("%d %d",&x,&y);
+		a[x-1][y-1]=1;
+	}
+	scanf("%d",&tq);
+	for(int i=0;i<tq;i++)
+	{
+		int w,x,y,q;
+		scanf("%d",&w);
+		if(w==1)
+		{
+			scanf("%d %d",&x,&y);
+			a[x-1][y-1]=1;
+		}else{
+			scanf("%d %d %d",&x,&y,&q);
+			dfs(x,y,q);
+		}
+	}
+ 	return 0;
+}

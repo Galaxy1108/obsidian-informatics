@@ -1,0 +1,30 @@
+#include<bits/stdc++.h>
+using namespace std;
+int n,m,p,w,pas;
+long long dp[3001],ans;
+int main()
+{
+	freopen("r","easyhard.in",stdin);
+	freopen("w","easyhard.out",stdout);
+    scanf("%d%d%d",&n,&m,&p);
+    for(int i=0;i<=n;i++)
+	{
+		dp[i]=1;
+	}
+	for(int i=1;i<=m;i++)
+	{
+		for(int j=0;j<=n;j++)
+		{
+			w=dp[j];
+			dp[j]=0;
+			if(j>0)dp[j]+=w+pas;
+			pas=w;
+			dp[j]%=p;
+			if(j<n)dp[j]+=w+dp[j+1];
+			dp[j]%=p;
+		}
+	}
+	for(int i=0;i<=n;i++)ans=(ans+dp[i])%p;
+	cout<<ans;
+	return 0;
+} 

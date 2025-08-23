@@ -1,0 +1,72 @@
+/*
+    长弓背负，仙女月鹫，
+	梦中徐来，长夜悠悠。
+	今宵共君，夜赏囃子，
+	盼君速归，长夜悠悠。
+	睡意袭我，眼阖梦徭，
+	睡意袭我，意归襁褓。
+	手扶卓揭，仙女水狃，
+	盼君速归，长夜悠悠。
+	今宵共君，戏于西楼，
+	盼君速归，长夜悠悠。
+	睡意袭我，涟锜池留，
+	睡意袭我，意归海角。
+					                  ——《ever17》
+*/
+
+/*
+	『月正笑，地正润潮，星正舞，风正凉。』
+*/
+
+/*
+	『长夜伴浪破晓梦，梦晓破浪伴夜长。』
+*/
+
+//#pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,tune=native")
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+inline int read()
+{
+	int sum = 0, nega = 1;
+	char ch = getchar();
+	while (ch > '9'||ch < '0')
+	{
+	    if (ch == '-') nega = -1;
+		ch = getchar();
+	}
+	while (ch <= '9' && ch >= '0') sum = sum * 10 + ch - '0', ch = getchar();
+	return sum * nega;
+}
+const int N = 2e5 + 9, mod = 998244353;
+int Num, n, a[N], q, pown[N], c[N], sum[N];
+inline int solve()
+{
+	for (int i = 1; i <= n; i++) sum[i] = sum[i - 1] + a[i];
+	int now = 0, ans = 0, lim = 0;
+	for (int i = n; i >= 1; i--) 
+	{
+		if(a[i] > now + sum[i - 1] || sum[i - 1] < lim) 
+			ans = (ans + pown[i]) % mod, now += (a[i] - 1), lim -= a[i];
+		else lim = max(lim, a[i] - now);
+	//	cout << lim << endl;
+	}
+	return ans;
+}
+signed main()
+{
+	freopen("imperishable.in", "r", stdin);
+	freopen("imperishable.out", "w", stdout);
+	Num = read();
+	n = read(); pown[0] = 1;
+	for (int i = 1; i <= n; i++) a[i] = read(), pown[i] = pown[i - 1] * 2 % mod, sum[i] = sum[i - 1] + a[i]; 
+	printf("%lld\n", solve());
+	q = read();
+	for (int i = 1; i <= q; i++) 
+	{
+		int x = read(), y = read(); 
+		a[x] = y;
+		printf("%lld\n", solve());
+	}
+	return 0;
+}

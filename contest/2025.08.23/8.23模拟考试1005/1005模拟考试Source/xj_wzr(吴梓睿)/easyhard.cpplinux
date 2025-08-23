@@ -1,0 +1,167 @@
+#include<bits/stdc++.h>
+using namespace std;
+inline long long read()
+{
+	long long s=0,k=1;
+	char c=getchar();
+	while(!isdigit(c))
+	{
+		k=(c=='-')?-1:1;
+		c=getchar();
+	}
+	while(isdigit(c))
+	{
+		s=s*10+c-'0';
+		c=getchar();
+	}
+	return s*k;
+}
+#define d read()
+#define ll long long
+#define Maxn 10010
+#define Size 10010
+#define mp make_pair
+#define pb push_back
+#define fi first
+#define se second
+ll ksc(ll a,ll b,ll m)
+{
+	if(a==0||b==0) return 0;
+	ll ans=0;
+	if(b<0)
+	{
+		b=-b,a=-a;
+	}
+	while(b)
+	{
+		if(b&1) ans=(ans+a)%m;
+		a=(a+a)%m;
+		b=b>>1;
+	}
+	return ans;
+}
+ll ksm(ll a,ll b,ll m)
+{
+	a%=m;
+	ll ans=1;
+	while(b)
+	{
+		if(b&1) ans=(ans*a)%m;
+		a=(a*a)%m;
+		b>>=1;
+	}
+	return ans;
+}
+ll exgcd(ll a,ll b,ll &x,ll &y)
+{
+	if(b==0)
+	{
+		x=1,y=0;
+		return a;
+	}
+	ll e=exgcd(b,a%b,y,x);
+	y=y-x*(a/b);
+	return e;
+}
+ll sogcd(ll a,ll b,ll c)
+{
+	ll e,x,y;
+	if(a<0) c=-c,a=-a;
+	e=exgcd(a,b,x,y);
+	if(c%e!=0)
+	{
+		return -1;
+	}
+	ll k=c/e,ka=a/e,kb=b/e;
+	ll nx=k*x,ny=k*y;
+	ll qwq;
+	if(nx<0) qwq=(kb-nx)/kb;
+	else qwq=(1-nx)/kb;
+	nx+=qwq*kb,ny-=qwq*ka;
+	return nx;
+}
+ll lcm(ll a,ll b)
+{
+	return a/__gcd(a,b)*b;
+}
+ll excrt(ll n,ll m[],ll r[])
+{
+	ll x,y;
+	ll M=m[0],ans=r[0];
+	for(int i=1;i<n;i++)
+	{
+		ll a=M,b=m[i],c=(r[i]-ans%b+b)%b;
+        ll e=exgcd(a,b,x,y);
+        ll bg=b/e;
+        if(c%e!=0) return -1;
+        x=ksc(x,c/e,bg);
+        ans+=x*M;
+        M=M*bg;
+        ans=(ans%M+M)%M;
+	}
+	return (ans%M+M)%M;
+}
+ll inv(ll a,ll b)
+{
+	ll x,y;
+	exgcd(a,b,x,y);
+	ll qwq;
+	if(x<0) qwq=(1-x+b-1)/b;
+	else qwq=(1-x)/b;
+	x+=qwq*b,y-=qwq*a;
+	return x;
+}
+ll calc(ll n,ll x,ll p)
+{
+	if(!n) return 1;
+	ll s=1;
+	for(ll i=1;i<=p;i++) if(i%x) s=s*i%p;
+	s=ksm(s,n/p,p);
+	for(ll i=n/p*p+1;i<=n;i++)	if(i%x) s=i%p*s%p;
+	return s*calc(n/x,x,p)%p;
+}
+ll mulucas(ll m,ll n,ll x,ll p)
+{
+	ll cnt=0;
+	for(ll i=m;i;i/=x) cnt+=i/x;
+	for(ll i=n;i;i/=x) cnt-=i/x;
+	for(ll i=m-n;i;i/=x) cnt-=i/x;
+	ll ans=ksm(x,cnt,p)*calc(m,x,p)%p;
+	ans=ans*inv(calc(n,x,p),p)%p;
+	ans=ans*inv(calc(m-n,x,p),p)%p;
+	return ans;
+}
+map<pair<ll,ll>,ll>Luc;
+ll exlucas(ll m,ll n,ll p)
+{
+	if(Luc[mp(m,n)]) return Luc[mp(m,n)];
+	ll mod[30],a[30];
+	ll cnt=0;
+	for(ll i=2;i*i<=p;i++)
+	{
+		if(p%i==0)
+		{
+			mod[cnt]=1;
+			while(p%i==0)
+			{
+				mod[cnt]*=i;
+				p/=i;
+			}
+			a[cnt]=mulucas(m,n,i,mod[cnt]);
+			cnt++;
+		}
+	}
+	if(p>1) mod[cnt]=p,a[cnt++]=mulucas(m,n,p,p);
+	return excrt(cnt,mod,a);
+}
+vector<ll>P[31];
+ll A(ll n,ll m,ll p)
+{
+	return ksm(2,m,p)*((n==0)?1:ksm(3,m,p))%p;
+}
+int main()
+{
+	ll n=d-1,m=d-1,p=d;
+	ll ans=A(n,m,p);
+	printf("%lld\n",ans*4%p);
+}

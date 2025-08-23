@@ -1,0 +1,44 @@
+#include<bits/stdc++.h>
+using namespace std;
+const int N=5005,M=150005;
+int T,n,m,k,q,x[N],y[N],ans1[N],ans2[N];
+int a[N][N];
+int dx[]={1,0};
+int dy[]={0,1};
+int main()
+{
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	scanf("%d%d%d%d",&T,&n,&m,&k);
+	for(int i=1;i<=k;i++) scanf("%d%d",&x[i],&y[i]);
+	scanf("%d",&q);
+	if(T==0)
+	{
+		for(int i=1;i<=k;i++) a[x[i]][y[i]]=1;
+		for(int i=1;i<=q;i++)
+		{
+			int op,x,y,z;
+			scanf("%d%d%d",&op,&x,&y);
+			if(op==1) a[x][y]=1;
+			if(op==2)
+			{
+				scanf("%d",&z);
+				int nowx=x,nowy=y;
+				int d=(!(x==0));
+				while(z&&nowx<=n&&nowy<=m)
+				{
+					nowx+=dx[d],nowy+=dy[d];
+					if(a[nowx][nowy]) z--,d^=1;
+				}
+				printf("%d %d\n",nowx,nowy);
+			}
+		}
+	}
+	if(T==1)
+	{
+		for(int i=1;i<=k;i++)
+		{
+			
+		}
+	}
+}

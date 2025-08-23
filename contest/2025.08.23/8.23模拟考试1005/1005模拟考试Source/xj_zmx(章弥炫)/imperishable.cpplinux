@@ -1,0 +1,67 @@
+#include<bits/stdc++.h>
+using namespace std;
+long long a,b,Num,d[200001],mod=998244353,pw[200001],q,w;
+struct p{long long q,w;bool operator < (const p &aa) const{return w<aa.w;};};
+priority_queue<p> quu;
+struct pp{long long sum,mx;}l[1600001];
+void pushup(long long qq){l[qq].sum=l[qq<<1].sum+l[qq<<1|1].sum;l[qq].mx=max(l[qq<<1].mx,l[qq<<1|1].mx);}
+void build(long long x,long long ll,long long rr)
+{
+	if(ll==rr){l[x].sum=l[x].mx=d[ll];return;}long long mid=((ll+rr)>>1);
+	build(x<<1,ll,mid),build(x<<1|1,mid+1,rr),pushup(x);
+}
+void change(long long x,long long ll,long long rr,long long qq,long long ww)
+{
+	if(ll==rr){l[x].sum=l[x].mx=ww;return;}
+	long long mid=((ll+rr)>>1);
+	if(mid>=qq) change(x<<1,ll,mid,qq,ww);
+	else change(x<<1|1,mid+1,rr,qq,ww);pushup(x);
+}
+long long query(long long x,long long ll,long long rr,long long qq)
+{
+	if(ll==rr) return ll;
+	long long mid=((ll+rr)>>1);
+	if(l[x<<1].sum<qq) return query(x<<1|1,mid+1,rr,qq-l[x<<1].sum);
+	return query(x<<1,ll,mid,qq);
+}
+long long get(long long x,long long ll,long long rr,long long qq)
+{
+	if(rr<=qq) return l[x].sum;
+	long long mid=((ll+rr)>>1);
+	if(mid>=qq) return get(x<<1,ll,mid,qq);
+	return l[x<<1].sum+get(x<<1|1,mid+1,rr,qq);
+}
+long long get1(long long x,long long ll,long long rr,long long qq)
+{
+	if(ll>=qq) return l[x].mx;
+	long long mid=((ll+rr)>>1);
+	if(mid<qq) return get1(x<<1|1,mid+1,rr,qq);
+	return max(get1(x<<1,ll,mid,qq),l[x].mx);
+}
+long long work()
+{
+	while(!quu.empty()&&d[quu.top().q]!=quu.top().w) quu.pop();
+	long long tt=quu.top().w;
+	long long gg=query(1,1,a,tt);
+	long long hh=get(1,1,a,gg),ann=pw[gg+1]-2;
+	tt=get1(1,1,a,gg+1);
+	for(int i=gg-1;i>=1;i--) if(hh-d[i]>=tt) hh-=d[i],ann-=pw[i];
+	return (ann%mod+mod)%mod;
+}
+int main()
+{
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	pw[0]=1;for(int i=1;i<=200000;i++) pw[i]=pw[i-1]*2%mod;
+	scanf("%lld",&Num);scanf("%lld",&a);
+	for(int i=1;i<=a;i++) scanf("%lld",&d[i]),quu.push(p{i,d[i]});
+	scanf("%lld",&b);build(1,1,a);
+	printf("%lld\n",work());
+	for(int i=1;i<=b;i++)
+	{
+		scanf("%lld%lld",&q,&w);
+		change(1,1,a,q,w);d[q]=w;quu.push(p{q,w});
+		printf("%lld\n",work());
+	}
+	return 0;
+}

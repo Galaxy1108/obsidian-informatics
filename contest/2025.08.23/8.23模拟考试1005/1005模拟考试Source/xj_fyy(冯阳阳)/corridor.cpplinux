@@ -1,0 +1,138 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define N 50005
+#define M (150005*2+50005*2*2*2+5)
+#define L 20
+#define ll long long
+int read(){
+	int w=0,f=1;
+	char c=' ';
+	while(c<'0'||c>'9')c=getchar(),f=c=='-'?-1:f;
+	while(c>='0'&&c<='9')w=w*10+c-48,c=getchar();
+	return w*f;
+}
+struct node{
+	int x,y,z;
+	node(int X=0,int Y=0,int Z=0){x=X,y=Y,z=Z;}
+	bool operator<(const node&o)const{
+		if(x!=o.x)return x<o.x;
+		if(y!=o.y)return y<o.y;
+		return z<o.z;
+	}
+}p[M];
+int Sid,n,m,k,Q;
+set<int>s[2][N];//0h 1l
+namespace sub0{
+	int nxth(int x,int y){
+		return *s[0][x].upper_bound(y);
+	}
+	int nxtl(int x,int y){
+		return *s[1][x].upper_bound(y);
+	}
+	void solve(int x,int y,int z){
+		int d=x?0:1;
+		while(1){
+			if(d==0)y=nxth(x,y);
+			else x=nxtl(y,x);
+			d^=1,z--;
+			if(!z||x==n+1||y==m+1)return printf("%d %d\n",x,y),void();
+		}
+	}
+	void main(){
+		for(int i=1;i<=n;i++)
+			s[0][i].insert(m+1);
+		for(int i=1;i<=m;i++)
+			s[1][i].insert(n+1);
+		for(int i=1;i<=k;i++){
+			int x=read(),y=read();
+			s[0][x].insert(y);
+			s[1][y].insert(x);
+		}
+		Q=read();
+		while(Q--){
+			int op=read(),x=read(),y=read(),z=(op==2?read():0);
+			if(op==1){
+				s[0][x].insert(y);
+				s[1][y].insert(x);
+			}
+			else solve(x,y,z);
+		}
+	}
+}
+namespace sub1{
+	int nxth(int x,int y){
+		if(x==n+1||y==m+1)return y;
+		return *s[0][x].upper_bound(y);
+	}
+	int nxtl(int x,int y){
+		if(x==m+1||y==n+1)return y;
+		return *s[1][x].upper_bound(y);
+	}
+	map<node,int>id;
+	int nxt[L][M],idx;
+	void add(int x,int y,int z){
+		p[++idx]=node(x,y,z),id[p[idx]]=idx;
+	}
+	void init(){
+		for(int i=1;i<=n;i++)
+			add(i,0,0),add(i,0,1),add(i,m+1,0),add(i,m+1,1);
+		for(int i=1;i<=m;i++)
+			add(0,i,0),add(0,i,1),add(n+1,i,0),add(n+1,i,1);
+		for(int i=1;i<=idx;i++){
+			if(p[i].z==0)nxt[0][i]=id[node(p[i].x,nxth(p[i].x,p[i].y),1)];
+			else nxt[0][i]=id[node(nxtl(p[i].y,p[i].x),p[i].y,0)];
+		}
+		for(int i=1;i<L;i++)
+			for(int j=1;j<=idx;j++)
+				nxt[i][j]=nxt[i-1][nxt[i-1][j]];
+	}
+	void solve(int x,int y,int z){
+		int now=(x?id[node(x,y,0)]:id[node(x,y,1)]);
+		for(int i=L-1;i>=0;i--)
+			if(z>=(1<<i))z-=(1<<i),now=nxt[i][now];
+		printf("%d %d\n",p[now].x,p[now].y);
+	}
+	void main(){
+		for(int i=1;i<=n;i++)
+			s[0][i].insert(m+1);
+		for(int i=1;i<=m;i++)
+			s[1][i].insert(n+1);
+		for(int i=1;i<=k;i++){
+			int x=read(),y=read();
+			s[0][x].insert(y);
+			s[1][y].insert(x);
+			add(x,y,0),add(x,y,1);
+		}
+		init();
+		Q=read();
+		while(Q--){
+			int op=read(),x=read(),y=read(),z=(op==2?read():0);
+			assert(op==2);
+			solve(x,y,z);
+		}
+	}
+}
+signed main(){
+	// freopen("corridor2.in","r",stdin);
+	// freopen("out.out","w",stdout);
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	Sid=read(),n=read(),m=read(),k=read();
+	if(Sid==0)sub0::main();
+	else if(Sid==1)sub1::main();
+	else sub0::main();
+	return 0;
+}
+/*
+1 4 4 2
+2 2
+3 2
+7
+2 2 0 1
+2 2 0 2
+2 2 0 3
+2 2 0 4
+2 0 2 1
+2 0 2 2
+2 0 2 3
+*/

@@ -1,0 +1,65 @@
+#include <cstdio>
+#include <vector>
+#include <algorithm>
+#define ub upper_bound
+using namespace std;
+const int N = 1000006;
+bool t1=1,t2=1,t3=1;
+int siz[N],n,f[N],w[N],x[N],ans;
+vector<int> e[N];
+void build(int i)
+{
+	for (auto j : e[i])
+		build(j),siz[i]+=siz[j];
+	++siz[i];
+}
+int main()
+{
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	scanf("%d",&n);
+	for (int i=2;i<=n;++i)
+		scanf("%d%d",f+i,w+i),
+		t1&=(w[i]==1),
+		t2&=(f[i]==i-1),
+		t3&=(f[i]==1),
+		e[f[i]].push_back(i);
+	if (t1)
+	{
+		build(1);
+		for (int i=2;i<=n;++i)
+		{
+			int mx=0;
+			for (auto j : e[i]) mx=max(siz[j],mx);
+			if (n-siz[i]<=mx)
+			for (auto j : e[i])
+				if (siz[j]==mx) ++x[j];
+			if (n-siz[i]>=mx) ++x[i];
+		}
+		for (int i=2;i<=n;++i) ans^=x[i];
+	}
+	else if (t2)//link
+	{
+
+	}
+	else if (t3)//flower gragh
+	{
+		int ans=0,mx=0;
+		for (int i=2;i<=n;++i)
+			mx=max(mx,w[i]),
+			x[i]=(n-1)*w[i];
+		sort(x+1,x+n+1);
+		for (int i=2;i<=n;++i)
+		{
+			int t=0;
+			if ((n-1)*w[i]>=mx) ++t;
+			t+=ub(x+1,x+n+1,w[i])-x-1;
+			ans^=t;
+		}
+	}
+	else
+	{
+	}
+	printf("%d",ans);
+	fclose(stdin),fclose(stdout);
+}

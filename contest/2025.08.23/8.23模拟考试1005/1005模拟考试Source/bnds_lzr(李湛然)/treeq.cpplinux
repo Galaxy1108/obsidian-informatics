@@ -1,0 +1,87 @@
+#include <bits/stdc++.h>
+using namespace std;
+const int N=5005;
+int n;
+int F[N];
+int w[N];
+int head[N],nxt[N],tot=0,to[N],ver[N];
+inline void add(int x,int y,int z)
+{
+    nxt[++tot]=head[x];
+    head[x]=tot;
+    to[tot]=y;
+    ver[tot]=z;
+    return ;
+}
+int sz[N];
+int a[N][N];
+int vis[N];
+int cnt=0;
+void dfs(int x,int fa)
+{
+    cnt++;
+    vis[x]=cnt;  
+    sz[x]=1;
+    for(int i=head[x];i;i=nxt[i])
+    {
+        if(to[i]==fa) continue;
+        dfs(to[i],x);
+        sz[x]+=sz[to[i]];
+    }
+}
+int c[N][N];
+int mxx[N];
+int main()
+{
+    freopen("treeq.in","r",stdin);
+    freopen("treeq.out","w",stdout);
+    cin>>n;
+    for(int i=2;i<=n;i++)
+    {
+        scanf("%d%d",&F[i],&w[i]);
+        add(F[i],i,w[i]);
+        add(i,F[i],w[i]);
+    }   
+    for(int j=1;j<=n;j++)
+    {
+        cnt=0;
+        dfs(j,j);
+        for(int i=2;i<=n;i++)
+        {
+            if(vis[F[i]]<=vis[i])
+            {
+                c[j][i]=sz[i];
+            }
+            else{
+                c[j][i]=sz[F[i]];
+            }
+            
+        }
+    }
+    
+    for(int i=2;i<=n;i++)
+    {
+        for(int j=1;j<=n;j++)
+        {
+            a[i][j]=c[j][i]*w[i];
+            mxx[j]=max(mxx[j],a[i][j]);
+        }
+    }
+    int ans=0;
+    int f=0;
+    for(int i=2;i<=n;i++)
+    {
+        f=0;
+        for(int j=1;j<=n;j++)
+        {
+            if(mxx[j]==a[i][j])
+            {
+                f++;
+            }
+        }
+        //cout<<f<<endl;
+        ans^=f;
+    }
+    cout<<ans;
+    return 0;
+}

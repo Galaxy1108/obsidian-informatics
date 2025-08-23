@@ -1,0 +1,44 @@
+//是原题捏
+//AGC的D拿来当NOIPT1 乐 
+
+//请求将此题降绿
+//版块AT2370 [A...
+//发帖时间2022-10-05 08:31
+//题目AT2370 [AGC013D] Piling Up
+//@hrgd 2022-10-05 08:31 回复
+//RT，既然有人能把它搬到 NOIP 模拟赛 T1 的话。
+
+// https://www.cnblogs.com/PinkRabbit/p/AGC013.html 
+#include <bits/stdc++.h>
+typedef long long LL;
+const int MN = 3005;
+int N, M, Mod;
+int f[2][MN], g[2][MN], Ans;
+int main() {
+	freopen("easyhard.in", "r", stdin);
+	freopen("easyhard.out", "w", stdout);
+	scanf("%d%d%d", &N, &M, &Mod);
+	int o = 0;
+	for (int i = 1; i <= N; ++i) f[o][i] = 1;
+	g[o][0] = 1;
+	for (int i = 1; i <= M; ++i) {
+		o ^= 1;
+		for (int j = 0; j <= N; ++j) f[o][j] = g[o][j] = 0;
+		for (int j = 0; j <= N; ++j) {
+			if (j) {
+				f[o][j] = (f[o][j] + f[o ^ 1][j - 1]) % Mod;
+				g[o][j] = ((LL)g[o][j] + g[o ^ 1][j - 1] + g[o ^ 1][j]) % Mod;
+				if (j == 1) g[o][j] = (g[o][j] + f[o ^ 1][j]) % Mod;
+				else f[o][j] = (f[o][j] + f[o ^ 1][j]) % Mod;
+			}
+			if (j < N) {
+				g[o][j] = ((LL)g[o][j] + g[o ^ 1][j + 1] + g[o ^ 1][j]) % Mod;
+				if (!j) g[o][j] = (g[o][j] + f[o ^ 1][j + 1]) % Mod;
+				else f[o][j] = ((LL)f[o][j] + f[o ^ 1][j + 1] + f[o ^ 1][j]) % Mod;
+			}
+		}
+	}
+	for (int j = 0; j <= N; ++j) Ans = (Ans + g[o][j]) % Mod;
+	printf("%d\n", Ans);
+	return 0;
+}

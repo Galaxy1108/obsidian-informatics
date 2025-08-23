@@ -1,0 +1,25 @@
+#include<bits/stdc++.h>
+using namespace std;
+int n,m,p;
+int f[6005];
+int main(){
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	scanf("%d%d%d",&n,&m,&p);
+	int ke=0;
+	f[1]=2;
+	n--;
+	ke++;
+	for(int i=2;i<=m*2;i++){
+		if(i%2) ke++;
+		if(n){
+			f[i]=f[i-1]*2%p;
+			n--;
+		}else if(ke){
+			f[i]=f[i-1]*2%p;
+			ke--;
+		}else f[i]=f[i-1];
+	}
+	printf("%d",f[m*2]);
+	return 0;
+} 

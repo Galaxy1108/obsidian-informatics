@@ -1,0 +1,55 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define N 200002
+#define fo(i, l, r) for (int i = (l), ed = (r); i <= ed; i ++)
+#define fd(i, l, r) for (int i = (l), ed = (r); i >= ed; i --)
+#define pb push_back
+#define mp make_pair
+#define fi first
+#define se second
+#define INF 2147483647 //9223372036854775807
+template <typename T> void gi(T &s){
+	s = 0;
+	int b = 1;
+	char ch = getchar();
+	while (ch < '0' || ch > '9') b *= (ch == '-') ? (-1) : 1, ch = getchar();
+	while (ch >= '0' && ch <= '9') s = s * 10 + ch - '0', ch = getchar();
+	s *= b;
+}
+
+const int P = 998244353;
+int n, a[N], Q, x, y, mi[N];
+
+void solve(){
+	int cnt = 0, mx = 0;
+	fo (i, 1, n) mx = max(mx, a[i]);
+	fo (i, 1, n){
+		cnt += a[i];
+		if (mx <= cnt){
+			int k = cnt - mx, ans = 0;
+			fd (j, i, 1){
+				if (k >= a[j]) k -= a[j];
+				else ans = (ans + mi[j]) % P;
+			}
+			printf("%d\n", ans);
+			return ;
+		}
+	}
+}
+
+int main(){
+	freopen("imperishable.in", "r", stdin);
+	freopen("imperishable.out", "w", stdout);
+	gi(n), gi(n);
+	mi[0] = 1;
+	fo (i, 1, n) mi[i] = mi[i - 1] * 2 % P;
+	fo (i, 1, n) gi(a[i]);
+	solve();
+	gi(Q);
+	while (Q --){
+		gi(x), gi(y);
+		a[x] = y;
+		solve();
+	}
+}

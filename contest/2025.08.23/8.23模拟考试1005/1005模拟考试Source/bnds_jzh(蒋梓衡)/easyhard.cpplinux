@@ -1,0 +1,50 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+void setio(string s) {
+	freopen((s + ".in").c_str(), "r", stdin);
+	freopen((s + ".out").c_str(), "w", stdout);
+#ifdef LOCAL
+	atexit([](){ system("grep VmPeak /proc/$PPID/status > /dev/tty"); });
+#endif
+}
+
+#define F(i, a, b) for (int i = (a), i##end = (b); i <= i##end; i++)
+#define R(i, a, b) for (int i = (a), i##end = (b); i >= i##end; i--)
+
+const int N = 3100;
+array<int, N> dp[2], f[2];
+int n, m, p;
+int madd(int x, int y) { return x + y >= p ? x + y - p : x + y; }
+void upd(int &x, int y) { x = madd(x, y); }
+
+int main() {
+	setio("easyhard");
+	cin >> n >> m >> p;
+	dp[1][0] = 1;
+	F(i, 1, n) dp[0][i] = 1;
+
+	F(i, 1, m) {
+		swap(dp, f);
+		F(k, 0, 1) F(j, 0, n) dp[k][j] = 0;
+		F(j, 1, n) {
+			upd(dp[1][j], f[1][j]);
+			upd(dp[1][j], f[1][j - 1]);
+			upd(dp[1][j - 1], f[1][j - 1]);
+			upd(dp[1][j - 1], f[1][j]);
+		}
+		F(j, 2, n) {
+			upd(dp[0][j], f[0][j]);
+			upd(dp[0][j], f[0][j - 1]);
+			upd(dp[0][j - 1], f[0][j - 1]);
+			upd(dp[0][j - 1], f[0][j]);
+		}
+		upd(dp[1][1], f[0][1]);
+		upd(dp[0][1], f[0][0]);
+		upd(dp[1][0], f[0][0]);
+		upd(dp[1][0], f[0][1]);
+	}
+	int ans = 0;
+	F(i, 0, n) upd(ans, dp[1][i]);
+	cout << ans << endl;
+}

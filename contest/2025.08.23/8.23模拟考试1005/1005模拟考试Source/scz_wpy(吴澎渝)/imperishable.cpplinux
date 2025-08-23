@@ -1,0 +1,111 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define mod 998244353
+#define ll long long
+int num;
+int n;
+int a[200005];
+int b[200005];
+int read()
+{
+	char ch;
+	int x=0,f=1;
+	for(;!isdigit(ch);ch=getchar())
+		if(ch=='-')
+			f=-1;
+	for(; isdigit(ch);ch=getchar())
+		x*=10,x+=(ch-'0');
+	return x*f;
+}
+int q;
+int main()
+{
+	freopen("imperishable.in","r",stdin);
+	freopen("imperishable.out","w",stdout);
+	num=read();
+	n=read();
+	int x;
+	for(int i=1;i<=n;i++)
+	{
+		b[i]=read();
+		a[i]=b[i];
+	}
+	ll ansn=1;
+	ll ans=0;
+		for(int i=1;i<=n;i++)
+		{
+			ansn*=2;
+			ansn%=mod;
+			if(a[i]>=2)
+			{
+					for(int j=i+1;j<=n;j++)
+					{
+						if(a[j]>=a[i])
+							a[j]-=a[i];
+						else
+							a[j]=0;
+					}
+				a[i]=0;
+				ans+=ansn;
+				ans%=mod;
+			}
+		}
+	ansn=1;
+	for(int i=1;i<=n;i++)
+	{
+		ansn*=2;
+		ansn%=mod;
+		if(a[i])
+		{
+			ans+=ansn;
+			ans%=mod;
+			break;
+		}
+	}
+	printf("%lld\n",ans);
+	q=read();
+	int y;
+	for(int i=1;i<=q;i++)
+	{
+		x=read();y=read();
+		b[x]=y;
+		for(int j=1;j<=n;j++)
+			a[j]=b[j];
+		ans=0;
+		ansn=1;
+			for(int j=1;j<=n;j++)
+			{
+				ansn*=2;
+				ansn%=mod;
+				bool flag=false;
+				if(a[j]>=2)
+				{
+					
+						for(int k=j+1;k<=n;k++)
+						{
+							if(a[k]>=a[j])
+								a[k]-=a[j];
+						}
+						a[j]=0;
+						ans+=ansn;
+						ans%=mod;
+					
+				}
+			}
+		ansn=1;
+		for(int j=1;j<=n;j++)
+		{
+			ansn*=2;
+			ansn%=mod;
+			if(a[j])
+			{
+				ans+=ansn;
+				ans%=mod;
+				break;
+			}
+		}
+			
+		printf("%lld\n",ans);
+	}
+	return 0;
+}

@@ -1,0 +1,67 @@
+#include <bits/stdc++.h>
+#define int long long
+#define SZ(x) (int) x.size() - 1
+#define ms(x, y) memset(x, y, sizeof x)
+#define all(x) x.begin(), x.end()
+#define F(i, x, y) for (int i = (x); i <= (y); i++)
+#define DF(i, x, y) for (int i = (x); i >= (y); i--)
+using namespace std;
+typedef long long ll;
+typedef unsigned long long ull;
+template <typename T> inline void chkmax(T &x, T y) { x = max(x, y); }
+template <typename T> inline void chkmin(T &x, T y) { x = min(x, y); }
+template <typename T> inline void read(T &x) {
+	x = 0; int f = 1; char c = getchar();
+	for (; !isdigit(c); c = getchar()) if (c == '-') f = -f;
+	for (; isdigit(c); c = getchar()) x = x * 10 + c - '0';
+	x *= f;
+}
+template <typename T> inline void write(T x) {
+	if (x < 0) { putchar('-'); x*= -1; }
+	if (x > 9) write(x / 10);
+	putchar(x % 10 + 48);
+}
+template <typename T> inline void writes(T x) { write(x); putchar(32); }
+template <typename T> inline void writeln(T x) { write(x); puts(""); }
+set <int> s;
+int n, m, p;
+void dfs(int a, int b, int c) {
+	if (a == m + 1) {
+//		cout << c << endl;
+//		F(i, )
+		s.insert(c);
+		return;
+	}
+	if (b >= 1) dfs(a + 1, b, c | (0 << (2 * a)));
+	if (b >= 1) dfs(a + 1, b - 1, c | (1 << (2 * a)));
+	if (n - b >= 1) dfs(a + 1, b, c | (2 << (2 * a)));
+	if (n - b >= 1) dfs(a + 1, b + 1, c | (3 << (2 * a)));
+}
+int calc() {
+	s.clear();
+	F(i, 0, n) dfs(1, i, 0);
+	return s.size();
+}
+inline int Quickpow(int x, int y) {
+	int ans = 1;
+	for (; y; x = x * x % p, y >>= 1)
+		if (y & 1) ans = ans * x % p;
+	return ans;
+}
+signed main() {
+	freopen("easyhard.in", "r", stdin);
+	freopen("easyhard.out", "w", stdout);
+	cin >> n >> m >> p;
+	if (n >= m) {
+		cout << Quickpow(2, 2 * m) << endl;
+		return 0;
+	}
+	cout << calc();
+//	F(i, 1, 10) {
+//		F(j, 1, 10) {
+//			n = i, m = j;
+//			cout << calc() << " ";
+//		} cout << endl;
+//	}
+	return 0;
+}

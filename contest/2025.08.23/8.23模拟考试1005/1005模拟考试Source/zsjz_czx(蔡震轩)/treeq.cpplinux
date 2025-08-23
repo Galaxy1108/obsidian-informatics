@@ -1,0 +1,71 @@
+#include<bits/stdc++.h>
+using namespace std;
+struct info
+{
+	int u,v; long long w; int id; bool op;
+	info(int U=0,int V=0,long long W=0,int ID=0,bool OP=0)
+		{u=U,v=V,w=W,id=ID,op=OP;}
+};
+const int N=1e7+5;
+int n,q,ex,ans,f[N],size[N],uID[N],dID[N],up[N],down[N],tag[N];
+vector <info> e[N],a;
+void read(int &x)
+{
+	char ch=getchar(); x=0;
+	for (;!isdigit(ch);ch=getchar());
+	for (;isdigit(ch);ch=getchar()) x=(x<<1)+(x<<3)+(ch^48);
+}
+void dfs(int x,int dad,int w,int id)
+{
+	size[x]=1;
+	for (auto now:e[x]) if (now.v^dad)
+		dfs(now.v,x,now.w,now.id),size[x]+=size[now.v];
+	if (x==1) return;
+	a.emplace_back(info(dad,x,1ll*w*size[x],id,0));
+	a.emplace_back(info(x,dad,1ll*w*(n-size[x]),id,1));
+}
+void dfsup(int x,int dad,int id)
+{
+	if (~uID[x]) return; else uID[x]=id;
+	if (!tag[x]) tag[x]=a[id].w;
+	if (tag[x]==a[id].w) up[x]=1;
+	for (auto now:e[x]) if (now.v^dad)
+		dfsup(now.v,x,id),up[x]+=(a[uID[now.v]].w==a[id].w)*up[now.v];
+}
+void dfsdown(int x,int dad,int id)
+{
+	if (~dID[x]) return; else dID[x]=id;
+	if (!tag[x]) tag[x]=a[id].w;
+	if (tag[x]==a[id].w) down[x]=1;
+	for (auto now:e[x]) if (now.v^dad)
+		dfsdown(now.v,x,id),down[x]+=(a[dID[now.v]].w==a[id].w)*down[now.v];
+}
+int main()
+{
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	read(n);
+	for (int u=2,v,w;u<=n;++u)
+	{
+		read(v),read(w);
+		e[u].emplace_back(info(u,v,w,u-1));
+		e[v].emplace_back(info(v,u,w,u-1));
+	}
+	dfs(1,0,0,0);
+	sort(begin(a),end(a),[] (info x,info y) {return x.w>y.w;});
+	fill(uID+1,uID+n+1,-1);
+	fill(dID+1,dID+n+1,-1);
+	for (int l=0,r;l<a.size();l=r+1)
+	{
+		for (r=l;r+1<a.size() && a[l].w==a[r+1].w;++r);
+		for (int i=l;i<=r;++i)
+		{
+			ex=0;
+			if (a[i].op==0) dfsup(a[i].u,a[i].v,i),ex+=(a[uID[a[i].u]].w==a[i].w)*up[a[i].u];
+			if (a[i].op==1) dfsdown(a[i].u,a[i].v,i),ex+=(a[dID[a[i].u]].w==a[i].w)*down[a[i].u];
+			f[a[i].id]+=ex;
+		}
+	}
+	for (int i=1;i<n;++i) ans^=f[i];
+	printf("%d",ans);
+}

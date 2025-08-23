@@ -1,0 +1,96 @@
+#include <cstdio>
+#include <algorithm>
+#define ll long long
+using namespace std;
+const int N = 1e6 + 5;
+int n,cnt,ans;
+int fa[N],w[N],head[N],sz[N],dfn[N],rt[N];
+struct graph {
+	int to , len , next;
+}edge[N];
+ll tag[N << 2],mx[N];
+int ls[N * 55],rs[N * 55],T[N * 55];
+void add(int x , int y , int z) {
+	edge[cnt] = (graph) {y , z , head[x]};
+	head[x] = cnt++;
+}
+void pushdown(int now) {
+	tag[now << 1] = max(tag[now << 1] , tag[now]);
+	tag[now << 1 | 1] = max(tag[now << 1 | 1] , tag[now]);
+}
+void modify(int now , int l , int r , int x , int y , ll val) {
+	if(x <= l && r <= y) {
+		tag[now] = max(tag[now] , val);
+		return;
+	}
+	int mid = l + r >> 1;
+	pushdown(now);
+	if(x <= mid)modify(now << 1 , l , mid , x , y , val);
+	if(mid < y)modify(now << 1 | 1 , mid + 1 , r , x , y , val);
+}
+void dfs(int now) {
+	sz[now] = 1;
+	dfn[now] = ++cnt;
+	for(int i = head[now];i != -1;i = edge[i].next) {
+		int to = edge[i].to;
+		dfs(to);sz[now] += sz[edge[i].to];
+		modify(1 , 1 , n , dfn[to] , dfn[to] + sz[to] - 1 , (ll)(n - sz[to]) * (ll)edge[i].len);
+		modify(1 , 1 , n , 1 , dfn[to] - 1 , (ll)sz[to] * (ll)edge[i].len);
+		modify(1 , 1 , n , dfn[to] + sz[to] , n , (ll)sz[to] * (ll)edge[i].len);
+	}
+}
+void query(int now , int l , int r) {
+	if(l == r) {mx[l] = tag[now];return;}
+	int mid = l + r >> 1;
+	pushdown(now);
+	query(now << 1 , l , mid);
+	query(now << 1 | 1 , mid + 1 , r); 
+}
+void update(int u , int &now , ll l , ll r , ll val) {
+	now = ++cnt;T[now] = T[u] + 1;
+	if(l == r)return;
+	ll mid = l + r >> 1;
+	if(val <= mid) {
+		rs[now] = rs[u];
+		update(ls[u] , ls[now] , l , mid , val);
+	} else {
+		ls[now] = ls[u];
+		update(rs[u] , rs[now] , mid + 1 , r , val);
+	}
+}
+int Query(int u , int now , ll l , ll r , ll val) {
+	if(T[now] == T[u])return 0;
+	if(l == r)return T[now] - T[u];
+	ll mid = l + r >> 1;
+	if(val <= mid)return Query(ls[u] , ls[now] , l , mid , val);
+	else return Query(rs[u] , rs[now] , mid + 1 , r , val);
+}
+void dfs2(int now) {
+	for(int i = head[now];i != -1;i = edge[i].next) {
+		int to = edge[i].to , flow = 0;
+		flow += Query(rt[dfn[to] - 1] , rt[dfn[to] + sz[to] - 1] , 0 , 1e16 , (ll)(n - sz[to]) * (ll)edge[i].len);
+		flow += Query(0 , rt[dfn[to] - 1] , 0 , 1e16 , (ll)sz[to] * (ll)edge[i].len);
+		flow += Query(rt[dfn[to] + sz[to] - 1] , rt[n] , 0 , 1e16 , (ll)sz[to] * (ll)edge[i].len);
+		ans ^= flow;
+		dfs2(to);
+	}
+}
+int main() {
+	freopen("treeq.in","r",stdin);
+	freopen("treeq.out","w",stdout);
+	scanf("%d",&n);
+	for(int i = 1;i <= n;++i)head[i] = -1;
+	for(int i = 2;i <= n;++i)
+		scanf("%d%d",&fa[i],&w[i]) , add(fa[i] , i , w[i]);
+	cnt = 0;
+	dfs(1);
+	query(1 , 1 , n);
+	cnt = 0;
+	for(int i = 1;i <= n;++i)
+		update(rt[i - 1] , rt[i] , 0 , 1e16 , mx[i]);
+	dfs2(1);
+	printf("%d",ans);
+	fclose(stdin);
+	fclose(stdout);
+	return 0;
+}

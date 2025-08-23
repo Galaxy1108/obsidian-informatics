@@ -1,0 +1,113 @@
+#include <bits/stdc++.h>
+#define int long long
+#pragma GCC optimize("Ofast", "inline", "-ffast-math")
+#pragma GCC target("avx,sse2,sse3,sse4,mmx")
+using namespace std;
+int n,m,k,Q;
+vector<int>x[50005],y[50005];
+signed main() {
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	scanf("%lld%lld%lld%lld",&n,&n,&m,&k);
+	for(int i=1; i<=k; ++i) {
+		int xx,yy;
+		scanf("%lld%lld",&xx,&yy);
+		x[xx].push_back(yy);
+		y[yy].push_back(xx);
+	}
+	scanf("%lld",&Q);
+//	for(int i=1;i<=n;++i){
+//		for(int j=0;j<x[i].size();++j) printf("%lld %lld !",i,x[i][j]);
+//		printf("\n");
+//	}
+	while(Q--) {
+		int op,xx,yy,q;
+		scanf("%lld%lld%lld",&op,&xx,&yy);
+		if(op==1) {
+			x[xx].push_back(yy);
+			y[yy].push_back(xx);
+		} else {
+			scanf("%lld",&q);
+			if(x==0) {
+				int nowx=0,nowy=m/2;
+				bool chk=1,f=0;//1下0右
+				while(q--) {
+					if(chk==0) {
+						int a=0x3f3f3f3f;
+						for(int i=0; i<x[nowx].size(); ++i) {
+							if(x[nowx][i]>nowy) {
+								a=min(a,x[nowx][i]);
+//							printf("?%lld %lld\n",x[nowx][i]);
+							}
+						}
+						if(a==0x3f3f3f3f) {
+//							printf("%lld\n",a);
+							printf("%lld %lld\n",nowx,m+1);
+							f=1;
+							break;
+						} else {
+							nowy=a;
+							chk=1;
+						}
+					} else {
+						int a=0x3f3f3f3f;
+						for(int i=0; i<y[nowy].size(); ++i) {
+							if(y[nowy][i]>nowy) {
+								a=min(a,y[nowy][i]);
+							}
+						}
+						if(a==0x3f3f3f3f) {
+							printf("%lld %lld\n",n+1,nowy);
+							f=1;
+							break;
+						} else {
+							nowx=a;
+							chk=0;
+						}
+					}
+				}
+				if(!f) printf("%lld %lld\n",nowx,nowy);
+			} else {
+				int nowx=n/2,nowy=0;
+				bool chk=0,f=0;//1下0右
+				while(q--) {
+					if(chk==0) {
+						int a=0x3f3f3f3f;
+						for(int i=0; i<x[nowx].size(); ++i) {
+							if(x[nowx][i]>nowy) {
+								a=min(a,x[nowx][i]);
+//							printf("?%lld %lld\n",x[nowx][i]);
+							}
+						}
+						if(a==0x3f3f3f3f) {
+//							printf("%lld\n",a);
+							printf("%lld %lld\n",nowx,m+1);
+							f=1;
+							break;
+						} else {
+							nowy=a;
+							chk=1;
+						}
+					} else {
+						int a=0x3f3f3f3f;
+						for(int i=0; i<y[nowy].size(); ++i) {
+							if(y[nowy][i]>nowy) {
+								a=min(a,y[nowy][i]);
+							}
+						}
+						if(a==0x3f3f3f3f) {
+							printf("%lld %lld\n",n+1,nowy);
+							f=1;
+							break;
+						} else {
+							nowx=a;
+							chk=0;
+						}
+					}
+				}
+				if(!f) printf("%lld %lld\n",nowx,nowy);
+			}
+		}
+	}
+	return 0;
+}

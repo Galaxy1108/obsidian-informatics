@@ -1,0 +1,172 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+#define fo(i,a,b) for(int i=a;i<=b;++i)
+#define fd(i,a,b) for(int i=a;i>=b;--i)
+#define fe(i,x) for(int i=eh[x];i;i=e[i].nxt)
+#define ll long long
+
+
+namespace IO{
+	char buf[1<<18], *fs, *ft;
+	inline char readc(){
+		return (fs==ft&&(ft=(fs=buf)+fread(buf,1,1<<18,stdin)),fs==ft)?EOF:*fs++;
+	}
+	inline int readint(){
+		char c; int r;
+		while(c = readc()){if(c >= '0' && c <= '9'){r = c^0x30;break;}}
+		while(isdigit(c = readc()))r = (r<<3)+(r<<1)+(c^0x30);
+		return r;
+	}
+	inline int read_string(char *str){
+		int len = 1;char c;
+		while(!isalpha(c = readc()));str[0] = c;
+		while(isalpha(c = readc()))str[len++] = c;
+		str[len] = 0;
+		return len;
+	}
+}
+using IO::read_string; using IO::readint;
+
+ll qmax(ll x, ll y) {
+	return x > y ? x : y;
+}
+
+const int N = 10000005;
+
+int n;
+struct ed { int y, w, nxt; }e[N];
+int el = 0, eh[N];
+int siz[N];
+int dfn[N], id[N], ind = 0;
+int rb[N];
+int F[N], w[N];
+ll val[N];
+ll prm[N], sum[N];
+bool prc[N], suc[N];
+int prl[N], sul[N];
+int ans[N], rt[N];
+ll tv[N];
+
+void prp() {
+	//[dfn, rb], id
+	fd(i, n, 1) {
+		int tmp = 1;
+		fe(j, i) {
+			int y = e[j].y;
+			dfn[y] = tmp;
+			tmp += siz[y];
+		}
+		siz[i] = tmp;
+	}
+	fo(i, 1, n) {
+		dfn[i] += dfn[F[i]];
+		id[dfn[i]] = i;
+		rb[i] = dfn[i];
+	}
+	fd(i, n, 1) {
+		fe(j, i) {
+			rb[i] = rb[e[j].y];
+		}
+	}
+	return;
+}
+
+void lval() {
+	fo(i, 1, n) {
+		fe(j, i) {
+			int y = e[j].y, w = e[j].w;
+			val[y] = qmax(val[i], (ll)(n - siz[y]) * w);
+		}
+	}
+	return;
+}
+
+void lans() {
+	fo(i, 1, n) {
+		fe(j, i) {
+			int y = e[j].y, w = e[j].w;
+			ll newv = (ll)(n - siz[y]) * w;
+			tv[y] = qmax(newv, tv[i]);
+		}
+	}
+	fd(i, n, 1) {
+		rt[i] = val[i] == tv[i];
+		fe(j, i) {
+			int y = e[j].y, w = e[j].w;
+			ll newv = (ll)(n - siz[y]) * w;
+			if(newv > tv[i]) ans[y] += rt[y];
+			else if(newv == tv[i]) {
+				int tmp = rt[y];
+				rt[i] += tmp, ans[y] += tmp;
+			} else rt[i] += rt[y];
+		}
+	}
+	return;
+}
+
+void add(int x, int y, int w) {
+	el++;
+	e[el].y = y, e[el].w = w, e[el].nxt = eh[x], eh[x] = el;
+	return;
+}
+
+int main() {
+	freopen("treeq.in", "r", stdin);
+	freopen("treeq.out", "w", stdout);
+	n = readint();
+	fo(i, 2, n) {
+		F[i] = readint(), w[i] = readint();
+		add(F[i], i, w[i]);
+	}
+	prp();
+	lval();
+	fo(i, 2, n) {
+		ll newv = (ll)siz[i] * w[i];
+		if(dfn[i] > 1) prm[dfn[i] - 1] = qmax(prm[dfn[i] - 1], newv);
+		if(rb[i] < n) sum[rb[i] + 1] = qmax(sum[rb[i] + 1], newv);
+	}
+	fd(i, n - 1, 1) {
+		if(prm[i] < prm[i + 1]) {
+			prm[i] = prm[i + 1];
+			prc[i] = 1;
+		}
+	}
+	fo(i, 2, n) {
+		if(sum[i] < sum[i - 1]) {
+			sum[i] = sum[i - 1];
+			suc[i] = 1;
+		}
+	}
+	fo(i, 1, n)
+		val[id[i]] = qmax(val[id[i]], qmax(prm[i], sum[i]));
+	int gs = 0;
+	fo(i, 1, n) {
+		if(prm[i - 1] > prm[i]) gs = 0;
+		if(val[id[i]] == prm[i]) ++gs;
+		if(!prc[i]) prl[i] = gs;
+	}
+	gs = 0;
+	fd(i, n, 1) {
+		if(sum[i + 1] > sum[i]) gs = 0;
+		if(val[id[i]] == sum[i]) ++gs;
+		if(!suc[i]) sul[i] = gs;
+	}
+	memset(ans, 0, sizeof(ans));
+	fo(i, 2, n) {
+		ll newv = (ll)siz[i] * w[i];
+		if(dfn[i] > 1) {
+			if(newv == prm[dfn[i] - 1])
+				ans[i] += prl[dfn[i] - 1];
+		}
+		if(rb[i] < n) {
+			if(newv == sum[rb[i] + 1])
+				ans[i] += sul[rb[i] + 1];
+		}
+	}
+	lans();
+	int outp = 0;
+	fo(i, 2, n) outp ^= ans[i];
+	printf("%d\n", outp);
+	return 0;
+}

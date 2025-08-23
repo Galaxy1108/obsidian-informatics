@@ -1,0 +1,111 @@
+#include<iostream>
+#include<cstdio>
+#include<set>
+#include<algorithm>
+using namespace std;
+#define fo(i,a,b) for(int i=a;i<=b;++i)
+#define fod(i,a,b) for(int i=a;i>=b;--i)
+#define pa pair<int,int>
+#define min(a,b) (a<b?a:b)
+#define max(a,b) (a>b?a:b)
+const int Mxdt=100000; 
+inline char gc(){
+	static char buf[Mxdt],*p1=buf,*p2=buf;
+	return p1==p2&&(p2=(p1=buf)+fread(buf,1,Mxdt,stdin),p1==p2)?EOF:*p1++;
+}
+inline int read(){
+	int t=0,f=0;char v=gc();
+	while(v<'0')f|=(v=='-'),v=gc();
+	while(v>='0')t=(t<<3)+(t<<1)+v-48,v=gc();
+	return f?-t:t;
+}
+int type,n,m,k,q;
+int c[200011],c2[200011],nex[2][200011];
+set<pa>H[200011],L[200011];
+pa find(int x,int y,bool z){
+	if(z==1){
+		if(x==0){
+			if(L[y].size()>0){
+				int h=(*L[y].begin()).second;
+				return {c[h],-h};
+			}
+			return {n+1,y};
+		}
+		if(!nex[z][-x]){
+			return {n+1,y};
+		}
+		return {c[nex[z][-x]],-nex[z][-x]};
+	}
+	if(!y){
+		if(H[x].size()>0){
+			int h=(*H[x].begin()).second;
+			return {-h,c2[h]};
+		}
+		return {x,m+1};
+	}
+	if(!nex[z][-y]){
+		return {x,m+1};
+	}
+	return {-nex[z][-y],c2[nex[z][-y]]};
+}
+void tj(int x){
+	auto it=L[c2[x]].upper_bound({c[x],0});
+	if(it!=L[c2[x]].end()){
+		nex[1][x]=(*it).second;
+	}
+	if(L[c2[x]].size()>0&&it!=L[c2[x]].begin()){
+		--it;
+		nex[1][(*it).second]=x;
+	}
+	it=H[c[x]].upper_bound({c2[x],0});
+	if(it!=H[c[x]].end()){
+		nex[0][x]=(*it).second;
+	}
+	if(H[c[x]].size()>0&&it!=H[c[x]].begin()){
+		--it;
+		nex[0][(*it).second]=x;
+	}
+	H[c[x]].insert({c2[x],x});
+	L[c2[x]].insert({c[x],x});
+}
+int main(){
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	type=read();
+	n=read();
+	m=read();
+	k=read();
+	fo(i,1,k){
+		c[i]=read();
+		c2[i]=read();
+		tj(i);
+	}
+	q=read();
+	fo(i,1,q){
+		int opt=read();
+		if(opt==1){
+			c[++k]=read();
+			c2[k]=read();
+			tj(k);
+		}
+		else{
+			int x=read(),y=read(),q2=read(),t=0,t2=0;
+			if(!y)t2=1;
+			fo(i,1,q2){
+				pa z=find(x,y,(bool)((t2^i)%2==1));
+				x=z.first,y=z.second;
+				if(x==n+1||y==m+1){
+					break;
+				}
+			}
+			if(x==n+1||y==m+1){
+				printf("%d %d\n",x,y);
+			}
+			else{
+				if(x<0)printf("%d %d\n",c[-x],c2[-x]);
+				else printf("%d %d\n",c[-y],c2[-y]);
+			}
+		}
+	}
+	return 0;
+}

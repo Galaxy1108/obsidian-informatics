@@ -1,0 +1,99 @@
+
+
+#include <set>
+#include <vector>
+#include <cstdio>
+#include <cstring>
+
+using namespace std;
+
+struct Node {
+    int p;
+    int id;
+    const bool operator < (const Node &b) const {
+        return p < b.p;
+    }
+};
+
+struct Link {
+    int nxt[600009];
+    int NN;
+    vector<int> X[50009];
+    vector<int> Y[50009];
+    void Init () {
+        memset(nxt, 0, sizeof(nxt));
+    }
+    void Add (int a, int b) {
+        nxt[a] = b;
+    }
+};
+
+int typ;
+int N;
+int M;
+int K;
+set<Node> X[50009];
+set<Node> Y[50009];
+Node pos[3000009];
+int Q;
+Link A;
+
+int main () {
+    int x;
+    int y;
+    int op;
+    int q;
+
+    freopen("corridor.in", "r", stdin);
+    freopen("corridor.out", "w", stdout);
+    scanf("%d%d%d%d", &typ, &N, &M, &K);
+    for (int i = 1; i <= K; i++) {
+        scanf("%d%d", &x, &y);
+        X[x].insert({y, i}), Y[y].insert({x, i});
+        pos[i * 2] = {x, y}, pos[i * 2 - 1] = {x, y};
+    }
+    A.Init();
+    for (int i = 1; i <= N; i++)
+        for (Node j : X[i]) {
+            if (X[i].find(j) == X[i].end()) break;
+            A.Add(j.id * 2, (*next(X[i].find(j))).id * 2 - 1);
+        }
+    for (int i = 1; i <= M; i++)
+        for (Node j : Y[i]) {
+            if (Y[i].find(j) == Y[i].end()) break;
+            A.Add(j.id * 2 - 1, (*next(Y[i].find(j))).id * 2);
+        }
+    A.NN = 2 * N;
+    for (int i = 1; i <= N; i++) {
+        Node t = *X[i].begin();
+        for (int j = t.id; j; j = A.nxt[j]) A.X[i].push_back(j);
+    }
+    for (int i = 1; i <= M; i++) {
+        Node t = *Y[i].begin();
+        for (int j = t.id; j; j = A.nxt[j]) A.Y[i].push_back(j);
+    }
+    scanf("%d", &Q);
+    while (Q--) {
+        scanf("%d%d%d", &op, &x, &y);
+        if (op & 1) {
+        }
+        else {
+            scanf("%d", &q);
+            if (!x) {
+                if (A.Y[y].size() < q) {
+                    if (A.Y[y].back() & 1) printf("%d %d\n", N + 1, pos[A.Y[y].back()].id);
+                    else printf("%d %d\n", pos[A.Y[y].back()].p, M + 1);
+                }
+                else printf("%d %d\n", pos[A.Y[y][q - 1]].p, pos[A.Y[y][q - 1]].id);
+            }
+            else {
+                if (A.X[x].size() < q) {
+                    if (A.X[x].back() & 1) printf("%d %d\n", N + 1, pos[A.X[x].back()].id);
+                    else printf("%d %d\n", pos[A.X[x].back()].p, M + 1);
+                }
+                else printf("%d %d\n", pos[A.X[x][q - 1]].p, pos[A.X[x][q - 1]].id);
+            }
+        }
+    }
+    return 0;
+}

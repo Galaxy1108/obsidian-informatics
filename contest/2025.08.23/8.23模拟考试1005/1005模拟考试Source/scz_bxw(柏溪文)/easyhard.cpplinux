@@ -1,0 +1,28 @@
+#include<bits/stdc++.h>
+using namespace std;
+int n,m,p,f[3020][3020];
+int pw(int x,int y,int m){
+	int re=1;
+	while(y){
+		if (y&1) re=re*x%m;
+		x=x*x%m;
+		y>>=1;
+	}
+	return re;
+} 
+int main(){
+	freopen("easyhard.in","r",stdin);
+	freopen("easyhard.out","w",stdout);
+	cin>>n>>m>>p;
+	if(m<=n){
+		cout<<pw(2,2*m,p)<<endl;
+		return 0; 
+	}
+	f[0][1]=2;
+	for(int i=1;i<=n;i++){
+		f[i][i-1]=f[i-1][i];
+		for(int j=i;j<=m;j++) f[i][j]=f[i][j-1]*2%p;
+	}
+	cout<<f[n][m]<<endl;
+	return 0;
+}

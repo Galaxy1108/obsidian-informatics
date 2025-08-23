@@ -1,0 +1,60 @@
+#include<bits/stdc++.h>
+using namespace std;
+int dx[4]={-1,0,1,0};
+int dy[4]={0,1,0,-1};
+int a[1505][1505];
+int main()
+{
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	int type;
+	int n,m,k;
+	cin>>type>>n>>m>>k;
+	for (int i=1;i<=k;i++)
+	{
+		int x,y;
+		cin>>x>>y;
+		a[x][y]=1;
+	}
+	int T;
+	cin>>T;
+	while (T--)
+	{
+		int opt;
+		cin>>opt;
+		if (opt==1)
+		{
+			int x,y;
+			cin>>x>>y;
+			a[x][y]=1;
+		}
+		else
+		{
+			int x,y,q,dir=2,s=0;
+			cin>>x>>y>>q;
+			if (x==0) dir=2;
+			else dir=1;
+			while (1)
+			{
+				x+=dx[dir];
+				y+=dy[dir];
+				if (x>n||y>m)
+				{
+					cout<<x<<' '<<y<<endl;
+					break; 
+				}
+				if (a[x][y]==1)
+				{
+					s++;
+					dir=3-dir;
+				}
+				if (s==q)
+				{
+					cout<<x<<' '<<y<<endl;
+					break;
+				}
+			}
+		}
+	}
+	return 0;
+}

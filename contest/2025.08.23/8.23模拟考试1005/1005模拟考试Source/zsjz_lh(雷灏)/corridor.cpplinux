@@ -1,0 +1,33 @@
+#include<cstdio>
+#define fo(i,x,y) for(int i = x;i <= y;++i)
+#define fd(i,x,y) for(int i = x;i >= y;--i)
+#define _is 1048576 * 10
+#define _os 1048576 * 10
+#define gc() ib[++bi]
+#define pc(ch) ob[++bo] = ch
+using namespace std;
+char ib[_is],ob[_os];
+int bi = -1,bo = -1;
+int rd()
+{
+	int x = 0;char ch = gc();
+	while(ch < 48 || ch > 57) ch = gc();
+	while(ch >= 48 && ch <= 57) x = x * 10 + ch - 48,ch = gc();return x;
+}
+void pr(int x,char s)
+{
+	char ch[20];int w = -1;
+	if(x == 0) ch[++w] = 48;
+	while(x) ch[++w] = x % 10 + 48,x /= 10;
+	fd(i,w,0) pc(ch[i]);pc(s);
+}
+int t,n,m,k;
+int main()
+{
+	freopen("corridor.in","r",stdin);
+	freopen("corridor.out","w",stdout);
+	fread(ib,1,_is,stdin);
+	t = rd(),n = rd(),m = rd(),k = rd();
+	fwrite(ob,1,bo + 1,stdout);
+	return 0;
+}

@@ -1,0 +1,50 @@
+
+
+#include <iostream>
+#include <fstream>
+#define ll long long
+
+const int MAXN = 3e3+9;
+using namespace std;
+
+ll P, ans;
+int N, M;
+
+inline void Read () {
+	ifstream fin ("easyhard.in");
+	
+	fin >> N >> M >> P;
+	// cin >> N >> M >> P;
+	
+	fin.close();
+}
+
+ll ksm (ll num, ll pow) {
+	if (pow == 0) return 1ll;
+	if (pow == 1) return num;
+	ll h = (ksm(num, pow>>1))%P;
+	if (pow%2) return ((h*h)%P)*num%P;
+	return (h*h)%P;
+}
+
+inline void Solve () {
+	ans = ksm(4ll, N)*1ll;
+	if (M > N) ans = (ans*ksm(2ll, M-N))%P;
+}
+
+inline void Write () {
+	ofstream fout ("easyhard.out");
+	
+	fout << ans << endl;
+	// cout << ans << endl;
+	
+	fout.close();
+}
+
+int main () {
+	Read();
+	Solve();
+	Write();
+	
+	return 0;
+}

@@ -1,0 +1,39 @@
+#include<bits/stdc++.h>
+using namespace std;
+inline int read(){
+    int ans=0,a=getchar();
+    while('0'>a||a>'9')a=getchar();
+    while('0'<=a&&a<='9')ans=ans*10+a-'0',a=getchar();
+    return ans;
+}
+const int Tmp=3001;
+int dp[3005][6005][4];
+int main(){
+    freopen("easyhard.in","r",stdin);
+    freopen("easyhard.out","w",stdout);
+    int n=read(),m=read(),p=read();
+    //dp[i][j][0]->最后一组填入0,1
+    //dp[i][j][1]->最后一组填入1,0
+    //dp[i][j][2]->最后一组填入0,0->j-1
+    //dp[i][j][3]->最后一组填入1,1->j+1
+    dp[1][Tmp-1][0]=dp[1][Tmp+1][1]=1;
+    dp[1][Tmp-1][2]=dp[1][Tmp+1][3]=1;
+    for(int i=2;i<=m;i++){
+        for(int j=max(-n,-i);j<=min(n,i);j++){
+            dp[i][j+Tmp][0]=(dp[i-1][j+Tmp][0]+dp[i-1][j+Tmp][3])%p,dp[i][j+Tmp][1]=(dp[i-1][j+Tmp][1]+dp[i-1][j+Tmp][2])%p;
+            dp[i][j+Tmp][2]=(dp[i-1][j+Tmp+1][0]+dp[i-1][j+Tmp+1][3])%p,dp[i][j+Tmp][3]=(dp[i-1][j+Tmp-1][1]+dp[i-1][j+Tmp-1][2])%p;
+            if(j!=-n)dp[i][j+Tmp][0]=(0ll+dp[i][j+Tmp][0]+dp[i-1][j+Tmp+1][2]+dp[i-1][j+Tmp+1][1])%p;
+            if(j!= n)dp[i][j+Tmp][1]=(0ll+dp[i][j+Tmp][1]+dp[i-1][j+Tmp-1][3]+dp[i-1][j+Tmp-1][0])%p;
+            if(j!=-n)dp[i][j+Tmp][2]=(0ll+dp[i][j+Tmp][2]+dp[i-1][j+Tmp+1][0]+dp[i-1][j+Tmp+1][2])%p;
+            if(j!= n)dp[i][j+Tmp][3]=(0ll+dp[i][j+Tmp][3]+dp[i-1][j+Tmp-1][1]+dp[i-1][j+Tmp-1][3])%p;
+        }
+    }
+    int ans=0;
+    for(int i=-n;i<=n;i++){
+        for(int j=0;j<=3;j++){
+            ans=(ans+dp[m][i+Tmp][j])%p;
+        }
+    }
+    cout<<ans<<endl;
+    return 0;
+}

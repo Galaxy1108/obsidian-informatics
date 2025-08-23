@@ -1,0 +1,80 @@
+#include <cstdio>
+#include <cctype>
+#include <algorithm>
+using namespace std;
+char buf[1<<14],*p1=buf,*p2=buf;
+#define GetC() ((p1==p2)&&(p2=(p1=buf)+fread(buf,1,1<<14,stdin),p1==p2)?EOF:*p1++)
+struct Ios{}io;
+template <typename _tp>
+Ios &operator >>(Ios &in,_tp &x){
+	x=0;int w=0;char c=GetC();
+	for(;!isdigit(c);w|=c=='-',c=GetC());
+	for(;isdigit(c);x=x*10+(c^'0'),c=GetC());
+	if(w) x=-x;
+	return in;
+}
+#define int long long
+#define File(a) freopen(a".in","r",stdin),freopen(a".out","w",stdout)
+const int N=3e3+5;
+int dp[N][N];
+int dp2[N][N];
+int dp3[N][N];
+int dp4[N][N];
+signed main(){
+	File("easyhard");
+	int n,m,p;io>>n>>m>>p;
+	dp[0][0]=1;
+	for(int i=1;i<=m;++i){
+		for(int j=0;j<=n;++j){
+			if(j>0) dp[i][j-1]=(dp[i][j-1]+dp[i-1][j])%p;
+			if(j<n) dp[i][j+1]=(dp[i][j+1]+dp[i-1][j])%p;
+			if(j>0) dp[i][j]=(dp[i][j]+dp[i-1][j])%p;
+			if(j<n) dp[i][j]=(dp[i][j]+dp[i-1][j])%p;
+		}
+	}
+	dp2[1][1]=1;
+	for(int i=2;i<=m;++i){
+		for(int j=1;j<=n;++j){
+			if(j>0) dp2[i][j-1]=(dp2[i][j-1]+dp2[i-1][j])%p;
+			if(j<n) dp2[i][j+1]=(dp2[i][j+1]+dp2[i-1][j])%p;
+			if(j>0) dp2[i][j]=(dp2[i][j]+dp2[i-1][j])%p;
+			if(j<n) dp2[i][j]=(dp2[i][j]+dp2[i-1][j])%p;
+		}
+	}
+	dp3[0][0]=1;
+	for(int i=1;i<=m;++i){
+		for(int j=0;j<=n-1;++j){
+			if(j>0) dp3[i][j-1]=(dp3[i][j-1]+dp3[i-1][j])%p;
+			if(j<n-1) dp3[i][j+1]=(dp3[i][j+1]+dp3[i-1][j])%p;
+			if(j>0) dp3[i][j]=(dp3[i][j]+dp3[i-1][j])%p;
+			if(j<n-1) dp3[i][j]=(dp3[i][j]+dp3[i-1][j])%p;
+		}
+	}
+	dp4[0][0]=1;
+	for(int i=1;i<=m;++i){
+		for(int j=0;j<=n-1;++j){
+			if(j>0) dp4[i][j-1]=(dp4[i][j-1]+dp4[i-1][j])%p;
+			if(j<n-1) dp4[i][j+1]=(dp4[i][j+1]+dp4[i-1][j])%p;
+			if(j>=0) dp4[i][j]=(dp4[i][j]+dp4[i-1][j])%p;
+			if(j<n-1) dp4[i][j]=(dp4[i][j]+dp4[i-1][j])%p;
+		}
+	}
+	int ans=0;
+	for(int j=0;j<=n;++j) ans=(ans+dp[m][j])%p;
+	for(int i=1;i<=m;++i){
+		int s=0;
+		for(int j=0;j<=n;++j) s=(s+dp[m-i][j])%p;
+		for(int j=-1;j>=-n;--j){
+			ans=(ans+s*dp2[i][-j]%p)%p;
+		}
+	}
+	for(int i=1;i<=m;++i){
+		int s=0;
+		for(int j=0;j<=n-1;++j) s=(s+dp4[m-i][j])%p;
+		for(int j=-1;j>=-n;--j){
+			ans=(ans+s*dp3[i-1][-j-1]%p)%p;
+		}
+	}
+	printf("%lld\n",ans);
+	return 0;
+}
