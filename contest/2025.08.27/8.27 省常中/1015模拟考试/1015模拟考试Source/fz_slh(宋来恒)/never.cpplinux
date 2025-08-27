@@ -1,0 +1,38 @@
+#include <cstdio>
+#include <iostream>
+#include <algorithm>
+#include <cstring>
+#include <queue>
+using namespace std;
+#define fi first
+#define sc second
+#define mkp make_pair
+#define pii pair<int,int>
+typedef long long ll;
+const int N=1e5+5,M=5005,K=35,oo=1e9+5,mod=998244353;
+inline int read() {
+    int x=0,flag=0;char ch=getchar();
+    while(ch<'0'||ch>'9') {flag|=(ch=='-');ch=getchar();}
+    while('0'<=ch&&ch<='9') {x=(x<<3)+(x<<1)+ch-'0';ch=getchar();}
+    return flag?-x:x;
+}
+inline int mx(int x,int y) {return x>y?x:y;}
+inline int mn(int x,int y) {return x<y?x:y;}
+inline void swp(int &x,int &y) {x^=y^=x^=y;}
+inline int as(int x) {return x>0?x:-x;}
+
+int n,s,t,x,y;
+int main() {
+    freopen("never.in","r",stdin);
+    freopen("never.out","w",stdout);
+    int TT=read();
+    while(TT--) {
+        n=read();s=read();t=read();x=read();y=read();
+        while(n--) {
+            if(s<t) s+=y;
+            else s-=x;
+        }
+        printf("%d\n",s);
+    }
+    return 0;
+}

@@ -1,0 +1,41 @@
+#include<bits/stdc++.h>
+using namespace std;
+void read(int &x){
+	x=0;char c=getchar();
+	int w=0;
+	while(!isdigit(c)){
+		(c=='-')&&(w=1);
+		c=getchar();
+	}
+	while(isdigit(c)){
+		x=x*10+(c^48);
+		c=getchar();
+	}
+	w&&(x=-x);
+}
+const int N=7;
+int m,n,s,a[N],ans;
+void dfs(int now,int cnt){
+	if(cnt>s)return;
+	if(now==m+1&&cnt==s)ans^=1;
+	if(now==m+1)return;
+	for(int i=1;i<=n;i++)
+		dfs(now+1,cnt+a[i]);
+}
+int main(){
+	freopen("give.in","r",stdin);
+	freopen("give.out","w",stdout);
+	int t;
+	read(t);
+	while(t--){
+		ans=0;
+		read(m);
+		read(s);
+		read(n);
+		for(int i=1;i<=n;i++){
+			read(a[i]);
+		}
+		dfs(1,0);
+		cout<<ans<<endl;
+	}
+}

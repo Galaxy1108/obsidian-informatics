@@ -1,0 +1,114 @@
+#include <algorithm>
+#include <iostream>
+#include <cstring>
+#include <cstdio>
+#include <vector>
+
+#define File(a) freopen(a".in", "r", stdin), freopen(a".out", "w", stdout)
+
+using std::pair;
+using std::make_pair;
+
+#define pii pair<int, int>
+#define mp make_pair
+
+using ll = long long;
+const int inf = 1e9;
+const ll infll = 0ll + 1e18;
+
+#define quad putchar(' ')
+#define Enter putchar('\n')
+
+namespace IO {
+template <class T> inline void read(T &a);
+template <class T, class ...rest> inline void read(T &a, rest &...x);
+template <class T> inline void write(T x);
+template <class T, class ...rest> inline void write(T x, rest ...a);
+} using namespace IO;
+
+#define int __int128
+
+int T, n, s, t, x, y;
+
+signed main(void) {
+  File("never");
+  read(T);
+  for (int test = 1; test <= T; test ++) {
+    read(n, s, t, x, y);
+    if (s >= t) {
+      int num = (s - t + 1 + x - 1) / x;
+      if (num >= n) {write(s - n * x); Enter; continue; }
+      n -= num; s -= num * x;
+    } else {
+      int num = (t - s + y - 1) / y;
+      if (num >= n) {write(s + n * y); Enter; continue; }
+      n -= num; s += num * y;
+    }
+    if (x <= y && s < t) {
+      int num = (t - s + y - 1) / y;
+      if (num >= n) {write(s + n * y); Enter; continue; }
+      n -= num; s += num * y;
+    } else if (x > y && s >= t) {
+      int num = (s - t + 1 + x - 1) / x;
+      if (num >= n) {write(s - n * x); Enter; continue; }
+      n -= num; s -= num * x;
+    }
+    int z = std::__gcd(x, y);
+    n = (n - 1) % ((x + y) / z) + 1;
+    if (n == 1) {
+      if (s >= t)write(s - x);
+      else write(s + y);
+      Enter; continue;
+    }
+    int ans;
+    if (x <= y) {
+      z = y - x;
+      if (n & 1)ans = x - n / 2 * z;
+      else ans = -n / 2 * z;
+      ans = s - ans;
+      if (ans < t - x)ans += (t - x - ans + x + y - 1) / (x + y) * (x + y);
+      if (ans >= t + y)ans -= (ans - t - y + 1 + x + y - 1) / (x + y) * (x + y);
+      write(ans);
+    } else {
+      z = x - y;
+      if (n & 1)ans = y - n / 2 * z;
+      else ans = -n / 2 * z;
+      ans = s + ans;
+      if (ans < t - x)ans += (t - x - ans + x + y - 1) / (x + y) * (x + y);
+      if (ans >= t + y)ans -= (ans - t - y + 1 + x + y - 1) / (x + y) * (x + y);
+      write(ans);
+    } Enter;
+  }
+  return 0;
+}
+
+namespace IO {
+template <class T> inline void read(T &a) {
+  T s = 0, t = 1;
+  char c = getchar();
+  while ((c < '0' || c > '9') && c != '-')
+    c = getchar();
+  if (c == '-')
+    c = getchar(), t = -1;
+  while (c >= '0' && c <= '9')
+    s = (s << 1) + (s << 3) + (c ^ 48), c = getchar();
+  a = s * t;
+}
+template <class T, class ...rest> inline void read(T &a, rest &...x) {
+  read(a); read(x...);
+}
+
+template <class T> inline void write(T x) {
+  if (x == 0) putchar('0');
+  if (x < 0) putchar('-'), x = -x;
+  int top = 0, sta[50] = {0};
+  while (x)
+    sta[++top] = x % 10, x /= 10;
+  while (top)
+    putchar(sta[top] + '0'), top --;
+  return ;
+}
+template <class T, class ...rest> inline void write(T x, rest ...a) {
+  write(x); quad; write(a...);
+}
+}

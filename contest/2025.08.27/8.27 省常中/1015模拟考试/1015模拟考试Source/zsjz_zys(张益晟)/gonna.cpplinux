@@ -1,0 +1,91 @@
+#include<cstdio>
+#include<vector>
+#define ll long long
+using namespace std;
+const int N=20000;
+int n;ll mod;
+struct node{int d,c;};
+vector<node> e[N+10];
+int prime[N+10];bool vis[N+10];
+void init()
+{
+	for(int i=2;i<=n;i++)
+	{
+		if(!vis[i]) prime[++prime[0]]=i;
+		for(int j=1;j<=prime[0]&&i*prime[j]<=n;j++)
+		{
+			vis[i*prime[j]]=true;
+			if(i%prime[j]==0) break;
+		}
+	}
+	// for(int i=1;i<=25;i++) printf("%d ",prime[i]);
+}
+int cs[N+10],cm[N+10],I[N+10];
+ll res[N+10],tmp[N+10];
+vector<int> f[N+10];
+int maxn[N+10];
+ll get(int i,int y)
+{
+	// for(;I[i]<=y;I[i]++)
+	// {
+	// 	res[i]+=tmp[i],res[i]%=mod,tmp[i]=tmp[i]*prime[i]%mod;
+	// }
+	// return res[i];
+	return f[i][y];
+	ll res=1,tmp=prime[i];
+	for(int j=1;j<=y;j++) res+=tmp,res%=mod,tmp=tmp*prime[i]%mod;
+	return res;
+}
+int main()
+{
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	scanf("%d %lld",&n,&mod);
+	init();
+	for(int i=1;i<=prime[0];i++)
+		for(int j=1;prime[i]*j<=n;j++)
+		{
+			int res=prime[i]*j,cnt=0;
+			while(res%prime[i]==0) res/=prime[i],cnt++;
+			e[prime[i]*j].push_back((node){i,cnt});
+		}
+	for(int i=1;i<=prime[0];i++) res[i]=1,tmp[i]=prime[i],I[i]=1;
+	for(int i=1;i<=n;i++)
+	{
+		for(auto v:e[i]) cs[v.d]+=v.c;
+		for(int j=1;j<=prime[0];j++)
+		{
+			if(prime[j]>i) break;
+			cm[j]+=cs[j];
+			maxn[j]=max(maxn[j],cs[j]*(i+1)-2*cm[j]);
+		}
+	}
+	for(int i=1;i<=prime[0];i++) cm[i]=cs[i]=0;
+	for(int i=1;i<=prime[0];i++)
+	{
+		f[i].resize(maxn[i]+1);
+		f[i][0]=1;int tmp=prime[i];
+		for(int j=1;j<=maxn[i];j++)
+			f[i][j]=(tmp+f[i][j-1])%mod,tmp=1ll*tmp*prime[i]%mod;
+	}
+	ll sum=0;int fuc=0;
+	for(int i=1;i<=n;i++)
+	{
+		for(auto v:e[i]) cs[v.d]+=v.c;
+		ll ans=1;
+		for(int j=1;j<=prime[0];j++)
+		{
+			if(prime[j]>i) break;
+			cm[j]+=cs[j];
+			ans=ans*get(j,cs[j]*(i+1)-2*cm[j])%mod;
+			maxn[j]=max(maxn[j],cs[j]*(i+1)-2*cm[j]);
+			// if(i==n) fuc+=cs[j]*(i+1)-2*cm[j];
+		}
+		sum+=ans,sum%=mod;
+	}
+	printf("%lld\n",sum);
+	// for(int i=1;i<=prime[0];i++) fuc+=maxn[i];
+	// printf("%d\n",fuc);
+	// printf("%d\n",fuc);
+	return 0;
+}

@@ -1,0 +1,74 @@
+#include <cstdio>
+#include <iostream>
+#include <algorithm>
+#include <cstring>
+#include <queue>
+using namespace std;
+#define fi first
+#define sc second
+#define mkp make_pair
+#define pii pair<int,int>
+typedef long long ll;
+const int N=2e4+5,M=3e3+5,K1=220000,K2=20000,oo=1e9;
+inline int read() {
+    int x=0,flag=0;char ch=getchar();
+    while(ch<'0'||ch>'9') {flag|=(ch=='-');ch=getchar();}
+    while('0'<=ch&&ch<='9') {x=(x<<3)+(x<<1)+ch-'0';ch=getchar();}
+    return flag?-x:x;
+}
+inline int mx(int x,int y) {return x>y?x:y;}
+inline int mn(int x,int y) {return x<y?x:y;}
+inline void swp(int &x,int &y) {x^=y^=x^=y;}
+inline int as(int x) {return x>0?x:-x;}
+
+int Mod;
+struct fastmod{} mod;
+unsigned long long iMod;
+ll operator %(ll x,fastmod) {
+    x-=ll((__int128_t)x*iMod>>64)*Mod+Mod;
+    return x+(Mod&(x>>63));
+}
+int n,pr[M],num,rev[N],f1[36][K1+5],f2[M][K2+5];
+bool vis[N];
+int S1[M],S2[M],S3[M],ans;
+int main() {
+    freopen("gonna.in","r",stdin);
+    freopen("gonna.out","w",stdout);
+    n=read();Mod=read();
+    iMod=(unsigned long long)-1/Mod;
+    for(int i=2;i<=n;++i) {
+        if(!vis[i]) pr[++num]=i,rev[i]=num;
+        for(int j=1;j<=num&&pr[j]*i<=n;++j) {
+            vis[pr[j]*i]=1;
+            if(i%pr[j]==0) break;
+        }
+    }
+    for(int i=1,now;i<=num;++i)
+        if(i<=34) {
+            f1[i][0]=1; now=pr[i];
+            for(int j=1;j<=K1;++j,now=1ll*now*pr[i]%mod)
+                f1[i][j]=(f1[i][j-1]+now)%mod;
+        } else {
+            f2[i][0]=1; now=pr[i];
+            for(int j=1;j<=K2;++j,now=1ll*now*pr[i]%mod)
+                f2[i][j]=(f2[i][j-1]+now)%mod;
+        }
+    for(int i=1;i<=n;++i) {
+        int now=i,sum,Sum;
+        for(int j=1;j<=num&&pr[j]*pr[j]<=now;++j)
+            while(now%pr[j]==0) {
+                ++S2[j]; S3[j]+=(2*i-1);
+                now/=pr[j];
+            } 
+        if(now>1) ++S2[rev[now]],S3[rev[now]]+=(2*i-1);
+        Sum=1;
+        for(int j=1;j<=num;++j) {
+            if(j<=34) sum=f1[j][S3[j]-S2[j]*i];
+            else sum=f2[j][S3[j]-S2[j]*i];
+            Sum=1ll*Sum*sum%mod;
+        }
+        ans=(ans+Sum)%mod;
+    }
+    printf("%d\n",ans);
+    return 0;
+}

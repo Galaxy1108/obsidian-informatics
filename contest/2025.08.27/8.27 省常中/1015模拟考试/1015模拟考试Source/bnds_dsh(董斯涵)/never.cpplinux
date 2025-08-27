@@ -1,0 +1,39 @@
+#include<cstdio>
+inline long long gcd(long long a,long long b)
+{
+	long long r=a%b;
+	while(r) a=b,b=r,r=a%b;
+	return b;
+}
+int main()
+{
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	int T;
+	scanf("%d",&T);
+	while(T--)
+	{
+		long long n,s,t,x,y;
+		scanf("%lld%lld%lld%lld%lld",&n,&s,&t,&x,&y);
+		if(s>=t)
+		{
+			long long g=t+(s-t)%x;
+			long long d=(s-g)/x;
+			if(n<d){printf("%lld\n",s-n*x);continue;}
+			else s=g,n-=d;
+		}
+		else if(s<t)
+		{
+			long long g=t+((s-t)%y+y)%y;
+			long long d=(g-s)/y;
+			if(n<d){printf("%lld\n",s+n*y);continue;}
+			else s=g,n-=d;
+		}
+		n%=((x+y)/gcd(x,y));
+		while(n--)
+			if(s>=t) s-=x;
+			else s+=y;
+		printf("%lld\n",s);
+	}
+	return 0;
+}

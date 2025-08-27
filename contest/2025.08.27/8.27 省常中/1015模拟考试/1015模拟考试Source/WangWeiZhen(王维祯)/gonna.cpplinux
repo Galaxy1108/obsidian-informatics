@@ -1,0 +1,49 @@
+#include<iostream>
+using namespace std;
+bool mk[20002];
+int mod,pr[10002];
+long long qp(long long x,long long y)
+{
+	long long res=1;
+	while(y)
+	{
+		if(y&1)	res=res*x%mod;
+		x=x*x%mod;
+		y>>=1;
+	}
+	return res;
+}
+int main()
+{
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	int n;
+	cin>>n>>mod;
+	for(int i=2;i<=n;i++)
+	{
+		if(!mk[i])
+			pr[++pr[0]]=i;
+		for(int j=i;j<=n;j+=i)
+			mk[j]=1;
+	}
+	long long sum=0;
+	for(int i=1;i<=n;i++)
+	{
+		//cout<<i<<':'<<endl;
+		long long ans=1;
+		for(int j=1;j<=pr[0] && pr[j]<=i;j++)
+		{
+			long long pw=1;
+			for(long long k=pr[j];k<=i;k*=pr[j])
+				pw+=(i/k)*(i/k*k+k-i-1);
+			//cout<<pw<<endl;
+			long long res=(qp(pr[j],pw)+mod-1)%mod;
+			res=res*qp(pr[j]-1,mod-2)%mod;
+			ans=ans*res%mod;
+		}
+		//cout<<ans<<endl;
+		sum=(sum+ans)%mod;
+	} 
+	cout<<sum;
+	return 0;
+}

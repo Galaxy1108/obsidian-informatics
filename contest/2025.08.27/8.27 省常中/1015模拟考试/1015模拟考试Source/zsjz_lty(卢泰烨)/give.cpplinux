@@ -1,0 +1,37 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+#define fo(i,a,b) for(int i=a;i<=b;++i)
+#define ll long long
+
+int m, s, n;
+int a[205];
+bitset<5005> f[32];
+
+void work() {
+	scanf("%d %d %d", &m, &s, &n);
+	fo(i, 1, n) {
+		scanf("%d", &a[i]);
+	}
+	f[0].reset();
+	f[0][0] = 1;
+	fo(i, 0, 30) {
+		int x = m & (1 << i) ? 1 << i : 0;
+		f[i + 1].reset();
+		fo(j, 1, n) {
+			if((ll)a[j] * x <= s)
+				f[i + 1] ^= f[i] << a[j] * x;
+		}
+	}
+	printf("%d\n", f[30].test(s));
+	return;
+}
+
+int main() {
+	freopen("give.in", "r", stdin);
+	freopen("give.out", "w", stdout);
+	int T;
+	scanf("%d", &T);
+	while(T--) work();
+	return 0;
+}

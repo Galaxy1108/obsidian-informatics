@@ -1,0 +1,33 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+int m, s, n;
+int ans;
+int a[205];
+void dfs(int k, int sum, int num) {
+    cout << k << " " << sum << " " << num << endl;
+    if (num > m) return;
+    if (sum > s) return;
+    if (num == m) {
+        if (sum == s) ++ans;
+        return;
+    }
+    if (k > n) return;
+    dfs(k, sum + a[k], num + 1);  // choose and continue
+    dfs(k + 1, sum, num);         // no choose and continue
+}
+inline void work() {
+    scanf("%d%d%d", &m, &s, &n);
+    for (int i = 1; i <= n; ++i) scanf("%d", a + i);
+    dfs(1, 0, 0);
+    cout << ans << endl;
+}
+
+int main() {
+    freopen("give.in", "r", stdin);
+    freopen("give.out", "w", stdout);
+    int T;
+    scanf("%d", &T);
+    while (T--) work();
+    return 0;
+}

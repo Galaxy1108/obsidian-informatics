@@ -1,0 +1,57 @@
+#include<cstdio>
+#include<map>
+#define int long long
+using namespace std;
+int tot,n,s,t,x,y,T,a[10000010],b[10000010],all;
+map<int,int> mp;
+bool bj=false;
+void dg(int pos,int n)
+{
+	if (!n)
+	{
+		printf("%lld\n",pos);
+		return;
+	}
+	a[++tot]=pos,b[tot]=all-n;
+	if (mp[pos]&&!bj)
+	{
+		bj=true;
+		int p=mp[pos];
+		int now=n%(b[tot]-b[p]);
+		int l=p,r=tot-1,ans=0;
+		while (l<=r)
+		{
+			int mid=(l+r+1)>>1;
+			if (b[mid]-b[p]<=now) l=mid+1,ans=mid;
+			else r=mid-1; 
+		}
+		dg(a[ans],now-(b[ans]-b[p]));
+		return;
+	}
+	if (!bj) mp[pos]=tot;
+	if (pos<t)
+	{
+		int times=(t-pos-1)/y+1;
+		if (n>=times) dg(pos+y*times,n-times);
+		else dg(pos+y*n,0);
+	}
+	else
+	{
+		int times=(pos-t)/x+1;
+		if (n>=times) dg(pos-x*times,n-times);
+		else dg(pos-x*n,0);
+	}
+} 
+signed main()
+{
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	scanf("%lld",&T);
+	while (T--)
+	{
+		scanf("%lld%lld%lld%lld%lld",&n,&s,&t,&x,&y);all=n;
+		mp.clear();tot=0;bj=false;
+		dg(s,n);
+	}
+	return 0;	
+} 

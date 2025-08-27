@@ -1,0 +1,38 @@
+#include<bits/stdc++.h>
+using namespace std;
+inline int read(){
+  int p=0,q=1;
+  char ch=getchar();
+  while(!isdigit(ch)){if(ch=='-')q=-1;ch=getchar();}
+  while(isdigit(ch))p=p*10+ch-'0',ch=getchar();
+  return p*q;
+}
+int main(){
+  freopen("never.in","r",stdin);
+  freopen("never.out","w",stdout);
+  int t;cin>>t;
+  while(t--){
+	long long n,a,b,x,y;
+	cin>>n>>a>>b>>x>>y;
+	if(x==y){
+		if(a>b){
+			long long t=(a-b)/x+1;
+			if(n<=t)cout<<a-x*n<<endl;
+			else if((n-t)&1)cout<<a-t*x+x<<endl;
+			else cout<<a-t*x<<endl;
+		}else{
+			long long t=(b-a-1)/x+1;
+			if(n<=t)cout<<a-x*n<<endl;
+			else if((n-t)&1)cout<<a+t*x-x<<endl;
+			else cout<<a+t*x<<endl;
+		}
+	}else{
+	for(int i=1;i<=n;i++){
+		if(a>=b)a-=x;
+		else a+=y;
+	}
+	cout<<a<<endl;
+	}
+  }
+  return 0;
+}

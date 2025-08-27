@@ -1,0 +1,161 @@
+#include<bits/stdc++.h>
+#define int long long
+using namespace std;
+namespace r_and_w{
+    int read(){
+        int s=0,f=1;
+        char ch=getchar();
+        while(ch>'9'||ch<'0'){
+            if(ch=='-'){
+                f=-1;
+            }
+            ch=getchar();
+        }
+        while(ch>='0'&&ch<='9'){
+            s=s*10+(ch-'0');
+            ch=getchar();
+        }
+        return s*f;
+    }
+    void write(int x){
+        if(x<0){
+            putchar('-');
+            x=-x;
+        }
+        if(x>=10){
+            write(x/10);
+        }
+        putchar(x%10+'0');
+    }
+    void write_endl(int x){
+        write(x);
+        putchar('\n');
+    }
+    void write_space(int x){
+        write(x);
+        putchar(' ');
+    }
+}
+using namespace r_and_w;
+const int N=3e5+10,mod=998244353;
+vector<int>e[N];
+int n,x;
+int fac[N],inv[N],ans[N];
+void solve1(){
+    int d[100][100],a[100],cnt;
+    memset(d,0x3f,sizeof(d));
+    for(int i=0;i<=n;i++){
+        ans[i]=0;
+        d[i][i]=0;
+    }
+    for(int u=1;u<=n;u++){
+        for(auto v:e[u]){
+            d[u][v]=1;
+        }
+    }
+    for(int k=1;k<=n;k++){
+        for(int i=1;i<=n;i++){
+            for(int j=1;j<=n;j++){
+                d[i][j]=min(d[i][j],d[i][k]+d[k][j]);
+            }
+        }
+    }
+    for(int i=0;i<1<<n;i++){
+        cnt=0;
+        int f=1,siz=0;
+        for(int j=1;j<=n;j++){
+            if(i&(1<<(j-1))){
+                siz++;
+                a[++cnt]=j;
+                for(int k=1;k<cnt;k++){
+                    if(d[j][a[k]]>x){
+                        f=0;
+                        break;
+                    }
+                }
+            }
+        }
+        ans[siz]+=f;
+    }
+}
+int qpow(int a,int b){
+    int res=1;
+    while(b){
+        if(b&1){
+            res=1ll*res*a%mod;
+        }
+        a=1ll*a*a%mod;
+        b>>=1;
+    }
+    return res;
+}
+void init(){
+    fac[0]=1;
+    for(int i=1;i<=n;i++){
+        fac[i]=fac[i-1]*i%mod;
+    }
+    inv[n]=qpow(fac[n],mod-2);
+    for(int i=n-1;i>=0;i--){
+        inv[i]=inv[i+1]*(i+1)%mod;
+    }
+}
+int C(int n,int m){
+    return fac[n]*inv[m]%mod*inv[n-m]%mod;
+}
+void solve2(){
+    for(int i=1;i<=n;i++){
+        ans[i]=C(n,i);
+    }
+}
+void solve3(){
+    for(int i=1;i<=x;i++){
+        for(int j=2;j<=i+1;j++){
+            ans[j]=ans[j]+C(i-1,j-2)*(n-i);
+            ans[j]%=mod;
+        }
+    }
+}
+signed main(){
+    freopen("youup.in","r",stdin);
+    freopen("youup.out","w",stdout);
+    int opt=read();
+    n=read(),x=read();
+    ans[1]=n;
+    for(int i=1,u,v;i<n;i++){
+        u=read(),v=read();
+        e[u].push_back(v);
+        e[v].push_back(u);
+    }
+    if(x==0){
+        ans[1]=n;
+        for(int i=2;i<=n;i++){
+            ans[i]=0;
+        }
+    }
+    else if(x==1){
+        write_space(n);
+        if(n>=2){
+            write_space(n-1);
+        }
+        for(int i=3;i<=n;i++){
+            write_space(0);
+        }
+        return 0;
+    }
+    else{
+        init();
+        if(opt<=2){
+            solve1();
+        }
+        else if(opt==4){
+            solve2();
+        }
+        else if(opt==5){
+            solve3();
+        }
+    }
+    for(int i=1;i<=n;i++){
+        write_space(ans[i]);
+    }
+    return 0;
+}

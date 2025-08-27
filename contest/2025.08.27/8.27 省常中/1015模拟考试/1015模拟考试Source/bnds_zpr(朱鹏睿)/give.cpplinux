@@ -1,0 +1,26 @@
+#include <bitset>
+#include <cstdio>
+#include <cstring>
+#define ll long long
+#define K 65
+using namespace std;
+int t;bool have[K];bitset<1<<18> dp[K],tmp;ll m,s;int n,a[10011];
+int main()
+{
+	freopen("give.in","r",stdin);freopen("give.out","w",stdout);
+	scanf("%d",&t);while(t--)
+	{
+		scanf("%lld%lld%d",&m,&s,&n);
+		for(int i=1;i<=n;++i)scanf("%d",a+i);
+		dp[0].reset();
+		for(int i=1;i<=n;++i)dp[0][a[i]]=m&1;if(!(m&1))dp[0][0]=1;
+		for(int i=1;i<60;++i)
+		{
+			tmp.reset();dp[i].reset();
+			for(int j=(s>>i-1&1);j<1<<18;j+=2)tmp[j>>1]=dp[i-1][j];
+			if(m>>i&1)for(int j=1;j<=n;++j)dp[i]^=tmp<<a[j];else dp[i]=tmp;
+		}
+		printf("%d\n",(int)dp[59][0]);
+	}
+	fclose(stdin);fclose(stdout);return 0;
+}

@@ -1,0 +1,44 @@
+#include <bits/stdc++.h>
+#define maxN 5010
+#define LL long long
+using namespace std;
+bool f[maxN][maxN];
+int val[maxN];
+int read ()
+{
+	int x = 0, Fu = 1;
+	char c = getchar();
+	while(c < '0' || c > '9')
+	{
+		if(c == '-') Fu = -1;
+		c = getchar();
+	}
+	while(c >= '0' && c <= '9')
+	{
+		x = x * 10 + (c - '0');
+		c = getchar();
+	}
+	return x * Fu;
+}
+int Min (int x, int y) { return x < y ? x : y; }
+int Max (int x, int y) { return x > y ? x : y; }
+int main ()
+{
+	freopen("give.in", "r", stdin);
+	freopen("give.out", "w", stdout);
+	int T = read();
+	while(T--)
+	{
+		int M = read(), S = read(), N = read();
+		for(int i = 1;i <= N; i++) val[i] = read();
+		f[0][0] = 1;
+		for(int i = 1;i <= M; i++)
+			for(int j = 0;j <= S; j++)
+				for(int k = 1;k <= N; k++)
+					if(j >= val[k]) f[i][j] ^= f[i - 1][j - val[k]];
+		printf("%d\n", f[M][S]);
+		for(int i = 0;i <= M; i++)
+			for(int j = 0;j <= S; j++) f[i][j] = 0;
+	}
+	return 0;
+}

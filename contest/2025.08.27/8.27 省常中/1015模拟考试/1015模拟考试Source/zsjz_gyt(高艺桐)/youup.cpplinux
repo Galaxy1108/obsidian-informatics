@@ -1,0 +1,97 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define N 2002
+#define M 100002
+#define fo(i, l, r) for (int i = (l), ed = (r); i <= ed; i ++)
+#define fd(i, l, r) for (int i = (l), ed = (r); i >= ed; i --)
+#define pb push_back
+#define mp make_pair
+#define fi first
+#define se second
+#define INF 2147483647 //9223372036854775807
+template <typename T> void gi(T &s){
+	s = 0;
+	int b = 1;
+	char ch = getchar();
+	while (ch < '0' || ch > '9') b *= (ch == '-') ? (-1) : 1, ch = getchar();
+	while (ch >= '0' && ch <= '9') s = s * 10 + ch - '0', ch = getchar();
+	s *= b;
+}
+
+const int P = 998244353;
+int num, n, S, bz[M], dis[N][N], ans[M], u, v;
+int fac[M], inv[M];
+vector < int > L[M];
+
+void dg(int x, int y, int z){
+	if (x > n){
+		ans[z] ++;
+		return ;
+	}
+	dg(x + 1, y, z);
+	int d = 0;
+	fo (i, 1, n) d = max(d, bz[i] * dis[x][i]);
+	if (d > S) return;
+	bz[x] = 1;
+	dg(x + 1, max(y, d), z + 1);
+	bz[x] = 0;
+}
+void find(int rt, int x, int fa){
+	for (int i : L[x]) if (i != fa){
+		dis[rt][i] = dis[rt][x] + 1;
+		find(rt, i, x);
+	}
+}
+int fpow(int x, int y){
+	int s = 1;
+	for (; y; y >>= 1, x = 1ll * x * x % P)
+		if (y & 1) s = 1ll * s * x % P;
+	return s;
+}
+
+int C(int x, int y){
+	return 1ll * fac[x] * inv[y] % P * inv[x - y] % P;
+}
+
+int main(){
+	freopen("youup.in", "r", stdin);
+	freopen("youup.out", "w", stdout);
+	gi(num);
+	gi(n), gi(S);
+	fo (i, 1, n - 1) gi(u), gi(v), L[u].pb(v), L[v].pb(u);
+	if (num <= 2){
+		fo (i, 1, n) find(i, i, 0);
+		dg(1, 0, 0);
+		fo (i, 1, n) printf("%d ", ans[i]);
+	}
+	else if (num == 4){
+		fac[0] = 1;
+		fo (i, 1, n) fac[i] = 1ll * fac[i - 1] * i % P;
+		inv[n] = fpow(fac[n], P - 2);
+		fd (i, n, 1) inv[i - 1] = 1ll * inv[i] * i % P;
+		printf("%d ", n);
+		if (!S){
+			fo (i, 2, n) printf("0 ");
+		}
+		else if (S == 1){
+			printf("%d ", n - 1);
+			fo (i, 3, n) printf("0 ");
+		}
+		else{
+			fo (i, 2, n) printf("%d ", C(n, i));
+		}
+	}
+	else if (num == 5){
+		fac[0] = 1;
+		fo (i, 1, n) fac[i] = 1ll * fac[i - 1] * i % P;
+		inv[n] = fpow(fac[n], P - 2);
+		fd (i, n, 1) inv[i - 1] = 1ll * inv[i] * i % P;
+		++ S;
+		fo (i, 1, n){
+			ans[i] = C(S - 1, i);
+			ans[i] = (ans[i] + 1ll * C(S - 1, i - 1) * (n - S + 1)) % P;
+			printf("%d ", ans[i]);
+		}
+	}
+}

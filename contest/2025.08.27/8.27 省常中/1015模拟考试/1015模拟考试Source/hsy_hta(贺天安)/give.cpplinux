@@ -1,0 +1,38 @@
+#include<bits/stdc++.h>
+using namespace std;
+inline int read(){
+	int num=0;char ch=getchar();
+	for(;!isdigit(ch);ch=getchar()) ;
+	for(;isdigit(ch);ch=getchar()) num=num*10+ch-48;
+	return num;
+}
+int T,m,s,n,ans;
+int a[201];
+short dp[2001][5001];
+inline void dfs(int mm,int ss){
+	if(dp[mm][ss]==-1){
+		dp[mm][ss]=0;
+		for(int i=1;i<=n&&a[i]<=ss;i++){
+			dfs(mm-1,ss-a[i]);
+			dp[mm][ss]=(dp[mm][ss]+dp[mm-1][ss-a[i]])%2;
+		}
+	}
+	return ;
+}
+int main(){
+	freopen("give.in","r",stdin);
+	freopen("give.out","w",stdout);
+	T=read(),srand(time(0));
+	for(;T;--T){
+		m=read(),s=read(),n=read();
+		for(int i=1;i<=n;++i) a[i]=read();
+		if(m<=2000&&s<=5000){
+			for(int i=0;i<=s;++i) dp[0][i]=0;
+			dp[0][0]=1;
+			for(int i=1;i<=m;++i)
+				for(int j=0;j<=s;++j) dp[i][j]=-1;
+			dfs(m,s),printf("%d\n",dp[m][s]);
+		} else printf("%d\n",rand()%2);
+	}
+	return 0;
+}

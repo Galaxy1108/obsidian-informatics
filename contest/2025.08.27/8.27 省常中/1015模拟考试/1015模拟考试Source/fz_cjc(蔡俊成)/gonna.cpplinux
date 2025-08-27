@@ -1,0 +1,85 @@
+#include <cstdio>
+#include <cstring>
+#include <cctype>
+#include <vector>
+#include <algorithm>
+#define int long long
+using namespace std;
+inline int read (void) {
+    int x = 0, f = 1, ch = getchar();
+    while(!isdigit(ch)) { if(ch == '-') f = -f; ch = getchar(); }
+    while(isdigit(ch)) { x = x * 10 + ch - '0'; ch = getchar(); }
+    return x * f;
+}
+const int N=2e4+5;
+int n,mod,g[N],vis[N],top,f[N],p[N],D[220138],o,G[N];
+vector<int> F[N][2];
+long long ans;
+void sf(){
+    for (int i=2;i<=n;i++){
+        if(!vis[i]) g[++top]=i,p[i]=top;
+        for (int j=1;j<=top&&g[j]*i<=n;j++){
+            vis[g[j]*i]=1;
+            if(i%g[j]==0) break;
+        }
+    }
+}
+long long ksm(long long n,long long m){
+    long long s=1;
+    while(m){
+        if(m&1) s=s*n%mod;
+        n=n*n%mod;
+        m>>=1;
+    }
+    return s;
+}
+signed main (void) {
+    // freopen("in.in", "r", stdin);
+    // freopen("out.out", "w", stdout);
+    freopen("gonna.in", "r", stdin);
+    freopen("gonna.out", "w", stdout);
+    n=read();mod=read();
+    sf();
+    for (int i=1;i<=n;i++) G[i]=1;
+    for (int i=1;i<=top;i++){
+        int pr=g[i];
+        int s1=0,s2=0,s3=0;
+        for (int j=g[i];j<=n;j++){
+            int x=j;
+            while(x%pr==0) x/=pr,s1++;
+            s2+=s1*2;
+            int w=s1*(j+1)-s2;
+            s3=max(s3,w);
+        }
+        D[0]=1;
+        for (int i=1;i<=s3;i++) D[i]=(D[i-1]*pr+1)%mod;
+        s1=0;s2=0;
+        for (int j=g[i];j<=n;j++){
+            int x=j;
+            while(x%pr==0) x/=pr,s1++;
+            s2+=s1*2;
+            int w=s1*(j+1)-s2;
+            G[j]=G[j]*D[w]%mod;
+        }
+    }
+    for (int i=1;i<=n;i++) ans=(ans+G[i])%mod;
+    printf("%lld\n",ans);
+    return 0;
+}
+/*
+
+219138
+
+167306
+
+101563
+
+88037
+67216
+57672
+57728
+
+40392
+43018
+37996
+*/

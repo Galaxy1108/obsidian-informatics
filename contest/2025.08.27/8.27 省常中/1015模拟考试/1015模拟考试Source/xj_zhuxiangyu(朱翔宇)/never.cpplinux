@@ -1,0 +1,62 @@
+// #pragma GCC optimize("O3")
+// #pragma GCC optimize("Ofast")
+// #pragma GCC optimize("unroll-loops")
+// #pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,tune=native")
+#include <bits/stdc++.h>
+using namespace std;
+
+#define PB emplace_back
+#define int __int128
+#define ll long long
+#define vi vector<int>
+#define siz(a) ((int)((a).size()))
+#define rep(i, a, b) for (int i = (a); i <= (b); ++i)
+#define per(i, a, b) for (int i = (a); i >= (b); --i)
+
+int go(int n, int x, int y) {
+	if(n >= 0) return (n + x) / x;
+	return (-n - 1 + y) / y;
+}
+int read(){
+   int s=0,w=1;
+   char ch=getchar();
+   while(ch<'0'||ch>'9'){if(ch=='-')w=-1;ch=getchar();}
+   while(ch>='0'&&ch<='9') s=s*10+ch-'0',ch=getchar();
+   return s*w;
+}
+void print(int n) {
+	if(n < 0) {
+		n = -n;
+		cout << '-';
+	}
+	if(n / 10) print(n / 10);
+	cout << (ll)(n % 10);
+}
+int a, b, c, x, y;
+
+signed main() {
+	freopen("never.in", "r", stdin);
+	freopen("never.out", "w", stdout);
+	ios::sync_with_stdio(0);
+	cin.tie(0), cout.tie(0);
+	int T;
+	for(T = read(); T--; ) {
+		a = read(), b = read(), c = read(), x = read(), y = read();
+		b -= c;
+		int tmp = go(b, x, y);
+		if(tmp >= a) {
+			print((b >= 0 ? -x : y) * a + b + c);
+			cout << '\n';
+			continue;
+		}
+		a -= tmp;
+		if(b >= 0) b -= tmp * x;
+		else b += tmp * y;
+		// print(b);
+		int n = (x + b + a * y) / (x + y);
+		b = b - n * x + (a - n) * y;
+		print(b + c);
+		cout << '\n';
+	}
+	return 0;
+}

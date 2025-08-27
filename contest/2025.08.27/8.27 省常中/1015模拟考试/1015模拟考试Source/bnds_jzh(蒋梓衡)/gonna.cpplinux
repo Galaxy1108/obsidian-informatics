@@ -1,0 +1,62 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+using ll = long long;
+using l3 = __int128_t;
+#define IO(a) freopen(#a".in", "r", stdin), freopen(#a".out", "w", stdout),\
+	cin.tie(0)->sync_with_stdio(0), cout.tie(0)
+#define F(i, a, b) for (int i = (a), i##end = (b); i <= i##end; i++)
+
+const int N = 20100;
+int n, M, vis[N], pr[N], cnt;
+int wow[N], sum[N], ans[N];
+
+l3 inv;
+int mod(long long x) {
+	x = x - ((x * inv) >> 64) * M;
+	if (x >= M) x -= M;
+	return x;
+}
+
+struct Mat {
+	array<int, 4> a;
+	Mat operator * (const Mat &b) const {
+		Mat c;
+		c.a[0] = mod(1ll * a[0] * b.a[0] + 1ll * a[1] * b.a[2]);
+		c.a[1] = mod(1ll * a[0] * b.a[1] + 1ll * a[1] * b.a[3]);
+		c.a[2] = mod(1ll * a[2] * b.a[0] + 1ll * a[3] * b.a[2]);
+		c.a[3] = mod(1ll * a[2] * b.a[1] + 1ll * a[3] * b.a[3]);
+		return c;
+	}
+};
+
+Mat A[2][N];
+
+int main() {
+	IO(gonna);
+	cin >> n >> M, inv = ((l3)1 << 64) / M;
+	F(i, 2, n) if (!vis[i]) {
+		pr[++cnt] = i;
+		F(j, 2, n / i) vis[i * j] = 1;
+	}
+	F(i, 1, n) ans[i] = 1;
+	F(i, 1, cnt) {
+		F(j, 1, n) {
+			wow[j] = wow[j / pr[i]] + j / pr[i];
+			sum[j] = sum[j - 1] + wow[j];
+		}
+		F(j, 1, n) wow[j] = wow[j] * (j + 1) - sum[j] * 2 + 1;
+
+		Mat X = {pr[i], 0, 1, 1};
+		A[0][0] = A[1][0] = {1, 0, 0, 1};
+		F(j, 1, n) A[0][j] = A[0][j - 1] * X;
+		F(j, 1, n) A[1][j] = A[1][j - 1] * A[0][n];
+		F(j, 1, n) {
+			Mat C = A[1][wow[j] / n] * A[0][wow[j] % n];
+			ans[j] = 1ll * ans[j] * C.a[2] % M;
+		}
+	}
+	ll sum = 0;
+	F(i, 1, n) sum += ans[i];
+	cout << sum % M;
+}

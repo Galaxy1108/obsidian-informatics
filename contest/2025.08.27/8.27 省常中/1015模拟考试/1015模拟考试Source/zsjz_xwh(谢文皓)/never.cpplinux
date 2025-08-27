@@ -1,0 +1,126 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define LL long long
+#define I1 long long
+#define abs(a) ((a>=0)?(a):(-a))
+#define rd (((I1)rand()<<45)+((I1)rand()<<30)+((I1)rand()<<15)+((I1)rand()))
+int i,j,m,k,l,o,p;
+I1 n,x,y,s,t;
+inline LL read()
+{
+	int f(1);
+	LL x(0);
+	char ch=getchar();
+	while (!isdigit(ch)) {if (ch=='-') f*=-1;ch=getchar();}
+	while (isdigit(ch)) x=(x<<1)+(x<<3)+ch-'0',ch=getchar();
+	return f*x;
+}
+inline void writ(I1 x)
+{
+	if (x<0) putchar('-'),x=-x;
+	if (x/10) writ(x/10);
+	putchar((char)(x%10+'0'));
+}
+inline void write(I1 x)
+{
+	writ(x);
+	putchar('\n');
+}
+inline LL gcd(LL x,LL y)
+{
+	return (y==0?x:gcd(y,x%y));
+}
+inline I1 ksm(I1 w,I1 cs,I1 mo)
+{
+	I1 v=1;
+	while (cs)
+	{
+		if (cs&1) v=v*w%mo;
+		cs>>=1,w=w*w%mo;
+	}
+	return v;
+}
+inline I1 phi(I1 x)
+{
+	I1 ans=x,now=1;
+	while ((++now)*now<=x)
+	{
+		if (x%now==0)
+		{
+			ans=ans/now*(now-1);
+			while (x%now==0) x/=now;
+		}
+	}
+	if (x!=1) ans=ans/x*(x-1);
+	return ans;
+}
+inline I1 ny(I1 x,I1 y)
+{
+	x%=y;
+	int bz(1),maxi(0);
+	I1 now(1),x1=x,y1=y;
+	while ((++now)*now<=min(x,y))
+	{
+		int num1(0),num2(0);
+		while (x%now==0) x/=now,++num1;
+		while (y%now==0) y/=now,++num2;
+		if ((num1&&(!num2))||(num2&&(!num1))) 
+		{
+			bz=0;
+			break;
+		}
+		maxi=max(maxi,(num2+num1-1)/num1);
+	}
+	if (x!=y) bz=0;
+	x=x1,y=y1;
+	I1 ph=phi(y);
+	if (!bz) return ksm(x/gcd(x,y),phi(y/gcd(x,y))-1,y/gcd(x,y));
+	return ((ph-1>=maxi)?(0):ksm(x/gcd(x,y),phi(y/gcd(x,y))-1,y/gcd(x,y))*gcd(x,y));
+}
+int main()
+{
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	int T(read());
+	while (T--)
+	{
+		n=read(),s=read(),t=read(),y=read(),x=read();
+		I1 f(1);
+		I1 gd=gcd(x,y);
+		s-=t;
+		I1 st=((s+gd)%gd+gd)%gd;
+		s-=st;
+		if (s<-y) 
+		{
+			I1 q=min(n,(-y-s+x-1)/x);
+			n-=q;
+			s+=q*x;
+		}
+		if (s>x) 
+		{
+			I1 q=min(n,(s-x+y-1)/y);
+			n-=q;
+			s-=q*y;
+		}
+		if (n==0)
+		{
+			write(s*f+t);
+			continue;
+		}
+		I1 e;
+//		if (y>=2) e=((x>=y?((y-s)%y):((s+y)%y))*ny(x,y)%y);
+		if (y>=2) e=(s+y)%y*ny(x,y)%y;
+		else
+		{
+			e=abs(s-x);
+		}
+		e=e*x;
+		I1 ans=(e-s)/y;
+		ans+=e/x;
+		n+=ans,s=0;
+		n%=(x+y);
+		if (n) e=((n*y-y)%(x+y)==0?(n*y-y)/(x+y):(n*y-y)/(x+y)+1); else e=0;
+		ans=e*x-(n-e)*y;
+		write(ans*f+t+st);
+	}
+}

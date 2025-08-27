@@ -1,0 +1,96 @@
+#include<iostream>
+#include<cstdio>
+#include<string>
+#include<cstring>
+#include<vector>
+#include<algorithm>
+using namespace std;
+typedef long long ll;
+const ll N=20005;
+
+ll n,mod,ans;
+ll pri[N],mnp[N],tot;
+ll id[N],t[N],pp[N],tt;
+ll sum;
+bool vis[N];
+
+ll pw1[2270][475];
+ll pwn[2270][475];
+ll S[2270][475];
+inline void read(ll &x) 
+{
+	ll f=1;char c;
+	for(x=0,c=getchar();c<'0'||c>'9';c=getchar()) if(c=='-') f=-1;
+	for(;c>='0'&&c<='9';c=getchar()) x=(x<<1)+(x<<3)+(c^48); x*=f;
+} 
+inline void sout(ll x)
+{
+	if(x<0) putchar('-'),x=-x;
+	if(x>9) sout(x/10);
+	putchar(x%10+'0');
+}
+inline ll mn(ll _x,ll _y){return _x<_y?_x:_y;}
+inline ll mx(ll _x,ll _y){return _x>_y?_x:_y;}
+inline ll ab(ll _x){return _x<0?-_x:_x;}
+inline void csh()
+{
+	for(int i=2;i<=20000;i++)
+	{
+		if(!vis[i]) {pri[++tot]=i;mnp[i]=i;id[i]=tot;pp[tot]=i;}
+		for(int j=1;j<=tot&&i*pri[j]<=20000;j++)
+		{
+			vis[i*pri[j]]=true;
+			mnp[i*pri[j]]=pri[j];
+			if(i%pri[j]==0) break;
+		}
+	}
+
+	for(int i=1;i<=tot;i++)
+	{
+		tt=pp[i];
+		pw1[i][0]=pwn[i][0]=S[i][0]=1;
+		for(int j=1;j<=470;j++) 
+		{
+			pw1[i][j]=pw1[i][j-1]*tt%mod;
+			S[i][j]=(S[i][j-1]+pw1[i][j])%mod;
+		}
+		for(int j=1;j<=470;j++)
+			pwn[i][j]=pwn[i][j-1]*pw1[i][470]%mod;			
+	}
+	
+	return ;
+}
+inline ll lightpow(ll id,ll cnt){return pw1[id][cnt%470]*pwn[id][cnt/470]%mod;}
+inline ll calc(ll nn,ll id)
+{
+	if(nn<=470) return S[id][nn];
+	ll mid=nn>>1;
+	return (calc(mid,id)+lightpow(id,mid+1)*calc(nn-mid-1,id)%mod)%mod;
+}
+int main()
+{
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	read(n);read(mod);
+	csh();
+	ans=1;
+	ll mxt=0;
+	for(int i=2;i<=n;i++)
+	{
+		tt=i;
+		while(mnp[tt]){t[id[mnp[tt]]]+=i;tt/=mnp[tt];}
+		for(int j=0;j<i;j++)
+		{
+			tt=i-j;
+			while(mnp[tt]){--t[id[mnp[tt]]];tt/=mnp[tt];}
+		}
+		sum=1;
+		for(int j=1;j<=tot;j++)
+			if(t[j]) sum=sum*calc(t[j],j)%mod;
+
+		ans+=sum;
+	}
+
+	printf("%lld\n",ans%mod);
+	return 0;	
+}  

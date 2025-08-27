@@ -1,0 +1,41 @@
+#include<bits/stdc++.h>
+using namespace std;
+inline int read(){
+  int p=0,q=1;
+  char ch=getchar();
+  while(!isdigit(ch)){if(ch=='-')q=-1;ch=getchar();}
+  while(isdigit(ch))p=p*10+ch-'0',ch=getchar();
+  return p*q;
+}
+vector<long long> w[71];
+long long m,s,n;
+bool ok[71][400001];
+long long f[71][400001];
+long long dp(int i,long long k){//算到第i位 前面给自己的mask是k 
+	if(i==63)return k==0;
+	if(ok[i][k])return f[i][k];
+	ok[i][k]=1;
+	long long y=(k&1ll),p=(m&(1ll<<i))?1ll:0,q=(s&(1ll<<i))?1ll:0;
+	long long ans=(y==q and p==0)?dp(i+1,k>>1ll):0;
+	if(p==0)return f[i][k]=ans;
+	for(auto v:w[i]){
+		if(((v&1ll)^y)==q)ans=(ans+dp(i+1ll,(k+v)>>1ll))&1ll;
+	}
+	return f[i][k]=ans;
+}
+int main(){
+  freopen("give.in","r",stdin);
+  freopen("give.out","w",stdout);
+  int t;cin>>t;
+  while(t--){
+	cin>>m>>s>>n;
+	for(int i=1;i<=n;i++){
+		long long a;cin>>a;
+		for(long long j=0;(long long)(a<<j)<=s;j++)w[j].push_back(a);
+	}
+	cout<<dp(0,0)<<endl;
+	for(int i=0;i<=63;i++)w[i].clear();
+	memset(ok,0,sizeof(ok));
+  }	    
+  return 0;
+}

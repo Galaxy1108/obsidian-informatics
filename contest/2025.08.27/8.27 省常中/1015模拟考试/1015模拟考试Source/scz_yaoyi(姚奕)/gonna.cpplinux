@@ -1,0 +1,100 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+using LL = long long;
+using ULL = unsigned long long;
+
+int n, fzx;
+int rr[20005], pri[20005], tpri;
+LL totx[2][20005], toti[20005];
+
+int calc(int x, int pp)
+{
+    int res = 0;
+    while (x >= pp)
+    {
+        res += x / pp;
+        x /= pp;
+    }
+    return res;
+}
+
+LL kpow(LL x, LL y)
+{
+    LL res = 1;
+    while (y > 0)
+    {
+        if (y & 1) res = res * x % fzx;
+        x = x * x % fzx;
+        y >>= 1;
+    }
+    return res;
+}
+
+pair<LL, LL> sum(int pp, int c)
+{
+    if (c == 1) return make_pair(pp, pp+1);
+    if (c == 0) return make_pair(1, 1);
+    
+    if (n <= 3000)
+    {
+        return make_pair(0, (kpow(pp, c+1)-1)
+            * kpow(pp-1, fzx-2) % fzx);
+    }
+    
+    if (c % 2 == 1)
+    {
+        pair<LL, LL> s = sum(pp, c/2);
+        return make_pair(s.first * s.first % fzx * pp % fzx,
+            (s.second + s.second * s.first % fzx * pp % fzx) % fzx);
+    }
+    pair<LL, LL> s = sum(pp, c/2-1);
+    return make_pair(s.first * s.first % fzx,
+        (s.second + s.second * s.first % fzx * pp % fzx
+        + pp * pp % fzx * s.first % fzx * s.first % fzx) % fzx);
+}
+
+int main(void)
+{
+    freopen("gonna.in", "r", stdin);
+    freopen("gonna.out", "w", stdout);
+    ios::sync_with_stdio(0);
+    cin.tie(NULL);
+    
+    cin >> n >> fzx;
+    
+    for (int i = 2; i <= n; ++i)
+    {
+        if (rr[i] == 0)
+        {
+            rr[i] = i;
+            pri[++tpri] = i;
+        }
+        for (int j = 1; j <= tpri; ++j)
+        {
+            if (pri[j] * i > n) break;
+            rr[pri[j] * i] = pri[j];
+            if (pri[j] == rr[i]) break;
+        }
+    }
+    
+    LL ans = 0;
+    for (int x = 1; x <= n; ++x)
+    {
+        LL res = 1;
+        for (int i = 1; pri[i] <= x && i <= tpri; ++i)
+        {
+            totx[x&1][i] = calc(x, pri[i]);
+            toti[i] += totx[(x&1)^1][i];
+//            cerr << x << ' ' << i << '\n';
+            res *= sum(pri[i], totx[x&1][i]*(x-1) - toti[i]*2).second;
+//            cerr << x << ' ' << i << '\n';
+            if (res > INT_MAX) res %= fzx;
+        }
+        ans = (ans + res) % fzx;
+    }
+    cout << ans << '\n';
+
+    return 0;
+}

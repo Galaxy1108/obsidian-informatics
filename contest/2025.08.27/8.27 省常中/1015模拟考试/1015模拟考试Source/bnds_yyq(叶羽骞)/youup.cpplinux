@@ -1,0 +1,107 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+#define int long long
+#define MAXN 25
+#define mod 998244353
+
+struct edge{
+	int nxt,to;
+}e[MAXN];
+
+int num,n,x,head[MAXN] = {0},etot = 1,cnt[MAXN] = {0},ans[MAXN] = {0},maxdep = 0;
+int fac[MAXN] = {0},nfac[MAXN] = {0};
+
+void add_edge( int u , int v ){
+	e[++etot].to = v;
+	e[etot].nxt = head[u];
+	head[u] = etot;
+}
+
+void dfs( int x , int f , int dep ){
+	cnt[dep] ++;
+	maxdep = max( maxdep , dep );
+	for( int i = head[x] ; i ; i = e[i].nxt ){
+		int y = e[i].to;
+		if( y == f ) continue;
+		dfs( y , x , dep + 1 );
+	}
+}
+
+int faspow( int x , int p ){
+	int res = 1;
+	while( p ){
+		if( p & 1 ) res = res * x % mod;
+		x = x * x % mod;
+		p >>= 1;
+	}
+	return res;
+}
+
+int C( int x , int y ){
+	if( x < y ) return 0;
+	return fac[x] * nfac[y] % mod * nfac[x - y] % mod;
+}
+
+signed main(){
+	freopen("youup.in","r",stdin);
+	freopen("youup.out","w",stdout);
+	scanf("%lld%lld%lld",&num,&n,&x);
+	//fac[0] = 1,nfac[0] = faspow( fac[0] , mod - 2 );
+	//for( int i = 1 ; i <= n ; i ++ ) fac[i] = fac[i - 1] * i % mod,nfac[i] = faspow( fac[i] , mod - 2 );
+	for( int i = 1 ; i < n ; i ++ ){
+		int u,v;
+		scanf("%lld%lld",&u,&v);
+		add_edge( u , v );
+		add_edge( v , u );
+	}
+	/*
+	for( int i = 1 ; i <= n ; i ++ ){
+		maxdep = 0;
+		memset( cnt , 0 , sizeof( cnt ) );
+		dfs(i,-1,1);
+		for( int j = 1 ; j <= min( x , maxdep ) + 1 ; j ++ )
+			cnt[j] += cnt[j - 1],printf("%d %d\n",j,cnt[j]);
+		for( int i = 1 ; i <= n ; i ++ )
+			ans[i] = ( ans[i] + C( cnt[min( x , maxdep ) + 1] , i ) ) % mod;
+	}
+	for( int i = 1 ; i <= n ; i ++ )
+		printf("%lld ",ans[i]);
+		*/
+	if( x == 0 ){
+		printf("%d",n);
+		for( int i = 1 ; i <= n - 1 ; i ++ ){
+			printf(" %d",0);
+		}
+		return 0;
+	}
+	if( num == 4 ){
+		if( x == 1 ){
+			printf("%d %d",n,n - 1);
+			for( int i = 1 ; i <= n - 2 ; i ++ ){
+				printf(" 0");
+			}
+			return 0;
+		}
+		if( x >= 2 ){
+			printf("%d %d",n,n - 1);
+			fac[0] = 1,nfac[0] = faspow( fac[0] , mod - 2 );
+			for( int i = 1 ; i <= n ; i ++ ) fac[i] = fac[i - 1] * i % mod,nfac[i] = faspow( fac[i] , mod - 2 );
+			for( int i = 2 ; i <= n ; i ++ ){
+				printf(" %d",C(n - 1,i));
+			}
+			return 0;
+		}
+	}
+	fclose(stdin);
+	fclose(stdout);
+	return 0; 
+}
+/*
+2
+5 1
+1 2
+2 3
+3 4
+4 5
+*/

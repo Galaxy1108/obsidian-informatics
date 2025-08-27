@@ -1,0 +1,72 @@
+#include <bits/stdc++.h>
+using ll = long long;
+
+inline void file () {
+	freopen("give.in", "r", stdin);
+	freopen("give.out", "w", stdout);
+}
+
+// constexpr int Mod = 2;
+inline bool add (bool x, bool y) { return x ^ y; }
+inline bool sub (bool x, bool y) { return x ^ y; }
+inline bool mul (bool x, bool y) { return x & y; }
+inline void updAdd (bool &x, bool y) { x = add(x, y); }
+inline void updSub (bool &x, bool y) { x = sub(x, y); }
+inline void updMul (bool &x, bool y) { x = mul(x, y); }
+
+const int N = 55;
+const int M = 205;
+const int S = 505;
+int m, s, n;
+int a[N];
+bool f[S], g[S];
+
+void solve () {
+	std::cin >> m >> s >> n;
+	for (int i = 1; i <= n; ++ i) {
+		std::cin >> a[i];
+	}
+	
+	memset(f, 0, sizeof f);
+	f[0] = 1;
+	
+	for (int i = 1; i <= m; ++ i) {
+		memcpy(g, f, sizeof f);
+		memset(f, 0, sizeof f);
+		
+		for (int j = 0; j <= s; ++ j) {
+			bool v = g[j];
+			if (!v) {
+				continue;
+			}
+			
+			for (int k = 1; k <= n; ++ k) {
+				int nj = j + a[k];
+				if (nj > s) {
+					break;
+				}
+				
+				updAdd(f[nj], v);
+			}
+		}
+	}
+	
+	std::cout << f[s] << '\n';
+}
+
+int main () {
+	
+	file();
+	std::ios::sync_with_stdio(0);
+	std::cin.tie(nullptr);
+	std::cout.tie(nullptr);
+	
+	int t;
+	std::cin >> t;
+	
+	while (t -- ) {
+		solve();
+	}
+	
+	return 0;
+}

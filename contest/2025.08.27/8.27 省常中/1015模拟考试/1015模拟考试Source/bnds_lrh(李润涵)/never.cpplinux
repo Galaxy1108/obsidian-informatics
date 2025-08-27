@@ -1,0 +1,66 @@
+#include<iostream>
+#include<cstdio>
+using namespace std;
+int t;
+__int128 n, x, y, s, lgc, q;//lgc=t;
+__int128 read()
+{
+	__int128 x=0;
+	int f=1;
+	char c=getchar();
+	while(c>'9'||c<'0')
+	{
+		if(c=='-')
+			f=-1;
+		c=getchar();
+	}
+	while(c>='0'&&c<='9')
+	{
+		x=x*10+c-'0';
+		c=getchar();
+	}
+	return x;
+}
+void write(__int128 x)
+{
+	if(x<0)
+	{
+		putchar('-');
+		x=-x;	
+	}
+	else if(!x)
+		putchar('0');
+	if(x/10)
+		write(x/10);
+	putchar(x%10+'0');	
+}
+int main()
+{
+	freopen("never.in", "r", stdin);
+	freopen("never.out", "w", stdout);
+	scanf("%d", &t);
+	while(t--)
+	{
+		n=read();
+		s=read();
+		lgc=read();
+		x=read();
+		y=read();
+		q=s<lgc?(lgc-s)/y:(s-lgc)/x;
+		if(q>=n)
+		{
+			write(s<lgc?s+n*y:s-n*x);
+			putchar('\n');
+			continue;
+		}
+		s=s<lgc?s+q*y:s-q*x;
+		n-=q;
+		q=(lgc-x+n*x-s-1)/(x+y)+1;
+		if(lgc-x+n*x-s<=0)
+			q=0;
+		write(s+q*y-(n-q)*x);
+		putchar('\n');
+	}
+	fclose(stdin);
+	fclose(stdout);
+}

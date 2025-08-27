@@ -1,0 +1,79 @@
+#include <bits/stdc++.h>
+#define il inline
+#define re register
+#define ll long long
+#define ull unsigned ll
+#define db double
+#define ldb long db
+#define fi first
+#define se second
+#define pii pair<int, int>
+#define MP(x, y) make_pair(x, y)
+#define eb emplace_back
+using namespace std;
+namespace FastIO {
+  const int iL = 1 << 20;
+  char ibuf[iL], *iS = ibuf + iL, *iT = ibuf + iL;
+  #define GC() (iS == iT) ? \
+  (iT = (iS = ibuf) + fread(ibuf, 1, iL, stdin), (iS == iT) ? EOF : *iS++) : *iS++
+  template <class T>il void read(T &x) {
+    x = 0;
+    char c = GC(); bool flg = false;
+    while(!isdigit(c)) {flg |= c == '-'; c = GC();}
+    while(isdigit(c)) {x = (x << 1) + (x << 3) + (c & 15); c = GC();}
+    if(flg) x = -x;
+  }
+  template <class T>il void gread(T &x) {
+    x = 0;
+    char c = getchar(); bool flg = false;
+    while(!isdigit(c)) {flg |= c == '-'; c = getchar();}
+    while(isdigit(c)) {x = (x << 1) + (x << 3) + (c & 15); c = getchar();}
+    if(flg) x = -x;
+  }
+  il int read() {
+    int x = 0;
+    char c = GC(); bool flg = false;
+    while(!isdigit(c)) {flg |= c == '-'; c = GC();}
+    while(isdigit(c)) {x = (x << 1) + (x << 3) + (c & 15); c = GC();}
+    return flg ? -x : x;
+  }
+  char Out[iL], *iter = Out;
+  #define Flush() fwrite(Out, 1, iter - Out, stdout); iter = Out
+  template <class T>il void write(T x, char LastChar = '\n') {
+    int c[35], len = 0;
+    if(x < 0) {*iter++ = '-'; x = -x;}
+    do {c[++len] = x % 10; x /= 10;} while(x);
+    while(len) *iter++ = c[len--] + '0';
+    *iter++ = LastChar; Flush();
+  }
+}
+using namespace FastIO;
+#define N 205
+#define M 2005
+#define S 5005
+int n, m, s, a[N];
+namespace sub1 {
+  bitset<S> f[2];
+  il void MAIN() {
+    f[0].reset(); f[1].reset(); f[0].set(0);
+    for(re int i = 1; i <= m; ++i) {
+      int now = i & 1, cur = !now;
+      f[now] = f[cur];
+      for(re int j = 1; j <= n; ++j)
+        f[now] ^= f[cur] << a[j];
+    }
+    write((int)f[m & 1][s]);
+  }
+}
+il void WORK() {
+  read(m); read(s); read(n);
+  for(re int i = 1; i <= n; ++i) read(a[i]);
+  if(s <= 5000) {sub1::MAIN(); return ;}
+}
+int main() {
+  freopen("give.in", "r", stdin);
+  freopen("give.out", "w", stdout);
+  int TC; read(TC);
+  for(re int i = 0; i < TC; ++i) WORK();
+  return 0;
+}

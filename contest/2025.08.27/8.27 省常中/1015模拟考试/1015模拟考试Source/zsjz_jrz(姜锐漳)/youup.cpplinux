@@ -1,0 +1,146 @@
+#include<bits/stdc++.h>
+using namespace std;
+const int N=3e5+5;
+int head[N],go[2*N],nxt[2*N];
+int Num,n,D,tot=0;
+namespace Tree{
+    int dep[N],f[N][20];
+    void dfs(int x,int fa){
+        for (int i=head[x];i;i=nxt[i])
+            if (go[i]!=fa){
+                dep[go[i]]=dep[x]+1;
+                f[go[i]][0]=x;
+                dfs(go[i],x);
+            }
+    }
+    inline void build(){
+        dep[1]=1;
+        dfs(1,0);
+        for (int j=1;j<20;++j)
+            for (int i=1;i<=n;++i)
+                f[i][j]=f[f[i][j-1]][j-1];
+    }
+    inline int lca(int x,int y){
+        if (dep[x]<dep[y]) swap(x,y);
+        for (int j=19;j>=0;--j)
+            if (dep[f[x][j]]>=dep[y]) x=f[x][j];
+        if (x==y) return x;
+        for (int j=19;j>=0;--j)
+            if (f[x][j]!=f[y][j]) x=f[x][j],y=f[y][j];
+        return f[x][0];
+    }
+    inline int dis(int x,int y){return dep[x]+dep[y]-2*dep[lca(x,y)];}
+}
+using Tree::dis;
+namespace sub1{
+    void main(){for (int i=1;i<=n;++i) printf("%d%c",i==1?n:0," \n"[i==n]);}
+}
+namespace sub2{
+    int ans[25],dis[25][25],rt;
+    void dfs(int x,int fa){
+        for (int i=head[x];i;i=nxt[i])
+            if (go[i]!=fa){
+                dis[rt][go[i]]=dis[rt][x]+1;
+                dfs(go[i],x);
+            }
+    }
+    void main(){
+        for (int i=1;i<=n;++i){
+            dis[i][i]=0;
+            rt=i;
+            dfs(i,0);
+        }
+        for (int s=1;s<(1<<n);++s){
+            int mx=0;
+            for (int i=1;i<=n;++i)
+                for (int j=1;j<=n;++j)
+                    if (s&(1<<i-1) && s&(1<<j-1))
+                        mx=max(mx,dis[i][j]);
+            if (mx<=D) ++ans[__builtin_popcount(s)];
+        }
+        for (int i=1;i<=n;++i) printf("%d%c",ans[i]," \n"[i==n]);
+    }
+}
+namespace sub3{
+    // int f[25][25][25],g[25][25],tg[25][25];
+    // void dfs(int x,int fa){
+    //     for (int j=0;j<=n;++j)
+    //         for (int k=0;k<=n;++k)
+    //             g[j][k]=0;
+    //     g[0][0]=-1;
+    //     for (int i=head[x];i;i=nxt[i])
+    //         if (go[i]!=fa){
+    //             dfs(go[i],x);
+    //         }
+    // }
+    void main(){
+        // dfs(1,0);
+    }
+}
+namespace sub4{
+    const int mod=998244353;
+    int fac[N],ifac[N];
+    inline int ksm(int x,int y){
+        int res=1;
+        while (y){
+            if (y&1) res=1ll*res*x%mod;
+            x=1ll*x*x%mod;
+            y>>=1;
+        }
+        return res;
+    }
+    inline int C(int n,int m){return 1ll*fac[n]*ifac[m]%mod*ifac[n-m]%mod;}
+    void main(){
+        if (D==0){
+            for (int i=1;i<=n;++i) printf("%d%c",i==1?n:0," \n"[i==n]);
+            return;
+        }
+        if (D==1){
+            for (int i=1;i<=n;++i) printf("%d%c",i<=2?n-i+1:0," \n"[i==n]);
+            return;
+        }
+        fac[0]=1;
+        for (int i=1;i<=n;++i) fac[i]=1ll*fac[i-1]*i%mod;
+        ifac[n]=ksm(fac[n],mod-2);
+        for (int i=n-1;i>=0;--i) ifac[i]=1ll*ifac[i+1]*(i+1)%mod;
+        for (int i=1;i<=n;++i) printf("%d%c",C(n,i)," \n"[i==n]);
+    }
+}
+namespace sub5{
+    const int mod=998244353;
+    int fac[N],ifac[N],mi[N];
+    inline int ksm(int x,int y){
+        int res=1;
+        while (y){
+            if (y&1) res=1ll*res*x%mod;
+            x=1ll*x*x%mod;
+            y>>=1;
+        }
+        return res;
+    }
+    inline int C(int n,int m){return n<m?0:1ll*fac[n]*ifac[m]%mod*ifac[n-m]%mod;}
+    void main(){
+        fac[0]=mi[0]=1;
+        for (int i=1;i<=n;++i) fac[i]=1ll*fac[i-1]*i%mod,mi[i]=2ll*mi[i-1]%mod;
+        ifac[n]=ksm(fac[n],mod-2);
+        for (int i=n-1;i>=0;--i) ifac[i]=1ll*ifac[i+1]*(i+1)%mod;
+        for (int i=1;i<=n;++i) printf("%lld%c",(1ll*(n-D)*C(D,i-1)%mod+C(D,i))%mod," \n"[i==n]);
+    }
+}
+int main(){
+    freopen("youup.in","r",stdin);
+    freopen("youup.out","w",stdout);
+    scanf("%d%d%d",&Num,&n,&D);
+    for (int x,y,i=1;i<n;++i){
+        scanf("%d%d",&x,&y);
+        ++tot;go[tot]=y;nxt[tot]=head[x];head[x]=tot;
+        ++tot;go[tot]=x;nxt[tot]=head[y];head[y]=tot;
+    }
+    Tree::build();
+    if (Num==1) return sub1::main(),0;// D=0           ok
+    if (Num==2) return sub2::main(),0;// N<=20         ok
+    if (Num==3) return sub3::main(),0;// N<=2000
+    if (Num==4) return sub4::main(),0;// deg(1)=N-1    ok
+    if (Num==5) return sub5::main(),0;// chain c       ok
+    return 0;
+}

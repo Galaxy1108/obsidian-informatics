@@ -1,0 +1,27 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+int gcd(int x, int y) {
+	if(y == 0) return x;
+	return gcd(y, x % y);
+}
+void solve() {
+	int n, s, t, x, y;
+	cin >> n >> s >> t >> x >> y;
+	int gc = gcd(x, y);
+	int AL = x / gc * y; 
+	n %= AL;
+	for(int i = 1; i <= n; i++) {
+		if(s < t) s += y;
+		else s -= x;
+	}
+	cout << s << endl;
+}
+signed main() {
+	freopen("never.in", "r", stdin);
+	freopen("never.out", "w", stdout);
+	int t;
+	cin >> t;
+	while(t--) solve();
+	return 0;
+}

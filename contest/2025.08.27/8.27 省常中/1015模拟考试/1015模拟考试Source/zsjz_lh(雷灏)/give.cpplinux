@@ -1,0 +1,28 @@
+#include<cstdio>
+#include<bitset>
+#define fo(i,x,y) for(int i = x;i <= y;++i)
+#define ll long long
+#define bs bitset<5010>
+using namespace std;
+int n,a[210],t;
+ll m,s;
+bs f[2],e;
+int main()
+{
+	freopen("give.in","r",stdin);
+	freopen("give.out","w",stdout);
+	scanf("%d",&t);
+	while(t--)
+	{
+		scanf("%lld%lld%d",&m,&s,&n);
+		fo(i,1,n) scanf("%d",&a[i]);
+		f[0] = e,f[1] = e,f[0].set(0);
+		int x = 0;
+		fo(i,1,m)
+		{
+			f[x ^= 1] = e;
+			fo(j,1,n) f[x] ^= f[x ^ 1] << a[j];
+		}
+		printf("%d\n",f[x].test(s));
+	}
+}

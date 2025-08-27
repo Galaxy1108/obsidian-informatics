@@ -1,0 +1,81 @@
+//我是废物，我爱贺题！！！
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define f(i,x,y,z) for(long long i=x;i<=y;i+=z)
+#define fd(i,x,y,z) for(long long i=x;i>=y;i-=z)
+ll T;
+ll n,s,t,x,y;
+int main(){
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	scanf("%lld",&T);
+	while(T--){
+		scanf("%lld%lld%lld%lld%lld",&n,&s,&t,&x,&y);
+		if(n<=1000000){
+			ll no=s;
+			f(i,1,n,1){
+				if(no<t){
+					no+=y;
+				}
+				else{
+					no-=x;
+				}
+			}
+			printf("%lld\n",no);
+		}
+		else{
+			if(x==y){
+				if(s==t){
+					if(n%2==0){
+						printf("%lld\n",s);
+					}
+					else{
+						printf("%lld\n",s-x);
+					}
+				}
+				else if(s>t){
+					if(n<=(s-t)/x){
+						printf("%lld\n",s-((s-t)/x)*x);
+					}
+					else{
+						n-=(s-t)/x;
+						s-=((s-t)/x)*x;
+						if(n%2==1){
+							printf("%lld\n",s-x);
+						}
+						else{
+							printf("%lld\n",s);
+						}
+					}
+				}
+				else{
+					if(n<=(t-s)/y){
+						printf("%lld\n",s+((t-s)/x)*x);
+					}
+					else{
+						n-=(t-s)/y;
+						s+=((t-s)/y)*y;
+						if(s==t){
+							if(n%2==0){
+								printf("%lld\n",s);
+							}
+							else{
+								printf("%lld\n",s-x);
+							}
+						}
+						else{
+							if(n%2==0){
+								printf("%lld\n",s);
+							}
+							else{
+								printf("%lld\n",s+x);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	return 0;
+}

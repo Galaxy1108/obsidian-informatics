@@ -1,0 +1,109 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define ull unsigned long long
+#define l(x) x<<1
+#define r(x) x<<1|1
+#define mpr make_pair
+const int SIZE = 200005;
+//const int mod = 998244353;
+int n, mod;
+vector<pair<int, int> > a[SIZE];
+int pr[SIZE], tot;
+int v[SIZE];
+int cntc[SIZE];
+ll jc[SIZE], ny[SIZE];
+
+inline int rd(){
+	int f = 1, x = 0;
+	char ch = getchar();
+	while(ch < '0' || ch > '9'){
+		if(ch == '-') f = -1;
+		ch = getchar();
+	}
+	while(ch >= '0' && ch <= '9'){
+		x = (x << 1) + (x << 3) + (ch ^ 48);
+		ch = getchar();
+	}
+	return f*x;
+}
+
+void get(){
+	for(int i = 2; i <= n; i++){
+		if(v[i] == 0){
+			v[i] = i, pr[++tot] = i;
+			a[i].push_back(mpr(i, 1));	
+		}
+		for(int j = 1; j <= tot; j++){
+			if(pr[j] > v[i] || pr[j] > n/i) break;
+			v[i*pr[j]] = pr[j];
+		}
+		if(v[i] != i){
+			int cnt = 0, now = i;
+			for(int j = 1; j <= tot && pr[j] * pr[j] <= now; j++){
+				if(now % pr[j] == 0){
+					cnt = 0;
+					while(now % pr[j] == 0) cnt++, now /= pr[j];
+					a[i].push_back(mpr(pr[j], cnt)); 
+				}
+			}	
+			if(now > 1){
+				a[i].push_back(mpr(now, 1));
+			}
+		}
+	}
+}
+
+ll power(ll x, ll y){
+	ll jl = 1;
+	while(y){
+		if(y & 1) jl = (jl * x) % mod;
+		x = (x * x) % mod;
+		y >>= 1;
+	}
+	return jl;
+}
+
+int main(){
+	freopen("gonna.in", "r", stdin);
+	freopen("gonna.out", "w", stdout);
+	n = rd(), mod = rd();
+	get();
+	jc[0] = 1;
+	for(int i = 1; i <= n; i++) jc[i] = (jc[i-1] * i) % mod; 
+	ll now = power(jc[n], mod-2);
+	for(int i = n; i >= 1; i--){
+		ny[i] = (now * jc[i-1]) % mod;
+		now = (now * i) % mod;
+	}
+	ll ans = 0;
+	for(int i = 1; i <= n; i++){
+		for(int j = 0; j < a[i].size(); j++) cntc[a[i][j].first] += a[i][j].second * (i-1);
+		ll ans1 = 1;
+		for(int j = 1; pr[j] <= i-1 && j <= tot; j++){
+			int now = pr[j], cnt = 0;
+			while(now <= i-1){
+				cnt += (i-1)/now;
+				now *= pr[j];
+			}
+			cntc[pr[j]] -= cnt;
+			if(cntc[pr[j]]){
+				ans1 = (ans1 * (power(pr[j], cntc[pr[j]] + 1) - 1)) % mod;
+				ans1 = (ans1 * ny[pr[j]-1]) % mod;	
+			}
+		}
+		if(cntc[i]){
+			ans1 = (ans1 * (power(i, cntc[i] + 1) - 1)) % mod;
+			ans1 = (ans1 * ny[i-1]) % mod;	
+		}
+		ans = (ans + ans1) % mod;
+	}
+	printf("%lld", ans);
+	return 0;
+}
+/*
+20000 998244353
+277344000
+*/
+
+

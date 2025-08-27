@@ -1,0 +1,97 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#include <vector>
+
+#define LOG(FMT...) fprintf(stderr, FMT)
+
+#define eb emplace_back
+
+using namespace std;
+
+typedef long long LL;
+const int M = 20001, PC = 5005;
+
+int n, mod, res;
+bool ws[M];
+int pr[PC], cnt;
+int ad[PC], dc[PC], v[PC];
+vector<int> ps[M];
+
+void Add(int &x, int y) {
+	if ((x += y) >= mod) {
+		x -= mod;
+	}
+}
+
+void sieve() {
+	for (int i = 2; i < M; ++i) {
+		if (!ws[i]) {
+			pr[cnt++] = i;
+		}
+		for (int j = 0; i * pr[j] < M; ++j) {
+			ws[i * pr[j]] = true;
+			if (i % pr[j] == 0) break;
+		}
+	}
+	for (int i = 0; i < cnt; ++i) {
+		for (int j = 1; pr[i] * j < M; ++j) {
+			ps[pr[i] * j].eb(i);
+		}
+	}
+}
+
+int inv(int x, int k) {
+	int r = 1;
+	while (k) {
+		if (k & 1) r = x * (LL)r % mod;
+		x = x * (LL)x % mod;
+		k >>= 1;
+	}
+	return r;
+}
+
+int calc(int p, int k) {
+	if (k == 0) {
+		return 0;
+	}
+	if (k & 1) {
+		return (1 + p * (LL)calc(p, k - 1)) % mod;
+	}
+	return (1 + inv(p, k / 2)) * (LL)calc(p, k / 2) % mod;
+}
+
+int main() {
+	freopen("gonna.in", "r", stdin);
+	freopen("gonna.out", "w", stdout);
+	sieve();
+	scanf("%d%d", &n, &mod);
+	for (int i = 0; i < cnt; ++i) {
+		v[i] = 1;
+	}
+	for (int x = 1; x <= n; ++x) {
+		int t = x, c, r = 1;
+		for (int k : ps[x]) {
+			c = 0;
+			while (t % pr[k] == 0) {
+				t /= pr[k];
+				++c;
+			}
+			ad[k] += 2 * x * c;
+			dc[k] += c;
+			if (dc[k] > ad[k]) {
+				LOG("ERROR\n");
+				exit(0);
+			}
+			// v[k] = calc(pr[k], ad[k] - dc[k]);
+		}
+		for (int i = 0; i < cnt; ++i) {
+			r = r * (LL)calc(pr[i], ad[i] - (x + 1) * dc[i] + 1) % mod;
+		}
+		// printf("%d\n", r);
+		Add(res, r);
+	}
+	printf("%d\n", res);
+	return 0;
+}

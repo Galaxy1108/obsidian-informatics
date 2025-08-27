@@ -1,0 +1,31 @@
+#include<iostream>
+using namespace std;
+int main()
+{
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	int T;
+	cin>>T;
+	while(T--)
+	{
+		long long n,s,t,x,y;
+		cin>>n>>s>>t>>x>>y;
+		while(n)
+		{
+			if(s<t)
+			{
+				long long k=(t-s-1)/y+1;
+				s+=min(n,k)*y;
+				n=max(n-k,0LL);
+			}
+			else
+			{
+				long long k=(s-t)/x+1;
+				s-=min(n,k)*x;
+				n=max(n-k,0LL);
+			}
+		}
+		cout<<s<<endl;
+	}
+	return 0;
+}

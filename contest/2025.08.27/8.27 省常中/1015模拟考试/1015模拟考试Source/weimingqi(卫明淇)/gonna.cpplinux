@@ -1,0 +1,73 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+const int MAXN=20202,PAIN=2333;
+
+int n,mod;
+
+int s[MAXN],pr[PAIN],tp=0;
+
+int t[PAIN],cnt[PAIN];
+
+int u[PAIN][MAXN],v[PAIN][MAXN];
+
+inline void Add(int &p,int q)
+{
+	p+=q; if(p>=mod) p-=mod;
+}
+
+int now[MAXN];
+
+int ans=0;
+
+int main()
+{
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	cin>>n>>mod;
+	for(int i=2;i<=n;i++)
+	{
+		if(!s[i])
+			pr[s[i]=++tp]=i;
+		for(int j=1;j<=s[i];j++)
+		{
+			int to=i*pr[j];
+			if(to>n) break;
+			s[to]=j;
+		}
+	}
+	for(int i=1;i<=tp;i++)
+	{
+		u[i][0]=1;
+		for(int j=1;j<=n;j++)
+			u[i][j]=(1ll*u[i][j-1]*pr[i]+1)%mod;
+		int w=(u[i][n]-u[i][n-1]+mod)%mod;
+		v[i][0]=1;
+		for(int j=1;j<=n;j++)
+			v[i][j]=(1ll*v[i][j-1]*w+1)%mod;
+	}
+	for(int i=1;i<=n;i++)
+		now[i]=1;
+	for(int i=1;i<=tp;i++)
+	{
+		int *U=u[i],*V=v[i];
+		for(int j=pr[i];j<=n;j++)
+		{
+			int tmp=j;
+			while(tmp%pr[i]==0)
+			{
+				tmp/=pr[i];
+				cnt[i]++;
+			}
+			t[i]+=cnt[i];
+			int q=(j+1)*cnt[i]-(t[i]<<1),b=q/n;
+			int cur=(1ll*V[b-1]*U[n-1]+1ll*U[q%n]*(V[b]-V[b-1]+mod))%mod;
+			now[j]=1ll*now[j]*cur%mod;
+		}
+	}
+	for(int i=1;i<=n;i++)
+		Add(ans,now[i]);
+	cout<<ans<<"\n";
+	return 0;
+}

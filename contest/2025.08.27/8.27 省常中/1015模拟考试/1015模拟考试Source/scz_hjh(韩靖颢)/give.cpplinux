@@ -1,0 +1,122 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+template < typename T >
+inline const void read(register T &x)
+{
+	register bool flg = x = 0;
+	register char c;
+	while ((c = getchar()) < 48 || c > 57)
+		flg |= c == '-';
+	do
+		x = (x << 1) + (x << 3) + (c ^ 48);
+	while ((c = getchar()) > 47 && c < 58);
+	if (flg) x = -x;
+}
+
+int OUTPUT[45];
+
+template < typename T >
+inline const void write(register T x)
+{
+	if (x < 0)
+	{
+		putchar('-');
+		x = -x;
+	}
+	register int len = 0;
+	do
+	{
+		OUTPUT[++len] = x % 10 | 48;
+		x /= 10;
+	}while (x);
+	while (len)
+		putchar(OUTPUT[len--]);
+}
+
+template < typename T >
+inline const void writesp(const register T x)
+{
+	write(x);
+	putchar(32);
+}
+
+template < typename T >
+inline const void writeln(const register T x)
+{
+	write(x);
+	putchar(10);
+}
+
+const int N = 2e5 + 5, M = 205;
+int T, n, a[M];
+long long m, s;
+//bool f[N], g[N];
+bitset < N > f, g;
+
+inline int F(long long x)
+{
+	int ret = 0;
+	do
+	{
+		++ret;
+		x >>= 1;
+	}while (x);
+	return ret;
+}
+//f[x]表示到当前一位，与s的前这么多位相差x的方案数
+int main()
+{
+	freopen("give.in", "r", stdin);
+	freopen("give.out", "w", stdout);
+//	f.to_string(); 
+//	read(m);writeln(F(m));
+//	read(m);writeln(F(m));
+//	return 0;
+	read(T);
+	while (T--)
+	{
+		read(m);
+		read(s);
+		read(n);
+		int maxn = 0;
+		for (register int i = 1; i <= n; ++i)
+			read(a[i]), maxn = max(maxn, a[i]);
+//		int num = (maxn << 1) | 1;
+//		f[0] = 1;
+//		for (register int i = 1; i <= num; ++i)
+//			f[i] = 0;
+		f.reset();
+		f[0] = 1;
+		for (register int i = max(F(m), F(s)) + 3; ~i; --i)
+		{
+//			for (register int j = 0; j <= num; ++j)
+//				g[j] = 0;
+			g.reset();
+			int tmp = (s >> i) & 1;
+			for (register int j = 0; j <= maxn; ++j)
+				g[(j << 1) | tmp] = f[j];
+			if ((m >> i) & 1)
+			{
+//				for (register int j = 0; j <= num; ++j)
+//					f[j] = 0;
+				f.reset();
+				for (register int j = 1; j <= n; ++j)
+				{
+//					for (register int k = num - a[j]; ~k; --k)
+//						f[k] ^= g[k + a[j]];
+//					f ^= (g << a[j]);
+					f ^= (g >> a[j]);
+				}
+			}
+			else
+			{
+//				for (register int j = 0; j <= num; ++j)
+//					f[j] = g[j];
+				f = g;
+			}
+		}
+		writeln(int(f[0])); 
+	}
+	return 0;
+}

@@ -1,0 +1,118 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define f(i,a,b) for(ll i=a;i<=b;i++)
+#define wt int tt=d;while(tt--)
+#define py puts("Yes")
+#define pn puts("No")
+#define fe(i,e) for(int i=0;i<e.size();i++)
+#define vi vector<ll>
+inline ll rd() {
+	ll x=0,f=1;
+	char c=getchar();
+	while(!isdigit(c)){if(c=='-')f=-1;c=getchar();}
+	while(isdigit(c))x=x*10+c-'0',c=getchar();
+	return x*f;
+}
+#define d rd()
+#define pb push_back
+const ll mod=998244353;
+ll qp(ll a,ll b,ll p){
+	ll ans=1;while(b){
+		if(b&1)ans=ans*a%p;
+		a=a*a%p;b>>=1;
+	}return ans;
+}ll n,m,NUM;
+vi e[300010];
+ll dis[2010][2010];
+void gd(ll u,ll fa,ll rt){
+	if(fa)dis[rt][u]=dis[rt][fa]+1;
+	fe(i,e[u]){
+		ll v=e[u][i];if(v==fa)continue;
+		gd(v,u,rt);
+	}
+}
+bool DP[1<<21];
+ll res[300010];
+ll jc[300010],inv[300010],inc[300010];
+ll C(ll n,ll m){return jc[n]*inc[m]%mod*inc[n-m]%mod;}
+int main(){
+	freopen("youup.in","r",stdin);
+	freopen("youup.out","w",stdout);
+	NUM=d,n=d,m=d;
+	jc[0]=jc[1]=inv[0]=inv[1]=inc[0]=inc[1]=1;
+	f(i,2,n)jc[i]=jc[i-1]*i%mod,inv[i]=(mod-mod/i)*inv[mod%i]%mod,
+	inc[i]=inc[i-1]*inv[i]%mod;
+	f(i,1,n-1){
+		ll u=d,v=d;
+		e[u].pb(v),e[v].pb(u);
+	}
+	if(NUM==4){
+		if(m==0)res[1]=n;
+		else if(m==1)res[1]=n,res[2]=n-1;
+		else f(i,1,n)res[i]=C(n,i);
+		f(i,1,n)printf("%lld ",res[i]);
+		return 0;
+	}if(NUM==5){
+		f(i,1,m+1){
+			res[i]=C(m,i)+(n-m)*C(m,i-1);
+			res[i]%=mod;
+		}f(i,1,n)printf("%lld ",res[i]);
+		return 0;
+	}
+	f(i,1,n)gd(i,0,i),DP[1<<(i-1)]=1;
+	f(i,0,(1<<n)-1)if(DP[i]){
+		f(j,1,n)if(!(i&(1<<(j-1)))){
+			bool fl=1;
+			f(k,1,n)if(i&(1<<(k-1)))
+				if(dis[j][k]>m){fl=0;break;}
+			if(fl)DP[i^(1<<(j-1))]=1;
+		}
+	}f(i,0,(1<<n)-1)if(DP[i])res[__builtin_popcount(i)]++;
+	f(i,1,n)printf("%lld ",res[i]);
+	return 0;
+}
+/*
+
+2
+5 1
+1 2
+2 3
+3 4
+4 5 
+
+5 4 0 0 0 
+
+2
+4 2
+1 2
+1 3
+1 4    
+
+4 6 4 1
+
+
+2
+20 14
+1 2
+2 3
+3 4
+4 5
+5 6
+6 7
+7 8
+8 9
+9 10
+10 11
+11 12
+12 13
+13 14
+14 15
+15 16
+16 17
+17 18
+18 19
+19 20
+
+20 175 910 3185 8008 15015 21450 23595 20020 13013 6370 2275 560 85 6 0 0 0 0 0
+*/

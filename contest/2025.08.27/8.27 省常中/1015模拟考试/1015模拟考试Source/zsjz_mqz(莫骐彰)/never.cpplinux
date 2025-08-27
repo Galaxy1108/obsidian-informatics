@@ -1,0 +1,92 @@
+#include<iostream>
+#include<cstdio>
+#include<bitset>
+using namespace std;
+#define fo(i,a,b) for(int i=a;i<=b;++i)
+#define fod(i,a,b) for(int i=a;i>=b;--i)
+#define LL long long
+int T;
+int a[205][205],jz[205][205],b[205][205];
+bitset<205>H[205],Z[205],ls;
+void Ksm(LL x){
+	if(x==1){
+		fo(i,0,200)
+		fo(j,0,200)a[i][j]=jz[i][j];
+		return ;
+	}
+	Ksm(x/2);
+	fo(i,0,200){
+		fo(j,0,200)H[i][j]=a[i][j],Z[j][i]=a[i][j];
+	}
+	fo(i,0,200)
+	fo(j,0,200){
+		ls=(H[i]&Z[j]);
+		b[i][j]=ls.count();
+	}
+	fo(i,0,200)
+	fo(j,0,200)a[i][j]=(b[i][j]>0);
+	if(x&1){
+		fo(i,0,200){
+			fo(j,0,200)H[i][j]=a[i][j],Z[j][i]=jz[i][j];
+		}
+		fo(i,0,200)
+		fo(j,0,200){
+			ls=(H[i]&Z[j]);
+			b[i][j]=ls.count();
+		}
+		fo(i,0,200)
+		fo(j,0,200)a[i][j]=(b[i][j]>0);
+	}
+}
+LL find(LL n,LL s,LL x,LL y){
+	if(n<=1000000){
+		fo(i,1,n){
+			if(s>=0)s-=x;
+			else s+=y;
+		}
+		return s;
+	}
+	if(s<0){
+		LL u=(-s)/y;
+		if(y*u+s<0)++u;
+		if(u>=n)return s+y*n;
+		n-=u;
+		s+=y*u;
+	}
+	LL u=s/x;
+	if(u>=n)return s-x*n;
+	n-=u;
+	s-=x*u;
+	if(x<=100&&y<=100){
+		fo(i,-100,100){
+			if(i<0)jz[i+100][i+100+y]=1;
+			if(i>=0)jz[i+100][i+100-x]=1;
+		}
+		Ksm(n);
+		fo(i,0,200){
+			if(a[s+100][i])return i-100;
+		}
+	}
+	if(x==y){
+		if(n&1)return s-x;
+		return s;
+	}
+	fo(i,1,n){
+		if(s>=0)s-=x;
+		else s+=y;
+	}
+	return s;
+}
+int main(){
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	scanf("%d",&T);
+	while(T){
+		--T;
+		LL n,s,t,x,y;
+		scanf("%lld%lld%lld%lld%lld",&n,&s,&t,&x,&y);
+		LL u=find(n,s-t,x,y)+t;
+		printf("%lld\n",u);
+	}
+	return 0;
+}

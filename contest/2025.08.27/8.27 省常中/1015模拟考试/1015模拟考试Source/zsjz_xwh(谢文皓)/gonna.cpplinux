@@ -1,0 +1,56 @@
+#include<bits/stdc++.h>
+using namespace std;
+int i,j,n,m,k,l,o,p;
+int a[3005][3005],num[3005];
+inline int read()
+{
+	int f(1),x(0);
+	char ch=getchar();
+	while (!isdigit(ch)) {if (ch=='-') f*=-1;ch=getchar();}
+	while (isdigit(ch)) x=(x<<1)+(x<<3)+ch-'0',ch=getchar();
+	return f*x;
+}
+inline void writ(int x)
+{
+	if (x<0) putchar('-'),x=-x;
+	if (x/10) writ(x/10);
+	putchar((char)(x%10+'0'));
+}
+inline void write(int x)
+{
+	writ(x);
+	putchar('\n');
+}
+inline void fj(int w,int *a)
+{
+	int x=1;
+	while ((++x)*x<=w) while (w%x==0) ++a[x],w/=x;
+	if (w!=0) ++a[w];
+	return ;
+}
+int main()
+{
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	n=read(),p=read();
+	for (i=1;i<=3000;i++) fj(i,a[i]);
+	for (i=1;i<=3000;i++) for (j=1;j<=3000;j++) a[i][j]+=a[i-1][j];
+	int tot(0);
+	for (i=1;i<=n;i++)
+	{
+		memset(num,0,sizeof num);
+		for (j=0;j<=i;j++)
+		{
+			for (k=1;k<=i;k++) num[k]+=a[i][k]-a[j][k]-a[i-j][k];
+		}
+		int ans(1);
+		for (j=2;j<=i;j++)
+		{
+			int now(1),cm(1);
+			for (k=1,cm=j;k<=num[j];k++,cm=1ll*cm*j%p) now=(now+cm)%p;
+			ans=1ll*ans*now%p;
+		}
+		tot=(tot+ans)%p;
+	}
+	printf("%d",tot);
+}

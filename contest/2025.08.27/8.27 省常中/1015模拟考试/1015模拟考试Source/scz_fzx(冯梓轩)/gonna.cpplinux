@@ -1,0 +1,61 @@
+#include<bits/stdc++.h>
+using namespace std;
+inline int read(){
+	int x=0;char ch=' ';
+	while(!isdigit(ch))ch=getchar();
+	while(isdigit(ch))x=(x<<1)+(x<<3)+(ch^48),ch=getchar();
+	return x;
+}
+inline void write(int x){
+	if(x>9)write(x/10);
+	putchar(x%10|48);
+}
+inline void writeln(int x){
+	write(x),putchar('\n');
+}
+int p[20004],k,g[20005],s[20005],a[20005],mod,n;
+bool vi[20004];
+int ksm(int x,int c){
+	int ans=1;
+	while(c){
+		if(c&1)ans=ans*1ll*x%mod;
+		x=x*1ll*x%mod;
+		c>>=1;
+	}
+	return ans;
+}
+int sl(int x,int c){
+	return (ksm(x,c+1)-1+mod)*1ll*ksm(x-1,mod-2)%mod;
+}
+int main(){
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	n=read(),mod=read();
+	vi[1]=1;
+	for(int i=1;i<=n;++i){
+		if(!vi[i])p[++k]=i;
+		for(int j=1;j<=k;++j){
+			if(i*p[j]>n)break;
+			vi[i*p[j]]=1;
+			if(i%p[j]==0)break;
+		}
+	}
+	int sum=0;
+	for(int i=1;i<=n;++i){
+		int ans=1;
+		for(int j=1;j<=k;++j){
+			int x=i;
+			g[j]=0;
+			while(x){
+				g[j]+=x/p[j];
+				x/=p[j];
+			}
+			s[j]+=g[j]*2;
+			a[j]=g[j]*(i+1)-s[j];
+			ans=ans*1ll*sl(p[j],a[j])%mod;
+		}
+		sum=(sum+ans)%mod;
+	}
+	writeln(sum);
+	return 0;
+} 

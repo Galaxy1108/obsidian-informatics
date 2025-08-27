@@ -1,0 +1,16 @@
+#include <bits/stdc++.h>
+using namespace std;
+int t, n, x;
+int main() {
+	freopen("youup.in", "r", stdin);
+	freopen("youup.out", "w", stdout);
+	int t;
+	cin >> t >> n >> x;
+	if(t == 1) {
+		cout << n << " ";
+		for(int i = 2; i <= n; i++) cout << 0 << " ";
+		cout << endl;
+		return 0;
+	}
+	return 0;
+}

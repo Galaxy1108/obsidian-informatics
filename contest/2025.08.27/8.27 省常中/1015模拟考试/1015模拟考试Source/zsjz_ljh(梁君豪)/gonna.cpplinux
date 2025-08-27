@@ -1,0 +1,68 @@
+#include <cstdio>
+#define ll long long
+#define r register int
+#define rl register ll
+const int N(2e4 + 1), M(2264);
+struct EDGE
+{
+	int next, to, w;
+}edge[N * 3];
+int n, m, pri[M], cnt, head[N], tot, _(1), num[M], ans(1);
+bool bz[N];
+inline int qp(rl x, r k)
+{
+	rl res1(1), res2(1), res3(x);
+	for (; k; k >>= 1, (res1 += res1 * x) %= m, (x *= x) %= m)
+		if (k & 1)
+		{
+			(res2 += res3 * res1) %= m; 
+			(res3 *= x) %= m;
+		}
+	return res2;
+}
+int main()
+{
+	freopen("gonna.in", "r", stdin);
+	freopen("gonna.out", "w", stdout);
+	scanf("%d%d", &n, &m);
+	for (r i(2); i <= n; ++i)
+	{
+		if (!bz[i])
+			pri[++tot] = i;
+		for (r j(1); ; ++j)
+		{
+			r nw(i * pri[j]);
+			if (nw >= N)
+				break;
+			bz[nw] = 1;
+			if (i % pri[j] == 0)
+				break;
+		}
+	}
+	for (r i(1); i <= tot; ++i)
+		for (r j(pri[i]); j < N; j += pri[i])
+		{
+			edge[++cnt].next = head[j];
+			edge[head[j] = cnt].to = i;
+			for (r nw(j); nw % pri[i] == 0; nw /= pri[i], ++edge[cnt].w);
+		}
+	for (r i(2); i <= n; ++i)
+	{
+		rl res(1);
+		if (pri[_ + 1] == i)
+			++_;
+		for (r j(1), nw(1 - i); j <= i; ++j, nw += 2)
+			if (nw)
+				for (r k(head[j]); k; k = edge[k].next)
+					num[edge[k].to] += nw * edge[k].w;
+		for (r j(1); j <= _; ++j)
+		{
+			(res *= qp(pri[j], num[j])) %= m;
+			num[j] = 0;
+		}
+		ans += res;
+		if (ans >= m)
+			ans -= m;
+	}
+	printf("%d", ans);
+}

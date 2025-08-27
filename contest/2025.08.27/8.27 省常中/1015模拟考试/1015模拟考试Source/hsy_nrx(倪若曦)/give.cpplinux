@@ -1,0 +1,47 @@
+#include<bits/stdc++.h>
+#define il inline
+#define cs const
+#define ri register
+#define int long long
+#define F(s) freopen(#s".in","r",stdin),freopen(#s".out","w",stdout);
+using namespace std;
+il int rd(){
+	ri int x=0,f=0;ri char c=getchar();
+	while(c<'0'||c>'9') f|=(c=='-'),c=getchar();
+	while(c>='0'&&c<='9') x=x*10+(c^48),c=getchar();
+	return f?-x:x;
+}
+il void wt(int x){
+	if(x<0) x=-x,putchar('-');
+	if(x>=10) wt(x/10);
+	putchar(x%10+48);
+	return;
+}
+cs int N=205;
+int t,m,s,n,a[N];
+int f[N][505];
+il int dfs(int l,int sum){
+	if(sum+a[n]*l<s||sum+a[1]*l>s) return 0;
+	if(!l) return sum==s;
+	if(~f[l][sum]) return f[l][sum];
+	int cnt=0;
+	for(ri int i=1;i<=n;++i){
+		if(a[i]+sum>s) break;
+		cnt^=dfs(l-1,sum+a[i]);
+	}	
+	return f[l][sum]=cnt;
+}
+signed main(){
+	F(give)
+	//暴力 
+	t=rd();
+	while(t--){
+		m=rd(),s=rd(),n=rd();
+		for(ri int i=1;i<=n;++i){
+			a[i]=rd();
+		}
+		memset(f,-1,sizeof(f));
+		wt(dfs(m,0)),putchar('\n');
+	}
+	return 0;
+}

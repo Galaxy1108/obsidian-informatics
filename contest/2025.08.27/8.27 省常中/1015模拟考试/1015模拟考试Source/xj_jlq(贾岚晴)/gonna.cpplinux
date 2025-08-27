@@ -1,0 +1,97 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long
+inline ll read(){
+	ll x=0,f=1;char ch=getchar();
+	while(ch<'0'||ch>'9'){if(ch=='-')f=-1;ch=getchar();}
+	while(ch>='0'&&ch<='9')x=(x<<3)+(x<<1)+ch-'0',ch=getchar();
+	return x*f; 
+}
+const ll N=20010,M=2510;ll mod;
+#define pb push_back
+namespace Math{
+	ll Qpow(ll x,ll y){
+		ll z=1;
+		for(;y;y>>=1){
+			if(y&1)z=z*x%mod;
+			x=x*x%mod;
+		}
+		return z;
+	}
+	ll jc[N],jcinv[N],inv[N],w;
+	struct Complex{
+		ll x,y;
+		Complex(ll _x=0,ll _y=0){x=_x,y=_y;}
+		Complex operator *(const Complex b){return Complex(x*b.x%mod+y*b.y%mod*w%mod,x*b.y%mod+y*b.x%mod);}
+		Complex operator %(const ll mod){return Complex((x%mod+mod)%mod,(y%mod+mod)%mod);}
+		Complex operator =(const ll x){return Complex(x,0);}
+	};
+	template<typename T>
+	T qpow(T x,ll y){
+		T z=1;
+		for(;y;y>>=1){
+			if(y&1)z=z*x%mod;
+			x=x*x%mod;
+		}
+		return z;
+	}
+	void Pre(){
+		jc[0]=inv[1]=1;
+		for(ll i=1;i<N;i++)jc[i]=jc[i-1]*i%mod;
+		jcinv[N-1]=Qpow(jc[N-1],mod-2);
+		for(ll i=N-1;i;i--)jcinv[i-1]=jcinv[i]*i%mod;
+		for(ll i=2;i<N;i++)inv[i]=(-(mod/i)+mod)%mod*inv[mod%i]%mod;
+	}
+	ll C(ll x,ll y){return x<y?0:jc[x]*jcinv[y]%mod*jcinv[x-y]%mod;}
+	ll Cn2(ll x){return x*(x-1)/2%(mod-1);}
+}
+using namespace Math;
+namespace Prime{
+	ll vis[N],prime[N],us[N],m;
+	void Euler(ll n){
+		for(ll i=2;i<=n;i++){
+			if(!vis[i])vis[i]=i,prime[++m]=i;
+			for(ll j=1;j<=m;j++){
+				if(prime[j]>vis[i]||prime[j]>n/i)break;
+				vis[i*prime[j]]=prime[j];
+			}
+		}
+		for(ll i=2;i<=n;i++)us[i]=!(vis[i]==i);
+	}
+}
+using namespace Prime;
+ll ntot,ans;vector<ll> S[N];
+void GetS(){
+	for(ll i=1;i<N;i++)S[i].pb(0);
+	for(ll j=1;j<=m&&prime[j]<=ntot;j++){
+		ll p=prime[j];
+		for(ll i=p,s,x;i<=ntot;i++){
+			s=0,x=i;
+			for(;x;x/=p)s+=x%p;
+			S[i].pb(s);
+		}
+	}
+}
+ll facp(ll x,ll p){
+	return prime[p]>x?0:(x-S[x][p]+mod)%mod*inv[prime[p]-1]%mod;
+}
+ll vp(ll x,ll y,ll p){
+	return (facp(x,p)-facp(y,p)+mod-facp(x-y,p)+mod)%mod;
+}
+int main(){
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	ntot=read(),mod=read();
+	Pre(),Euler(N-5),GetS();
+	for(ll n=1,mul;n<=ntot;n++){
+		mul=1;
+		for(ll i=1,pcnt;i<=m&&prime[i]<=n;i++){
+			pcnt=0;
+			for(ll j=0;j<=n;j++)pcnt+=vp(n,j,i);
+			if(pcnt)mul=mul*(Qpow(prime[i],pcnt+1)-1)%mod*inv[prime[i]-1]%mod;
+		}
+		ans=(ans+mul)%mod;
+	}
+	printf("%lld\n",ans);
+	return 0;
+}

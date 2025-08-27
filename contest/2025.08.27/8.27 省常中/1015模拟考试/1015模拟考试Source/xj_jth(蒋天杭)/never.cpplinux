@@ -1,0 +1,25 @@
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+ll t;
+ll N,S,T,X,Y;
+void work() {
+    scanf("%lld%lld%lld%lld%lld",&N,&S,&T,&X,&Y);
+    while ( N ) {
+        if ( S < T ) {
+            S += Y;
+        } else if ( S >= T ) {
+            S -= X;
+        }
+        --N;
+    }
+    printf("%lld\n",S);
+}
+int main() {
+    freopen("never.in","r",stdin);
+    freopen("never.out","w",stdout);
+    scanf("%lld",&t);
+    while ( t-- ) {
+        work();
+    }
+}

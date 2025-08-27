@@ -1,0 +1,131 @@
+#include <cstdio>
+#define g getchar()
+#define ll long long
+#define r register int
+const int mod(998244353), N(3e5 + 1);
+struct EDGE
+{
+	int next, to;
+}edge[40];
+int n, m, p, head[21], cnt, dep[21], LCA[21][21], fa[21], ans[21], a[21], tot;
+ll fra[N], inv[N], fri[N];
+inline int read()
+{
+	r a(0), b(g);
+	for (; b < 48 || b > 57; b = g);
+	for (; b > 47 && b < 58; b = g)
+		(a *= 10) += b ^ 48;
+	return a;
+}
+inline void add(r u, r v)
+{
+	edge[++cnt].next = head[u];
+	edge[head[u] = cnt].to = v;
+}
+inline void dfs(r x)
+{
+	for (r i(head[x]); i; i = edge[i].next)
+	{
+		r v(edge[i].to);
+		if (v ^ fa[x])
+		{
+			fa[v] = x;
+			dep[v] = dep[x] + 1;
+			dfs(v);
+		}
+	}
+}
+inline int dfs(r x, r y)
+{
+	if (dep[x] < dep[y])
+		x ^= y ^= x ^= y;
+	while (dep[x] > dep[y])
+		x = fa[x];
+	while (x ^ y)
+	{
+		x = fa[x];
+		y = fa[y];
+	}
+	return x;
+}
+inline int max(r x, r y)
+{
+	return x > y ? x : y;
+}
+inline void dfs2(r x)
+{
+	if (x > m)
+	{
+		++ans[tot];
+		return;
+	}
+	dfs2(x + 1);
+	r mx(0);
+	for (r i(1); i <= tot; ++i)
+		mx = max(mx, dep[a[i]] + dep[x] - dep[LCA[a[i]][x]] * 2);
+	if (mx <= p)
+	{
+		a[++tot] = x;
+		dfs2(x + 1);
+		--tot;
+	}
+}
+int main()
+{
+	freopen("youup.in", "r", stdin);
+	freopen("youup.out", "w", stdout);
+	n = read();
+	m = read();
+	p = read();
+	if (n < 3)
+	{
+		for (r i(1); i < m; ++i)
+		{
+			r u(read()), v(read());
+			add(u, v);
+			add(v, u);
+		}
+		dfs(1);
+		for (r i(1); i < m; ++i)
+			for (r j(2); j <= m; ++j)
+				LCA[i][j] = LCA[j][i] = dfs(i, j);
+		dfs2(1);
+		for (r i(1); i <= m; ++i)
+			printf("%d ", ans[i]);
+	}
+	if (n == 4)
+	{
+		if (!p)
+		{
+			printf("%d", m);
+			for (r i(1); i < m; ++i)
+				printf(" 0");
+		}
+		else
+			if (p == 1)
+			{
+				printf("%d %d", m, m - 1);
+				for (r i(2); i < m; ++i)
+					printf(" 0");
+			}
+			else
+			{
+				fra[1] = inv[1] = fri[1] = fra[0] = fri[0] = 1;
+				for (r i(2); i <= m; ++i)
+				{
+					fra[i] = fra[i - 1] * i % mod;
+					inv[i] = mod - inv[mod % i] * (mod / i) % mod;
+					fri[i] = fri[i - 1] * inv[i] % mod;
+				}
+				for (r i(1); i <= m; ++i)
+					printf("%lld ", fra[m] * fri[i] % mod * fri[m - i] % mod);
+			}
+	}
+	if (n == 5)
+	{
+		for (r i(1); i <= m; ++i)
+		{
+			
+		}
+	}
+}

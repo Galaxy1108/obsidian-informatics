@@ -1,0 +1,56 @@
+#include<stdio.h>
+#define N 20001
+#define M 2266
+#define P 109999
+#define B 12
+int n,m,mod,a[M][N],b[M][N],primes[M],ans,ths=1;bool np[N];
+int small[M][1<<B],big[M][(P>>B)+1],pfx[M][1<<B];
+inline long long ksm(long long a,int b)
+{
+	long long ans=1;
+	for(;b;b>>=1,a*=a,a%=mod)if(b&1)ans*=a,ans%=mod;
+	return ans;
+}
+inline long long ksm1(int a,int b)
+{
+	return(long long)(small[a][b&(1<<B)-1])*big[a][b>>B]%mod;
+}
+inline long long f(const int&n,const int&m)
+{
+	if(!(m>>B))return pfx[n][m];
+	if(m&1)return f(n,m>>1)*(1+ksm1(n,m+1>>1))%mod;
+	long long tmp=ksm1(n,m>>1);
+	return(f(n,m-1>>1)*(1+tmp)+tmp*tmp)%mod;
+}
+main()
+{
+	freopen("gonna.in","r",stdin);freopen("gonna.out","w",stdout);
+	scanf("%d%d",&n,&mod);
+	primes[m++]=2;
+	for(int i=3;i<=n;i+=2)if(!np[i])
+	{
+		primes[m++]=i;
+		for(int j=i*i;j<=n;j+=i)np[j]=1;
+	}
+	for(int i=0;i<m;++i)
+	{
+		for(int j=1;j<=n;++j)
+		{
+			a[i][j]=a[i][j-1];
+			for(int k=j;!(k%primes[i]);++a[i][j],k/=primes[i]);
+		}
+		for(int j=1;j<=n;++j)b[i][j]=b[i][j-1]+a[i][j];
+		small[i][0]=big[i][0]=pfx[i][0]=1;
+		for(int j=1;j<1<<B;++j)
+			small[i][j]=small[i][j-1]*(long long)(primes[i])%mod,
+			pfx[i][j]=pfx[i][j-1]+small[i][j]-mod,
+			pfx[i][j]>>31&&(pfx[i][j]+=mod);
+		big[i][1]=ksm(primes[i],1<<B);
+		for(int j=2;j<=P>>B;++j)
+			big[i][j]=(long long)(big[i][j-1])*big[i][1]%mod;
+	}
+	for(int i=1;i<=n;++i,ans+=ths-mod,ans>>31&&(ans+=mod),ths=1)
+		for(int j=0;j<m&&primes[j]<=i;++j)
+			ths=ths*f(j,a[j][i]*(i+1)-(b[j][i]<<1))%mod;
+	printf("%d",ans);
+}

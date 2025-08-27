@@ -1,0 +1,46 @@
+#pragma GCC optimize(3)
+#pragma GCC target("avx,sse2,sse3,sse4,mmx")
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("inline")
+#include<bits/stdc++.h>
+using namespace std;
+long long a,b,mod,g[30001],v[3001],cn,ann,dp[101][2][2],f[1001],t[30001];
+int sum[2301][20001],pw1[2301][20001],pw2[51][300001];
+bool ch(long long qq){for(int i=2;i<=sqrt(qq);i++) if(qq%i==0) return 0;return 1;}
+int main()
+{
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+//	freopen("1.in","r",stdin);
+//	freopen("1.out","w",stdout);
+	scanf("%lld%lld",&a,&mod);
+	for(int i=2;i<=a;i++)
+	{
+		if(!ch(i)) continue;g[++cn]=i;
+		long long hh=0;
+		for(int j=1;j<=a;j++)
+		{
+			if(j%i==0) t[j]=t[j/i]+1;
+			else t[j]=0;
+			hh+=t[j];sum[cn][j]=sum[cn][j-1]+hh;
+		}
+	}
+	for(int i=1;i<=50;i++)
+	{
+		pw2[i][0]=1;long long hh=1;
+		for(int j=1;j<=300000;j++) hh=hh*g[i]%mod,pw2[i][j]=(pw2[i][j-1]+hh)%mod;
+	}
+	for(int i=51;i<=cn;i++)
+	{
+		pw1[i][0]=1;long long hh=1;
+		for(int j=1;j<=20000;j++) hh=hh*g[i]%mod,pw1[i][j]=(pw1[i][j-1]+hh)%mod;
+	}
+	for(int i=1;i<=a;i++)
+	{
+		for(int k=1;k<=cn&&g[k]<=i;k++) v[k]=(sum[k][i]-sum[k][i-1])*(i+1)-2*sum[k][i];
+		long long gg=1;
+		for(int j=1;j<=50&&g[j]<=i&&j<=cn;j++) gg=gg*pw2[j][v[j]]%mod;
+		for(int j=51;j<=cn&&g[j]<=i;j++) gg=gg*pw1[j][v[j]]%mod;ann+=gg,ann%=mod;
+	}printf("%lld",(ann%mod+mod)%mod);
+	return 0;
+}

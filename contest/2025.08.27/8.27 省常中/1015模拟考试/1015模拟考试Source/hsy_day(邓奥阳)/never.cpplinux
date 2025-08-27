@@ -1,0 +1,41 @@
+#include<bits/stdc++.h>
+#define ll long long
+using namespace std;
+int T;
+ll n,s,t,x,y;
+inline ll read()
+{
+    ll c=0;int f=1;
+    char ch=getchar();
+    while(ch<'0'||ch>'9'){if(ch=='-')f=-1;ch=getchar();}
+    while(ch>='0'&&ch<='9')c=c*10+ch-'0',ch=getchar();
+    return f==1?c:-c;
+}
+int main()
+{
+    freopen("never.in","r",stdin);
+    freopen("never.out","w",stdout);
+    T=read();
+    for(int o=1;o<=T;++o)
+    {
+        n=read(),s=read(),t=read(),x=read(),y=read();
+        while(n)
+        {
+            if(s>=t)
+            {
+                ll tu=ceil((s-t)*1.0/x);
+                if(s==t)tu++;
+                if(tu>n)s-=n*x,n=0;
+                else s-=tu*x,n-=tu;
+            }
+            else
+            {
+                ll tu=ceil((t-s)*1.0/y);
+                if(tu>n)s+=n*y,n=0;
+                else s+=tu*y,n-=tu;
+            }
+        }
+        printf("%lld\n",s);
+    }
+    return 0;
+}

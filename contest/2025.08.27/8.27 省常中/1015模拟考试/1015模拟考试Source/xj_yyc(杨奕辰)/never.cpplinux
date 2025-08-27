@@ -1,0 +1,64 @@
+#include<cstdio>
+#include<cctype>
+#define int long long
+inline int read(){
+	int ans(0), sign(1);
+	char ch = getchar();
+	while(!isdigit(ch)){
+		if(ch == '-') sign = -1;
+		ch = getchar();
+	}
+	while(isdigit(ch)){
+		ans *= 10;
+		ans += ch - '0';
+		ch = getchar();
+	}
+	return ans * sign;
+}
+inline void write(int n){
+	if(n < 0){
+		n = -n;
+		putchar('-');
+	}
+	if(n > 9) write(n / 10);
+	putchar('0' + n % 10);
+}
+int T, n, s, t, x, y;
+int gcd(int x, int y){
+	if(x % y == 0) return y;
+	return gcd(y, x % y);
+}
+signed main(){
+	freopen("never.in", "r", stdin);
+	freopen("never.out", "w", stdout);
+	T = read();
+	while(T--){
+		n = read(), s = read(), t = read(), x = read(), y = read();
+		int g = gcd(x, y), len = x / g + y / g;
+		if(s >= t){
+			if(s - t <= (__int128)n * x){
+				n -= (s - t) / x;
+				s -= ((s - t) / x) * x;
+			} else {
+				s -= n * x;
+				n = 0;
+			}
+		} else {
+			if(t - s <= n * y){
+				n -= (t - s) / y;
+				s += ((t - s) / y) * y;
+			} else {
+				s += n * y;
+				n = 0;
+			}
+		}
+		n %= len;
+		while(n--){
+			if(s >= t) s -= x;
+			else s += y;
+		}
+		write(s);
+		putchar(10);
+	}
+	return 0;
+}

@@ -1,0 +1,47 @@
+#include <iostream>
+#include <cstdio>
+#define int long long
+#define inf 1123456789123456789
+using namespace std;
+int q,n,s,t,x,y;
+struct node{
+	int pos,cnt;
+};
+node make_node(int pos,int cnt){
+	node ans;
+	ans.pos=pos,ans.cnt=cnt;
+	return ans;
+}
+node work(int n,int s,int t,int x,int y,int cx,int cy){
+	if (s>=t){
+		node ans=work(n,(2*t-1)-s,t,y,x,cy,cx);
+		ans.pos=(2*t-1)-ans.pos;
+		return ans;
+	}
+	if (x==0)return make_node(s,n%cx);
+	int cnt=(t-s+x-1)/x;
+	if (cnt>=n/cx)return make_node(s+(n/cx)*x,n%cx);
+	if (x>y)return work(n-cx*cnt,s+x*cnt,t,x,y,cx,cy);
+	cnt--;
+	n-=cx*cnt,s+=x*cnt;
+	int qwq=inf;
+	if (inf/cx>y/x)qwq=cx*(y/x);
+	node ans=work(n,s,t,x,y%x,cx,cy+qwq);
+	if (ans.pos>=t){
+		if (ans.cnt<cy)return ans;
+		ans.cnt-=cy,ans.pos-=y;
+	}
+	int d=ans.cnt/cx;
+	ans.pos+=x*d,ans.cnt-=cx*d;
+	return ans;
+}
+signed main(){
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	cin>>q;
+	while(q--){
+		cin>>n>>s>>t>>x>>y;
+		cout<<work(n,s,t,y,x,1,1).pos<<endl;
+	}
+	return 0;
+}

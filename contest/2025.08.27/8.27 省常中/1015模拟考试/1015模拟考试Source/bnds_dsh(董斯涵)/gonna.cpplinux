@@ -1,0 +1,60 @@
+#include<cstdio>
+const int N=20010,M=2300,T=12000;
+unsigned long long MOD;
+int d[N][M],s[N][M],cnt[N],ans[N];
+bool vis[N];
+int id[N],c,p[N];
+const int B=1<<12;
+unsigned long long f[M][B],g[M][B],q[M][B];
+template<typename T> inline void Add(T &x,T y){if((x+=y)>=MOD) x-=MOD;}
+inline unsigned long long Calc(int t,int v)
+{
+	int tmp=v>>12;
+	unsigned long long res=0;
+	if(tmp) res=(res+f[t][B-1]*q[t][tmp-1])%MOD;
+	if(v&4095) res=(res+f[t][(v&4095)-1]*g[t][tmp])%MOD;
+	return res*p[t]%MOD;
+}
+inline unsigned long long solve(int n)
+{
+	unsigned long long res=1;
+	for(int i=1;i<=c;++i)
+	{
+		int t=d[n][i]*(n+1)-(s[n][i]<<1);
+		if(t) res=res*(1+Calc(i,t))%MOD;
+	}
+	return res;
+}
+int main()
+{
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	int n;
+	scanf("%d%lld",&n,&MOD);
+	for(int i=2;i<=n;++i)
+	{
+		if(!vis[i]) id[i]=++c,p[c]=i;
+		for(int j=(i<<1);j<=n;j+=i) vis[j]=true;
+	}
+	for(int i=1;i<=c;++i)
+	{
+		f[i][0]=g[i][0]=1;
+		for(int j=1;j<B;++j) f[i][j]=f[i][j-1]*p[i]%MOD;
+		unsigned long long cur=f[i][B-1]*p[i]%MOD;
+		for(int j=1;j<B;++j) g[i][j]=g[i][j-1]*cur%MOD;
+		q[i][0]=g[i][0];
+		for(int j=1;j<B;++j) Add(f[i][j],f[i][j-1]),q[i][j]=q[i][j-1],Add(q[i][j],g[i][j]);
+	}
+	for(int i=2;i<=n;++i)
+	{
+		int tmp=i;
+		for(int j=2;j*j<=i;++j)
+			while(tmp%j==0) ++d[i][id[j]],tmp/=j;
+		if(tmp!=1) ++d[i][id[tmp]];
+		for(int j=1;j<=c;++j) d[i][j]+=d[i-1][j],s[i][j]=s[i-1][j]+d[i][j];
+	}
+	unsigned long long sum=0;
+	for(int i=1;i<=n;++i) sum=(sum+solve(i))%MOD;
+	printf("%lld\n",sum);
+	return 0;
+}

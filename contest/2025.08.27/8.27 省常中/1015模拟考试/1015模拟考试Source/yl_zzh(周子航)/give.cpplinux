@@ -1,0 +1,83 @@
+#include<bits/stdc++.h>
+using namespace std;
+namespace r_and_w{
+    int read(){
+        int s=0,f=1;
+        char ch=getchar();
+        while(ch>'9'||ch<'0'){
+            if(ch=='-'){
+                f=-1;
+            }
+            ch=getchar();
+        }
+        while(ch>='0'&&ch<='9'){
+            s=s*10+(ch-'0');
+            ch=getchar();
+        }
+        return s*f;
+    }
+    void write(int x){
+        if(x<0){
+            putchar('-');
+            x=-x;
+        }
+        if(x>=10){
+            write(x/10);
+        }
+        putchar(x%10+'0');
+    }
+    void write_endl(int x){
+        write(x);
+        putchar('\n');
+    }
+    void write_space(int x){
+        write(x);
+        putchar(' ');
+    }
+}
+using namespace r_and_w;
+int n,m,s,a[210],f[2010][5010];
+int dfs(int k,int sum){
+    if(f[k][sum]!=-1){
+        return f[k][sum];
+    }
+    if(k>m){
+        f[k][sum]=(sum==s);
+        return f[k][sum];
+    }
+    if(sum+a[n]*(m-k+1)<s){
+        f[k][sum]=0;
+        return f[k][sum];
+    }
+    f[k][sum]=0;
+    for(int i=1;i<=n;i++){
+        if(sum+a[i]>s){
+            break;
+        }
+        f[k][sum]=(f[k][sum]+dfs(k+1,sum+a[i]))%2;
+    }
+    return f[k][sum];
+}
+void solve(){
+    m=read(),s=read(),n=read();
+    for(int i=0;i<=m+1;i++){
+        for(int j=0;j<=s;j++){
+            f[i][j]=-1;
+        }
+    }
+    for(int i=1;i<=n;i++){
+        a[i]=read();
+    }
+    dfs(1,0);
+    write_endl(f[1][0]);
+}
+int main(){
+    freopen("give.in","r",stdin);
+    freopen("give.out","w",stdout);
+    int t;
+    t=read();
+    while(t--){
+        solve();
+    }
+    return 0;
+}

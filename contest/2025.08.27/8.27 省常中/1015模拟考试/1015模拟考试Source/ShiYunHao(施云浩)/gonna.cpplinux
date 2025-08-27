@@ -1,0 +1,39 @@
+
+
+#include <bits/stdc++.h>
+#define int long long
+using namespace std;
+int n, p;
+int c[55][55];
+signed main (){
+	freopen("gonna.in", "r", stdin);
+	freopen("gonna.out", "w", stdout);
+	for(int i = 0; i < 51; i++){
+		c[i][i] = 1;
+		c[i][0] = 1;
+	}
+	for(int i = 1; i <= 51; i++){
+		for(int j = 1; j <= 51; j++){
+			c[i][j] = c[i - 1][j] + c[i - 1][j - 1];
+		} 
+	}
+	cin >> n >> p;
+	int sum = 0;
+	for(int i = 1; i <= n; i++){
+		int f = 1;
+		for(int j = 0; j <= i; j++){
+			f *= c[i][j];
+		}
+		for(int j = 1; j * j <= f; j++){
+			if(f % j == 0 && j * j != f){
+				sum = (sum + j) % p;
+				sum = (sum + f / j) % p;
+			}
+			if(j * j == f){
+				sum = (sum + j) % p;
+			}
+		}
+	}
+	cout << sum << endl;
+	return 0;
+}

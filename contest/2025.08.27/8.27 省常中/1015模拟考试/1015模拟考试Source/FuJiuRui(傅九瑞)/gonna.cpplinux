@@ -1,0 +1,105 @@
+#include<stdio.h>
+#include<algorithm>
+#include<vector>
+using namespace std;
+typedef long long LL;
+const int NR=2e4+5;
+const int MR=2.3e3;
+int MOD;
+int n;
+int prime[MR];
+bool isp[NR];
+int minp[NR];
+int a[NR][MR];
+int sum[NR][MR];
+int maxx[MR];
+vector<int> ve[MR];
+int main()
+{
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	scanf("%d%d",&n,&MOD);
+	int m=0;
+	for(int i=2;i<=n;++i)
+	{
+		if(!isp[i]) prime[++m]=i,minp[i]=m;
+		for(int j=1;j<=m&&prime[j]*i<=n;++j)
+		{
+			isp[i*prime[j]]=1;
+			minp[i*prime[j]]=j;
+			if(i%prime[j]==0) break;
+		}
+	}
+//	for(int i=2;i<=n;++i) printf("%d %d\n",i,minp[i]);
+//	printf("%d\n",m);
+	for(int i=2;i<=n;++i)
+	{
+		for(int j=1;j<=m;++j) a[i][j]=a[i-1][j];
+		int x=i;
+		while(x>1)
+		{
+			a[i][minp[x]]++;
+			x/=prime[minp[x]];
+		}
+		for(int j=1;j<=m;++j) sum[i][j]=sum[i-1][j]+a[i][j];
+	}
+//	for(int i=1;i<=m;++i) printf("%d ",a[n][i]);
+//	for(int i=1;i<=n;++i)
+//		for(int j=1;j<=m;++j) printf("%d%c",a[i][j]," \n"[j==m]);
+	//long long  ss=0;
+	for(int i=1;i<=n;++i)
+	{
+		for(int j=1;j<=m;++j)
+		{
+			a[i][j]=a[i][j]*(i+1)-2*sum[i][j];//,printf("%d%c",nw[j]," \n"[j==m]);
+			maxx[j]=max(maxx[j],a[i][j]);
+		}
+	}
+	//for(int i=1;i<=m;++i) ss+=maxx[i];
+	//printf("%lld\n",ss);
+	for(int i=1;i<=m;++i)
+	{
+		//if(MOD%(prime[i]-1)==0)
+		//{
+			int s=0;
+			int bei=1;
+			for(int j=0;j<=maxx[i];++j)
+			{
+				s=(s+bei)%MOD;
+				ve[i].push_back(s);
+				bei=bei*1ll*prime[i]%MOD;
+			}
+		//	printf("%d\n",i);
+		//}
+	}
+	int ans=0;
+	for(int i=1;i<=n;++i)
+	{
+		int res=1;
+		for(int j=1;j<=m;++j)
+		{
+			//int nw=a[i][j]*(i+1)-2*sum[i][j];//,printf("%d%c",nw[j]," \n"[j==m]);
+			/*
+			if(j==1)
+			{
+				res=res*1ll*(ksm(2,nw+1)+MOD-1)%MOD;
+			}
+			else if(MOD%(prime[j]-1)==0)
+			{
+			*/
+				res=res*1ll*ve[j][a[i][j]]%MOD;
+			/*
+			}
+			else
+			{
+				res=res*1ll*(ksm(prime[j],nw+1)+MOD-1)%MOD*ksm(prime[j]-1,MOD-2)%MOD;
+			}
+			*/
+		}
+		//printf("%d\n",res);
+		ans=(ans+res)%MOD;
+	}
+	printf("%d\n",ans);
+	//for(int i=1;i<=m;++i) printf("%d ",maxx[i]);
+	return 0;
+}

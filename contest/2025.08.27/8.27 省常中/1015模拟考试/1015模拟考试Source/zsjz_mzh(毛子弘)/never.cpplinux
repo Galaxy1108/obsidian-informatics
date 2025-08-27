@@ -1,0 +1,26 @@
+#include <cstdio>
+#include <algorithm>
+#define ll long long
+using namespace std;
+int TT;
+ll n,s,t,x,y;
+int main() {
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	scanf("%d",&TT);
+	while(TT--) {
+		scanf("%lld%lld%lld%lld%lld",&n,&s,&t,&x,&y);
+		while(n) {
+			if(s >= t) {
+				int k = min((s - t) / x + 1 , n);
+				n -= k;
+				s -= k * x;
+			} else {
+				int k = min((t - s) / y + ((t - s) % y > 0) , n);
+				n -= k;
+				s += k * y;
+			}
+		}
+		printf("%lld\n",s);
+	}
+}

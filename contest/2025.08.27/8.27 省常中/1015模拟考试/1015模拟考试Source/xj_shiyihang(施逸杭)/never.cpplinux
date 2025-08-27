@@ -1,0 +1,90 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define ull unsigned long long
+#define l(x) x<<1
+#define r(x) x<<1|1
+#define mpr make_pair
+const ll SIZE = 200005;
+const ll mod = 998244353;
+ll T;
+
+inline ll rd(){
+	ll f = 1, x = 0;
+	char ch = getchar();
+	while(ch < '0' || ch > '9'){
+		if(ch == '-') f = -1;
+		ch = getchar();
+	}
+	while(ch >= '0' && ch <= '9'){
+		x = (x << 1) + (x << 3) + (ch ^ 48);
+		ch = getchar();
+	}
+	return f*x;
+}
+
+int main(){
+	freopen("never.in", "r", stdin);
+	freopen("never.out", "w", stdout);
+	T = rd();
+	while(T--){
+		ll n = rd(), s = rd(), t = rd(), x = rd(), y = rd();
+		if(x == y){
+			if(s >= t){
+				ll cc = (s-t)/x;
+				while(s-cc*x >= t) cc++;
+				if(n <= cc){
+					printf("%lld\n", s-n*x);
+				}
+				else{
+					n -= cc; s = s-cc*x;
+					if(n % 2 == 0) printf("%lld\n", s);
+					else printf("%lld\n", s+x); 
+				}
+			}
+			else{
+				ll cc = (t-s)/x;
+				while(s+cc*x >= t) cc--;
+				while(s+cc*x < t) cc++;
+				if(n <= cc){
+					printf("%lld\n", s+n*x);
+				}
+				else{
+					n -= cc; s = s+cc*x;
+					if(n % 2 == 0) printf("%lld\n", s);
+					else printf("%lld\n", s-x); 
+				}
+			}
+			continue;
+		}
+		ll now = s;
+		while(n){
+			if(now < t){
+				ll cc = (t-now)/y;
+				while(now+cc*y >= t) cc--;
+				while(now+cc*y < t) cc++;
+				if(n <= cc){
+					printf("%lld\n", now+n*y);
+					break;
+				}
+				else{
+					n -= cc; now = now+cc*y; 
+				}
+			}
+			else{
+				ll cc = (now-t)/x;
+				while(now-cc*x >= t) cc++;
+				if(n <= cc){
+					printf("%lld\n", now-n*x);
+					break;
+				}
+				else{
+					n -= cc; now = now-cc*x; 
+				}
+			}
+		}
+	}
+	return 0;
+}
+
+

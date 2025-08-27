@@ -1,0 +1,70 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+inline ll fj( ll x, ll p ) {
+    ll ans = 0;
+    while ( x ) {
+        x /= p;
+        ans += x;
+    }
+    return ans;
+}
+bool is_prime[20005];
+ll prime[20005], cnt;
+ll x[20005];
+ll n, p;
+ll ans = 0;
+ll o( ll x, const ll& s, ll& q ) {
+    if ( x == 1 ) {
+    	q = s;
+    	return 1;
+    }
+    ll rs = o(x>>1,s,q);
+    rs = rs * ( q + 1 ) % p;
+    if ( x & 1 ) {
+    	q = q * q % p * s % p;
+        return rs * s % p + 1;
+    } else {
+    	q = q * q % p;
+        return rs;
+    }
+}
+int main() {
+	freopen("gonna.out","w",stdout);
+	freopen("gonna.in","r",stdin);
+	scanf( "%lld%lld", &n, &p );
+	for ( ll i = 2; i <= 20000; ++i ) {
+		if ( !is_prime[i] ) {
+			prime[++cnt] = i;
+			for ( ll j = i * i; j <= 20000; j += i ) {
+				is_prime[j] = true;
+			}
+		}
+	}
+    ans = 1ll;
+    ll tmp, ans1;
+	for ( ll i = 2; i <= n; ++i ) {
+        tmp = i;
+        for ( ll j = 1 ; j <= cnt && prime[j] <= tmp ; ++j ) {
+            while ( tmp % prime[j] == 0 ) {
+                x[j] += i;
+                tmp /= prime[j];
+            }
+        }
+		for ( ll j = 1; j <= cnt && prime[j] <= i; ++j ) {
+            x[j] -= fj(i,prime[j]);
+		}
+        ans1 = 1;
+        for ( ll j = 1 ; j <= cnt && prime[j] <= i ; ++j ) {
+        	if ( x[j] ) {
+            	ans1 *= o(x[j]+1,prime[j],tmp);
+            	ans1 %= p;
+            }
+        }
+        ans += ans1;
+        if ( ans > p ) {
+        	ans -= p;
+        }
+	}
+    printf("%lld",ans%p);
+}

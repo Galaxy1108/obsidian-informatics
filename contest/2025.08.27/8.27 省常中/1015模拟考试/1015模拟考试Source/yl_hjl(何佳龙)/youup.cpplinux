@@ -1,0 +1,102 @@
+#include<bits/stdc++.h>
+#define db double
+#define int ll
+#define ll long long
+#define ull unsigned long long
+#define pb push_back
+#define MP make_pair
+#define pii pair<int, int>
+#define fi first
+#define se second
+#define ls k*2
+#define rs k*2+1 
+using namespace std;
+inline int read(){
+	register int x=0,f=1;
+	register char ch=getchar();
+	while(ch<'0'||ch>'9'){if(ch=='-')f=-1;ch=getchar();}
+	while(ch>='0'&&ch<='9'){x=x*10+ch-'0';ch=getchar();}
+	return x*f;
+}
+inline void write(register int x){
+	if(x<0){putchar('-');x=-x;}
+	if(x>9)write(x/10);
+	putchar(x%10+'0');
+}
+const int N=3e5+5,mod=998244353;
+int n,x,fac[N],inv[N];
+pii E[N];
+int Qpow(int b,int p){
+    int res=1ll;
+    while(p){
+        if(p&1)(res*=b)%=mod;
+        (b*=b)%=mod;p>>=1;
+    }
+    return res;
+}
+int C(int n,int m){return fac[n]*inv[m]%mod*inv[n-m]%mod;}
+namespace Brute1{
+    const int N=25;
+    int d[N],dp[N][10],cnt[1<<N],ans[N],cut[N][N];
+    vector<int>G[N];
+    void dfs(int x,int fa){
+        d[x]=d[fa]+1;dp[x][0]=fa;
+        for(int i=1;i<=5;i++)dp[x][i]=dp[dp[x][i-1]][i-1];
+        for(auto y:G[x]){
+            if(y==fa)continue;
+            dfs(y,x);
+        }
+    }
+    int LCA(int a,int b){
+        if(d[a]>d[b])swap(a,b);
+        for(int i=5;i>=0;i--)if(d[a]<=d[dp[b][i]])b=dp[b][i];
+        if(a==b)return a;
+        for(int i=5;i>=0;i--)if(dp[a][i]!=dp[b][i])a=dp[a][i],b=dp[b][i];
+        return dp[a][0];
+    }
+    void main(){
+        for(int i=1;i<n;i++)G[E[i].fi].pb(E[i].se),G[E[i].se].pb(E[i].fi);
+        dfs(1,0);
+        int tot=(1<<n)-1;
+        for(int S=1;S<=tot;S++){
+            cnt[S]=cnt[S-(S&(-S))]+1;
+            int ok=1;
+            for(int i=1;i<=n;i++){
+                if((S>>i-1)&1^1)continue;
+                for(int j=i+1;j<=n;j++){
+                    if((S>>j-1)&1^1)continue;
+                    if(cut[i][j]==1){ok=0;break;}
+                    if(cut[i][j]==2)continue;
+                    int tmp=LCA(i,j);
+                    if(d[i]+d[j]-2*d[tmp]>x){cut[i][j]=1;ok=0;break;}
+                    else cut[i][j]=2;
+                }
+                if(!ok)break;
+            }
+            if(ok)ans[cnt[S]]++;
+        }
+        for(int i=1;i<=n;i++)cout<<ans[i]<<' ';
+    }
+}
+signed main(){   
+ 	freopen("youup.in","r",stdin);
+ 	freopen("youup.out","w",stdout);
+    int Num=read();
+    n=read();x=read();
+    fac[0]=1;for(int i=1;i<=n;i++)fac[i]=fac[i-1]*i;
+    inv[n]=Qpow(fac[n],mod-2);for(int i=n-1;i>=0;i--)inv[i]=inv[i+1]*(i+1);
+    for(int i=1;i<n;i++)E[i]=MP(read(),read());
+    if(Num==1||x==0){cout<<n<<' ';for(int i=2;i<=n;i++)cout<<"0 ";return 0;}
+    if(Num==2){Brute1::main();return 0;}
+    if(Num==4){
+        if(x==1){
+            cout<<n<<' '<<n-1<<' ';
+            for(int i=3;i<=n;i++)cout<<"0 ";
+        }
+        else {
+            for(int i=1;i<=n;i++)cout<<C(n,i)<<' ';
+        }
+    }
+  //printf("\nTIME:%lf\n",(double)clock()/CLOCKS_PER_SEC);
+	return 0;
+}

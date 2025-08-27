@@ -1,0 +1,35 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+int testcase,a[205] = {0};
+int dp[205][505] = {0};//使用i个数和为j的方案数 
+
+void solve(){
+	memset( dp , 0 , sizeof( dp ) );
+	int m,s,n;
+	scanf("%d%d%d",&m,&s,&n);
+	for( int i = 1 ; i <= n ; i ++ )
+		scanf("%d",&a[i]);
+	dp[0][0] = 1;
+	for( int i = 1 ; i <= m ; i ++ ){
+		for( int j = 1 ; j <= s ; j ++ ){
+			for( int k = 1 ; k <= n ; k ++ ){
+				if( j >= a[k] )
+					dp[i][j] = ( dp[i][j] + dp[i - 1][j - a[k]] ) % 2;
+			}
+			//printf("dp[%d][%d] = %d\n",i,j,dp[i][j]);
+		}
+	}
+	printf("%d\n",dp[m][s] % 2);
+}
+
+int main(){
+	freopen("give.in","r",stdin);
+	freopen("give.out","w",stdout);
+	scanf("%d",&testcase);
+	while( testcase -- )
+		solve();
+	fclose(stdin);
+	fclose(stdout);	
+	return 0;
+}

@@ -1,0 +1,148 @@
+//回家？我没有家可以回，我没有退路。
+#include<bits/stdc++.h>
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
+#pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,tune=native")
+using namespace std;
+#define ll long long
+inline int read(){
+   int s=0,w=1;
+   char ch=getchar();
+   while(ch<'0'||ch>'9'){if(ch=='-')w=-1;ch=getchar();}
+   while(ch>='0'&&ch<='9') s=s*10+ch-'0',ch=getchar();
+   return s*w;
+}
+const int p=998244353;
+int qp(int x,int y)
+{
+	int res=1;
+	for(int t=x; y; y>>=1,t=1ll*t*t%p)
+		if(y&1) res=1ll*res*t%p;
+	return res;
+}
+long long A[1<<20],B[1<<20];
+int rev[1<<20],N=1;
+inline void init()
+{
+    rev[0]=0,rev[1]=N>>1;
+    for(int i=2,d=N>>2; i<N; i<<=1,d>>=1)
+        for(int j=0; j<i; ++j) rev[i+j]=rev[j]+d;
+    return ;
+}
+inline void NTT(long long* F,int op)
+{
+    for(int i=0; i<N; ++i) if(rev[i]>i) F[i]^=F[rev[i]]^=F[i]^=F[rev[i]];
+    for(int len=2,M=1; len<=N; len<<=1,M<<=1)
+    {
+        long long w=qp(op?3:332748118,998244352/len);
+        //omega(m,1)
+        for(int l=0; l<N; l+=len)
+        {
+            long long w0=1;
+            for(int i=l; i<l+M; ++i)
+            {
+                long long x=F[i],y=w0*F[i+M]%p;
+                ((F[i]=x+y)>=p)&&(F[i]-=p),
+                ((F[i+M]=x-y)<0)&&(F[i+M]+=p),
+                w0=w0*w%p;
+            }
+        }
+    }
+}
+int fac[300003],ifac[300003];
+int C(int n,int m)
+{
+	return 1ll*fac[n]*ifac[m]%p*ifac[n-m]%p;
+}
+int sub,n,m;
+vector<int> e[300003];
+int dis[23][23];
+void dfs(int rt,int x,int fa=0)
+{
+	for(int y:e[x]) if(y!=fa)
+		dis[rt][y]=dis[rt][x]+1,dfs(rt,y,x);
+	return ;	
+}
+int ans[300003];
+signed main()
+{
+#ifndef local
+	freopen("youup.in","r",stdin),
+	freopen("youup.out","w",stdout);
+#endif
+	sub=read(),n=read(),m=read();
+	for(int i=1,u,v; i<n; ++i)
+		u=read(),v=read(),
+		e[u].push_back(v),
+		e[v].push_back(u);
+	if(n==1) puts("1");
+	else if(sub==1||sub==2)
+	{
+		for(int i=1; i<=n; ++i) dfs(i,i);
+		int N=1<<n;
+		for(int i=1; i<N; ++i)
+		{
+			bool flg=1;
+			for(int j=0; j<n; ++j) if((i>>j)&1)
+				for(int k=j+1; k<n; ++k) if((i>>k)&1)
+					flg&=(dis[j+1][k+1]<=m);
+			ans[__builtin_popcount(i)]+=flg;
+		}	
+		for(int i=1; i<=n; ++i)
+			printf("%d ",ans[i]);
+		puts("");
+	}
+	else if(sub==4)
+	{
+		if(m==0)
+		{
+			printf("%d ",n);
+			for(int i=2; i<=n; ++i) printf("0 ");
+			puts("");
+		}
+		else if(m==1)
+		{
+			printf("%d %d ",n,n-1);
+			for(int i=3; i<=n; ++i) printf("0 ");
+			puts("");
+		}
+		else
+		{
+			fac[0]=ifac[0]=1;
+			for(int i=1; i<=n; ++i)
+				fac[i]=1ll*fac[i-1]*i%p,
+				ifac[i]=qp(fac[i],p-2);
+			for(int i=1; i<=n; ++i) printf("%d ",C(n,i));
+			puts("");
+		}
+	}
+	else if(sub==5)
+	{
+		fac[0]=ifac[0]=1;
+		for(int i=1; i<=n; ++i)
+			fac[i]=1ll*fac[i-1]*i%p,
+			ifac[i]=qp(fac[i],p-2);
+		for(int i=0; i<=min(m-1,n); ++i)
+			A[i]=1ll*fac[i]*(n-i-1)%p;
+		for(int i=0; i<=min(m-1,n); ++i) B[i]=ifac[i];
+		for(N=1;N<=n+n;N<<=1);
+		init();
+        reverse(A,A+n+1);
+        NTT(A,1),NTT(B,1);
+        for(int j=0; j<N; ++j)
+            A[j]=A[j]*B[j]%p;
+        NTT(A,0);
+        reverse(A,A+n+1);
+        printf("%d ",n);
+        int inv=qp(N,p-2);
+		for(int i=0; i<n-1; ++i)
+			printf("%lld ",A[i]*ifac[i]%p*inv%p);
+	}
+	else
+	{
+		printf("%d ",n);
+		for(int i=2; i<=n; ++i) printf("0 ");
+		return 0;
+	}
+	return 0;
+}

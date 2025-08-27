@@ -1,0 +1,28 @@
+#include <bits/stdc++.h>
+using namespace std;
+const int N = 2e2 + 5,M = 5e3 + 5;
+int n,A[N],m,S;
+bitset<M> f,g;
+int main()
+{
+	freopen("give.in","r",stdin);
+	freopen("give.out","w",stdout);
+	int T;
+	scanf("%d",&T);
+	while(T--)
+	{
+		f.reset();g.reset();
+		scanf("%d%d%d",&m,&S,&n);
+		for(int i = 1;i <= n;i++) scanf("%d",&A[i]);
+		f.set(0);
+		for(int i = 1;i <= m;i++)
+		{
+			g.reset();
+			for(int j = 1;j <= n;j++)
+				g ^= (f << A[j]);
+			f = g;
+		}
+		printf("%d\n",(int)f[S]);	
+	}
+	return 0;
+}

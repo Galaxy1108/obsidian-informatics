@@ -1,0 +1,32 @@
+#include<bits/stdc++.h>
+#define fo(i,a,b) for(int i=a;i<=b;++i)
+#define fd(i,a,b) for(int i=a;i>=b;--i)
+using namespace std;
+typedef long long ll;
+ll n,S,T,x,y,opt;
+int main(){
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	scanf("%lld",&opt);
+	while(opt--){
+		scanf("%lld%lld%lld%lld%lld",&n,&S,&T,&x,&y);
+		ll l=0,r=n+1,mid;
+		while(l<r-1){
+			mid=l+r>>1;
+			ll calc=0;
+			if(S-T+mid*y>=0)calc=(S-T+mid*y)/x+1;
+			if(mid+calc<=n)l=mid;
+			else r=mid;
+		}
+		ll c1=0;
+		if(S-T+l*y>=0)c1=(S-T+l*y)/x+1;
+		ll ans=S+y*l-x*c1;
+		if(l+c1<n){
+			ans+=y;
+			ans-=x*(n-l-c1-1);
+		}
+		printf("%lld\n",ans);
+	}
+
+	return 0;
+}

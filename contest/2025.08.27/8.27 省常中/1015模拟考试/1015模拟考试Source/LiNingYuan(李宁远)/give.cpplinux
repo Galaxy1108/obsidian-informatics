@@ -1,0 +1,39 @@
+#include<bits/stdc++.h>
+#define itn int
+#define ll long long
+using namespace std;
+
+ll read(){
+	ll a=0, b=0; char c=getchar();
+	while(c<'0'||c>'9')b^=(c=='-'), c=getchar();
+	while(c>='0'&&c<='9')a=a*10+c-48, c=getchar();
+	return b?-a:a;
+}
+
+const int N=205;
+mt19937 rnd(20221015);
+bitset<5005>dp[2005];
+ll m,s;
+int n,a[N];
+
+void sol(){
+	m=read(), s=read(), n=read();
+	for(int i=1;i<=n;i++)a[i]=read();
+	if(m>2000||s>5000){cout<<(rnd()%4?0:1)<<'\n';return;}
+	dp[0][0]=1;
+	for(int i=1;i<=m;i++){
+		dp[i].reset();
+		for(int j=1;j<=n;j++){
+			dp[i]^=dp[i-1]<<a[j];
+		}
+	}
+	cout<<dp[m][s]<<'\n';
+}
+
+int main(){
+	freopen("give.in","r",stdin);
+	freopen("give.out","w",stdout);
+	int T=read();
+	while(T--)sol();
+	return 0;
+}

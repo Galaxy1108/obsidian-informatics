@@ -1,0 +1,36 @@
+#include<bits/stdc++.h>
+using namespace std;
+long long t,k,m,s,n,i,j,l,r,a[202],f[2002][5005];
+bitset<5005>g[2002];
+int main()
+{
+	freopen("give.in","r",stdin);
+	freopen("give.out","w",stdout);
+	scanf("%lld",&t);
+	for(k=1;k<=t;k=k+1)
+	{
+		scanf("%lld%lld%lld",&m,&s,&n);
+		for(i=1;i<=n;i=i+1)scanf("%lld",&a[i]);
+		if(n<=50&&m<=200&&s<=500)
+		{
+			for(i=0;i<=m;i=i+1)
+			for(j=0;j<=s;j=j+1)
+			f[i][j]=0;f[0][0]=1;
+			for(i=1;i<=m;i=i+1)
+			for(l=1;l<=n;l=l+1)
+			for(j=a[l];j<=s;j=j+1)
+			f[i][j]=(f[i][j]+f[i-1][j-a[l]])%2;
+			printf("%lld\n",f[m][s]);
+		}
+		else if(n<=200&&m<=2000&&s<=5000)
+		{
+			for(i=0;i<=m;i=i+1)g[i].reset();g[0][0]=1;
+			for(i=1;i<=m;i=i+1)
+			for(l=1;l<=n;l=l+1)
+			g[i]^=(g[i-1]<<a[l]);
+			if(g[m][s])puts("1");else puts("0");
+		}
+		else puts("0");
+	}
+	return 0;
+}

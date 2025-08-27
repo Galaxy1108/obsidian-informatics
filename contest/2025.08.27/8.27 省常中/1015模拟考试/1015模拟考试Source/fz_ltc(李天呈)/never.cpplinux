@@ -1,0 +1,174 @@
+#include<bits/stdc++.h>
+#define int ll
+#define pb push_back
+#define mp make_pair
+#define pii pair<int,int>
+#define fir first
+#define sec second
+typedef long long ll;
+using namespace std;
+const int N=100005;
+const int inf=1000000005;
+const ll inff=1ll<<60;
+const int mod=1000000007;
+
+namespace io{
+	const int SIZE=(1<<21)+1;
+	char ibuf[SIZE],*iS,*iT,obuf[SIZE],*oS=obuf,*oT=oS+SIZE-1,c,qu[55]; int qr;
+	#define gc() (iS==iT?(iT=(iS=ibuf)+fread(ibuf,1,SIZE,stdin),(iS==iT?EOF:*iS++)):*iS++)
+	inline void flush(){ fwrite(obuf,1,oS-obuf,stdout); oS=obuf; }
+	inline void putc(char x){ *oS++=x; if(oS==oT) flush(); }
+	template <class I>
+	inline void read(I &x){
+		int ff=1;
+		for(c=gc();c<'0'||c>'9';c=gc()) if(c=='-') ff=-1;
+		for(x=0;c<='9'&&c>='0';c=gc()) x=x*10+(c&15);
+		x*=ff;
+	}
+	template <class I>
+	inline void print(I x){
+		if(!x) putc('0'); if(x<0) putc('-'),x=-x;
+		while(x) qu[++qr]=x%10+'0',x/=10;
+		while(qr) putc(qu[qr--]);
+	}
+}
+using io::read; using io::putc; using io::print;
+
+int n,s,t,x,y;
+
+void solve(){
+	read(n); read(s); read(t); read(x); read(y);
+	if(x==y){
+		int ne;
+		if(s<t) ne=(t-s)/y;
+		else ne=(s-t)/y;
+		if(ne >= n){
+			if(s<t) print(s+y*n);
+			else print(s-y*n);
+			putc('\n');
+			return;
+		}
+		n-=ne;
+		if(s<t) s+=y*ne; else s-=y*ne;
+		if(s<t){
+			if(n&1) print(s+y);
+			else print(s);
+		}
+		else{
+			if(n&1) print(s-y);
+			else print(s);
+		}
+		putc('\n');
+		return;
+	}
+	int ne;
+	if(s<t) ne=(t-s)/y;
+	else ne=(s-t)/x;
+	if(ne >= n){
+		if(s<t) print(s+y*n);
+		else print(s-x*n);
+		putc('\n');
+		return;
+	}
+	n-=ne;
+	if(s<t) s+=y*ne; else s-=x*ne;
+	if(s<t){
+		n--; s+=y;
+		if(n==0){
+			print(s); putc('\n');
+			return;
+		}
+		n--; s-=x;
+		if(n==0){
+			print(s); putc('\n');
+			return;
+		}
+	}
+	else{
+		n--; s-=x;
+		if(n==0){
+			print(s); putc('\n');
+			return;
+		}
+		n--; s+=y;
+		if(n==0){
+			print(s); putc('\n');
+			return;
+		}
+	}
+	while(n){
+		if(s<t){
+			int ne = (t-s+y-1)/y;
+			if(ne >= n){
+				print(s+y*n); putc('\n');
+				return;
+			}
+			n-=ne; 
+			int ns = s+y*ne , nne = (ns-(t-1)+x-1)/x;
+			if(nne >= n){
+				print(ns-x*n); putc('\n');
+				return;
+			}
+			n-=nne;
+			int npos=ns-x*nne;
+			if(npos == s) n/=(ns+nne);
+			else{
+				int delta=npos-s; s=npos;
+				int r=t-ne*y,l=r-y+1;
+				int lll=(t-1)+nne*x,rrr=(t-1)+x-1;
+				r=min(r,rrr); l=max(l,lll);
+				if(l<=r){
+					if(delta > 0){
+						int tt=(r-s)/delta;
+						if(tt>0) n-=tt*(ne+nne),s+=delta*tt;
+					}
+					else{
+						int tt=(l-s)/delta;
+						if(tt>0) n-=tt*(ne+nne),s+=delta*tt;
+					}
+				}
+			}
+			s=npos;
+		}
+		else{
+			int ne = (s-(t-1)+x-1)/x;
+			if(ne >= n){
+				print(s-x*n); putc('\n');
+				return;
+			}
+			n-=ne; 
+			int ns = s-x*ne , nne = (t-ns+y-1)/y;
+			if(nne >= n){
+				print(ns+y*n); putc('\n');
+				return;
+			}
+			n-=nne;
+			int npos=ns+y*nne;
+			if(npos == s) n/=(ns+nne);
+			else{
+				int delta=npos-s; s=npos;
+				int r=t-nne*y,l=r-y+1;
+				int lll=(t-1)+ne*x,rrr=(t-1)+x-1;
+				r=min(r,rrr); l=max(l,lll);
+				if(l<=r){
+					if(delta > 0){
+						int tt=(r-s)/delta;
+						if(tt>0) n-=tt*(ne+nne),s+=delta*tt;
+					}
+					else{
+						int tt=(l-s)/delta;
+						if(tt>0) n-=tt*(ne+nne),s+=delta*tt;
+					}
+				}
+			}
+		}
+	}
+	print(s); putc('\n');
+}
+
+main(){
+	freopen("never.in","r",stdin); freopen("never.out","w",stdout);
+    int tc; read(tc);
+    while(tc--) solve(); 
+	io::flush();
+}

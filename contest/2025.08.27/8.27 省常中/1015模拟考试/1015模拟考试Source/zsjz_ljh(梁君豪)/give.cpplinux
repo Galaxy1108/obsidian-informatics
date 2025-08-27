@@ -1,0 +1,43 @@
+#include <cstdio>
+#include <cstring>
+#define g getchar()
+#define r register int
+int T, n, m, p, q, a[201];
+bool f[2][5001];
+inline int read()
+{
+	r a(0), b(g);
+	for (; b < 48 || b > 57; b = g);
+	for (; b > 47 && b < 58; b = g)
+		(a *= 10) += b ^ 48;
+	return a;
+}
+inline int min(r x, r y)
+{
+	return x < y ? x : y;
+}
+int main()
+{
+	freopen("give.in", "r", stdin);
+	freopen("give.out", "w", stdout);
+	T = read();
+	while (T--)
+	{
+		m = read();
+		p = read();
+		n = read();
+		for (r i(1); i <= n; ++i)
+			a[i] = read();
+		memset(f, 0, sizeof f);
+		f[q = 0][0] = 1;
+		for (r i(1); i <= m; ++i, q ^= 1)
+			for (r j(min(p, (i - 1) * a[n])), nw((i - 1) * a[1]); j >= nw; --j)
+				if (f[q][j])
+				{
+					for (r k(1); a[k] + j <= p && k <= n; ++k)
+						f[!q][a[k] + j] ^= 1;
+					f[q][j] = 0;
+				}
+		printf("%d\n", f[q][p]);
+	}
+}

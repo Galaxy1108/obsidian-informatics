@@ -1,0 +1,64 @@
+#include <iostream>
+using namespace std;
+const int mod=998244353;
+int num;
+int n,x;
+long long z[300010];
+int read()
+{
+	int s=0;
+	char ch=getchar();
+	while(!isdigit(ch)) ch=getchar();
+	while(isdigit(ch))
+	{
+		s=(s<<3)+(s<<1)+(ch^48);
+		ch=getchar();
+	}
+	return s;
+}
+void add(long long &a,int b)
+{
+	a+=b;
+	if(a>=mod) a-=mod;
+}
+int main()
+{
+	freopen("youup.in","r",stdin);
+	freopen("youup.out","w",stdout);
+	num=read();
+	n=read();
+	x=read();
+	if(x==0)
+	{
+		cout<<n;
+		for(int i=1;i<n;++i)
+		{
+			putchar(' ');
+			putchar('0');
+		}
+	}
+	else if(x==1)
+	{
+		cout<<n<<' '<<n-1;
+		for(int i=1;i<n-1;++i) putchar(' '),putchar('0');
+	}
+	else if(num==4)
+	{
+		z[0]=1;
+		for(int i=1;i<=n;++i)
+			for(int j=i;j>=1;--j)
+				add(z[j],z[j-1]);
+		for(int i=1;i<=n;++i) cout<<z[i]<<' ';
+	}
+	else
+	{
+		z[0]=1;
+		for(int i=1;i<=x;++i)
+			for(int j=i;j>=1;--j)
+				add(z[j],z[j-1]);
+		for(int i=1;i<=x+1;++i)
+			cout<<((z[i-1]*(n-x)%mod+z[i])%mod)<<' ';
+		for(int i=x+2;i<=n;++i) putchar('0'),putchar(' ');
+	}
+	return 0;
+}

@@ -1,0 +1,44 @@
+#include<bits/stdc++.h>
+#define ll long long
+using namespace std;
+int n,pri[2500],bz[30010],tot,now;
+ll s[2500],b[2500],a[2500][20010],c[2500],p,
+sum,ans,m1[2500][2010],m2[2500][2010];
+ll mod(ll x){return x-(x/p)*p;}
+ll qpow(ll x,ll v){return mod(m1[x][v%2000]*m2[x][v/2000]);}
+int main(){
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	scanf("%d%lld",&n,&p);
+	for(int i=2;i<=n;i++){
+		if(!bz[i])pri[++tot]=i;
+		for(int j=1;j<=tot&&i*pri[j]<=n;j++){
+			bz[pri[j]*i]=1;
+			if(i%pri[j]==0)break;
+		}
+	}
+	for(int i=1;i<=tot;i++){
+		a[i][0]=1;
+		for(int j=1;j<=n;j++)
+		a[i][j]=mod(a[i][j-1]*pri[i]+1);
+		m1[i][0]=1;m2[i][0]=1;
+		for(int j=1;j<=2000;j++)
+		m1[i][j]=mod(m1[i][j-1]*pri[i]);
+		for(int j=2;j<=2000;j++)
+		m2[i][j]=mod(m2[i][j-1]*m1[i][2000]);
+	}ans=0;
+	for(int i=1;i<=tot;i++)c[i]=1;
+	for(int i=1;i<=n;i++){
+		now=i;sum=1;
+		for(int j=1;j<=tot;j++){
+			while(now%pri[j]==0){
+				now/=pri[j];b[j]+=1;
+				c[j]=mod(c[j]+a[j][i-1]*qpow(j,s[j]+1));s[j]+=i;
+			}s[j]-=b[j];
+			c[j]=mod(c[j]+p-mod(a[j][b[j]-1]*qpow(j,s[j]+1)));
+			sum=mod(sum*c[j]);
+		}
+		ans=mod(ans+sum);
+	}
+	printf("%lld ",ans);
+}

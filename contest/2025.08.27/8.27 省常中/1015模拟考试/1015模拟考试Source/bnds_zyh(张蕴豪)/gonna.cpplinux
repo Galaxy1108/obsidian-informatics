@@ -1,0 +1,66 @@
+#include <cstdio>
+#include <iostream>
+#include <set>
+#define macro_expand(x) #x
+#define print_macro(x) printf("%s\n",macro_expand(x))
+#define FOR(i,l,r) for(int i=(l),i##ADJK=(r);i<=i##ADJK;++i)
+#define ROF(i,r,l) for(int i=(r),i##ADJK=(l);i>=i##ADJK;--i)
+using namespace std;
+typedef long long LL;
+const int MN=2e4+5;
+int N,P;
+int ad(int x,int y){return ((x+y)>=P)?(x+y-P):(x+y);}
+int ml(int x,int y){return (LL)x*y%P;}
+bool isp[MN];
+int pri[MN],mn[MN],tot;
+void init(){
+	FOR(i,2,N)isp[i]=1;
+	FOR(i,2,N){
+		if(isp[i]){
+			pri[++tot]=i;
+			mn[i]=tot;
+		}
+		FOR(j,1,tot){
+			if(i*pri[j]>N)break;
+			isp[i*pri[j]]=0;
+			mn[i*pri[j]]=j;
+			if(i%pri[j]==0)break;
+		}
+	}
+}
+int cnt[MN][2267],pre[MN][2267];
+int calc(int x,int y){
+	// 1+x+x^2+...+x^y
+	int ret=0,p=1,p2=1;
+	for(;y;y>>=1,p=ml(p,ad(x,1)),x=ml(x,x))
+		if(y&1){
+			ret=ad(ret,ml(p,p2));
+			p2=ml(p2,x);
+		}
+	return ret;
+}
+int main(){
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	scanf("%d%d",&N,&P);
+	init();
+	FOR(i,2,N){
+		int p=i/pri[mn[i]];
+		FOR(j,1,tot)cnt[i][j]=cnt[p][j];
+		++cnt[i][mn[i]];
+	}
+	FOR(i,1,N)FOR(j,1,tot)cnt[i][j]+=cnt[i-1][j];
+	FOR(i,1,N)FOR(j,1,tot)pre[i][j]=pre[i-1][j]+cnt[i][j];
+	int ans=0;
+	FOR(i,1,N){
+		static int tmp[2267];
+		FOR(j,1,tot)tmp[j]=cnt[i][j]*(i+1)-2*pre[i][j];
+		int pro=1;
+		FOR(j,1,tot)pro=ml(pro,calc(pri[j],tmp[j]+1));
+		ans=ad(ans,pro);
+	}
+	printf("%d\n",ans);
+	fclose(stdin);
+	fclose(stdout);
+	return 0;
+}

@@ -1,0 +1,36 @@
+//回家？我没有家可以回，我没有退路。
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+inline int read(){
+   int s=0,w=1;
+   char ch=getchar();
+   while(ch<'0'||ch>'9'){if(ch=='-')w=-1;ch=getchar();}
+   while(ch>='0'&&ch<='9') s=s*10+ch-'0',ch=getchar();
+   return s*w;
+}
+signed main()
+{
+#ifndef local
+	freopen("never.in","r",stdin),
+	freopen("never.out","w",stdout);
+#endif
+	for(int T=read(); T--;)
+	{
+		int n=read(),s=read(),t=read(),x=read(),y=read();
+		int base=t-x,v=s-base,p=x+y;
+		if(v>=p)
+		{
+			int op=min((v-p)/x+1,n);
+			v-=x*op,n-=op;
+		}
+		else if(v<0)
+		{
+			int op=min((-v-1)/y+1,n);
+			v+=y*op,n-=op;
+		}
+		if(n) v=(v+(__int128)y*n)%p;
+		printf("%lld\n",v+base);
+	}
+	return 0;
+}

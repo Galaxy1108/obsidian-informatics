@@ -1,0 +1,136 @@
+/*
+打炸了 
+*/
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define ull unsigned long long
+const double eps = 0.000001;
+inline ll read()
+{
+	ll x=0,f=1;
+	char ch = getchar();
+	while (ch > '9' || ch < '0')
+		{
+			if (ch == '-')
+				f = -1;
+			ch = getchar();
+		}
+	while (ch <= '9' && ch >= '0')
+		{
+			x = x * 10 + ch - 48;
+			ch = getchar();
+		}
+	return x*f;
+}
+inline void write(ll x)
+{
+	if (x < 0)
+		{
+			putchar('-');
+			x = -x;
+		}
+	if (x > 9)
+		write(x/10);
+	putchar(x%10+'0');
+}
+ll T,n,s,t,x,y;
+ll cnt,now,delta;
+ll gcd(ll a,ll b)
+{
+	if (b == 0)
+		return a;
+	else
+		return gcd(b,a%b);
+}
+int main()
+{
+	//freopen("testdata.txt","r",stdin);
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	T = read();
+	while (T--)
+		{
+			n = read();
+			s = read();
+			t = read();
+			x = read();
+			y = read();
+			cnt = 0;
+			now = s;
+			ll temp1 = gcd(x,y);
+			if (now < t)
+				{
+					cnt += (t-now-1) / y;
+					now += y * ((t-now-1)/y);
+					if (cnt >= n)
+						{
+							printf("%lld\n",s+n*y);
+							continue;
+						}
+				}
+			if (now >= t)
+				{
+					cnt += (now-t) / x + 1;
+					now -= x * ((now-t)/x+1);
+					if (cnt >= n)
+						{
+							printf("%lld\n",s-n*x);
+							continue;
+						}
+				}
+			//jump to the left of t
+			//cout<<now<<" "<<cnt<<endl;
+			
+			ll temp2 = (x / temp1) + (y / temp1);
+			//cout<<x<<" "<<y<<" "<<temp1<<" "<<temp2<<endl;
+			
+			n -= cnt;
+			if (n > temp2)
+				n %= temp2;
+			
+			ll tempnow = now;
+			
+			ll temp3 = (t-tempnow-1)/y + 1;
+			tempnow += y * ((t-tempnow-1)/y+1);
+			temp3 += (tempnow-t) / x + 1;
+			tempnow -= x * ((tempnow-t)/x+1);
+			delta = now - tempnow;
+			
+			/*while (n > temp3)
+				{
+					now -= delta;
+					n -= temp3;
+					while (now < t-y)
+						{
+							now += y;
+							--n;
+						}
+					while (now >= t+x)
+						{
+							now -= x;
+							--n;
+						}
+				}*/
+				
+			//cout<<n<<" "<<now<<endl;
+			//cout<<temp3<<" "<<delta<<endl;
+			
+			 
+			
+			ll temp4 = (t-now-1)/y + 1;
+			if (n > temp4)
+				{
+					n -= temp4;
+					now += y * ((t-now-1)/y+1);
+				}
+			for (int i=1;i<=n;++i)
+				if (now < t)
+					now += y;
+				else
+					now -= x;
+			
+			printf("%lld\n",now);
+		}
+	return 0;
+}

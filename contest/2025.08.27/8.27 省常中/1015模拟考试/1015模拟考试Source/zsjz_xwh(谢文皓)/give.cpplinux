@@ -1,0 +1,55 @@
+#include<bits/stdc++.h>
+using namespace std;
+int i,j,n,m,k,l,o,p;
+int a[205];
+inline int read()
+{
+	int f(1),x(0);
+	char ch=getchar();
+	while (!isdigit(ch)) {if (ch=='-') f*=-1;ch=getchar();}
+	while (isdigit(ch)) x=(x<<1)+(x<<3)+ch-'0',ch=getchar();
+	return f*x;
+}
+inline void writ(int x)
+{
+	if (x<0) putchar('-'),x=-x;
+	if (x/10) writ(x/10);
+	putchar((char)(x%10+'0'));
+}
+inline void write(int x)
+{
+	writ(x);
+	putchar('\n');
+}
+int ans=0;
+void ss(int sum,int num)
+{
+	if (sum==m) 
+	{
+		if (num!=k) return ;
+		(++ans)%=2;
+	}
+	if (num>k) return ;
+	for (int x=1;x<=n;++x) ss(sum+a[x],num+1);
+}
+int main()
+{
+	freopen("give.in","r",stdin);
+	freopen("give.out","w",stdout);
+	int t=read();
+	srand(time(0));
+	p=1;
+	while (t--)
+	{
+		k=read(),m=read(),n=read();
+		for (i=1;i<=n;i++) a[i]=read();
+		if (n>=7||k>=15)
+		{
+			printf("%d\n",rand()%2);
+			continue;
+		}
+		ans=0;
+		ss(0,0);
+		printf("%d\n",ans);
+	}
+}

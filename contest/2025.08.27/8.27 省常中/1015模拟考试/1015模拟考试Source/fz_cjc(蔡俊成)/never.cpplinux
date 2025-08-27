@@ -1,0 +1,48 @@
+#include <cstdio>
+#include <cstring>
+#include <cctype>
+#include <vector>
+#include <algorithm>
+#define int long long
+using namespace std;
+inline int read (void) {
+    int x = 0, f = 1, ch = getchar();
+    while(!isdigit(ch)) { if(ch == '-') f = -f; ch = getchar(); }
+    while(isdigit(ch)) { x = x * 10 + ch - '0'; ch = getchar(); }
+    return x * f;
+}
+int q,n,s,t,x,y;
+signed main (void) {
+    freopen("never.in", "r", stdin);
+    freopen("never.out", "w", stdout);
+    q=read();
+    while(q--){
+        n=read();s=read();t=read();x=read();y=read();
+        s=s-t;
+        if(s<0){
+            s=-s;
+            int w=(s+y-1)/y;
+            s=-s;
+            s+=min(n,w)*y;
+            if(n<=w){
+                printf("%lld\n",t+s);
+                continue ;
+            }
+            n-=w;
+        }
+        if(s>0){
+            int w=(s+x-1)/x;
+            s-=min(n,w)*x;
+            if(n<=w){
+                printf("%lld\n",t+s);
+                continue;
+            }
+            n-=w;
+        }
+        int g=((__int128)n*x-s+y-1)/(x+y);
+        s=s+g*y-(n-g)*x;
+        // printf("%lld\n",g);
+        printf("%lld\n",s+t);
+    }
+    return 0;
+}

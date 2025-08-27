@@ -1,0 +1,36 @@
+#include<cstdio>
+#define fo(i,x,y) for(int i = x;i <= y;++i)
+#define ll long long
+int q;
+ll n,s,t,x,y;
+int main()
+{
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	scanf("%d",&q);
+	while(q--)
+	{
+		scanf("%lld%lld%lld%lld%lld",&n,&s,&t,&x,&y);
+		if(s >= t)
+		{
+			int N = (s - t) / x;
+			if(n < N) N = n;
+			s -= N * x,n -= N;
+		}
+		else
+		{
+			int N = (t - s) / y;
+			if(n < N) N = n;
+			s += N * y,n -= N;
+		}
+		ll S = s;
+		fo(i,1,10000)
+		{
+			s = (s >= t) ? (s - x) : (s + y);
+			if(s == S) {n %= i;break;}
+		}
+		s = S;
+		while(n--) s = (s >= t) ? (s - x) : (s + y);
+		printf("%lld\n",s);
+	}
+}

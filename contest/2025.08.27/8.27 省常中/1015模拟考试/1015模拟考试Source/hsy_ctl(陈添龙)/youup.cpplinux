@@ -1,0 +1,27 @@
+#include<bits/stdc++.h>
+#define pc putchar
+using namespace std;
+inline int read()
+{
+	int x=0,f=1;char ch=getchar();
+	while(ch<'0'||ch>'9'){f=ch=='-'?-1:f;ch=getchar();}
+	while(ch>='0'&&ch<='9'){x=x*10+(ch^48);ch=getchar();}
+	return x*f;
+}
+void write(int x)
+{
+	if(x<0){x=-x;pc('-');}
+	if(x>9)write(x/10);
+	pc(x%10+48);
+}
+
+
+int main()
+{
+	freopen("youup.in","r",stdin);
+	freopen("youup.out","w",stdout);
+	int num=read();
+	int n=read(),x=read();write(n),pc(' ');
+	for(int i=2;i<=n;++i)write(0),pc(' '); pc('\n');
+	return 0;
+}

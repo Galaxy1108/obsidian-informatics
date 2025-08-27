@@ -1,0 +1,173 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+template < typename T >
+inline const void read(register T &x)
+{
+	register bool flg = x = 0;
+	register char c;
+	while ((c = getchar()) < 48 || c > 57)
+		flg |= c == '-';
+	do
+		x = (x << 1) + (x << 3) + (c ^ 48);
+	while ((c = getchar()) > 47 && c < 58);
+	if (flg) x = -x;
+}
+
+int OUTPUT[45];
+
+template < typename T >
+inline const void write(register T x)
+{
+	if (x < 0)
+	{
+		putchar('-');
+		x = -x;
+	}
+	register int len = 0;
+	do
+	{
+		OUTPUT[++len] = x % 10 | 48;
+		x /= 10;
+	}while (x);
+	while (len)
+		putchar(OUTPUT[len--]);
+}
+
+template < typename T >
+inline const void writesp(const register T x)
+{
+	write(x);
+	putchar(32);
+}
+
+template < typename T >
+inline const void writeln(const register T x)
+{
+	write(x);
+	putchar(10);
+}
+
+const int N = 3e5 + 5, M = 2005, P = 998244353;
+int Num, n, X, front, rear, len, Ans[N], a[N], q[N], fac[N], inv[N], dis[M][M];
+bool vis[M];
+vector < int > G[N];
+
+inline int power(int x, int y)
+{
+	int ret = 1;
+	while (y)
+	{
+		if (y & 1) ret = (long long)ret * x % P;
+		x = (long long)x * x % P;
+		y >>= 1;
+	}
+	return ret;
+}
+
+inline int C(int x, int y)
+{
+	if (y > x) return 0;
+	return (long long)fac[x] * (long long)inv[y] % P * (long long)inv[x - y] % P;
+}
+
+void dfs(int dep = 1)
+{
+	if (dep > n)
+	{
+		++Ans[len];
+		return;
+	}
+	dfs(dep + 1);
+	for (register int i = 1; i <= len; ++i)
+		if (dis[a[i]][dep] > X) return;
+	a[++len] = dep;
+	dfs(dep + 1);
+	--len;
+}
+
+int main()
+{
+	freopen("youup.in", "r", stdin);
+	freopen("youup.out", "w", stdout);
+	read(Num);
+	read(n);
+	read(X);
+	fac[0] = 1;
+	for (register int i = 1; i <= n; ++i)
+		fac[i] = (long long)fac[i - 1] * i % P;
+	inv[n] = power(fac[n], P - 2);
+	for (register int i = n - 1; ~i; --i)
+		inv[i] = inv[i + 1] * (i + 1ll) % P;
+	if (Num == 4)
+	{
+		for (register int i = 1; i <= n; ++i)
+		{
+			if (i != 1) putchar(32);
+			if (!X)
+			{
+				if (i == 1) write(n);
+				else putchar(48);
+				continue;
+			}
+			if (X == 1)
+			{
+				if (i == 1) write(n);
+				else if (i == 2) write(n - 1);
+				else putchar(48);
+				continue;
+			}
+			write(C(n, i));
+		}
+		putchar(10);
+		return 0;
+	}
+	if (Num == 5)
+	{
+		for (register int i = 1; i <= n; ++i)
+		{
+			if (i != 1) putchar(32);
+			if (i - 1 > X)
+			{
+				putchar(48);
+				continue;
+			}
+			write(((long long)C(X, i - 1) * (n - X) % P + C(X, i)) % P);
+		}
+		putchar(10);
+		return 0;
+	}
+	for (register int i = 1; i < n; ++i)
+	{
+		int x, y;
+		read(x);
+		read(y);
+		G[x].push_back(y);
+		G[y].push_back(x);
+	}
+	for (register int i = 1; i <= n; ++i)
+	{
+		for (register int j = 1; j <= n; ++j)
+			vis[j] = 0;
+		vis[i] = 1;
+		front = rear = 1;
+		q[1] = i;
+		while (front <= rear)
+		{
+			int len = G[q[front]].size();
+			for (register int j = 0; j < len; ++j)
+				if (!vis[G[q[front]][j]])
+				{
+					vis[G[q[front]][j]] = 1;
+					dis[i][G[q[front]][j]] = dis[i][q[front]] + 1;
+					q[++rear] = G[q[front]][j];
+				}
+			++front;
+		}
+	}
+	dfs();
+	for (register int i = 1; i < n; ++i)
+		writesp(Ans[i]);
+	writeln(Ans[n]);
+	return 0;
+}

@@ -1,0 +1,43 @@
+#include<iostream>
+#include<cstdio>
+#include<algorithm>
+#include<cmath>
+#include<cstring>
+#include<cstdlib>
+using namespace std;
+#define re int
+inline long long read(){
+	long long x=0,ff=1;char c=getchar();
+	while(c<'0'||c>'9'){if(c=='-')ff=-1;c=getchar();}
+	while(c>='0'&&c<='9'){x=(x<<1)+(x<<3)+(c^'0');c=getchar();}
+	return x*ff;
+}
+int tt;
+int main(){
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	tt=read();__int128 n,s,t,x,y,k;
+	long long ans;
+	while(tt--){
+		n=read();s=read();t=read();x=read();y=read();
+		if(s<t){
+			if((t-s)/y>=n){
+				ans=s+n*y;
+				printf("%lld\n",ans);continue;
+			}
+		}
+		if(s>=t){
+			if((s-t)/x>=n){
+				ans=s-n*x;
+				printf("%lld\n",ans);continue;
+			}
+		}
+		k=1.0*(y-1+t-s)/(x+y)+1.0*x/(x+y)*n;
+		__int128 qwq=x*(k-n)+k*y+s-t;
+		while(qwq<-x)qwq+=y+x;
+		while(qwq>=y)qwq-=x+y;
+		long long ans=qwq+t;
+		printf("%lld\n",ans);
+	}
+	return 0;
+}

@@ -1,0 +1,99 @@
+#include <bits/stdc++.h>
+using ll = long long;
+
+inline void file () {
+	freopen("youup.in", "r", stdin);
+	freopen("youup.out", "w", stdout);
+}
+
+template <class T> inline T min (T x, T y) { return x < y ? x : y; }
+template <class T> inline T max (T x, T y) { return x > y ? x : y; }
+template <class T> inline void updMin (T &x, T y) { x = min(x, y); }
+template <class T> inline void updMax (T &x, T y) { x = max(x, y); }
+
+const int int_inf = 0x3f3f3f3f;
+const int N = 25;
+int Num;
+int n, lim;
+int d[N][N];
+
+bool vis[1 << N - 3];
+int ans[N];
+
+bool check (int s) {
+	for (int i = 0; i < n - 1; ++ i) {
+		if (!(s >> i & 1)) {
+			continue;
+		}
+		
+		for (int j = i + 1; j < n; ++ j) {
+			if (!(s >> j & 1)) {
+				continue;
+			}
+			
+			if (d[i + 1][j + 1] > lim) {
+				return 0;
+			}
+		}
+	}
+	
+	return 1;
+}
+
+int main () {
+	
+	file();
+	std::ios::sync_with_stdio(0);
+	std::cin.tie(nullptr);
+	std::cout.tie(nullptr);
+	
+	std::cin >> Num;
+	std::cin >> n >> lim;
+	
+	for (int x = 1; x <= n; ++ x) {
+		for (int y = 1; y <= n; ++ y) {
+			if (x != y) {
+				d[x][y] = int_inf;
+			}
+		}
+	}
+	
+	for (int i = 1; i < n; ++ i) {
+		int x, y;
+		std::cin >> x >> y;
+		d[x][y] = d[y][x] = 1;
+	}
+	
+	for (int z = 1; z <= n; ++ z) {
+		for (int x = 1; x <= n; ++ x) {
+			for (int y = 1; y <= n; ++ y) {
+				updMin(d[x][y], d[x][z] + d[z][y]);
+			}
+		}
+	}
+	
+	int all = (1 << n) - 1;
+	for (int s = 1; s <= all; ++ s) {
+		if (vis[s]) {
+			continue;
+		}
+		
+		if (check(s)) {
+			int sz = __builtin_popcount(s);
+			ans[sz] ++ ;
+		} else {
+			int left = all ^ s;
+			for (int t = left; t; t = (t - 1) & left) {
+				vis[all ^ t] = 1;
+			}
+			vis[all ^ 0] = 1;
+		}
+	}
+	
+	for (int i = 1; i <= n; ++ i) {
+		std::cout << ans[i] << ' ';
+	}
+	std::cout << '\n';
+	
+	return 0;
+}

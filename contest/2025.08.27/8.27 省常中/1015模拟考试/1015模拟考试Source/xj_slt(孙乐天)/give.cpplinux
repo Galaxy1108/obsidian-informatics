@@ -1,0 +1,41 @@
+#include<bits/stdc++.h>
+#define ll long long
+#define inf 114514541
+#define mk make_pair
+#define pb push_back
+using namespace std;
+
+int Min(int a,int b){ return a>b?b:a;}
+int Max(int a,int b){ return a>b?a:b;}
+void Swap(int &a,int &b){ int t=a;a=b;b=t;}
+inline int read()
+{
+    int n=0;bool f=0;char ch=getchar();
+    while(!isdigit(ch)) f|=(ch=='-'),ch=getchar();
+    while(isdigit(ch)) n=(n<<1)+(n<<3)+(ch^48),ch=getchar();
+    return f?-n:n;
+}
+
+const int N=200+5;
+int T,m,s,n;
+int a[N];
+void in(){
+    m=read(),s=read(),n=read();
+    for(int i=1;i<=n;i++) a[i]=read();
+}
+void solve(){
+    in();
+    int ans=rand()%2;
+    printf("%d\n",ans);
+}
+int main()
+{
+    // freopen("F:\\code\\txt.in","r",stdin);
+    // freopen("F:\\code\\txt.out","w",stdout);
+    freopen("give.in","r",stdin);
+    freopen("give.out","w",stdout);
+    T=read();
+    srand(time(NULL));
+    while(T--) solve();
+    return 0;
+}

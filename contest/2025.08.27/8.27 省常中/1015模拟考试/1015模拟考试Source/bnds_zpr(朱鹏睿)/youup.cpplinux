@@ -1,0 +1,26 @@
+#include <cstdio>
+#include <cstring>
+#define N 300011
+int num,n,x,dis[2011][2011],ans[100011],w[10011];
+struct edge{int v,next;edge(){}edge(int _v,int _next){v=_v;next=_next;}}e[N<<1];int head[N],sz;
+void init(){memset(head,-1,sizeof(head));sz=0;}void insert(int u,int v){e[++sz]=edge(v,head[u]);head[u]=sz;}
+void dfs(int u,int f,int *dis)
+{
+	for(int i=head[u];~i;i=e[i].next)if(e[i].v^f)dis[e[i].v]=dis[u]+1,dfs(e[i].v,u,dis);
+}
+int main()
+{
+	freopen("youup.in","r",stdin);freopen("youup.out","w",stdout);
+	scanf("%d%d%d",&num,&n,&x);init();
+	for(int i=1;i<n;++i){int u,v;scanf("%d%d",&u,&v);insert(u,v);insert(v,u);}
+	for(int i=1;i<=n;++i)dfs(i,0,dis[i]);
+	for(int S=0;S<1<<n;++S)
+	{
+		int cnt=0;for(int i=0;i<n;++i)cnt+=S>>i&1;
+		w[0]=0;for(int i=1;i<=n;++i)if(S>>i-1&1)w[++w[0]]=i;bool flg=0;
+		for(int i=1;i<=w[0];++i)for(int j=i+1;j<=w[0];++j)if(dis[w[i]][w[j]]>x){flg=1;break;}
+		ans[cnt]+=!flg;
+	}
+	for(int i=1;i<=n;++i)printf("%d ",ans[i]);putchar(10);
+	fclose(stdin);fclose(stdout);return 0;
+}

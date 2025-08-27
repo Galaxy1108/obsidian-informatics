@@ -1,0 +1,64 @@
+#include<bits/stdc++.h>
+using namespace std;
+const int N=5005;
+const int M=2005;
+const int mod=111111111;
+
+namespace io{
+	const int SIZE=(1<<21)+1;
+	char ibuf[SIZE],*iS,*iT,obuf[SIZE],*oS=obuf,*oT=oS+SIZE-1,c,qu[55]; int qr;
+	#define gc() (iS==iT?(iT=(iS=ibuf)+fread(ibuf,1,SIZE,stdin),(iS==iT?EOF:*iS++)):*iS++)
+	inline void flush(){ fwrite(obuf,1,oS-obuf,stdout); oS=obuf; }
+	inline void putc(char x){ *oS++=x; if(oS==oT) flush(); }
+	template <class I>
+	inline void read(I &x){
+		for(c=gc();c<'0'||c>'9';c=gc());
+		for(x=0;c<='9'&&c>='0';c=gc()) x=x*10+(c&15);
+	}
+	template <class I>
+	inline void print(I x){
+		if(!x) putc('0'); if(x<0) putc('-'),x=-x;
+		while(x) qu[++qr]=x%10+'0',x/=10;
+		while(qr) putc(qu[qr--]);
+	}
+}
+using io::read; using io::putc; using io::print;
+
+int m,s,n,a[N],f[2][M][N],sum[N];
+
+int calc(int s){
+	for(int j=0;j<=m;j++)
+		for(int l=0;l<=s;l++)
+			f[0][j][l]=0;
+	f[0][0][0]=1;
+	for(int i=1;i<=n;i++){
+		for(int j=0;j<=m;j++)
+			for(int l=0;l<=s;l++)
+				f[i&1][j][l]=0;
+		for(int j=0;j<=m;j++){
+			for(int l=0;l<=s;l++){
+				if(f[i-1&1][j][l] == 0) continue;
+				for(int k=(m-j);;k=(m-j)&(k-1)){
+					if(l+k*a[i]<=s) f[i&1][j+k][l+k*a[i]] ^= f[i-1&1][j][l];
+					if(k==0) break;
+				}
+			}
+		}
+	}
+	return f[n&1][m][s];
+}
+
+void solve(){
+	read(m); read(s); read(n);
+	for(int i=1;i<=n;i++) read(a[i]);
+	if(s<=5000 && m<=2000 && n<=200) print(calc(s));
+	else print(0);
+	putc('\n');
+}
+
+main(){
+	freopen("give.in","r",stdin); freopen("give.out","w",stdout);
+    int tc; read(tc);
+    while(tc--) solve();
+	io::flush();
+}

@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <algorithm>
+#include <cstring>
+#include <iostream>
+#include <vector>
+using namespace std;
+
+const int NR = 2e4 + 10, LIM = 20000, PRIME = 2300;
+
+int n, P;
+int ans = 0;
+int pcnt = 0, prime[PRIME];
+int pre[PRIME], mi[PRIME], sum[PRIME];
+bool pd[NR];
+vector<int> vec[PRIME];
+
+inline void add(int &a, const int &b) { a += b; a = (a >= P ? a - P : a); }
+inline int aad(const int &a, const int &b) { return (a + b >= P ? a + b - P : a + b); }
+inline void mul(int &a, const int &b) { a = 1ll * a * b % P; }
+inline int mut(const int &a, const int &b) { return 1ll * a * b % P; }
+
+int main()
+{
+#ifdef WYZ
+	freopen("1.in", "r", stdin);
+	freopen("1.out", "w", stdout);
+#else
+	freopen("gonna.in", "r", stdin);
+	freopen("gonna.out", "w", stdout);
+#endif
+	ios::sync_with_stdio(0);
+		
+	for (int i = 2; i <= LIM; i++) {
+		if (!pd[i]) prime[++pcnt] = i;
+		for (int j = 1; j <= pcnt && i * prime[j] <= LIM; j++) {
+			pd[i * prime[j]] = 1;
+			if (!(i % prime[j])) break;
+		}
+	}
+	for (int i = 1; i <= pcnt; i++) mi[i] = 1, vec[i].resize(1), vec[i][0] = 1;
+
+	cin >> n >> P;
+	for (int i = 1; i <= n; i++) {
+		int cur = 1;
+		for (int j = 1; j <= pcnt && prime[j] <= i; j++) {
+			int ci = 0;
+			for (int t = prime[j]; t <= i; t *= prime[j]) ci += i / t;
+			sum[j] += ci;
+			int tmp = (i + 1) * ci - 2 * sum[j];
+			if (vec[j].size() < tmp + 1) vec[j].resize(tmp + 1);
+			while (pre[j] < tmp) mul(mi[j], prime[j]), vec[j][pre[j] + 1] = aad(vec[j][pre[j]], mi[j]), pre[j]++;
+			mul(cur, vec[j][tmp]);
+		}
+		add(ans, cur);
+	}
+	cout << ans << '\n';
+
+	return 0;
+}

@@ -1,0 +1,31 @@
+#include<bits/stdc++.h>
+#define N 2009
+using namespace std;
+bool f[N][N];
+int m,s,n;
+vector<int>a;
+bool solve(){
+	a.clear();
+	cin>>m>>s>>n;
+	while(n--){
+		int x;cin>>x;
+		a.push_back(x);
+	}
+	f[0][0]=1;
+	for(int i=1;i<=m;i++){
+		for(int j=0;j<=s;j++){
+			f[i][j]=0;
+			for(auto k:a){
+				if(j>=k)f[i][j]^=f[i-1][j-k];
+			}
+		}
+	}
+	return f[m][s];
+}
+int main(){
+	freopen("give.in","r",stdin);
+	freopen("give.out","w",stdout);
+	int T;cin>>T;
+	while(T--)cout<<solve()<<endl;
+	return 0;
+}

@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define LOG(FMT...) fprintf(stderr, FMT)
+
+const int N = 22, M = 42;
+
+int task, n, D;
+int h[N], e[M], ne[M], idx;
+int vs[N], *v, ws, bw[N];
+int res[N];
+
+void add(int x, int y) {
+	e[++idx] = y, ne[idx] = h[x], h[x] = idx;
+}
+
+void dfs1(int x, int f, int d) {
+	if (d > D) {
+		return;
+	}
+	*v |= 1 << x;
+	for (int i = h[x]; i; i = ne[i]) {
+		int y = e[i];
+		if (y == f) {
+			continue;
+		}
+		dfs1(y, x, d + 1);
+	}
+}
+
+void dfs(int u, int c) {
+	if (u == n) {
+		++res[c];
+		return;
+	}
+	dfs(u + 1, c);
+	if (ws >> u & 1) {
+		bw[u] = ws;
+		ws &= vs[u];
+		dfs(u + 1, c + 1);
+		ws = bw[u];
+	}
+}
+
+int main() {
+	freopen("youup.in", "r", stdin);
+	freopen("youup.out", "w", stdout);
+	scanf("%d%d%d", &task, &n, &D);
+	for (int i = 1; i < n; ++i) {
+		int x, y;
+		scanf("%d%d", &x, &y);
+		--x, --y;
+		add(x, y), add(y, x);
+	}
+	for (int x = 0; x < n; ++x) {
+		v = vs + x;
+		dfs1(x, -1, 0);
+		// LOG("%d\n", vs[x]);
+	}
+	ws = (1 << n) - 1;
+	dfs(0, 0);
+	for (int k = 1; k <= n; ++k) {
+		printf("%d ", res[k]);
+	}
+	puts("");
+	return 0;
+}

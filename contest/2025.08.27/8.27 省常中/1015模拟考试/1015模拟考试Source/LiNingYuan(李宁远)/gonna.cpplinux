@@ -1,0 +1,60 @@
+#include<bits/stdc++.h>
+#define itn int
+#define ll long long
+using namespace std;
+
+int read(){
+	int a=0, b=0; char c=getchar();
+	while(c<'0'||c>'9')b^=(c=='-'), c=getchar();
+	while(c>='0'&&c<='9')a=a*10+c-48, c=getchar();
+	return b?-a:a;
+}
+
+int cal(int n, int p){
+	int r=0;
+	while(n%p==0)++r,n/=p;
+	return r;
+}
+const int N=20003;
+typedef unsigned ll ull;
+int iv[N];
+ull mod;
+int is[N], p[N], ct, n, s[N];
+void init(){
+	for(int i=2;i<N;i++){
+		if(!is[i])p[ct++]=i;
+		for(int j=0;j<ct&&p[j]*i<N;j++){
+			is[i*p[j]]=1;
+			if(i%p[j]==0)break;
+		}
+	}
+}
+const int M=3e6;
+ll re[N],pw[M],iw[M];
+
+int main(){
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	init();
+	n=read(), mod=read();
+	ll ans=0;
+	for(int i=1;i<=n;i++)re[i]=1;
+	for(int j=0;j<ct;j++){
+		int nz=0, o=0, so=0; pw[0]=iw[0]=1;
+		for(int i=p[j];i<=n;i++){
+			o+=cal(i, p[j]);
+			so+=o;
+			int z=(i+1)*o-2*so;
+			while(nz<z){
+				++nz;
+				pw[nz]=pw[nz-1]*p[j]%mod;
+				iw[nz]=iw[nz-1]+pw[nz];
+				if(iw[nz]>=mod)iw[nz]-=mod;
+			}
+			re[i]=re[i]*iw[z]%mod;
+		}
+	}
+	for(int i=1;i<=n;i++)ans+=re[i];
+	cout<<ans%mod<<'\n';
+	return 0;
+}

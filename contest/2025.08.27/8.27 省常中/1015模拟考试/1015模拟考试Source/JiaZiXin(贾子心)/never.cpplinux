@@ -1,0 +1,33 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long 
+ll n,s,t,x,y;
+int main() {
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	int T;cin>>T;
+	while(T--){
+		cin>>n>>s>>t>>x>>y;
+		int cnt=0;
+		while(cnt<n){
+			if(s<t){
+				ll tmp=(ll)ceil(1.0*(t-s)/y);
+				if(cnt+tmp>n){
+					s+=y*(n-cnt);
+					cnt=n;break;
+				}
+				cnt+=tmp;s+=tmp*y;
+			}
+			else{
+				ll tmp=(ll)ceil(1.0*(s-t+1)/x);
+				if(cnt+tmp>n){
+					s-=x*(n-cnt);
+					cnt=n;break;
+				}
+				cnt+=tmp;s-=tmp*x;
+			}
+		}
+		cout<<s<<'\n';
+	}
+	return 0;
+}

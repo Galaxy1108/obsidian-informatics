@@ -1,0 +1,23 @@
+#include<bits/stdc++.h>
+#define int long long
+#define int128 __int128 
+using namespace std;
+int T;
+int n,s,t,x,y;
+int128 ans,tmp;
+signed main(){
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	cin>>T;
+	while(T--){
+		cin>>n>>s>>t>>x>>y;t--;
+		ans=n;ans*=y;ans+=s;
+		if(ans>t+y){
+			tmp=(ans-(t+y))/(x+y);
+			ans=ans-tmp*(x+y);
+			while(ans>t+y)ans-=(x+y);
+		}
+		cout<<(long long)ans<<endl;
+	}
+	return 0;
+}

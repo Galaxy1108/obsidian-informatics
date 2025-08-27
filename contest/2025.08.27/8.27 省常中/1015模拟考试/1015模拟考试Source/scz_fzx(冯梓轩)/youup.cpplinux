@@ -1,0 +1,63 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define mod 998244353
+inline int read(){
+	int x=0;char ch=' ';
+	while(!isdigit(ch))ch=getchar();
+	while(isdigit(ch))x=(x<<1)+(x<<3)+(ch^48),ch=getchar();
+	return x;
+}
+inline void write(ll x){
+	if(x>9)write(x/10);
+	putchar(x%10|48);
+}
+inline void writeln(ll x,char ch){
+	write(x),putchar(ch);
+}
+const int N=3e5+10;
+vector<int> edge[N];
+ll ans[N],d[25][25],p,a[25],g,n,m;
+void dfs(int dep,int u,int fa){
+	d[p][u]=dep;
+	for(int i=0;i<edge[u].size();++i){
+		int v=edge[u][i];
+		if(v==fa)continue;
+		dfs(dep+1,v,u);
+	}
+}
+bool ck(){
+	for(int i=1;i<=g;++i){
+		for(int j=i+1;j<=g;++j)if(d[a[i]][a[j]]>m)return 0;
+	}
+	return 1;
+}
+int main(){
+	freopen("youup.in","r",stdin);
+	freopen("youup.out","w",stdout);
+	int num=read();
+	n=read(),m=read();
+	for(int i=1;i<n;++i){
+		int u=read(),v=read();
+		edge[u].push_back(v);
+		edge[v].push_back(u);
+	}
+	if(num==1){
+		for(int i=1;i<=n;++i)writeln(i==1?n:0,i==n?'\n':' ');
+		return 0;
+	}
+	if(num==2){
+		for(int i=1;i<=n;++i){
+			p=i;
+			dfs(0,i,0);
+		}
+		for(int i=0;i<(1<<n);++i){
+			g=0;
+			for(int j=0;j<n;++j)if((i>>j)&1)a[++g]=j+1;
+			if(ck())++ans[g];
+		}
+		for(int i=1;i<=n;++i)writeln(ans[i],i==n?'\n':' ');
+		return 0;
+	}
+	return 0;
+} 

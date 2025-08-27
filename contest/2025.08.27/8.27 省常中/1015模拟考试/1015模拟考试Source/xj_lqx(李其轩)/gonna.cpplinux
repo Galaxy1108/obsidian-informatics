@@ -1,0 +1,38 @@
+#include <bits/stdc++.h>
+#define sz(a) int((a).size())
+#define FOR(i, l, r) for(int i = (l); i <= (r); i++)
+#define ROF(i, r, l) for(int i = (r); i >= (l); i--)
+#define ll long long
+#define vi vector<int>
+using namespace std;
+const int N = 2e4 + 10, M = 2.2e5;
+int n, P, p1[M];
+ll pop[N], sump[N];
+int ans[N], ppw[N];
+int main() {
+    freopen("gonna.in", "r", stdin);
+    freopen("gonna.out", "w", stdout);
+    ios :: sync_with_stdio(0), cin.tie(0), cout.tie(0);
+    cin >> n >> P;
+    FOR(i, 1, n) ans[i] = 1;
+    ll mx = 0;
+    FOR(i, 2, n) {
+        int isp = 1;
+        for(int j = 2; j * j <= i; j++) if(i % j == 0) isp = 0;
+        if(!isp) continue;
+        int up = 0;
+        FOR(j, 1, n) {
+            pop[j] = pop[j / i] + j % i, sump[j] = sump[j - 1] + pop[j];
+            ppw[j] = (sump[j] * 2 - pop[j] * (j + 1)) / (i - 1) + 1;
+            up = max(up, ppw[j]);
+        }
+        p1[0] = 0;
+        FOR(j, 1, up) p1[j] = ((ll)p1[j - 1] * i + 1) % P;
+        FOR(j, 1, n) {
+            ans[j] = (ll)ans[j] * p1[ppw[j]] % P;
+        }
+    }
+    int sum = 0;
+    FOR(i, 1, n) (sum += ans[i]) %= P;
+    cout << sum << "\n";
+}

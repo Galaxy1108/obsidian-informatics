@@ -1,0 +1,58 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long
+inline ll read(){
+	ll x=0;char ch=' ';
+	while(!isdigit(ch))ch=getchar();
+	while(isdigit(ch))x=(x<<1)+(x<<3)+(ch^48),ch=getchar();
+	return x;
+}
+inline void write(ll x){
+	if(x>9)write(x/10);
+	putchar(x%10|48);
+}
+inline void writeln(ll x){
+	if(x<0)putchar('-'),x=-x;
+	write(x),putchar('\n');
+}
+ll n,s,t,x,y;
+void work(){
+	n=read(),s=read(),t=read(),x=read(),y=read();
+	if(n<=1e6){
+		for(int i=1;i<=n;++i){
+			if(s<t)s+=y;
+			else s-=x;
+		}
+		writeln(s);
+		return;
+	}
+	if(s<t-x){
+		ll d=ceil((long double)(t-x-s)/n);
+		if(n<=d){
+			writeln(s+n*y);
+			return;
+		}
+		n-=d;
+		s+=d*y;
+	}
+	if(s>=t+y-1){
+		ll d=ceil((long double)(s-(t+y-1))/n);
+		if(n<=d){
+			writeln(s-n*x);
+			return;
+		}
+		n-=d;
+		s-=d*x;
+	}
+	if(n){
+		ll tmp=(s-(t-x)+y*n)%(x+y)+t-x;
+		writeln(tmp);
+	}
+}
+int main(){
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	int t=read();
+	while(t--)work();
+	return 0;
+} 

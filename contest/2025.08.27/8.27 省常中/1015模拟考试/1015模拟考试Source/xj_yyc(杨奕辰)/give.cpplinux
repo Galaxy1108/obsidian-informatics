@@ -1,0 +1,45 @@
+#include<cstdio>
+#include<cctype>
+inline int read(){
+	int ans(0), sign(1);
+	char ch = getchar();
+	while(!isdigit(ch)){
+		if(ch == '-') sign = -1;
+		ch = getchar();
+	}
+	while(isdigit(ch)){
+		ans *= 10;
+		ans += ch - '0';
+		ch = getchar();
+	}
+	return ans * sign;
+}
+int T, m, s, n, a[201], ans;
+void dfs(int now, int sum){
+	if(sum > s) return;
+	if(now > m){
+		if(sum == s){
+			ans ^= 1;
+		}
+		return;
+	}
+	for(int i = 1; i <= n; i++){
+		dfs(now + 1, sum + a[i]);
+	}
+}
+int main(){
+	freopen("give.in", "r", stdin);
+	freopen("give.out", "w", stdout);
+	T = read();
+	while(T--){
+		ans = 0;
+		m = read(), s = read(), n = read();
+		for(int i = 1; i <= n; i++){
+			a[i] = read();
+		}
+		dfs(1, 0);
+		putchar(ans + '0');
+		putchar(10);
+	}
+	return 0;
+}

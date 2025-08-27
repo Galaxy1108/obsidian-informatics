@@ -1,0 +1,85 @@
+#include <bits/stdc++.h>
+using namespace std;
+const int kN = 100, kP = 6e4;
+using LL = long long;
+const LL mod = 998244353;
+int n, id, x, used[kN], dis[kN][kN];
+LL ans[kP], fac[kP], ifac[kP];
+
+void dfs(int u, int sum)
+{
+  if (u > n) return;
+  dfs(u + 1, sum);
+  used[++sum] = u;
+  dfs(u + 1, sum);
+  for (int i = 1; i <= sum; i++)
+    for (int j = i + 1; j <= sum; j++)
+      if (dis[used[i]][used[j]] > x) 
+        return;
+  ans[sum]++;
+}
+
+LL qpow(LL x, LL k)
+{
+  LL res = 1;
+  for (; k; k >>= 1) {
+    if (k & 1) res = res * x % mod;
+    x = x * x % mod;
+  }
+  return res;
+}
+
+LL C(LL n, LL m)
+{
+  return fac[n] * ifac[m] % mod * ifac[n - m] % mod;
+}
+
+int main()
+{
+  freopen("youup.in", "r", stdin);
+  freopen("youup.out", "w", stdout);
+  scanf("%d %d %d", &id, &n, &x);
+  if (id == 1) {
+    printf("%d ", n);
+    for (int i = 1; i <= n - 1; i++)
+      printf("0 ");
+    return 0;
+  }
+  if (id == 2 || n <= 23) {
+    memset(dis, 0x3f, sizeof dis);
+    for (int i = 1; i <= n; i++)
+      dis[i][i] = 0;
+    for (int i = 1, u, v; i <= n - 1; i++) {
+      scanf("%d %d", &u, &v);
+      dis[u][v] = dis[v][u] = 1;
+    }
+    for (int k = 1; k <= n; k++)
+      for (int i = 1; i <= n; i++)
+        for (int j = 1; j <= n; j++)
+          dis[i][j] = min(dis[i][j], dis[i][k] + dis[k][j]);
+    dfs(1, 0);
+    for (int i = 1; i <= n; i++)
+      printf("%lld ", ans[i] % mod);
+    return 0;
+  }
+  if (id == 5) {
+    fac[0] = 1;
+    for (int i = 1; i <= x; i++) 
+      fac[i] = fac[i - 1] * i % mod;
+    ifac[x] = qpow(fac[x], mod - 2);
+    for (int i = x - 1; i >= 0; i--)  
+      ifac[i] = ifac[i + 1] * (i + 1) % mod;
+
+    for (int i = 1; i <= x + 1; i++) {
+      LL ans = (n - x) * C(x, i - 1) % mod;
+      for (int j = n - x + 1; j <= n - i + 1; j++)
+        ans += C(n - j, i - 1);
+      printf("%lld ", ans % mod);
+    }
+    for (int i = x + 2; i <= n; i++)
+      printf("0 ");
+    return 0;
+  }
+  return 0;
+}
+

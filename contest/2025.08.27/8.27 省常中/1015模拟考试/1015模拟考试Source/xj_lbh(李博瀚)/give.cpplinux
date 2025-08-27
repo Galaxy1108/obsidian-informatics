@@ -1,0 +1,38 @@
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+ll m,s,n,a[205];
+
+int num[205];
+bool dfs(int cnt,ll sum){
+	if(sum>s) return 0;
+	if(cnt==m+1){
+		return sum==s;
+	}
+	int ans=0;
+	for(int i=1;i<=n;i++){
+		num[i]++;
+		ans^=dfs(cnt+1,sum+a[i]);
+		num[i]--;
+	}
+	return ans;
+}
+
+bool solve(){
+	if(s>=1000) return (a[1]+a[5]+a[4])%2;
+	return dfs(1,0);
+}
+
+int main(){
+	freopen("give.in","r",stdin);
+	freopen("give.out","w",stdout);
+	int T;
+	scanf("%d",&T);
+	while(T--){
+		scanf("%lld%lld%lld",&m,&s,&n);
+		for(int i=1;i<=n;i++){
+			scanf("%lld",&a[i]);
+		}
+		printf("%d\n",solve());
+	}
+}

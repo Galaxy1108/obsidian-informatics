@@ -1,0 +1,90 @@
+#include<stdio.h>
+#include<algorithm>
+#include<math.h>
+#include<string.h>
+using namespace std;
+
+typedef long long ll;
+const int N=1e5+86;
+
+ll n,s,t,x,y,num,T;
+bool f;
+
+template<typename T>
+inline void read(T &x)
+{
+	T k=1;char ch=getchar();x=0;
+	while(ch<'0'||ch>'9'){if(ch=='-') k=-1;ch=getchar();}
+	while(ch>='0'&&ch<='9')x=(x<<1)+(x<<3)+ch-'0',ch=getchar();
+	x*=k;
+}
+
+int main()
+{
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	read(T);
+	while(T--)
+	{
+		read(n);
+		read(s);
+		read(t);
+		read(x);
+		read(y);
+		num=0;
+		if(s>=t)
+		{
+			if((s-t)/x+1>=n)
+			{
+				printf("%lld\n",s-n*x);
+				continue;
+			}
+			else num=(s-t)/x+1,s=t-(s-num*x),f=0;
+			if(x==y)
+			{
+				int k=(n-num)%2;
+				if(k) printf("%lld\n",t-s+x);
+				else printf("%lld\n",t-s);
+				continue;
+			}
+		}
+		else
+		{
+			if((t-s-1)/y+1>=n)
+			{
+				printf("%lld\n",s+n*y);
+				continue;
+			}
+			else num=(t-s-1)/y+1,s=(s+num*y-t),f=1;
+			if(x==y)
+			{
+				int k=(n-num)%2;
+				if(k) printf("%lld\n",t+s-x);
+				else printf("%lld\n",t+s);
+				continue;
+			}
+		}
+		while(num<n)
+		{
+			if(f)
+			{
+				if(num+s/x+1>=n)
+				{
+					printf("%lld\n",t+s-(n-num)*x);
+					break;
+				}
+				else num+=s/x+1,s=-(s-(s/x+1)*x),f=0;
+			}
+			else
+			{
+				if(num+(s-1)/y+1>=n)
+				{
+					printf("%lld\n",t-s+(n-num)*y);
+					break;
+				}
+				else num+=(s-1)/y+1,s=(-s+((s-1)/y+1)*y),f=1;
+			}
+		}
+	}
+	return 0;
+}

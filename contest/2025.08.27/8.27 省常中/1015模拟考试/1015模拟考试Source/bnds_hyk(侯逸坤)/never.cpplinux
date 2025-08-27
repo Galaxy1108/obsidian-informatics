@@ -1,0 +1,44 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+int GCD(int x,int y){
+	if(x==0||y==0) return x+y;
+	return GCD(y,x%y);
+}
+signed main(){
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	int T,n,s,t,x,y,dir;
+	cin>>T;
+	while(T--){
+		scanf("%lld%lld%lld%lld%lld",&n,&s,&t,&x,&y);
+		int gcd=GCD(x,y);
+		cerr<<gcd<<endl;
+		if(n<=100000000){
+			while(n--){
+				if(s>=t) s-=x;
+				else s+=y;
+			}
+			printf("%lld\n",s);
+			continue;
+		}
+		if(s>t){
+			int d=s-t,times=d/x;
+			if(times>=n){
+				printf("%lld\n",s-n*x);
+			}
+			else s-=times*x,n-=times;
+			printf("%lld\n",s-(n%2)*x);
+		}
+		else{
+			int d=t-s,times=d/x;
+			if(d%x==0) times--;
+			if(times>=n){
+				printf("%lld\n",s+n*x);
+			}
+			else s+=times*x,n-=times;
+			printf("%lld\n",s+(n%2)*x);
+		}
+	}
+	return 0;
+}

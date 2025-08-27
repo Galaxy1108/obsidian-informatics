@@ -1,0 +1,111 @@
+//我是废物，我爱贺题！！！
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define f(i,x,y,z) for(long long i=x;i<=y;i+=z)
+#define fd(i,x,y,z) for(long long i=x;i>=y;i-=z)
+ll n,mod;
+ll ans=0;
+ll mx=0;
+ll tp=0;
+ll pr[20005];
+ll cnm[20005];
+ll sm[20005];
+ll gt[20005];
+ll tg[20005];
+vector<ll> v[20005],u[20005];
+void pri(){
+	f(i,2,20000,1){
+		if(!tg[i]){
+			tg[i]=i;
+			pr[++tp]=i;
+			cnm[i]=tp;
+		}
+		f(j,1,tp,1){
+			if(pr[j]*i>20000){
+				break;
+			}
+			tg[i*pr[j]]=pr[j];
+			if(i%pr[j]==0){
+				break;
+			}
+		}
+	}
+}
+ll qpow(ll x,ll y){
+	ll tot=1;
+	while(y){
+		if(y&1){
+			tot=tot*x;
+			tot%=mod;
+		}
+		x=x*x;
+		x%=mod;
+		y>>=1;
+	}
+	return tot;
+}
+int main(){
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	mod=1;
+	scanf("%lld%lld",&n,&mod);
+	pri();
+	f(i,2,n,1){
+		ll _=i;
+		f(j,1,tp,1){
+			if(pr[j]*pr[j]>_){
+				break;
+			}
+			else{
+				if(_%pr[j]==0){
+					ll ttt=0;
+					v[i].push_back(j);
+					while(_%pr[j]==0){
+						_/=pr[j];
+						ttt++;
+					}
+					u[i].push_back(ttt);
+				}
+			}
+		}
+		if(_>1){
+			v[i].push_back(cnm[_]);
+			u[i].push_back(1);
+		}
+	}
+	ans=1;
+	f(i,2,n,1){
+		for(ll j=0;j<v[i].size();j++){
+			ll yyy=v[i][j];
+			mx=max(mx,yyy);
+			sm[yyy]+=u[i][j];
+			gt[yyy]+=u[i][j]*i;
+		}
+		f(j,1,mx,1){
+			gt[j]-=sm[j];
+		}
+		ll sum=0;
+		ll ad=0;
+		fd(j,mx,1,1){
+			if(gt[j]){
+				ll woc=(qpow(pr[j],gt[j]+1)-pr[j])%mod*qpow(pr[j]-1,mod-2)%mod;
+				ad+=(sum+1)*woc;
+				ans+=(sum+1)*woc;
+				sum=ad;
+				sum%=mod;
+				ans%=mod;
+				ad%=mod;
+			}
+		}
+		ans++;
+		//printf("%lld\n",ans);
+	}
+	printf("%lld\n",(ans%mod+mod)%mod);
+	// f(i,1,n,1){
+		// for(ll j=0;j<v[i].size();j++){
+			// printf("%lld %lld\n",v[i][j],u[i][j]);
+		// }
+	// }
+	return 0;
+}

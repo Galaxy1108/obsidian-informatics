@@ -1,0 +1,66 @@
+#include<cstdio>
+#include<vector>
+#define fo(i,x,y) for(int i = x;i <= y;++i)
+#define ll long long
+#define u128 __uint128_t
+#define pb push_back
+using namespace std;
+int n,p,pm[2310],a[2310],b[2310],dn[10][2];
+bool bz[20010];
+struct fastmod{
+	ll b,m;
+	void init(int p) {b = p,m = (u128(1) << 64) / p;}
+	int operator ()(ll x)
+	{
+		ll res = x - (u128(x) * m >> 64) * b;
+		if(res >= b) res -= b;
+		return res;
+	}
+}FM;
+void inc(int &x,int y) {x = (x + y >= p ? x + y - p : x + y);}
+vector<int> P[2310];
+int sz[2310];
+int main()
+{
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	scanf("%d%d",&n,&p);
+	fo(i,2,n)
+	{
+		if(bz[i] == 0) pm[++pm[0]] = i;
+		fo(j,1,pm[0])
+		{
+			if(i * pm[j] > n) break;
+			bz[i * pm[j]] = 1;
+			if(i % pm[j] == 0) break;
+		}
+	}
+	int ans = 1,l = 0;
+	FM.init(p);
+	fo(i,2,n)
+	{
+		if(i == pm[l + 1]) ++l,P[l].pb(1),P[l].pb(i + 1),sz[l] = 1;
+		int x = i,tp = 0;
+		fo(j,1,l)
+		{
+			if(x % pm[j]) continue;
+			dn[++tp][0] = j,dn[tp][1] = 0;
+			while(x % pm[j] == 0) ++dn[tp][1],x /= pm[j];
+		}
+		fo(j,1,tp) a[dn[j][0]] += dn[j][1] * i,b[dn[j][0]] += dn[j][1];
+		fo(j,1,l)
+		{
+			a[j] -= b[j];
+			while(sz[j] < a[j])
+			{
+				int v = FM(P[j][sz[j]] + 1ll * (P[j][sz[j]] - P[j][sz[j] - 1] + p) * pm[j]);
+				P[j].push_back(v),++sz[j];
+			}
+		}
+		int an = 1;
+		fo(j,1,l) an = FM(1ll * an * P[j][a[j]]);
+		inc(ans,an);
+	}
+	printf("%d\n",ans);
+	return 0;
+}

@@ -1,0 +1,40 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+using ll = long long;
+
+const __int128 inf = 1e18 + 100;
+
+__int128 solve(__int128 n,__int128 s,__int128 t,__int128 x,__int128 y){
+  if (t) return t + solve(n, s - t, 0, x, y);
+  if (y > x) return -solve(n, -s, 1, y, x);
+  if (!n) return s;
+  if (s + y < 0) {
+    __int128 tmp = (-s - 1) / y;
+    if (n < tmp) return s + y * n;
+    return solve(n - tmp, s + y * tmp, t, x, y);
+  }
+  if (s >= 0) {
+    __int128 tmp = s / x + 1;
+    if (n < tmp) return s - x * n;
+    return solve(n - tmp, s - x * tmp, t, x, y);
+  }
+  __int128 l = 1, r = inf, res = 0, resVal = 0;
+  while (l <= r) {
+    __int128 mid = (l + r) >> 1, midVal = (mid * y + s) / x + mid + 1;
+    if (midVal <= n) res = mid, resVal = midVal, l = mid + 1;
+    else r = mid - 1;
+  }
+  return n == resVal ? solve(n - res, s + res * y, t, x, y) : solve(n - res - 1, s + (res + 1) * y, t, x, y);
+}
+
+int main() {
+  freopen("never.in", "r", stdin), freopen("never.out", "w", stdout);
+  int T;
+  for (scanf("%d", &T); T; --T) {
+    ll n, s, t, x, y;
+    scanf("%lld%lld%lld%lld%lld", &n, &s, &t, &x, &y);
+    printf("%lld\n", (ll)solve(n, s, t, x, y));
+  }
+}

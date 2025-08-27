@@ -1,0 +1,94 @@
+#include<bits/stdc++.h>
+#define int long long
+using namespace std;
+int cnt[52],tmp,mod,ans,n;
+int qpow(int x,int p){
+	if(!p)return  1;
+	if(p&1)return x*qpow(x,p^1)%mod;
+	return tmp=qpow(x,p>>1),tmp*tmp%mod;
+}
+void read(int &x){
+	x=0;char c=getchar();
+	int w=0;
+	while(!isdigit(c)){
+		(c=='-')&&(w=1);
+		c=getchar();
+	}
+	while(isdigit(c)){
+		x=x*10+(c^48);
+		c=getchar();
+	}
+	w&&(x=-x);
+}
+signed main(){
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	read(n);
+	read(mod);
+	for(int x=1;x<=n;x++){
+		memset(cnt,0,sizeof cnt);
+		for(int j=1,now=1-x;j<=x;j++,now+=2){
+			switch(j){
+				case 2:cnt[2]+=now;break;
+				case 3:cnt[3]+=now;break;
+				case 4:cnt[2]+=2*now;break;
+				case 5:cnt[5]+=now;break;
+				case 6:cnt[2]+=now;cnt[3]+=now;break;
+				case 7:cnt[7]+=now;break;
+				case 8:cnt[2]+=3*now;break;
+				case 9:cnt[3]+=2*now;break;
+				case 10:cnt[2]+=now,cnt[5]+=now;break;
+				case 11:cnt[11]+=now;break;
+				case 12:cnt[2]+=2*now,cnt[3]+=now;break;
+				case 13:cnt[13]+=now;break;
+				case 14:cnt[2]+=now;cnt[7]+=now;break;
+				case 15:cnt[5]+=now;cnt[3]+=now;break;
+				case 16:cnt[2]+=4*now;break;
+				case 17:cnt[17]+=now;break;
+				case 18:cnt[2]+=now;cnt[3]+=2*now;break;
+				case 19:cnt[19]+=now;break;
+				case 20:cnt[2]+=2*now;cnt[5]+=now;break;
+				case 21:cnt[3]+=now;cnt[7]+=now;break;
+				case 22:cnt[2]+=now;cnt[11]+=now;break;
+				case 23:cnt[23]+=now;break;
+				case 24:cnt[2]+=3*now;cnt[3]+=now;break;
+				case 25:cnt[5]+=2*now;break;
+				case 26:cnt[2]+=now;cnt[13]+=now;break;
+				case 27:cnt[3]+=3*now;break;
+				case 28:cnt[2]+=2*now;cnt[7]+=now;break;
+				case 29:cnt[29]+=now;break;
+				case 30:cnt[3]+=now;cnt[5]+=now;cnt[2]+=now;break;
+				case 31:cnt[31]+=now;break;
+				case 32:cnt[2]+=5*now;break;
+				case 33:cnt[3]+=now;cnt[11]+=now;break;
+				case 34:cnt[2]+=now;cnt[17]+=now;break;
+				case 35:cnt[5]+=now;cnt[7]+=now;break;
+				case 36:cnt[2]+=2*now;cnt[3]+=2*now;break;
+				case 37:cnt[37]+=now;break;
+				case 38:cnt[2]+=now;cnt[19]+=now;break;
+				case 39:cnt[3]+=now;cnt[13]+=now;break;
+				case 40:cnt[2]+=3*now;cnt[5]+=now;break;
+				case 41:cnt[41]+=now;break;
+				case 42:cnt[3]+=now;cnt[2]+=now;cnt[7]+=now;break;
+				case 43:cnt[43]+=now;break;
+				case 44:cnt[2]+=2*now;cnt[11]+=now;break;
+				case 45:cnt[3]+=2*now;cnt[5]+=now;break;
+				case 46:cnt[2]+=now;cnt[23]+=now;break;
+				case 47:cnt[47]+=now;break;
+				case 48:cnt[2]+=4*now;cnt[3]+=now;break;
+				case 49:cnt[7]+=2*now;break;
+				case 50:cnt[5]+=2*now;cnt[2]+=now;break;
+			}
+		}
+		int ttp=1;
+		for(int i=1;i<=50;i++){
+			int tmp=0;
+			for(int j=0;j<=cnt[i];j++){
+				tmp=(tmp+qpow(i,j))%mod;
+			}
+			ttp=ttp*tmp%mod;
+		}
+		ans=(ans+ttp)%mod;
+	}
+	cout<<ans%mod;
+}

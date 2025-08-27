@@ -1,0 +1,44 @@
+#include<bits/stdc++.h>
+using namespace std;
+int T;
+long long n,s,t,x,y;
+long long cs,l,r;
+int main(){
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	cin>>T;
+	while(T--){
+		cin>>n>>s>>t>>x>>y;
+		l=0,r=0;
+		while(n){
+			if(s>=t){
+				cs=s-t+x;
+				cs/=x;
+				if(cs<=n){
+					s-=cs*x;
+					n-=cs;
+					l+=cs;
+				}else{
+					s-=n*x;
+					l+=n;
+					n=0;
+				}
+			}else{
+				cs=t-s+y-1;
+				cs/=y;
+				if(cs<=n){
+					s+=cs*y;
+					n-=cs;
+					r+=cs;
+				}else{
+					s+=n*y;
+					r+=n;
+					n=0;
+				}
+			}
+		}
+		cout<<s<<'\n';
+	}
+	
+	return 0;
+}

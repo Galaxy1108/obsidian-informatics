@@ -1,0 +1,92 @@
+#include<bits/stdc++.h>
+#define fo(i,a,b) for(int i=a;i<=b;++i)
+#define fd(i,a,b) for(int i=a;i>=b;--i)
+using namespace std;
+typedef long long ll;
+const int N=2300, M=5e7;
+int cnt,pri[N],n,mod,d[N],f[N],ans,f1[N],mx[N],val[N];
+int g[M],cnt1,l[N],qpow[M];
+bool bz[20010];
+void init(int n){
+	bz[1]=1;
+	fo(i,2,n){
+		if(!bz[i])pri[++cnt]=i;
+		for(int j=1;j<=cnt && i*pri[j]<=n;++j){
+			bz[i*pri[j]]=1;
+			if(!(i%pri[j]))break;
+		}
+	}
+}
+inline int add(int a,int b){return a+b>=mod?a+b-mod:a+b;}
+int power2(ll x,int n){
+	++n;
+	ll a=1,v=0,v1=1;
+	while(n){
+		if(n&1){
+			v=(a*v1 + v) % mod;
+			a=a*x%mod;
+		}
+		v1=v1*(x+1)%mod;
+		x=x*x%mod;
+		n>>=1;
+	}
+	return v;
+}
+int main(){
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	scanf("%d%d",&n,&mod);
+	init(n);
+	int Max=0;ans=1;
+	fo(i,2,n){
+		for(int x=i,j=1;j<=cnt && pri[j]<=x;++j)if(!(x%pri[j])){
+			int c=0;
+			for(;!(x%pri[j]);x/=pri[j])++c;
+			d[j]+=c;f[j]+=c*i;
+		}
+		// int calc=1;
+		for(int j=1;j<=cnt && pri[j]<=i;++j){
+			f[j]-=d[j];
+			// calc=(ll)calc * power2(pri[j],f[j]) % mod;
+			mx[j]=max(mx[j],f[j]);
+			// Max=max(Max,f[j]);
+			// f1[j]=f[j];
+		}
+		// ans=add(ans , calc);
+		// if(!(i%100))printf("%d\n",i);
+	}
+	// printf("%d\n",ans);
+	// printf("%d\n",Max);
+	// int sum=0;
+	// fo(i,1,cnt)printf("%d ",mx[i]),sum+=mx[i];
+	// printf("\n");
+	// printf("%d\n",sum);
+	fo(i,1,cnt)f[i]=f1[i]=d[i]=0;
+	ans=1;
+	fo(i,1,cnt){
+		int v=1,v1=1;
+		l[i]=cnt1;
+		fo(j,1,mx[i]){
+			v1=(ll)v1*pri[i]%mod;
+			g[++cnt1]=v=add(v,v1);
+			qpow[cnt1]=v1;
+		}
+		val[i]=1;
+	}
+	fo(i,2,n){
+		for(int x=i,j=1;j<=cnt && pri[j]<=x;++j)if(!(x%pri[j])){
+			int c=0;
+			for(;!(x%pri[j]);x/=pri[j])++c;
+			d[j]+=c;f[j]+=c*i;
+		}
+		int calc=1;
+		for(int j=1;j<=cnt && pri[j]<=i;++j){
+			f[j]-=d[j];
+			if(f[j])calc=(ll)calc * g[l[j]+f[j]] % mod;
+		}
+		ans=add(ans ,calc);
+	}
+	printf("%d\n",ans);
+
+	return 0;
+}

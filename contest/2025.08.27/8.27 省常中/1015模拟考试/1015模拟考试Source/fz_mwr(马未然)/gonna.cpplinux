@@ -1,0 +1,49 @@
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#define ll long long
+using namespace std;
+int n,mod;
+int f[100005],sf[100005],val[100005];
+int Qpow(int a,int p){
+	if (p==0)return 1;
+	int t=Qpow(a,p/2);
+	t=1ll*t*t%mod;
+	if (p&1)t=1ll*t*a%mod;
+	return t;
+}
+bool isp(int x){
+	if (x==0||x==1)return 0;
+	for (int i=2;i*i<=x;i++)
+		if (x%i==0)return 0;
+	return 1;
+}
+int s[250005];
+int main(){
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	cin>>n>>mod;
+	for (int i=1;i<=n;i++)val[i]=1;
+	for (int i=1;i<=n;i++){
+		if (!isp(i))continue;
+		memset(f,0,sizeof(f));
+		int lim=250000;
+		if (i>200)lim=20000;
+		s[0]=1;
+		int t=1;
+		for (int j=1;j<=lim;j++){
+			t=1ll*t*i%mod;
+			s[j]=s[j-1]+t;
+			if (s[j]>=mod)s[j]-=mod;
+		}
+		for (int j=i;j<=n;j++)f[j]=j/i+f[j/i];
+		for (int j=1;j<=n;j++){
+			sf[j]=sf[j-1]+f[j];
+			val[j]=1ll*val[j]*s[(j+1)*f[j]-2*sf[j]]%mod;
+		}
+	}
+	int ans=0;
+	for (int i=1;i<=n;i++)ans=(ans+val[i])%mod;
+	cout<<ans<<endl;
+	return 0;
+}

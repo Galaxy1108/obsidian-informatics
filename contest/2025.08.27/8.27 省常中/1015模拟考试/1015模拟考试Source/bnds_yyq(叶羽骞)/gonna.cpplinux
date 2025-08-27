@@ -1,0 +1,27 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+#define int long long
+int n,p,fac[8] = {1,1,2,6,24,120,720,5040};
+
+int G( int x ){
+	int u = 1,sum = 0;
+	for( int i = 0 ; i <= x ; i ++ )
+		u *= fac[x] / ( fac[i] * fac[x - i] );
+	for( int i = 1 ; i <= sqrt(u) ; i ++ )
+		if( u % i == 0 ) sum = sum + ( ( i == u / i ) ? i : i + u / i ) % p;
+	return sum;
+}
+
+signed main(){
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	scanf("%lld%lld",&n,&p);
+	int ans = 0;
+	for( int i = 1 ; i <= n ; i ++ )
+		ans = ( ans + G(i) ) % p;
+	printf("%lld\n",ans);
+	fclose(stdin);
+	fclose(stdout);
+	return 0;
+}

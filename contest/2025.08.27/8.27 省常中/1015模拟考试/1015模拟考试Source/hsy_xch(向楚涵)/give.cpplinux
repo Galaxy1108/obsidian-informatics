@@ -1,0 +1,27 @@
+#include<bits/stdc++.h>
+using namespace std;
+int T,m,s,n,a[205],b[2005],ans,cnt;
+void dfs(int x){
+	if(x==m+1){
+		ans=0;
+		for(int i(1);i<=m;++i)ans+=b[i];
+		cnt+=(ans==s?1:0);
+		return;
+	}
+	for(int i(1);i<=n;++i){
+		b[x]=a[i];
+		dfs(x+1);
+	}
+}
+int main(){
+	freopen("give.in","r",stdin);
+	freopen("give.out","w",stdout);
+	scanf("%d",&T);
+	while(T--){
+		scanf("%d%d%d",&m,&s,&n);
+		for(int i(1);i<=n;++i)scanf("%d",a+i);
+		dfs(1);
+		printf("%d\n",cnt%2);
+	}
+	return 0;
+}

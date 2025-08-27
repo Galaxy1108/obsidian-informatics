@@ -1,0 +1,51 @@
+#include <cstdio>
+#include <vector>
+#include <iostream>
+#define LL long long
+using namespace std;
+template <typename T>
+inline void read(T &x) {
+	x = 0; int f = 0; char ch = getchar();
+	for(; !isdigit(ch); ch = getchar()) if(ch == '-') f = 1;
+	for(; isdigit(ch); ch = getchar()) x = (x << 3) + (x << 1) + (ch ^ 48);
+	if(f) x = ~x + 1;
+}
+const int N = 24;
+int num, n, x;
+int dep[N], low[N], ans[N], a[N];
+vector<int> G[N];
+void dfs1(int u, int fa) {for(auto v : G[u]) if(v != fa) dep[v] = dep[u] + 1, dfs1(v, u);}
+bool check(int u, int fa) {
+	if(a[u] == 1) low[u] = dep[u];
+	else low[u] = 0;
+	for(auto v : G[u]) {
+		if(v == fa) continue;
+		if(!check(v, u)) return false;
+		if(low[u] && low[u] + low[v] - 2 * dep[u] > x) return false;
+		low[u] = max(low[u], low[v]);
+	}
+	return true;
+}
+void dfs(int k, int c) {
+	if(k > n) {
+		if(check(1, 0)) {
+			++ans[c];
+		}
+		return ;
+	}
+	dfs(k + 1, c), a[k] = 1, dfs(k + 1, c + 1), a[k] = 0;
+}
+int main() {
+	freopen("youup.in","r",stdin);
+	freopen("youup.out","w",stdout);
+	read(num);
+	read(n), read(x);
+	for(int i = 1, u, v; i < n; ++i) {
+		read(u), read(v);
+		G[u].emplace_back(v), G[v].emplace_back(u);
+	}
+	dep[1] = 1;
+	dfs1(1, 0);
+	dfs(1, 0);
+	for(int i = 1; i <= n; ++i) printf("%d ",ans[i]);
+}

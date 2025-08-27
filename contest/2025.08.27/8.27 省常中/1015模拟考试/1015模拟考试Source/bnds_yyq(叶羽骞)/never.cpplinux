@@ -1,0 +1,55 @@
+//[T-X,T+Y-1]
+//[1,X+Y-1]
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+
+int testcase;
+int N,S,T,X,Y;
+int vis[3005] = {0};
+
+void solve(){
+	memset( vis , 0 , sizeof( vis ) );
+	scanf("%lld%lld%lld%lld%lld",&N,&S,&T,&X,&Y);
+	int Zx = 0,st = 0,now = 0;
+	if( S >= T ) Zx = ( S - T ) / X,vis[(now = st = S - Zx * X) - T + X] = 1;
+	else Zx = ( T - S - 1 ) / Y,vis[(now = st = S + Zx * Y) - T + X] = 1;
+	if( X == Y ){
+		if( st >= T ) printf("%lld\n",(N - Zx) % 2 ? st - X : st );
+		else printf("%lld\n",(N - Zx) % 2 ? st + Y : st );
+		return;
+	}
+	int step = 1;
+	while( true ){
+		if( st >= T ){
+			st -= X;
+			if( vis[st - T + X] ) break;
+			vis[st - T + X] = 1;
+			step ++;
+		}
+		else{
+			st += Y;
+			if( vis[st - T + X] ) break;
+			vis[st - T + X] = 1;
+			step ++;
+		}
+	}
+	int t = ( N - Zx ) % step;
+	while( t -- ){
+		if( st >= T ) st -= X;
+		else st += Y;
+	}
+	printf("%lld\n",st);
+	return;
+}
+
+signed main(){
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	scanf("%lld",&testcase);
+	while( testcase -- )
+		solve();
+	fclose(stdin);
+	fclose(stdout);
+	return 0;
+}

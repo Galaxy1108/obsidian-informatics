@@ -1,0 +1,35 @@
+#include <bits/stdc++.h>
+#define fo(i,a,b) for(int i=a;i<=b;++i)
+#define fd(i,a,b) for(int i=a;i>=b;--i)
+#define max(a,b) ((a)>(b)?(a):(b))
+#define min(a,b) ((a)<(b)?(a):(b))
+#define LL long long
+using namespace std;
+__int128 cal(LL s,LL a,LL b,LL c,LL d)
+{
+	__int128 nu=s-(__int128)a*b+(__int128)c*d;
+	return nu;
+}
+int main()
+{
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	int t;scanf("%d",&t);
+	while(t--)
+	{
+		LL n,s,t,x,y;
+		scanf("%lld%lld%lld%lld%lld",&n,&s,&t,&x,&y);
+		s-=t;
+		LL l=0,r=n;
+		while(l<r-1)
+		{
+			LL mid=l+r>>1;
+			if(cal(s,mid,x,n-mid,y)<0)r=mid;
+			else l=mid;
+		}
+		LL aa=(LL)cal(s,l,x,n-l,y)+t,bb=(LL)cal(s,r,x,n-r,y)+t;
+		if(aa-t<y)printf("%lld\n",aa);
+		else printf("%lld\n",bb);
+	}
+	return 0;
+}

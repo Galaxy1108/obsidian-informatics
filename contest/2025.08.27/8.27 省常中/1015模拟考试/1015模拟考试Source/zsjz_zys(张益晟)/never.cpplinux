@@ -1,0 +1,124 @@
+#include<cstdio>
+#include<algorithm>
+#define ll long long
+using namespace std;
+int T;ll n,s,t,x,y;
+ll calc(ll s,ll x)
+{
+	if(s<0) return (-s-1)/x+1;
+	return s/x+1;
+}
+pair<ll,ll> solve(ll n,ll s,ll x,ll kx,ll y,ll ky)
+{
+	// printf("%lld %lld %lld %lld %lld %lld\n",n,s,x,kx,y,ky);
+	// if(x<0) return {0,0};
+	if(s>=0)
+	{
+		if(x==0) return {s,n%kx};
+		ll tmp=s/x;
+		if(tmp>=(n+kx-1)/kx) return {s-n/kx*x,n-n/kx*kx};
+		n-=tmp*kx,s-=tmp*x;
+	}
+	else
+	{
+		if(y==0) return {s,n%ky};
+		ll tmp=(-s-1)/y;
+		if(tmp>=(n+ky-1)/ky)  return {s+n/ky*y,n-n/ky*ky};
+		n-=tmp*ky,s+=tmp*y;
+	}
+	if(x==y)
+	{
+		ll tmp=n/(kx+ky);
+		n-=tmp*(kx+ky);
+		if(s<0)
+		{
+			if(n>=ky) s+=y,n-=ky;
+			return {s,n};
+		}
+		else
+		{
+			if(n>=kx) s-=x,n-=kx;
+			return {s,n};
+		}
+	}
+	pair<ll,ll> res;
+	if(x<y)
+	{
+		if(s>=0)
+		{
+			if(n>=kx) s-=x,n-=kx;
+			else return {s,n};
+		}
+		ll news=s+y,tmp=calc(min(news,news-s-x),x);
+		if(tmp<=(n-ky)/kx)
+		{
+			res=solve(n,s,x,kx,y-tmp*x,tmp*kx+ky);
+			s=res.first,n=res.second;
+		}
+	}
+	else
+	{
+		// puts("fuc");
+		if(s<0)
+		{
+			if(n>=ky) s+=y,n-=ky;
+			else return {s,n};
+		}
+		ll news=s-x,tmp=calc(max(news,news-s+y),y);
+		if(tmp<=(n-kx)/ky)
+		{
+			res=solve(n,s,x-tmp*y,tmp*ky+kx,y,ky);
+			s=res.first,n=res.second;
+		}
+	}
+	if(s>=0)
+	{
+		ll tmp=s/x+1;
+		if(tmp>=(n+kx-1)/kx) return {s-n/kx*x,n-n/kx*kx};
+		n-=tmp*kx,s-=tmp*x;
+	}
+	else
+	{
+		ll tmp=(-s-1)/y+1;
+		if(tmp>=(n+ky-1)/ky)  return {s+n/ky*y,n-n/ky*ky};
+		n-=tmp*ky,s+=tmp*y;
+	}
+	if(s>=0)
+	{
+		ll tmp=s/x+1;
+		if(tmp>=(n+kx-1)/kx) return {s-n/kx*x,n-n/kx*kx};
+		n-=tmp*kx,s-=tmp*x;
+	}
+	else
+	{
+		ll tmp=(-s-1)/y+1;
+		if(tmp>=(n+ky-1)/ky)  return {s+n/ky*y,n-n/ky*ky};
+		n-=tmp*ky,s+=tmp*y;
+	}
+	return {s,n};
+}
+ll solve(ll n,ll s,ll t,ll x,ll y)
+{
+	for(int i=1;i<=n;i++)
+	{
+		if(s<t) s+=y;
+		else s-=x;
+	}
+	return s;
+}
+int main()
+{
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	int T=10000;
+	scanf("%d",&T);
+	for(;T--;)
+	{
+		// puts("fuc");
+		scanf("%lld %lld %lld %lld %lld",&n,&s,&t,&x,&y);
+		// n=10000,s=rand()%10000,t=rand()%1000,x=rand()%1000+1,y=rand()%1000+1;
+		auto res=solve(n,s-t,x,1,y,1);
+		printf("%lld\n",res.first+t);
+	}
+	return 0;
+}

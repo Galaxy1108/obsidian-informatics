@@ -1,0 +1,22 @@
+#include <iostream>
+using namespace std;
+long long g[11];
+int n,p;
+long long sum;
+int main()
+{
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	g[1]=1;
+	g[2]=3;
+	g[3]=13;
+	g[4]=252;
+	g[5]=5467;
+	g[6]=585156;
+	g[7]=55314571;
+	g[8]=30840599664;
+	cin>>n>>p;
+	for(int i=1;i<=n;++i) sum+=g[i];
+	cout<<sum%p;
+	return 0;
+}

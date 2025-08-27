@@ -1,0 +1,21 @@
+#include<bits/stdc++.h>
+using namespace std;
+int T,m,s,n,a[205],f[5005];
+void work(){
+    for (int i=0;i<=s;++i) f[i]=0;f[0]=1;
+    for (int j=1;j<=m;++j)
+        for (int i=s;i>=0;--i)
+            for (int k=1;k<=n && a[k]<=i;++k)
+                f[i]^=f[i-a[k]];
+    printf("%d\n",f[s]);
+}
+int main(){
+    freopen("give.in","r",stdin);
+    freopen("give.out","w",stdout);
+    scanf("%d",&T);
+    while (T--){
+        scanf("%d%d%d",&m,&s,&n);
+        for (int i=1;i<=n;++i) scanf("%d",&a[i]);
+        work();
+    }
+}

@@ -1,0 +1,49 @@
+#include <cstdio>
+#include <iostream>
+#include <tr1/unordered_map>
+#define IN inline
+using namespace std;
+
+template <typename T>
+IN void read(T &x) {
+	x = 0; char ch = getchar(); int f = 0;
+	for(; !isdigit(ch); f = (ch == '-' ? 1 : f), ch = getchar());
+	for(; isdigit(ch); x = (x<<3)+(x<<1)+(ch^48), ch = getchar());
+	if (f) x = ~x + 1;
+}
+
+typedef long long LL;
+LL n, S, T, X, Y, top, Q[10000005];
+tr1::unordered_map<LL, int> vis;
+
+IN LL calc(LL x, LL y) {return x / y + (x % y != 0);}
+LL dfs(LL x, LL n, int p) {
+	if (!p) {
+		int z = vis[x];
+		if (z) return dfs(x, n - n / (Q[z] - n) * (Q[z] - n), 1);
+		Q[++top] = n, vis[x] = top;
+	}
+	if (n == 0) return x;
+	if (x >= T) {
+		if (X == 0) return x;
+		LL z = min(calc(x - T + 1, X), n);
+		return dfs(x - X * z, n - z, p);
+	}
+	else {
+		if (Y == 0) return x;
+		LL z = min(calc(T - x, Y), n);
+		return dfs(x + Y * z, n - z, p);
+	}
+}
+
+int main() {
+	freopen("never.in", "r", stdin);
+	freopen("never.out", "w", stdout);
+	int t; read(t);
+	for(; t; --t) {
+		read(n), read(S), read(T), read(X), read(Y);
+		int bz = (n > 1e6 && S <= 100 && T <= 100 && X <= 100 && Y <= 100) || (X == Y);
+		printf("%lld\n", dfs(S, n, !bz));
+		if (bz) vis.clear(), top = 0;
+	}
+}

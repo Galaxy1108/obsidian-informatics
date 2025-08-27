@@ -1,0 +1,73 @@
+#include<bits/stdc++.h>
+#define ll long long
+using namespace std;
+
+void so(ll n, ll s, ll t, ll x)
+{
+	if(s <= t)
+	{
+		if(s + x > t) cout << (n % 2 ? s + x : s) << endl;
+		else
+		{
+			if(s + x * n < t)
+			{
+				cout << s + x * n << endl;
+				return ;
+			}
+			int len = (t - s) / x;
+			if((t - s) % x == 0) len --;
+			n -= len;
+			s += (len * x);
+			cout << (n % 2 ? s + x : s) << endl; 
+		}
+	}
+	else
+	{
+		if(s - x < t) cout << (n % 2 ? s - x : s) << endl;
+		else
+		{
+			if(s - x * n > t)
+			{
+				cout << s - x * n << endl;
+				return ;
+			}
+			int len = (s - t) / x;
+			n -= len;
+			s -= (len * x);
+			cout << (n % 2 ? s - x : s) << endl; 
+		}
+	}
+}
+
+ll solve(ll n, ll s, ll t, ll x, ll y)
+{
+	ll u = s;
+	// cout << u << ' ' ;
+	while(n --)
+	{
+		if(u >= t) u -= x;
+		else u += y;
+		// cout << u << ' ';
+	}
+	return u;
+}
+int main()
+{
+	std::ios::sync_with_stdio(false);
+	cin.tie(0);
+	cout.tie(0);
+	freopen("never.in", "r", stdin);
+	freopen("never.out", "w", stdout);
+	int T;
+	cin >> T;
+	ll n, s, t, x, y;
+	while(T --)
+	{
+		cin >> n >> s >> t >> x >> y;
+		// so(n, s, t, x);
+		// cout << solve(n, s, t, x, y) << endl << "------------------------" << endl;
+		if(n > 1e6 && x == y) so(n, s, t, x);
+		else cout << solve(n, s, t, x, y) << endl;
+	}
+    return 0;
+}

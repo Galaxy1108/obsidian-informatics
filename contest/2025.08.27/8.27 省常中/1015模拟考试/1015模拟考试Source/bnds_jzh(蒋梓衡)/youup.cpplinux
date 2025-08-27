@@ -1,0 +1,126 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+using ll = long long;
+#define IO(a) freopen(#a".in", "r", stdin), freopen(#a".out", "w", stdout),\
+	cin.tie(0)->sync_with_stdio(0), cout.tie(0)
+#define F(i, a, b) for (int i = (a), i##end = (b); i <= i##end; i++)
+#define R(i, a, b) for (int i = (a), i##end = (b); i >= i##end; i--)
+#define eb emplace_back
+
+const int M = 998244353, N = 1200100;
+int n, k;
+vector<int> e[N];
+void add(int u, int v) { e[u].eb(v), e[v].eb(u); }
+
+int sz[N], ch[N], vis[N], ans[N];
+void dfs1(int x, int f) {
+	sz[x] = 1, ch[x] = 0;
+	for (int v: e[x]) if (v != f && !vis[v]) {
+		dfs1(v, x), sz[x] += sz[v];
+		if (sz[ch[x]] < sz[v]) ch[x] = v;
+	}
+}
+int dep[N], buc[N], col[N], d;
+vector<int> vec;
+void dfs2(int x, int f) {
+	vec.eb(x), dep[x] = dep[f] + 1, d = max(d, dep[x]);
+	for (int v: e[x]) if (v != f && !vis[v]) dfs2(v, x);
+}
+
+void solve(int x) {
+	dfs1(x, 0);
+	int s = sz[x];
+	while (sz[ch[x]] > s / 2) x = ch[x];
+
+	vec.clear(), d = 0, dfs2(x, 0);
+	d = min(d, k);
+	F(i, 0, d) buc[i] = 0;
+	for (int v: vec) buc[dep[v]] += (v <= n);
+	F(i, 1, d) buc[i] += buc[i - 1];
+	for (int v: vec) if (dep[v] <= k) ans[v] += buc[min(d, k - dep[v])];
+
+	for (int v: e[x]) if (!vis[v]) {
+		vec.clear(), d = 0, dfs2(v, x);
+		d = min(d, k);
+		F(i, 0, d) buc[i] = 0;
+		for (int v: vec) buc[dep[v]] += (v <= n);
+		F(i, 1, d) buc[i] += buc[i - 1];
+		for (int v: vec) if (dep[v] <= k) ans[v] -= buc[min(d, k - dep[v])];
+	}
+
+	vis[x] = 1; for (int v: e[x]) if (!vis[v]) solve(v);
+}
+
+int fac[N], ifac[N];
+int binom(int n, int m) {
+	if (m < 0 || n < m) return 0;
+	return 1ll * fac[n] * ifac[m] % M * ifac[n - m] % M;
+}
+int power(int x, int y) {
+	int ans = 1;
+	for (; y; y >>= 1, x = 1ll * x * x % M) if (y & 1)
+		ans = 1ll * ans * x % M;
+	return ans;
+}
+
+int f[N], g[N];
+int madd(int x, int y) { return x + y < M ? x + y : x + y - M; }
+int msub(int x, int y) { return x < y ? x - y + M : x - y; }
+void ntt(int *a, int n, int flag) {
+	for (int i = 0, j = 0; i < n; i++) {
+		if (i < j) swap(a[i], a[j]);
+		for (int l = n >> 1; (j ^= l) < l; l >>= 1);
+	}
+	for (int m = 1, k = 2; m < n; m <<= 1, k <<= 1) {
+		int om = power(3, (M - 1) / k);
+		for (int j = 0; j < n; j += k)
+			for (int i = 0, o = 1; i < m; i++, o = 1ll * o * om % M) {
+				int x = 1ll * o * a[i+j+m] % M;
+				a[i+j+m] = msub(a[i+j], x);
+				a[i + j] = madd(a[i+j], x);
+			}
+	}
+	if (flag == -1) {
+		int inv = power(n, M - 2);
+		reverse(a + 1, a + n);
+		F(i, 0, n - 1) a[i] = 1ll * a[i] * inv % M;
+	}
+}
+
+void solve() {
+	cin >> n >> k, k *= 2, dep[0] = -1;
+	fac[0] = 1;
+	F(i, 1, n) fac[i] = 1ll * i * fac[i - 1] % M;
+	ifac[n] = power(fac[n], M - 2);
+	R(i, n, 1) ifac[i - 1] = 1ll * i * ifac[i] % M;
+	F(i, 2, n) {
+		int u, v, w = i + n - 1, x = w + n - 1, y = x + n - 1;
+		cin >> u >> v;
+		add(u, x), add(x, w), add(w, y), add(y, v);
+	}
+	solve(1);
+	F(i, 1, n) buc[i] = 0;
+	F(i, 1, n * 2 - 1) buc[ans[i]]++;
+	F(i, n * 2, n * 4 - 3) buc[ans[i]]--;
+	F(i, 0, n) {
+		f[i] = 1ll * (M + buc[i]) * fac[i] % M;
+		g[i] = ifac[n - i] % M;
+	}
+	
+	int lim = 1;
+	while (lim <= n * 2) lim *= 2;
+	ntt(f, lim, 1), ntt(g, lim, 1);
+	F(i, 0, lim - 1) f[i] = 1ll * f[i] * g[i] % M;
+	ntt(f, lim, -1);
+
+	F(i, 1, n) cout << 1ll * f[n + i] * ifac[i] % M << " ";
+	cout << "\n";
+}
+
+int main() {
+	IO(youup);
+	int Num;
+	cin >> Num;
+	solve();
+}

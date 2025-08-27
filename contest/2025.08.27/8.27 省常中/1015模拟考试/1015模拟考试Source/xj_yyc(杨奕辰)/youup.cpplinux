@@ -1,0 +1,67 @@
+#include<cstdio>
+#include<cctype>
+#define mod 998244353
+inline int read(){
+	int ans(0);
+	char ch = getchar();
+	while(!isdigit(ch)){
+		ch = getchar();
+	}
+	while(isdigit(ch)){
+		ans *= 10;
+		ans += ch - '0';
+		ch = getchar();
+	}
+	return ans;
+}
+int subtask, n, x, u, v, tim[50001];
+inline int qpow(long long a, int b){
+	int ans = 1;
+	a = (a % mod + mod) % mod;
+	for (; b; b >>= 1) {
+		if (b & 1) ans = (a * ans) % mod;
+		a = (a * a) % mod;
+	}
+	return ans;
+}
+int c(int n, int m){
+	return 1ll * tim[n] * 
+	qpow(tim[m], mod - 2) % mod * qpow(tim[n - m], mod - 2) % mod;
+}
+int main(){
+	freopen("youup.in", "r", stdin);
+	freopen("youup.out", "w", stdout);
+	subtask = read();
+	n = read(), x = read();
+	for(int i = 1; i < n; i++){
+		u = read(), v = read();
+	}
+	tim[1] = 1;
+	for(int i = 2; i <= n; i++){
+		tim[i] = 1ll * tim[i - 1] * i % mod;
+	}
+	switch(subtask){
+		case 1:
+x0:			printf("%d ", n);
+			for(int i = 2; i <= n; i++){
+				printf("0 ");
+			}
+			putchar(10);
+			break;
+		case 4:
+			if(x == 0) goto x0;
+			else if(x == 1){
+				printf("%d %d ", n, n - 1);
+				for(int i = 3; i <= n; i++){
+					printf("0 ");
+				}
+			} else {
+				for(int i = 1; i <= n; i++){
+					printf("%d ", c(n, i));
+				}
+			}
+			putchar(10);
+			break;
+	}
+	return 0;
+}

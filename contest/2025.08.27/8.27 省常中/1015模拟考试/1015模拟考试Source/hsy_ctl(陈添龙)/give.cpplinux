@@ -1,0 +1,39 @@
+#include<bits/stdc++.h>
+#define pc putchar
+using namespace std;
+inline int read()
+{
+	int x=0,f=1;char ch=getchar();
+	while(ch<'0'||ch>'9'){f=ch=='-'?-1:f;ch=getchar();}
+	while(ch>='0'&&ch<='9'){x=x*10+(ch^48);ch=getchar();}
+	return x*f;
+}
+void write(int x)
+{
+	if(x<0){x=-x;pc('-');}
+	if(x>9)write(x/10);
+	pc(x%10+48);
+}
+int T,n,m,s;
+int a[205];
+bitset<505>f[205];
+void solve()
+{
+	m=read(),s=read(),n=read();
+	for(int i=1;i<=n;++i)a[i]=read();
+	sort(a+1,a+n+1);f[0][0]=1;
+	for(int i=1;i<=m;++i)
+	{
+		for(int j=1;j<=s;++j)f[i][j]=0;
+			for(int k=1;k<=n;++k)
+				f[i]^=(f[i-1]<<a[k]);
+	}write(f[m][s]),pc('\n');
+}
+int main()
+{
+	freopen("give.in","r",stdin);
+	freopen("give.out","w",stdout);
+	T=read();
+	while(T--)solve();
+	return 0;
+}

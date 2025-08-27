@@ -1,0 +1,95 @@
+#include <bits/stdc++.h>
+#define int long long
+using namespace std;
+
+template < typename T >
+inline const void read(register T &x)
+{
+	register bool flg = x = 0;
+	register char c;
+	while ((c = getchar()) < 48 || c > 57)
+		flg |= c == '-';
+	do
+		x = (x << 1) + (x << 3) + (c ^ 48);
+	while ((c = getchar()) > 47 && c < 58);
+	if (flg) x = -x;
+}
+
+int OUTPUT[45];
+
+template < typename T >
+inline const void write(register T x)
+{
+	if (x < 0)
+	{
+		putchar('-');
+		x = -x;
+	}
+	register int len = 0;
+	do
+	{
+		OUTPUT[++len] = x % 10 | 48;
+		x /= 10;
+	}while (x);
+	while (len)
+		putchar(OUTPUT[len--]);
+}
+
+template < typename T >
+inline const void writesp(const register T x)
+{
+	write(x);
+	putchar(32);
+}
+
+template < typename T >
+inline const void writeln(const register T x)
+{
+	write(x);
+	putchar(10);
+}
+
+inline int Times(int x, int y, int Mod)
+{
+	int ret = 0;
+	while (y)
+	{
+		if (y & 1) (ret += x) %= Mod;
+		(x <<= 1) %= Mod;
+		y >>= 1;
+	}
+	return ret;
+}
+
+signed main()
+{
+	freopen("never.in", "r", stdin);
+	freopen("never.out", "w", stdout);
+	int abc;
+	read(abc);
+	while (abc--)
+	{
+		int n, S, T, X, Y;
+		read(n);
+		read(S);
+		read(T);
+		read(X);
+		read(Y);
+		if ((S - T) / X >= n)//一直往左 
+		{
+			writeln(S - n * X);
+			continue;
+		}
+		if ((T - S) / Y >= n)//一直往右 
+		{
+			writeln(S + n * Y);
+			continue;
+		}
+		int Z = X + Y; 
+		int ans = (S + Times(n, Y, Z)) % Z;
+		int lft = ((T - X) % Z + Z) % Z;
+		if (ans >= lft) writeln((T - X) + (ans - lft));
+		else writeln((T - X) + (Z - lft + ans));
+	}
+	return 0;
+}

@@ -1,0 +1,30 @@
+#include<bits/stdc++.h>
+#define rep(a,b,c) for (register int a=b;a<=c;a++)
+#define per(a,b,c) for (register int a=b;a>=c;a--)
+using namespace std;
+typedef long long ll;
+template <typename T> inline void read(T &x){
+	ll f = 1;x = 0;char ch = getchar();
+	while (!isdigit(ch)){if (ch == '-')f = -1;ch = getchar();}
+	while (isdigit(ch)){x = (x << 1)+(x << 3)+(ch ^ 48);ch = getchar();}
+	x *= f;
+}
+
+int ans[10];
+int deg[10];
+int main()
+{
+	freopen("youup.in","r",stdin);
+	freopen("youup.out","w",stdout);
+	
+	int num;
+	cin>>num;
+	int n,x;
+	cin>>n>>x;
+	rep(i,1,n-1){int u,v;cin>>u>>v;}
+	cout<<n<<' ';
+	rep(i,2,n)cout<<0<<' ';
+	cout<<endl; 
+	return 0;
+}
+

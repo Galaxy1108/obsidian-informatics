@@ -1,0 +1,51 @@
+#include <bits/stdc++.h>
+using namespace std;
+const int N = 2e4 + 5,Num = 2270;
+int n,P;
+inline int qpow(int a,long long b) { int res = 1;while(b) {if(b&1) res = 1ll * res * a % P;a = 1ll * a * a % P;b >>= 1;} return res;}
+int pri[N],vst[N],tot,inv[N];
+inline int Sum(int p,long long k) { if(p == 1) return (k + 1) % P;return 1ll * (qpow(p,k + 1) + P - 1) * inv[p - 1] % P;}
+inline void sieve(int n)
+{
+	for(int i = 2;i <= n;i++)
+	{
+		if(!vst[i]) pri[++tot] = i;
+		for(int j = 1;j <= tot && 1ll * i * pri[j] <= n;j++)
+		{
+			vst[i * pri[j]] = true;
+			if(i % pri[j] == 0) break;
+		}
+	}
+	inv[1] = 1;
+	for(int i = 2;i <= n;i++) inv[i] = 1ll * (P - P / i) * inv[P % i] % P;
+}
+long long Pow[Num][N];
+int ans[N];
+int main()
+{
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	scanf("%d%d",&n,&P);
+	sieve(n);
+	for(int i = 1;i <= tot;i++)
+	{
+		for(int j = 1;j <= n;j++)
+		{
+			long long tmp = pri[i];long long res = 0;
+			while(tmp <= j) res += j / tmp,tmp = tmp * pri[i];
+			Pow[i][j] = Pow[i][j - 1] + res;
+		}
+	}
+	for(int i = 1;i <= n;i++)
+	{
+		ans[i] = 1;
+		for(int j = 1;j <= tot;j++)
+		{
+			long long now = (Pow[j][i] - Pow[j][i - 1]) * (i + 1) - 2ll * Pow[j][i];
+			ans[i] = 1ll * ans[i] * Sum(pri[j],now) % P;
+		}
+	}
+	int res = 0;
+	for(int i = 1;i <= n;i++) (res += ans[i]) %= P;
+	cout << res << endl;
+}

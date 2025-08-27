@@ -1,0 +1,64 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long
+const int N=2e4+5;
+int n,mod,cnt;
+int pri[N];
+bool vst[N];
+ll fpow(ll x,int k)
+{
+    ll now=1;
+    while(k)
+    {
+        if(k&1) now=now*x%mod;
+        x=x*x%mod,k>>=1;
+    }
+    return now;
+}
+void init()
+{
+    for(int i=2;i<=n;i++)
+    {
+        if(!vst[i]) pri[++cnt]=i;
+        for(int j=1;j<=cnt && i*pri[j]<=n;j++)
+        {
+            vst[i*pri[j]]=true;
+            if(!(i%pri[j])) break;
+        }
+    }
+}
+int main()
+{
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+    scanf("%d%d",&n,&mod);
+    init();
+    ll sum=0;
+    for(int i=1;i<=n;i++)
+    {
+        ll ans=1;
+        for(int j=1;j<=cnt;j++)
+        {
+            if(pri[j]>i) break;
+            ll t=0;
+            for(ll op=pri[j];op<=n;op*=pri[j])
+            {
+                if(op>i) break;
+                if(i/op>(i-(i-1)/2-1)/op)
+                {
+                    ll maxx=max(0ll,i-1-(i%op)*2),minn=max(0ll,i-1-(i-1)/2*2+((op-(i-(i+1)/2+1)%op)%op)*2);
+                    t+=(maxx+minn)*((maxx-minn)/2/op+1)/2;    
+                }
+                if((i-(i-1)/2-1)/op>0)
+                {
+                    ll maxx=max(0ll,i-op*2+1),minn=max(0ll,i-1-(i-1)/2*2+(((i-1)/2+1)%op)*2);
+                    t-=(maxx+minn)*((maxx-minn)/2/op+1)/2;    
+                }
+            }
+            ans=ans*((fpow(pri[j],t+1)-1)*fpow(pri[j]-1,mod-2)%mod)%mod;
+        }
+        sum=(sum+ans)%mod;
+    }
+    printf("%lld\n",(sum+mod)%mod);
+	return 0;
+}

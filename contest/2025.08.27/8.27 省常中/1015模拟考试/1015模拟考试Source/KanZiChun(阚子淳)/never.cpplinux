@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define LOG(FMT...) fprintf(stderr, FMT)
+
+typedef long long LL;
+
+LL n, s, t, x, y;
+
+int main() {
+	freopen("never.in", "r", stdin);
+	freopen("never.out", "w", stdout);
+	int task;
+	for (scanf("%d", &task); task--; ) {
+		scanf("%lld%lld%lld%lld%lld", &n, &s, &t, &x, &y);
+		while (n) {
+			if (s >= t) {
+				s -= x;
+			} else {
+				s += y;
+			}
+			--n;
+		}
+		LOG("%lld\n", s);
+		printf("%lld\n", s);
+	}
+	return 0;
+}

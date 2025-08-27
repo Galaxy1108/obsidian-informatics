@@ -1,0 +1,46 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define N 5002
+#define fo(i, l, r) for (int i = (l), ed = (r); i <= ed; i ++)
+#define fd(i, l, r) for (int i = (l), ed = (r); i >= ed; i --)
+#define pb push_back
+#define mp make_pair
+#define fi first
+#define se second
+#define INF 2147483647 //9223372036854775807
+template <typename T> void gi(T &s){
+	s = 0;
+	int b = 1;
+	char ch = getchar();
+	while (ch < '0' || ch > '9') b *= (ch == '-') ? (-1) : 1, ch = getchar();
+	while (ch >= '0' && ch <= '9') s = s * 10 + ch - '0', ch = getchar();
+	s *= b;
+}
+
+int T, n, m, S, a[N], f[N];
+
+void solve(){
+	gi(m), gi(S), gi(n);
+	fo (i, 1, n) gi(a[i]);
+	sort(a + 1, a + n + 1);
+	memset(f, 0, sizeof(f));
+	f[0] = 1;
+	fo (i, 1, m){
+		fd (j, S, 0) if (f[j]){
+			fo (k, 1, n){
+				if (j + a[k] > S) break;
+				f[j + a[k]] ^= 1;
+			}
+		}
+	}
+	printf("%d\n", f[S]);
+}
+
+int main(){
+	freopen("give.in", "r", stdin);
+	freopen("give.out", "w", stdout);
+	gi(T);
+	while (T --)
+		solve();
+}

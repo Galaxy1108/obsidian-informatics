@@ -1,0 +1,40 @@
+#include<bits/stdc++.h>
+#define ll long long
+#define db double
+#define ve vector<ll>
+#define pa pair<ll,ll>
+using namespace std;
+const ll N=205,mod=1000000007ll;
+ll n,m,s,t,a[N],ans,b[100005];
+inline ll read()
+{
+	ll x=0,f=1;char ch=getchar();
+	while (ch<'0'||ch>'9'){if (ch=='-') f=-1;ch=getchar();}
+	while (ch>='0'&&ch<='9'){x=x*10+ch-48;ch=getchar();}
+	return x*f;
+}
+int main() {
+	freopen("give.in","r",stdin);
+	freopen("give.out","w",stdout);
+	t=read();
+	while(t--){
+		for(int i=0;i<=100000;i++)b[i]=0;
+		m=read(),s=read(),n=read();
+		ans=0;
+		for(int i=0;i<n;i++){
+			a[i]=read();
+			b[a[i]]++;
+		}
+		for(int i=100000;i>0;i--){
+			if(b[i]!=0){
+				ll c=s-i;
+				if(c%(m-1)==0){
+					if(b[c/(m-1)]!=0){
+						ans++;
+					}
+				}
+			}
+		}
+		printf("%lld\n",ans);
+	}
+}//20000 998244353

@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <algorithm>
+#include <cstring>
+#include <iostream>
+using namespace std;
+
+const int MR = 200 + 10, SR = 5000 + 10, NR = 2000 + 10;
+
+int T;
+int n, s, m;
+int a[MR];
+bool f[NR][SR];
+
+int main()
+{
+#ifdef WYZ
+	freopen("1.in", "r", stdin);
+	freopen("1.out", "w", stdout);
+#else
+	freopen("give.in", "r", stdin);
+	freopen("give.out", "w", stdout);
+#endif
+	ios::sync_with_stdio(0);
+	
+	cin >> T;
+	while (T--) {
+		cin >> n >> s >> m;
+		for (int i = 1; i <= m; i++) cin >> a[i];
+
+		f[0][0] = 1;
+		for (int i = 0; i < n; i++)
+			for (int j = 0; j <= s; j++) {
+				if (!f[i][j]) continue;
+				for (int k = 1; k <= m; k++) {
+					if (j + a[k] > s) break;
+					f[i + 1][j + a[k]] ^= f[i][j];
+				}
+			}
+		cout << f[n][s] << '\n';
+
+		for (int i = 0; i <= n; i++)
+			for (int j = 0; j <= s; j++) f[i][j] = 0;
+	}
+
+	return 0;
+}

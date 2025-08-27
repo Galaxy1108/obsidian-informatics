@@ -1,0 +1,58 @@
+#include<bits/stdc++.h>
+#define itn int
+#define ll long long
+using namespace std;
+
+ll read(){
+	ll a=0, b=0; char c=getchar();
+	while(c<'0'||c>'9')b^=(c=='-'), c=getchar();
+	while(c>='0'&&c<='9')a=a*10+c-48, c=getchar();
+	return b?-a:a;
+}
+
+ll rev(ll n, ll s, ll x, ll y);
+
+ll gt(ll n, ll s, ll x, ll y){
+	if(x==y&&n>1){n%=2;return rev(n, s, x, y);}
+	if(x>100||y>100)return rev(n, s, x, y);
+	static int to[100][205];
+	const int B=102;
+	s+=B;
+	for(int i=0;i<205;i++){
+		if(i<B)to[0][i]=i+y;
+		else to[0][i]=i-x;
+	}
+	for(int i=1;i<61;i++)for(int j=0;j<205;j++){
+		to[i][j]=to[i-1][to[i-1][j]];
+	}
+	for(int i=60;i>=0;i--){
+		if(n>=(1ll<<i))n-=1ll<<i, s=to[i][s];
+	}
+	return s-B;
+}
+
+ll rev(ll n, ll s, ll x, ll y){
+	if(s<0){
+		ll k=(-s)/y+bool((-s)%y);
+		if(n<=k)return s+n*y;
+		return gt(n-k, s+k*y, x, y);
+	}else{
+		ll k=s/x+1;
+		if(n<=k)return s-n*x;
+		return gt(n-k, s-k*x, x, y);
+	}
+}
+
+void sol(){
+	ll n=read(), s=read(), t=read(), x=read(), y=read();
+	s-=t;
+	cout<<rev(n, s, x, y)+t<<'\n';
+}
+
+int main(){
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	int T=read();
+	while(T--)sol();
+	return 0;
+}

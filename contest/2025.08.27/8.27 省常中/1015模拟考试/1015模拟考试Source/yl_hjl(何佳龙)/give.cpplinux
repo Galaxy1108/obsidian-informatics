@@ -1,0 +1,94 @@
+#include<bits/stdc++.h>
+#define db double
+#define int ll
+#define ll long long
+#define ull unsigned long long
+#define pb push_back
+#define MP make_pair
+#define pii pair<int, int>
+#define fi first
+#define se second
+#define ls k*2
+#define rs k*2+1 
+using namespace std;
+inline int read(){
+	register int x=0,f=1;
+	register char ch=getchar();
+	while(ch<'0'||ch>'9'){if(ch=='-')f=-1;ch=getchar();}
+	while(ch>='0'&&ch<='9'){x=x*10+ch-'0';ch=getchar();}
+	return x*f;
+}
+inline void write(register int x){
+	if(x<0){putchar('-');x=-x;}
+	if(x>9)write(x/10);
+	putchar(x%10+'0');
+}
+const int N=2e3+5;
+int n,m,s,a[N];
+map<int,bool>mp;
+namespace Brute{
+    int f[N][N];
+    void clear(){for(int i=1;i<=m;i++)for(int j=0;j<=s;j++)f[i][j]=0;}
+    void main(){
+        f[0][0]=1;
+        for(int i=1;i<=m;i++){
+            for(int j=1;j<=n;j++){
+                for(int k=a[j];k<=s;k++){
+                    (f[i][k]+=f[i-1][k-a[j]])%=2;
+                }
+            }
+        }
+        cout<<f[m][s]<<"\n";
+        clear();
+    }
+}
+int Qpow(int b,int p){
+    int res=1ll;
+    while(p){
+        if(p&1)res*=b;
+        b*=b;p>>=1;
+    }
+    return res;
+}
+int pd(int x,int y){
+    if((s-y*m)%(x-y))return 0;
+    int tmp=(s-y*m)/(x-y);//cout<<x<<' '<<tmp<<' '<<y<<' '<<m-tmp<<"\n";
+    if(tmp>0&&tmp<m)return 1;
+    return 0;
+}
+void solve(){
+    m=read();s=read();n=read();
+    for(int i=1;i<=n;i++)a[i]=read();
+    if(m<=200){Brute::main();return ;}
+    int ans=0;
+    for(int i=1;i<=n;i++)mp[a[i]]=1;
+    for(int i=1;i<=n;i++){
+        if(a[i]*m==s)ans^=1;
+        if(m%2==0)continue;
+        for(int j=i+1;j<=n;j++){
+            if(i!=j&&pd(a[i],a[j]))ans^=1;
+        }
+    }
+    cout<<ans<<"\n";mp.clear();
+}
+/*void solve(){
+    m=read();s=read();n=read();
+    for(int i=1;i<=n;i++)a[i]=read();
+    if(m<=200){Brute::main();return ;}
+    int ans=0;
+    for(int i=1;i<=n;i++)mp[a[i]]=1;
+    for(int i=1;i<=n;i++){
+        if(a[i]*m==s)ans^=1;
+        else if((m&1)&&mp.find(s-(m-1)*a[i])!=mp.end())ans^=1;//,cout<<i<<' '<<(m-1)*a[i]<<"\n";
+        else if(mp.find((s-(m-2)*a[i])/2)!=mp.end())ans^=1;
+    }
+    cout<<ans<<"\n";mp.clear();
+}*/
+signed main(){   
+ 	freopen("give.in","r",stdin);
+ 	freopen("give.out","w",stdout);
+    //cout<<783383884/4<<' ';
+    int T=read();while(T--)solve();
+//  printf("\nTIME:%lf\n",(double)clock()/CLOCKS_PER_SEC);
+	return 0;
+}

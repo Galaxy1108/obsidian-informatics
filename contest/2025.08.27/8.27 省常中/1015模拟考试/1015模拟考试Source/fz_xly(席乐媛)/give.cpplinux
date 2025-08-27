@@ -1,0 +1,36 @@
+#include<cstdio>
+#include<bitset>
+using namespace std;
+const int N=205,M=2e3+5,S=5e3+5;
+int a[N];
+bitset<S>f[M];
+int redd(){
+	int xx=0,fl=1;char ch=getchar();
+	while((ch<'0'||ch>'9')&&ch!='-')ch=getchar();
+	if(ch=='-'){ch=getchar();fl=-1;}
+	for(;ch>='0'&&ch<='9';ch=getchar())
+		xx=(xx<<3)+(xx<<1)+ch-'0';
+	return xx*fl;
+}
+int main(){
+	freopen("give.in","r",stdin);
+	freopen("give.out","w",stdout);
+	int t,m,s,n;
+	t=redd();
+	while(t--){
+		m=redd();s=redd();n=redd();
+		for(int i=1;i<=n;i++)a[i]=redd();
+		for(int i=0;i<=m;i++)f[i].reset();
+		if(n&1){
+			for(int i=1;i<=n;i++)f[0].set(a[i],f[0][a[i]]^1);
+		}
+		else{
+			f[0].set(0);
+		}
+		for(int i=1;i<=m/2;i++)
+			for(int j=1;j<=n;j++)
+				f[i]^=f[i-1]<<(a[j]*2);
+		printf("%d\n",(int)f[m/2][s]);
+	}
+	return 0;
+}

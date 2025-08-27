@@ -1,0 +1,41 @@
+#include<cstdio>
+#include<cstring>
+#include<map>
+#define il inline
+#define ri register int
+#define gc getchar()
+using namespace std;
+il long long read()
+{
+	long long ans=0,f=1;char ch=gc;
+	while(ch<'0' || ch>'9') {if(ch=='-') f=-1;ch=gc;}
+	while(ch>='0' && ch<='9') ans=(ans<<3)+(ans<<1)+(ch^48),ch=gc;
+	return ans*f; 
+}
+map<long long,long long> vis,cnt;
+il void file()
+{
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+}
+int main()
+{
+	file();
+	int T=read();
+	while(T--)
+	{
+		vis.clear();
+		long long n=read(),s=read(),t=read(),x=read(),y=read(),tag=0,len=0;
+		s<t? len=min((t-s)/y+((t-s)%y!=0),n),s+=len*y: (len=min((s-t)/x+1,n),s-=len*x);
+		if((n-=len)==0) {printf("%lld\n",s);continue;}
+		for(ri i=1;i<=n;i++)
+		{
+			s<t?s+=y:s-=x;
+			if(vis[s]) {tag=i;break;}
+			vis[s]=i,cnt[i]=s; 
+		}
+		len=tag-vis[s],n=(n-vis[s])%len+vis[s],s=cnt[n];
+		printf("%lld\n",s);
+	}
+	return 0;
+} 

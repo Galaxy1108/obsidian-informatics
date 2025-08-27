@@ -1,0 +1,63 @@
+#include<cstdio>
+using namespace std;
+int main() {
+    freopen("never.in", "r", stdin);
+    freopen("never.out", "w", stdout);
+    int T;
+    scanf("%d", &T);
+    while (T--) {
+        long long n, s, t, x, y;
+        scanf("%lld%lld%lld%lld%lld", &n, &s, &t, &x, &y);
+        t-=s;
+        long long cnt1 = 0, cnt2 = 0;
+        while (n>0) {
+            if (t>0) {
+                long long tmp = t/y;
+                if (t-tmp*t>0) ++tmp;
+                if (tmp > n) {
+                    cnt1 += tmp = n;
+                    break;
+                }
+                cnt1 += tmp;
+                n -= tmp;
+                t -= tmp*y;
+            }
+            else {
+                long long tmp = 1-t/x;
+                if (tmp > n) {
+                    cnt2 += tmp = n;
+                    break;
+                }
+                cnt2 += tmp;
+                n -= tmp;
+                t += tmp*x;
+            }
+        }
+        printf("%lld %lld %lld ", s, y*cnt1, x*cnt2);
+        s += y*cnt1-x*cnt2;
+        printf("%lld %lld\n", cnt1, s);
+    }
+    return 0;
+}
+/*
+t-=s;
+if (t>0) {
+    ll tmp = t/y+1;
+    if (tmp > n) {
+        cnt += tmp = n;
+        break;
+    }
+    cnt += tmp;
+    n -= tmp;
+    t -= tmp*y;
+}
+else {
+    ll tmp = 1-t/x;
+    if (tmp > n) {
+        break;
+    }
+    n -= tmp;
+    t += tmp*x;
+}
+s += y*cnt-x*(n-cnt);
+*/

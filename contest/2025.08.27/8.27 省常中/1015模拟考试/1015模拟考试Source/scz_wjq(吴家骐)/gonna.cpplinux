@@ -1,0 +1,65 @@
+#include<bits/stdc++.h>
+using namespace std;
+inline int read(){
+  int p=0,q=1;
+  char ch=getchar();
+  while(!isdigit(ch)){if(ch=='-')q=-1;ch=getchar();}
+  while(isdigit(ch))p=p*10+ch-'0',ch=getchar();
+  return p*q;
+}
+int f[50001];
+long long s[50001];
+bool vst[50001];
+long long ans[50001];
+void sieve(){
+	for(int i=2;i<=50000;i++){
+		if(!vst[i]){
+			for(int j=2*i;j<=50000;j+=i)vst[j]=1;
+		}
+	}
+	return ;
+} 
+long long lpowGS[100001];//光速幂 存储1+..+i^(kn-1)
+long long gGS[100001];
+long long lpowBS[100001];//光速幂 存储1+i+i^2+..+i^k 
+long long n,mod;
+int B;
+inline long long lpow(int w){
+	w++;
+	if(w<=B)return lpowBS[w-1];
+	if(w%B==0)return lpowGS[w/B];
+	return (lpowGS[w/B]+gGS[w/B]*lpowBS[w%B-1])%mod;
+}
+int main(){
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+  cin>>n>>mod;
+  sieve();
+  lpowBS[0]=1;gGS[0]=1;
+  for(int i=1;i<=n;i++)ans[i]=1;
+  for(int i=2;i<=n;i++){
+  	if(!vst[i]){
+	  	for(int j=2;j<=n;j++)f[j]=j/i+f[j/i];
+        for(int j=2;j<=n;j++)s[j]=f[j]+s[j-1];
+        long long g=1;//i^n
+        long long mx=1;
+		for(int j=1;j<=n;j++){
+			long long v=(j+1)*f[j]-(s[j]<<1);
+			mx=max(v,mx);
+		}
+		B=sqrt(mx);
+		for(int j=1;j<=B;j++)g=g*i%mod;
+		for(int j=1;j<=B-1;j++)lpowBS[j]=(lpowBS[j-1]*i+1)%mod; 
+		lpowGS[1]=lpowBS[B-1];
+		for(int j=2;j<=B+5;j++)lpowGS[j]=(lpowGS[j-1]*g+lpowGS[1])%mod;
+		for(int j=1;j<=B+5;j++)gGS[j]=gGS[j-1]*g%mod;
+		for(int j=1;j<=n;j++){
+			long long v=(j+1)*f[j]-(s[j]<<1);
+			ans[j]=(ans[j]*lpow(v))%mod;
+		}
+	}
+  }
+  for(int i=1;i<=n;i++)ans[i]=(ans[i]+ans[i-1])%mod;
+  cout<<ans[n]<<endl;
+  return 0;
+}

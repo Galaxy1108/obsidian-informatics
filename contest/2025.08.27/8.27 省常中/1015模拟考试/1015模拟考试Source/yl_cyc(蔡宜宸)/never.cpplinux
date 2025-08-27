@@ -1,0 +1,108 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+inline int read(){
+	int s=0,w=1;char ch=getchar();
+	while((ch<'0')||(ch>'9')){if(ch=='-'){w=-1;}ch=getchar();}
+	while((ch>='0')&&(ch<='9')){s=(s<<3)+(s<<1)+ch-'0';ch=getchar();}
+	return s*w;
+}
+int T,n,s,t,x,y,cnt,len,now;
+namespace Sub1{
+	inline void Main(){
+		for(int i=1;i<=n;i++){
+			if(s>=t)s-=x;else s+=y;
+		}
+		printf("%lld\n",s);
+		return ;
+	}
+}
+namespace Sub2{
+	map<int,int>mp;vector<int>id;int cnt;
+	inline void Main(){
+		map<int,int>().swap(mp);vector<int>().swap(id);
+		id.push_back(s);mp[s]=cnt=0;
+		int bg,ed;
+		while(1){
+			if(s>=t)s-=x;else s+=y;
+			if(mp.count(s)){bg=mp[s];ed=cnt;break;}
+			mp[s]=++cnt;id.push_back(s);
+		}
+		if(n<=ed){printf("%lld\n",id[n]);return ;}
+		n-=ed;printf("%lld\n",id[bg+(n-1)%(ed-bg+1)]);
+		return ;
+	}
+}
+namespace Sub3{
+	inline void Main(){
+		if(s<t){
+			int p=(t-s-1)/y+1;if(p>=n){printf("%lld\n",s+n*y);return ;}
+			n-=p;s+=p*y;printf("%lld\n",s-(n&1)*x);return ;
+		}
+		int p=(s-t)/x;if(p>=n){printf("%lld\n",s-n*x);return ;}
+		n-=p;s-=p*x;printf("%lld\n",s-(n&1)*x);return ;
+	}
+}
+namespace Sub4{
+	inline int gcd(int x,int y){return y==0?x:gcd(y,x%y);}
+	inline void Main(){
+		n%=(x+y)/gcd(x,y);
+		if(n==0){printf("%lld\n",s);return ;}
+		n--;int tmp=x;
+		if(x<y){
+			while(n){
+				int cnt=y%x,tot=(tmp-1)/cnt+1,num=y/x+1;
+				if(n>=num*tot){
+					n-=num*tot;
+					tmp-=cnt*tot;
+					if(n){n--;tmp+=x;}
+					continue;
+				} 
+				int p=n/num,q=n-num*p;
+				tmp-=cnt*p;n=q;
+				if(n){n--;tmp-=y;tmp+=n*x;}
+				n=0;
+			}
+			printf("%lld\n",s-tmp);
+			return ;
+		}
+		while(n){
+			int cnt=((x-1)/y+1)*y-x,tot=(tmp-1)/cnt+1,num=(x-1)/y+2;
+			if(n>=num*tot){
+				n-=num*tot;
+				tmp-=cnt*tot;
+				if(n){n--;tmp+=x;}
+				continue;
+			}
+			int p=n/num,q=n-num*p;
+			tmp-=cnt*p;n=q;
+			while(n){
+				int r=(tmp-1)/y+1;
+				if(n<r){tmp-=n*y;break;}
+				n-=r;tmp-=r*y;
+				if(n){n--;tmp+=x;}
+			}
+			n=0;
+		}
+		printf("%lld\n",s-tmp);
+		return ;
+	}
+}
+inline void Solve(){
+	n=read();s=read();t=read();x=read();y=read();
+	if(x<=100&&y<=100&&abs(s)<=100&&abs(t)<=100){
+		if(n<=1000000){Sub1::Main();return ;}
+		else{Sub2::Main();return ;}
+	}
+	if(x==y){Sub3::Main();return ;}
+	if(s==t){Sub4::Main();return ;}
+	Sub1::Main();return ;
+}
+signed main(){
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	T=read();while(T--)Solve();
+	fclose(stdin);
+	fclose(stdout);
+	return 0;
+}

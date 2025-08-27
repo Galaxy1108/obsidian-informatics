@@ -1,0 +1,46 @@
+#include<bits/stdc++.h>
+using namespace std;
+const int N=300005;
+int n,x;
+vector<int> e[N];
+
+long long Ans[N];
+
+void putsAns(){
+	for(int i=1;i<n;i++)
+		printf("%lld ",Ans[i]);
+	printf("%lld\n",Ans[n]);
+}
+
+int main(){
+	freopen("youup.in","r",stdin);
+	freopen("youup.out","w",stdout);
+	int Num;
+	scanf("%d",&Num);
+	scanf("%d%d",&n,&x);
+	for(int i=1;i<n;i++){
+		int x,y;
+		scanf("%d%d",&x,&y);
+		e[x].push_back(y);
+		e[y].push_back(x);
+	}
+	Ans[1]=n;
+	if(Num==1||x==0){
+		putsAns();
+		return 0;
+	}
+	if(Num==4){
+		if(x==1){
+			Ans[2]=n-1;
+			putsAns();
+			return 0; 
+		}
+		if(x>=2){
+			for(int i=2;i<=n;i++)
+				Ans[i]=Ans[i-1]*(n-i+1)/(i);
+			putsAns();
+			return 0;
+		}
+	}
+	
+}

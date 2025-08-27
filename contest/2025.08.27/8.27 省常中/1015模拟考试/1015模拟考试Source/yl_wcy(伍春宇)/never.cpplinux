@@ -1,0 +1,50 @@
+#include <bits/stdc++.h>
+using namespace std;
+using LL = long long;
+int T;
+LL n, s, t, x, y;
+
+int main()
+{
+  freopen("never.in", "r", stdin);
+  freopen("never.out", "w", stdout);
+  scanf("%d", &T);
+  while (T--) {
+    scanf("%lld %lld %lld %lld %lld", &n, &s, &t, &x, &y);
+    if (x == y) {
+      if (abs(s - t) / x >= n) {
+        if (s >= t)
+          printf("%lld\n", s - n * x);
+        else printf("%lld\n", s + n * y);
+        continue;
+      }
+      if (s >= t) {
+        n -= (t - s) / x;
+        s -= (t - s) / x * n;
+      }
+      if ((n & 1) == 0) printf("%lld\n", s);
+      else printf("%lld\n", s + (s >= t ? -x : y));
+      continue;
+    }
+    if (x / y >= 3 || y / x >= 3) {
+      while (n > 0) {
+        if (s >= t) {
+          int dis = (s - t) / x + 1;
+          if (dis <= n) n -= dis, s -= x * dis;
+          else s -= x * n, n = 0;
+        }
+        else {
+          int dis = (t - s - 1) / y + 1;
+          if (dis <= n) n -= dis, s += y * dis; 
+          else s += y * n, n = 0;
+        }
+      }
+    }
+    else for (LL i = 1; i <= n; i++)
+      if (s >= t) s -= x;
+      else s += y;
+    printf("%lld\n", s);
+  }
+  return 0;
+}
+      

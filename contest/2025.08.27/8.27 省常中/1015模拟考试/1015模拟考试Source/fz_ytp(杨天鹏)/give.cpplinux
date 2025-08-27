@@ -1,0 +1,36 @@
+#pragma GCC optimize(2)
+#include<bits/stdc++.h>
+using namespace std;
+inline int read(){
+    int ans=0,a=getchar(),flg=1;
+    while('0'>a||a>'9')flg=(a=='-'?-1:1),a=getchar();
+    while('0'<=a&&a<='9')ans=ans*10+a-'0',a=getchar();
+    return ans;
+}
+int m,S,n;
+int pos[205];
+int dp[2][5005];
+int main(){
+    freopen("give.in","r",stdin);
+    freopen("give.out","w",stdout);
+    int T=read();
+    while(T--){
+        memset(dp,0,sizeof(dp));
+        m=read(),S=read(),n=read();
+        for(int i=1;i<=n;i++)pos[i]=read();
+        sort(pos+1,pos+n+1);
+        dp[0][0]=1;
+        for(int i=0;i<m;i++){
+            for(int j=0;j<=S;j++)dp[i+1&1][j]=0;
+            for(int j=0;j<=S;j++){
+                if(!dp[i&1][j])continue;
+                for(int k=1;k<=n;k++){
+                    if(j+pos[k]>S)break;
+                    dp[i+1&1][j+pos[k]]^=1;
+                }
+            }
+        }
+        printf("%d\n",dp[m&1][S]);
+    }
+    return 0;
+}

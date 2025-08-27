@@ -1,0 +1,143 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+template < typename T >
+inline const void read(register T &x)
+{
+	register bool flg = x = 0;
+	register char c;
+	while ((c = getchar()) < 48 || c > 57)
+		flg |= c == '-';
+	do
+		x = (x << 1) + (x << 3) + (c ^ 48);
+	while ((c = getchar()) > 47 && c < 58);
+	if (flg) x = -x;
+}
+
+int OUTPUT[45];
+
+template < typename T >
+inline const void write(register T x)
+{
+	if (x < 0)
+	{
+		putchar('-');
+		x = -x;
+	}
+	register int len = 0;
+	do
+	{
+		OUTPUT[++len] = x % 10 | 48;
+		x /= 10;
+	}while (x);
+	while (len)
+		putchar(OUTPUT[len--]);
+}
+
+template < typename T >
+inline const void writesp(const register T x)
+{
+	write(x);
+	putchar(32);
+}
+
+template < typename T >
+inline const void writeln(const register T x)
+{
+	write(x);
+	putchar(10);
+}
+
+const int N = 2e4 + 5, M = 2305;
+int n, P, cnt, ans, p[N], sum[N], s[N][M], pw[M][N], f[M][N], g[M][N];
+bool vis[N];
+
+//inline int power(int x, int y)
+//{
+//	int ret = 1;
+//	while (y)
+//	{
+//		if (y & 1) ret = (long long)ret * x % P;
+//		x = (long long)x * x % P;
+//		y >>= 1;
+//	}
+//	return ret;
+//}
+
+inline int F(int x, int y)
+{
+	if (!y) return 1;
+////	assert(y <= n * n);
+////	return (power(x, y + 1) - 1ll + P) % P * power(x - 1, P - 2) % P;
+	int a = y / n/*, b = y % n*/;
+	if (!a) return f[x][y];
+	int b = y % n;
+	return ((long long)g[x][a] * (long long)pw[x][b] % P + (long long)f[x][b]) % P;
+////	assert(a || b);
+//	if (!b) return g[x][a];
+//	if (!a)
+//	{
+////		assert(y < n);
+//		return f[x][b];
+//	}
+//	return ((long long)g[x][a] * (long long)pw[x][b] % P + (long long)f[x][b - 1]) % P;
+}
+
+int main()
+{
+	freopen("gonna.in", "r", stdin);
+	freopen("gonna.out", "w", stdout);
+	read(n);
+	read(P);
+	for (register int i = 2; i <= n; ++i)
+	{
+		if (!vis[i]) p[++cnt] = i;
+		long long tmp = 0ll;
+		for (register int j = 1; j <= cnt && (tmp = (long long)p[j] * (long long)i) <= n; ++j)
+		{
+			vis[tmp] = 1;
+			if (!(i % p[j])) break;
+		}
+	}
+//	writeln(cnt);
+	for (register int i = 1; i <= cnt; ++i)
+		for (register int j = p[i]; j <= n; ++j)
+		{
+			int tmp = j;
+			while (tmp /= p[i])
+				s[j][i] += tmp;
+		}
+	for (register int i = 1; i <= cnt; ++i)
+	{
+		pw[i][0] = 1;
+		f[i][0] = 1;
+//		int num = 1;
+		for (register int j = 1; j <= n; ++j)
+		{
+			pw[i][j] = (long long)pw[i][j - 1] * (long long)p[i] % P;
+//			num = (long long)num * (long long)p[i] % P;
+			f[i][j] = (f[i][j - 1] + pw[i][j]) % P;
+		}
+//		g[i][1] = 
+		int num = (s[n][i] * (n + 1ll)) / n;
+		g[i][1] = (f[i][n] - 1 + P) % P;
+		for (register int j = 2; j <= num; ++j)
+			g[i][j] = ((long long)g[i][j - 1] * (long long)pw[i][n] % P + /*(f[i][n] - 1 + P) % P*/g[i][1]) % P;
+	}
+	for (register int i = 1; i <= n; ++i)
+	{
+		for (register int j = 1; j <= cnt; ++j)
+			sum[j] += s[i][j];
+		int cur = 1;
+		for (register int j = 1; j <= cnt && p[j] <= i; ++j)
+			cur = (long long)cur * (long long)F(/*p[j]*/j, s[i][j] * (i + 1) - (sum[j] << 1)) % P;
+		ans = (ans + cur) % P;
+	}
+	writeln(ans);
+	return 0;
+}
+/*
+20000 12345
+
+
+*/

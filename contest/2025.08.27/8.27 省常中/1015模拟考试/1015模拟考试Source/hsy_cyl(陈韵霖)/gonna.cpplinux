@@ -1,0 +1,78 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define file(a) freopen(#a".in","r",stdin);freopen(#a".out","w",stdout);
+#define re register int
+#define ll long long
+#define il inline
+const int N=3e3+5;
+vector <int> pe;
+int c[N];
+void pre_(){
+    for(int i=2;i<=N;++i){
+        if(c[i]==0){c[i]=i,pe.push_back(i);}
+        for(unsigned int yu=0;yu<pe.size();++yu){
+            if(pe[yu]*i>N||pe[yu]>c[i]) break;
+            c[pe[yu]*i]=pe[yu];  
+        }
+    }
+}
+ll p;
+int n;
+ll lo[N];
+ll pi[N];
+ll as[N];
+ll tot;
+void ex_gcd(ll &a,ll &b,ll c,ll r){
+    if(r==0){a=1,b=0;return;}
+    ex_gcd(a,b,r,c%r);
+    tot=b;
+    b=a-c/r*b,a=tot;
+}
+il ll ny(ll c){
+    ll ai,bi;
+    ex_gcd(ai,bi,c,p);
+    return (ai%p+p)%p;
+}
+il ll mu(ll ai,ll bi){
+    ll si=1;
+    while(bi){
+        if(bi&1) si=si*ai%p;
+        ai=ai*ai%p;
+        bi>>=1;
+    }
+    return si;
+}
+il ll fund(ll ci){
+    return ((mu(pe[ci],pi[ci]+1)-1)*ny(pe[ci]-1))%p;
+}
+void pn(int i){
+    int v=i,cnt=0;
+    for(unsigned int yu=0;yu<pe.size();++yu){
+        if(pe[yu]>i) break;
+        cnt=0;
+        while(v%pe[yu]==0){
+            v/=pe[yu];cnt++;
+        }
+        pi[yu]+=cnt*i;
+        lo[yu]+=cnt;
+        pi[yu]-=lo[yu];
+        as[yu]=fund(yu);
+    }
+}
+int main(){
+    file(gonna);
+    pre_();
+    scanf("%d%lld",&n,&p);
+    ll ans=1,ld;
+    for(int i=2;i<=n;++i){
+        pn(i);
+        ld=1;
+        for(unsigned int yu=0;yu<pe.size();++yu){
+            if(pe[yu]>i) break;
+            ld=ld*as[yu]%p;
+        }
+        ans=(ans+ld)%p;
+    }
+    printf("%lld",ans);
+    return 0;
+}

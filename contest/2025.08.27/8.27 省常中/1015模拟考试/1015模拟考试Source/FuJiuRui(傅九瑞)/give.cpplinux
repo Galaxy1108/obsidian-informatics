@@ -1,0 +1,33 @@
+#include<stdio.h>
+using namespace std;
+const int NR=2e3+5;
+const int MR=5e3+5;
+bool dp[NR][MR];
+int a[NR];
+int main()
+{
+	freopen("give.in","r",stdin);
+	freopen("give.out","w",stdout);
+	int T;scanf("%d",&T);
+	while(T--)
+	{
+		int m,s,n;scanf("%d%d%d",&m,&s,&n);
+		for(int i=1;i<=n;++i) scanf("%d",a+i);
+		dp[0][0]=1;
+		for(int i=1;i<=m;++i)
+		{
+			for(int j=0;j<=s;++j) dp[i][j]=0;
+			for(int j=0;j<=s;++j)
+			{
+				if(!dp[i-1][j]) continue;
+				for(int k=1;k<=n;++k)
+				{
+					if(a[k]+j>s) break;
+					dp[i][a[k]+j]^=1;
+				}
+			}
+		}
+		printf("%d\n",dp[m][s]);
+	}
+	return 0;
+}

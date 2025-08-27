@@ -1,0 +1,47 @@
+#include <cstdio>
+#include <iostream>
+#define macro_expand(x) #x
+#define print_macro(x) printf("%s\n",macro_expand(x))
+#define FOR(i,l,r) for(LL i=(l),i##ADJK=(r);i<=i##ADJK;++i)
+#define ROF(i,r,l) for(LL i=(r),i##ADJK=(l);i>=i##ADJK;--i)
+using namespace std;
+typedef long long LL;
+LL gcd(LL x,LL y){return (!y)?x:gcd(y,x%y);}
+LL n,s,t,x,y,T;
+int main(){
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	scanf("%lld",&T);
+	while(T--){
+		scanf("%lld%lld%lld%lld%lld",&n,&s,&t,&x,&y);
+		LL now=s-t;
+		if(now<0){
+			LL fu=(-now)/y;
+			if(n<fu){
+				printf("%lld\n",now+n*y+t);
+				continue;
+			}else{
+				n-=fu;
+				now+=y*fu;
+			}
+		}else{
+			LL fu=now/x;
+			if(n<fu){
+				printf("%lld\n",now-n*x+t);
+				continue;
+			}else{
+				n-=fu;
+				now-=x*fu;
+			}
+		}
+		n%=(x+y)/gcd(x,y);
+		FOR(i,1,n){
+			if(now>=0)now-=x;
+			else now+=y;
+		}
+		printf("%lld\n",now+t);
+	}
+	fclose(stdin);
+	fclose(stdout);
+	return 0;
+}

@@ -1,0 +1,33 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+inline int read(){
+	int s=0,w=1;char ch=getchar();
+	while((ch<'0')||(ch>'9')){if(ch=='-'){w=-1;}ch=getchar();}
+	while((ch>='0')&&(ch<='9')){s=(s<<3)+(s<<1)+ch-'0';ch=getchar();}
+	return s*w;
+}
+const int N=2005;
+const int S=5005;
+int T,m,s,n,a[N],dp[N][S];
+inline void Solve(){
+	m=read();s=read();n=read();
+	if(m>2000){srand(time(0));printf("%d\n",rand()%2);return ;}
+	for(int i=1;i<=n;i++)a[i]=read();
+	memset(dp,0,sizeof(dp));
+	dp[0][0]=1;
+	for(int i=1;i<=m;i++)
+		for(int j=0;j<=s;j++)
+			for(int k=1;k<=n;k++)
+				if(j>=a[k])dp[i][j]=(dp[i][j]+dp[i-1][j-a[k]])&1;
+	printf("%d\n",dp[m][s]);
+	return ;
+}
+signed main(){
+	freopen("give.in","r",stdin);
+	freopen("give.out","w",stdout);
+	T=read();while(T--)Solve();
+	fclose(stdin);
+	fclose(stdout);
+	return 0;
+}

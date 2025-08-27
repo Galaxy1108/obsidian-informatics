@@ -1,0 +1,92 @@
+#include<iostream>
+#include<cstdio>
+#include<vector>
+using namespace std;
+#define fo(i,a,b) for(int i=a;i<=b;++i)
+#define fod(i,a,b) for(int i=a;i>=b;--i)
+#define p 998244353
+#define LL long long
+#define lx edge[x][i]
+int read(){
+	int u=0;
+	char c=getchar();
+	while(c>'9'||c<'0')c=getchar();
+	while(c>='0'&&c<='9'){
+		u=u*10+c-48;
+		c=getchar();
+	}
+	return u;
+}
+int ksm(int x,int y){
+	if(!x)return 1;
+	if(x==1)return y;
+	LL u=ksm(x/2,y);
+	u=u*u%p;
+	if(x&1)u=u*y%p;
+	return u;
+}
+int n,lim,jc[100011],ny[100011];
+int fa[100011],deep[100011];
+vector<int>edge[100011];
+int C(int x,int y){
+	return (LL)jc[x]*ny[y]%p*ny[x-y]%p;
+}
+int dis[30][30];
+int ans[100011];
+void dfs(int x,int y,int z){
+	dis[x][y]=z;
+	if(edge[x].size()){
+		fo(i,0,edge[x].size()-1){
+			if(fa[x]!=lx){
+				fa[lx]=x;
+				dfs(lx,y,z+1);
+			}
+		}
+	}
+}
+int mj[20];
+void dfs2(int x,int y){
+	if(x==n+1){
+		++ans[y];
+		return ;
+	}
+	dfs2(x+1,y);
+	fo(i,1,y){
+		if(dis[mj[i]][x]>lim)return ;
+	}
+	mj[y+1]=x;
+	dfs2(x+1,y+1);
+}
+int main(){
+	freopen("youup.in","r",stdin);
+	freopen("youup.out","w",stdout);
+	int type=read();
+	n=read();
+	lim=read();
+	fo(i,1,n-1){
+		int u=read(),v=read();
+		edge[u].push_back(v);
+		edge[v].push_back(u);
+	}
+	jc[0]=ny[0]=1;
+	fo(i,1,100000){
+		jc[i]=(LL)jc[i-1]*i%p;
+		ny[i]=ksm(p-2,jc[i]);
+	}
+	if(type==4){
+		ans[1]=n;
+		if(lim==1)ans[2]=n-1;
+		if(lim>=2){
+			fo(i,1,n)ans[i]=C(n,i);
+		}
+		fo(i,1,n)printf("%d ",ans[i]);
+		return 0;
+	}
+	fo(i,1,n){
+		fa[i]=0;
+		dfs(i,i,0);
+	}
+	dfs2(1,0);
+	fo(i,1,n)printf("%d ",ans[i]);
+	return 0;
+}

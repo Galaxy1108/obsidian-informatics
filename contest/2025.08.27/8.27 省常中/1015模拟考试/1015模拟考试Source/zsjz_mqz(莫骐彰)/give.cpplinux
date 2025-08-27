@@ -1,0 +1,44 @@
+#include<iostream>
+#include<cstdio>
+using namespace std;
+#define fo(i,a,b) for(int i=a;i<=b;++i)
+#define fod(i,a,b) for(int i=a;i>=b;--i)
+#define LL long long
+int T,n,a[211];
+LL s,m,er[62];
+int f[2][5011];
+int main(){
+	freopen("give.in","r",stdin);
+	freopen("give.out","w",stdout);
+	er[0]=1;
+	fo(i,1,61)er[i]=er[i-1]*2;
+	scanf("%d",&T);
+	while(T){
+		--T;
+		scanf("%lld%lld%d",&m,&s,&n);
+		fo(i,1,n)scanf("%d",&a[i]);
+		if(s<=5000){
+			int u=0;
+			f[0][0]=1;
+			fo(i,0,61){
+				if(er[i]&m){
+					int v=(u^1);
+					fo(j,0,s){
+						f[v][j]=f[u][j];
+						fo(k,1,n){
+							if((LL)er[i]*a[k]>j)break;
+							f[v][j]^=f[u][j-er[i]*a[k]];
+						}
+					}
+					u=v;
+				}
+			}
+			printf("%d\n",f[u][s]);
+			fo(j,0,s){
+				f[0][j]=f[1][j]=0;
+			}
+		}
+		else printf("0\n");
+	}
+	return 0;
+}

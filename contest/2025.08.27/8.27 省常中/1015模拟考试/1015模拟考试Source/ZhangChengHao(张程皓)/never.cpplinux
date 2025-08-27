@@ -1,0 +1,82 @@
+#include <bits/stdc++.h>
+using ll = long long;
+using i128 = __int128;
+
+inline void file () {
+	freopen("never.in", "r", stdin);
+	freopen("never.out", "w", stdout);
+}
+
+void exgcd (ll a, ll b, ll &x, ll &y) {
+	if (!b) {
+		x = 1; y = 0;
+		return;
+	}
+	
+	ll tx, ty;
+	exgcd(b, a % b, tx, ty);
+	x = ty;
+	y = tx - b * (a / b) * ty;
+}
+
+void solve () {
+	ll N, S, T, X, Y;
+	std::cin >> N >> S >> T >> X >> Y;
+	
+	if (S < T - X) {
+		ll times = (T - X - S + Y - 1) / Y;
+		if(times >= N) {
+			std::cout << S + N * Y << '\n';
+			return;
+		}
+		N -= times;
+		S -= times * X;
+	} else if (S > T + Y - 1) {
+		ll times = (S - (T + Y - 1) + X - 1) / X;
+		if(times >= N) {
+			std::cout << S - 1ll * N * X << '\n';
+			return;
+		}
+		N -= times;
+		S += times * Y;
+	}
+	
+//	std::cerr << "Running\n";
+	
+	S -= (T - X);
+	
+	ll tx, ty;
+	exgcd(X + Y, 1, tx, ty);
+	
+	i128 x = (i128)tx * (S + (i128)N * Y);
+	i128 y = (i128)ty * (S + (i128)N * Y);
+//	x *= (S + N * Y);
+//	y *= (S + N * Y);
+	
+//	std::cerr << "a = " << X + Y << ' ' << "b = " << 1 << ' ' << "c = " << (S + N * Y) << '\n';
+//	std::cerr << "x = " << x << ' ' << "y = " << y << '\n';
+	
+	ll mod = (X + Y);
+	
+	ll ans = T - X;
+	ans += (y % mod + mod) % mod;
+	
+	std::cout << ans << '\n';
+}
+
+int main () {
+	
+	file();
+	std::ios::sync_with_stdio(0);
+	std::cin.tie(nullptr);
+	std::cout.tie(nullptr);
+	
+	int t;
+	std::cin >> t;
+	
+	while (t -- ) {
+		solve();
+	}
+	
+	return 0;
+} 

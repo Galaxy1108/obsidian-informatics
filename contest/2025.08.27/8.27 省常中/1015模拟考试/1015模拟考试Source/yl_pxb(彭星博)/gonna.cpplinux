@@ -1,0 +1,44 @@
+#include<bits/stdc++.h>
+using namespace std;
+int n;
+long long p,ans=0;
+map<int,int> b;
+void dfs(map<int,int>::iterator k,long long t)
+{
+	if(k==b.end()) {ans+=t,ans%=p;return;}
+	long long i,x=1;
+	auto nxt=k;nxt++;
+	for(i=0;i<=(k->second);i++)
+	{
+		dfs(nxt,t*x%p);
+		x=x*(k->first)%p;
+	}
+}
+int main()
+{
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	scanf("%d%lld",&n,&p);
+	int i,j,l;
+	for(l=1;l<=n;l++)
+	{
+		b.clear();
+		for(i=1;i<=l;i++)
+		{
+			int x=i;
+			for(j=2;j*j<=x;j++)
+			{
+				if(x%j==0)
+				{
+					int tot=0;
+					while(x%j==0) x/=j,tot++;
+					b[j]+=(1ll*((i-1)-(l-i))*tot%p+p)%p,b[j]%=p;
+				}
+			}
+			if(x>1) b[x]+=(1ll*((i-1)-(l-i))%p+p)%p,b[x]%=p;
+		}
+		dfs(b.begin(),1);
+	}
+	printf("%lld",ans);
+	return 0;
+}

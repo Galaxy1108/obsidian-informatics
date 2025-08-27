@@ -1,0 +1,63 @@
+#include<cstdio>
+#include<algorithm>
+using namespace std;
+const int N=2e4+5;
+int n,mo,P,ans,p[N],bz[N],b[N][2300],c[N],q[N],d[N];
+void pre(int x)
+{
+	P=x;
+	for(int i=2;1ll*i*i<=1ll*x;i++)
+		if(!(x%i))
+		{
+			P=P/i*(i-1);
+			while(!(x%i))x/=i;
+		}
+	if(x>1)P=P/x*(x-1);
+	P--;
+}
+int fpow(int x,int y)
+{
+	int res=1;
+	for(;y;y>>=1,x=1ll*x*x%mo)if(y&1)res=1ll*res*x%mo;
+	return res;
+}
+int main()
+{
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	scanf("%d%d",&n,&mo);
+	pre(mo);
+	for(int i=2;i<=n;i++)
+	{
+		if(!bz[i])p[bz[i]=++p[0]]=i,q[p[0]]=fpow(i-1,P);
+		for(int j=1;j<=p[0]&&1ll*i*p[j]<=1ll*n;j++)
+		{
+			bz[i*p[j]]=1;
+			if(!(i%p[j]))break;
+		}
+	}
+	for(int i=2;i<=n;i++)
+	{
+		int x=i;
+		for(int j=1;1ll*p[j]*p[j]<=1ll*x;j++)
+			while(!(x%p[j]))b[i][j]++,x/=p[j];
+		if(x>1)b[i][bz[x]]++;
+		for(int j=1;j<=p[0];j++)b[i][j]+=b[i-1][j];
+	}
+	ans=1;
+	for(int i=1;i<=p[0];i++)d[i]=p[i];
+	for(int i=2;i<=n;i++)
+	{
+		int res=1;
+		for(int j=1;j<=p[0]&&p[j]<=i;j++)
+		{
+			int ss=c[j];
+			c[j]=c[j]-b[i-1][j]+(b[i][j]-b[i-1][j])*(i-1);
+			if(ss!=c[j])d[j]=fpow(p[j],c[j]+1);
+			res=1ll*(d[j]-1+mo)%mo*res%mo*q[j]%mo;
+		}
+		ans=(ans+res)%mo;
+	}
+	printf("%d",ans);
+	return 0;
+}

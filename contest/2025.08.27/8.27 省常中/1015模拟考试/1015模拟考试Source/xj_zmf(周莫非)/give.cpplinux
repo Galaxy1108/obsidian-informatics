@@ -1,0 +1,95 @@
+/*
+    长弓背负，仙女月鹫，
+	梦中徐来，长夜悠悠。
+	今宵共君，夜赏囃子，
+	盼君速归，长夜悠悠。
+	睡意袭我，眼阖梦徭，
+	睡意袭我，意归襁褓。
+	手扶卓揭，仙女水狃，
+	盼君速归，长夜悠悠。
+	今宵共君，戏于西楼，
+	盼君速归，长夜悠悠。
+	睡意袭我，涟锜池留，
+	睡意袭我，意归海角。
+					                  ——《ever17》
+*/
+
+/*
+	『月正笑，地正润潮，星正舞，风正凉。』
+*/
+
+/*
+	『长夜伴浪破晓梦，梦晓破浪伴夜长。』
+*/
+
+//#pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,tune=native")
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+inline int read()
+{
+	int sum = 0, nega = 1;
+	char ch = getchar();
+	while (ch > '9'||ch < '0')
+	{
+	    if (ch == '-') nega = -1;
+		ch = getchar();
+	}
+	while (ch <= '9' && ch >= '0') sum = sum * 10 + ch - '0', ch = getchar();
+	return sum * nega;
+}
+const int N = 209, M = 509;
+int m, s, n, a[N], T;
+int dp[2][N][M], C[M][M];
+int flag;
+inline void work()
+{
+	memset(dp, 0, sizeof(dp));
+	dp[0][0][0] = 1;
+	for (int i = 1; i <= n; i++) 
+	{
+		int now = (i & 1), lst = (now ^ 1);
+		for (int j = 0; j <= m; j++) 
+			if(a[i] * j <= s) 
+			{
+				int v = a[i] * j;
+				for (int p0 = m; p0 >= j; p0--) 
+				{
+					if(!C[p0][j]) continue;
+					for (int p1 = s; p1 >= v; p1--) 
+						dp[now][p0][p1] ^= dp[lst][p0 - j][p1 - v];
+				}
+			}
+		for (int j = 0; j <= m; j++) 
+			for (int k = 0; k <= s; k++)
+				dp[lst][j][k] = 0;
+	}
+	printf("%lld\n", dp[(n & 1)][m][s]); return ;
+}
+inline void init(int nn) 
+{
+	for (int i = 0; i <= nn; i++) C[i][0] = C[i][i] = 1;
+	for (int i = 1; i <= nn; i++) 
+		for (int j = 1; j < i; j++) 
+			C[i][j] = (C[i - 1][j] ^ C[i - 1][j - 1]);
+}
+signed main()
+{
+	freopen("give.in", "r", stdin);
+	freopen("give.out", "w", stdout);
+	T = read(); init(500);
+	for (int ttt = 1; ttt <= T; ttt++) 
+	{
+		m = read(), s = read(), n = read(); flag = 0;
+		for (int i = 1; i <= n; i++) a[i] = read();
+		if(n <= 50 && m <= 200 && s <= 500) 
+			work();
+		else
+		{
+			for (int i = 1; i <= n; i++) 
+				if(a[i] * m == s) flag ^= 1;
+			printf("%lld\n", flag);
+		}
+	}
+	return 0;
+}

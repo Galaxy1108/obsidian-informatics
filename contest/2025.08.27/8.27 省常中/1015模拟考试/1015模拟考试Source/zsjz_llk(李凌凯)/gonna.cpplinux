@@ -1,0 +1,73 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define Fo(i,a,b) for(int i=a;i<=b;i++)
+#define Fd(i,a,b) for(int i=a;i>=b;i--)
+#define N 20010
+#define M 2300
+
+typedef long long ll;
+typedef unsigned long long ull;
+typedef __uint128_t L;
+struct FastMod{
+	ull b,m;
+	FastMod(){}
+	FastMod(ull b):b(b),m(ull((L(1)<<64)/b)){}
+	ull reduce(ull a){
+		ull q=(ull)((L(m)*a)>>64);
+		ull r=a-q*b;
+		return r>=b?r-b:r;
+	}
+}F;
+int R(ll x){return F.reduce(x);}
+
+int n,p,prime[N],tot,vis[N],low[N],id[N],ans,Mx[M];
+int S[M],sum1[M],sum2[M];
+vector<int>Pow[M];
+
+int mod(int x){return x>=p?x-p:x;}
+
+int main(){
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	scanf("%d%d",&n,&p);
+	F=FastMod(p);
+	vis[1]=1;
+	Fo(i,2,n){
+		if(!vis[i])prime[++tot]=i,low[i]=i,id[i]=tot;
+		for(int j=1;j<=tot&&1ll*i*prime[j]<=n;j++){
+			vis[i*prime[j]]=1;
+			low[i*prime[j]]=prime[j];
+			if(!(i%prime[j]))break;
+		}
+	}
+	Fo(i,1,n){
+		int x=i;
+		while(x>1)sum1[id[low[x]]]++,S[id[low[x]]]++,x/=low[x];
+		if(x>1)sum1[id[x]]++,S[id[x]]++;
+		Fo(j,1,tot)sum2[j]+=2*S[j];
+		Fo(j,1,tot)Mx[j]=max(Mx[j],sum1[j]*(i+1)-sum2[j]);
+	}
+	Fo(i,1,tot){
+		Pow[i].resize(Mx[i]+1);
+		Pow[i][0]=1;
+		int tmp=1;
+		Fo(j,1,Mx[i]){
+			tmp=R(1ll*tmp*prime[i]);
+			Pow[i][j]=mod(Pow[i][j-1]+tmp);
+		}
+	}
+	memset(sum1,0,sizeof(sum1));
+	memset(sum2,0,sizeof(sum2));
+	memset(S,0,sizeof(S));
+	Fo(i,1,n){
+		int x=i;
+		while(x>1)sum1[id[low[x]]]++,S[id[low[x]]]++,x/=low[x];
+		if(x>1)sum1[id[x]]++,S[id[x]]++;
+		Fo(j,1,tot)sum2[j]+=2*S[j];
+		int tmp=1;
+		Fo(j,1,tot)tmp=R(1ll*tmp*Pow[j][sum1[j]*(i+1)-sum2[j]]);
+		ans=mod(ans+tmp);
+	}
+	printf("%d",ans);
+	return 0;
+}

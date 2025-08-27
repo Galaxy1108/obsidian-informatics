@@ -1,0 +1,94 @@
+#include<bits/stdc++.h>
+#pragma GCC optimize(2)
+using namespace std;
+#define int long long
+
+inline int read(){
+	int x=0,f=1;char ch=getchar();
+	while (ch<'0'||ch>'9'){if (ch=='-') f=-1;ch=getchar();}
+	while (ch>='0'&&ch<='9'){x=x*10+ch-48;ch=getchar();}
+	return x*f;
+}
+
+const int maxn=110;
+
+int n,p;
+
+int c[maxn][maxn];
+int g[maxn][maxn][maxn];
+int prime[maxn],vis[maxn],cnt,ans;
+int tot[maxn];
+
+vector <int> d,back;
+
+int gcd(int a,int b){
+	return b==0 ? a : gcd(b,a%b);
+}
+
+void elur(){
+	vis[1]=1;
+	for(int i=2;i<=50;i++){
+		if(!vis[i]){
+			prime[++cnt]=i;
+		}
+		for(int j=1;j<=cnt&&prime[j]*i<=50;j++){
+			vis[prime[j]*i]=1;
+			if(i%prime[j]==0) break;
+		}
+	}
+}
+
+signed main(){
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	elur();
+	n=read(),p=read();
+	for(int i=1;i<=n;i++){
+		for(int j=0;j<=i;j++){
+			if(!j||i==j) continue;
+			d.clear(),back.clear();
+			int tmp=max(j,i-j);
+			for(int k=2;k<=tmp;k++) d.push_back(k);
+			for(int k=i;k>i-tmp;k--) back.push_back(k);
+			for(int k=0;k<d.size();k++){
+				for(int s=0;s<back.size();s++){
+					if(back[s]==1||d[k]==1) continue;
+					int x=gcd(d[k],back[s]);
+					d[k]/=x,back[s]/=x;
+				}
+			}
+			for(int k=0;k<back.size();k++){
+				if(back[k]==1) continue;
+				for(int s=1;s<=cnt;s++){
+					while(back[k]%prime[s]==0){
+						g[i][j][s]++;
+						back[k]/=prime[s];
+					}
+					if(back[k]==1) break;
+				}
+			}
+		}
+	}
+	
+	for(int i=1;i<=n;i++){
+		memset(tot,0,sizeof(tot));
+		for(int j=0;j<=i;j++){
+			for(int k=1;k<=cnt;k++){
+				tot[k]+=g[i][j][k];
+			}
+		}
+		int res=1;
+		for(int j=1;j<=cnt;j++){
+			if(!tot[j]) continue;
+			int sum=1,tmp=1;
+			for(int k=1;k<=tot[j];k++){
+				tmp=tmp*prime[j]%p;
+				sum=(sum+tmp)%p;
+			}
+			res=res*sum%p;
+		}
+		ans=(ans+res)%p;
+	}
+	printf("%lld",ans%p);
+	return 0;
+}

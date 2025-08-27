@@ -1,0 +1,102 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define MAX 3005
+int mod;
+ll p[MAX];
+ll prime[MAX];
+ll k;
+int jie[3005][3005], he[3005][3005];//jie代表对n!分解只因数，he表示1!2!3!4!...n!分解只因数
+void init()
+{
+    k=1;
+    memset(p,0,sizeof(p));
+    for(int i=2; i<MAX; i++)
+    {
+        if(!p[i])
+        {
+            for(int j=i+i; j<MAX; j+=i)
+            {
+                p[j]++;
+            }
+            prime[k]=i;
+            k++;
+        }
+    }
+	for(int i = 1;i <= 3000;i ++)
+	{
+		for(int j = 1;j <= k;j ++)
+		{
+			if(prime[j] > i) break;
+			int u = i;
+			while(u % prime[j] == 0) jie[i][j] ++, u /= prime[j];
+			// cout << jie 
+		}
+	}
+	for(int i = 2;i <= 3000;i ++)
+	{
+		for(int j = 1;j <= 3000;j ++) jie[i][j] += jie[i - 1][j];
+	}
+	for(int i = 2;i <= 3000;i ++)
+	{
+		for(int j = 1;j <= 3000;j ++) he[i][j] = he[i - 1][j] + jie[i][j];
+	}
+}
+ll qpow(ll n,ll a)
+{
+    ll ans=1;
+    while(a>=1)
+    {
+        if(a&1) ans=(n*ans) % mod;
+        a=a>>1;
+        n=(n*n) % mod;
+    }
+    return ans;
+}
+int a[3005];
+ll pr[MAX];
+ll num[MAX];
+ll A;
+void solve(int n)
+{
+	for(int i = 1;i <= 3000;i ++) a[i] = (jie[n][i] * (n + 1)) - (he[n][i] * 2);
+	// cout << endl;
+	if(n==0)
+	{
+		printf("0\n");
+		return ;
+	}
+	memset(pr,0,sizeof(pr));
+	memset(num,0,sizeof(num));
+	ll cnt=1;
+	for(int i = 1;i <= 3000;i ++)
+	{
+		if(a[i]) 
+		{
+			// cout << prime[i] << ' ' << a[i] << endl;
+			pr[cnt] = prime[i];
+			num[cnt] = a[i];
+			cnt ++;
+		}
+	} 
+	ll ans=1;
+	for(int i=1; i<=cnt; i++)
+	{
+		if(pr[i]==1) continue;
+		ans = (ans * (((qpow(pr[i],num[i]+1)-1) * qpow((pr[i]-1), mod - 2)) % mod)) % mod;
+	}
+	// cout << ans << endl;
+	A += ans;
+	A %= mod;
+}
+int main()
+{
+	freopen("gonna.in", "r", stdin);
+	freopen("gonna.out", "w", stdout);
+    init();
+	int n;
+	cin >> n >> mod;
+	for(int i = 1;i <= n;i ++) solve(i);
+	cout << A << endl;
+    return 0;
+}

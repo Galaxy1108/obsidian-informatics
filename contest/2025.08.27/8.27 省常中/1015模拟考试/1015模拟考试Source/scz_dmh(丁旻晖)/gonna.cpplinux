@@ -1,0 +1,61 @@
+#include<bits/stdc++.h>
+#define N 20009
+#define M 2509
+using namespace std;
+int pr[N];
+int diff[M],cnt[M];
+int n,mod; 
+int rnum[N],tot;
+vector<int>v[N];
+vector<int>p[M];
+void init(){
+	fill(pr,pr+N,1);
+	pr[1]=pr[0]=0;
+	for(int i=2;i<=n;i++){
+		if(pr[i]==1){
+			pr[i]=++tot;
+			rnum[tot]=i;
+			for(int j=2;i*j<=n;j++)pr[i*j]=0;
+		}
+	}
+	for(int i=1;i<=tot;i++)p[i].push_back(1);
+}
+void push(int k){
+	long long tmp=p[k][p[k].size()-1];
+	tmp=(tmp*rnum[k]+1)%mod;
+	p[k].push_back(tmp);
+}
+int calc(){
+	long long ans=1;
+	for(int i=1;i<=tot;i++){
+		while(p[i].size()<cnt[i]+1)push(i);
+		ans=ans*p[i][cnt[i]]%mod;
+	}
+	return ans;
+}
+void change(int i,int j){
+	cnt[j]+=i;
+	diff[j]++;
+	if(j>tot)tot=j;
+}
+int main(){
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	cin>>n>>mod;
+	init();tot=0;
+	long long ans=1;
+	for(int i=2;i<=n;i++){
+		int tmp=i;
+		for(int j=2;j*j<=i;j++){
+			while(tmp%j==0){
+				change(i,pr[j]);
+				tmp/=j;
+			}
+		}
+		if(tmp!=1)change(i,pr[tmp]);
+		for(int j=1;j<=tot;j++)cnt[j]-=diff[j];
+		ans=ans+calc(); 
+	}
+	cout<<ans%mod;
+	return 0;
+}

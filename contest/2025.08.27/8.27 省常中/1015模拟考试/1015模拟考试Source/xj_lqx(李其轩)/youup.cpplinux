@@ -1,0 +1,134 @@
+#include <bits/stdc++.h>
+#define sz(a) int((a).size())
+#define FOR(i, l, r) for(int i = (l); i <= (r); i++)
+#define ROF(i, r, l) for(int i = (r); i >= (l); i--)
+#define ll long long
+#define vi vector<int>
+using namespace std;
+const int N = 1.2e6 + 10, P = 998244353;
+int n, x, tot;
+int cnt[N], dis[N], siz[N], used[N], fa[N];
+int fac[N], ifac[N];
+int ans[N], ce[N];
+vector<int> g[N];
+int pw(int a, int b, int c = 1) {
+    for(; b; b >>= 1, a = (ll)a * a % P) if(b & 1) c = (ll)c * a % P;
+    return c;
+}
+void initm(int n) {
+    fac[0] = 1;
+    FOR(i, 1, n) fac[i] = (ll)fac[i - 1] * i % P;
+    ifac[n] = pw(fac[n], P - 2);
+    ROF(i, n - 1, 0) ifac[i] = (ll)ifac[i + 1] * (i + 1) % P;
+}
+void AE(int u, int v) {
+    g[u].emplace_back(v), g[v].emplace_back(u);
+}
+void dfsc(int u, int fa, vi &id) {
+    ::fa[u] = fa;
+    id.emplace_back(u);
+    siz[u] = 1;
+    for(auto v : g[u]) if(v != fa && !used[v]){
+        dfsc(v, u, id);
+        siz[u] += siz[v];
+    }
+}
+void dfsd(int u, int fa, vi &id) {
+    id.emplace_back(u);
+    dis[u] = dis[fa] + 1;
+    for(auto v : g[u]) if(v != fa && !used[v]){
+        dfsd(v, u, id);
+    }
+}
+void solve(vi &id, int opt) {
+    sort(id.begin(), id.end(), [&](int x, int y) {
+        return dis[x] < dis[y];
+    });
+    int lst = -1, cnt = 0;
+    ROF(i, sz(id) - 1, 0) {
+        int x = id[i];
+        while(lst + 1 < sz(id) && dis[x] + dis[id[lst + 1]] <= ::x) lst++, cnt += id[lst] <= n;
+        ::cnt[x] += opt * cnt;
+    }
+}
+void dq(int rt) {
+    vi id;
+    dfsc(rt, 0, id);
+    int wsz = tot + 1, ws = -1;
+    for(auto u : id) {
+        int ms = 0;
+        for(auto v : g[u]) if(v != fa[u] && !used[v]) {
+            ms = max(ms, siz[v]);
+        }
+        ms = max(ms, siz[rt] - siz[u]);
+        if(wsz > ms) {
+            wsz = ms, ws = u;
+        }
+    }
+    int u = ws;
+    id.clear();
+    dfsd(u, 0, id);
+    solve(id, 1);
+    used[u] = 1;
+    for(auto v : g[u]) if(!used[v]) {
+        id.clear();
+        dfsd(v, u, id);
+        solve(id, -1);
+    }
+    for(auto v : g[u]) if(!used[v]) dq(v);
+}
+int rt[N], rev[N];
+void initrt(int n) {
+    for(int i = 2; i <= n; i <<= 1) {
+        int e = pw(3, (P - 1) / i);
+        rt[(i >> 1)] = 1;
+        FOR(j, (i >> 1) + 1, i - 1) rt[j] = (ll)rt[j - 1] * e % P;
+    }
+}
+void fft(vi &a, int t) {
+    int n = sz(a);
+    FOR(i, 1, n - 1) rev[i] = (rev[i >> 1] >> 1) | ((i & 1) * (n >> 1));
+    FOR(i, 0, n - 1) if(i < rev[i]) swap(a[i], a[rev[i]]);
+    for(int i = 2; i <= n; i <<= 1) {
+        for(int j = 0; j < n; j += i) {
+            for(int k = 0; k < (i >> 1); k++) {
+                int x = a[j + k], y = (ll)a[j + k + (i >> 1)] * rt[(i >> 1) + k] % P;
+                a[j + k] = (x + y) % P;
+                a[j + k + (i >> 1)] = (x - y + P) % P;
+            }
+        }
+    }
+    if(t == -1) {
+        reverse(a.begin() + 1, a.end());
+        int ivn = pw(n, P - 2);
+        FOR(i, 0, n - 1) a[i] = (ll)a[i] * ivn % P;
+    }
+}
+int main() {
+    freopen("youup.in", "r", stdin);
+    freopen("youup.out", "w", stdout);
+    ios :: sync_with_stdio(0), cin.tie(0), cout.tie(0);
+    dis[0] = -1;
+    int num;
+    cin >> num;
+    cin >> n >> x;
+    tot = n;
+    FOR(i, 1, n) ce[i] = 1;
+    FOR(i, 1, n - 1) {
+        int u, v;
+        cin >> u >> v;
+        ce[tot + 2] = 1, ce[tot + 1] = ce[tot + 3] = P - 1;
+        AE(u, tot + 1), AE(tot + 1, tot + 2), AE(tot + 2, tot + 3), AE(tot + 3, v);
+        tot += 3;
+    }
+    x *= 2;
+    dq(1);
+    initm(n);
+    FOR(i, 1, tot) {
+        FOR(j, 1, cnt[i]) {
+            (ans[j] += (ll)ce[i] * fac[cnt[i]] % P * ifac[j] % P * ifac[cnt[i] - j] % P) %= P;
+        }
+    }
+    FOR(i, 1, n) cout << ans[i] << " ";
+    cout << "\n";
+}

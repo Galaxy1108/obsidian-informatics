@@ -1,0 +1,108 @@
+#include<cstdio>
+#include<bits/stdc++.h>
+using namespace std;
+#define ll __int128
+int st[100],top;
+int redd(){
+	int xx=0,fl=1;char ch=getchar();
+	while((ch<'0'||ch>'9')&&ch!='-')ch=getchar();
+	if(ch=='-'){ch=getchar();fl=-1;}
+	for(;ch>='0'&&ch<='9';ch=getchar())
+		xx=(xx<<3)+(xx<<1)+ch-'0';
+	return xx*fl;
+}
+ll redl(){
+	ll xx=0,fl=1;char ch=getchar();
+	while((ch<'0'||ch>'9')&&ch!='-')ch=getchar();
+	if(ch=='-'){ch=getchar();fl=-1;}
+	for(;ch>='0'&&ch<='9';ch=getchar())
+		xx=(xx<<3)+(xx<<1)+ch-'0';
+	return xx*fl;
+}
+void write(ll x){
+	if(x<0){putchar('-');x=-x;}
+	if(!x){putchar('0');putchar('\n');return;}
+	top=0;
+	while(x){
+		st[++top]=x%10;
+		x/=10;
+	}
+	for(int i=top;i>=1;i--)putchar('0'+st[i]);
+	putchar('\n');
+}
+ll gcd(ll x,ll y){
+	if(!y)return x;
+	return gcd(y,x%y);
+}
+void work(){
+	ll n,s,t,x,y;
+	n=redl();s=redl();t=redl();x=redl();y=redl();
+	if(s>=t){
+		if((s-t+1+x-1)/x>=n){
+			write(s-n*x);
+			return;
+		}
+		n-=(s-t+1+x-1)/x;
+		s-=(s-t+1+x-1)/x*x;
+	}
+	else{
+		if((t-s+y-1)/y>=n){
+			write(s+n*y);
+			return;
+		}
+		n-=(t-s+y-1)/y;
+		s+=(t-s+y-1)/y*y;
+	}
+	if(x<=y&&s<t){
+		if((t-s+y-1)/y>=n){
+			write(s+n*y);
+			return;
+		}
+		n-=(t-s+y-1)/y;
+		s+=(t-s+y-1)/y*y;
+	}
+	else if(x>y&&s>=t){
+		if((s-t+1+x-1)/x>=n){
+			write(s-n*x);
+			return;
+		}
+		n-=(s-t+1+x-1)/x;
+		s-=(s-t+1+x-1)/x*x;
+	}
+	ll z=gcd(x,y);
+	n=(n-1)%((x+y)/z)+1;
+	if(n==1){
+		if(s>=t)write(s-x);
+		else write(s+y);
+		return;
+	}
+	ll ans;
+	if(x<=y){
+		z=y-x;
+		if(n&1)ans=x-n/2*z;
+		else ans=-n/2*z;
+		ans=s-ans;
+		if(ans<t-x)ans+=(t-x-ans+x+y-1)/(x+y)*(x+y);
+		if(ans>=t+y)ans-=(ans-t-y+1+x+y-1)/(x+y)*(x+y);
+		write(ans);
+	}
+	else{
+		z=x-y;
+		if(n&1)ans=y-n/2*z;
+		else ans=-n/2*z;
+		ans=s+ans;
+		if(ans<t-x)ans+=(t-x-ans+x+y-1)/(x+y)*(x+y);
+		if(ans>=t+y)ans-=(ans-t-y+1+x+y-1)/(x+y)*(x+y);
+		write(ans);
+	}
+}
+int main(){
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	int t;
+	t=redd();
+	while(t--){
+		work();
+	}
+	return 0;
+}

@@ -1,0 +1,44 @@
+//#pragma GCC optimize("Ofast")
+#include<bits/stdc++.h>
+using namespace std;
+#define F(i,a,b) for(int i=a;i<=b;i++)
+#define Fd(i,a,b) for(int i=a;i>=b;i--)
+#define N 210
+#define M 300
+#define LL long long
+
+int T,n,a[N],Min,Max,f[M+10][M+10];
+LL m,s;
+
+int solve(LL x,LL y){
+	if(!x)return (y==0);
+	if(x<=M&&y<=M)return f[x][y];
+	if(Max*x<y||Min*x>y)return 0;
+	int res=0;
+	if(x&1){
+		F(i,1,n)if(!(y-a[i]&1)&&y>=a[i])res^=solve((x-1)>>1,(y-a[i])>>1);
+	}else
+	if(!(y&1)){
+		res=solve(x>>1,y>>1);
+	}
+	return res;
+}
+
+int main(){
+	freopen("give.in","r",stdin);
+	freopen("give.out","w",stdout);
+	scanf("%d",&T);
+	while(T--){
+		scanf("%lld%lld%d",&m,&s,&n);
+		F(i,1,n)scanf("%d",&a[i]);
+		Min=Max=a[1];
+		F(i,2,n)Min=min(Min,a[i]),Max=max(Max,a[i]);
+		memset(f,0,sizeof(f));
+		f[0][0]=1;
+		F(i,0,M-1) F(j,0,M){
+			F(k,1,n)if(a[k]+j<=M)f[i+1][a[k]+j]^=f[i][j];
+		}
+		printf("%d\n",solve(m,s));
+	}
+	return 0;
+}

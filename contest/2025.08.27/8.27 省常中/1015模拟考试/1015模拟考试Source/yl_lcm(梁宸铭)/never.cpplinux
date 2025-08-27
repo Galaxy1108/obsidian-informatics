@@ -1,0 +1,83 @@
+#include<bits/stdc++.h>
+#define ll long long    
+#define ull unsigned long long
+#define db double
+#define ldb long double
+#define pb push_back
+#define mp make_pair
+#define pii pair<int, int>
+#define FR first
+#define SE second
+#define int long long
+using namespace std;
+inline int read() {
+    int x = 0; bool op = 0;
+    char c = getchar();
+    while(!isdigit(c))op |= (c == '-'), c = getchar();
+    while(isdigit(c))x = (x << 1) + (x << 3) + (c ^ 48), c = getchar();
+    return op ? -x : x;
+}
+const int N = 1e5 + 10;
+int n, S, T, X, Y;
+namespace bf {
+    void MAIN() {
+        int cur = S;
+        for(int i = 1; i <= n; i++) {
+            if(cur < T)cur += Y;
+            else cur -= X;
+        }
+        printf("%lld\n", cur);
+        return ;
+    }
+};
+namespace S1 {
+    void MAIN() {
+        if(S >= T) {
+            int st = (S - T) / X, cur = S;
+            if(st >= n)return printf("%lld\n", S - n * X), void();
+            n -= st; cur -= st * X;
+            printf("%lld\n", (n & 1) ? cur - X : cur);
+            return ;
+        }
+        else {
+            int st = (T - 1 - S) / Y, cur = S;
+            if(st >= n)printf("%lld\n", S + n * Y);
+            n -= st; cur += st * X;
+            printf("%lld\n", (n & 1) ? cur + X : cur);
+        }
+        return ;
+    }
+};
+namespace S2 {
+    map<int, int> pos;
+    int p[N];
+    void MAIN() {
+        pos.clear();
+        int cur = S;
+        for(int i = 1; i <= n; i++) {
+            if(cur < T)cur += Y;
+            else cur -= X;
+            if(pos.count(cur)) {
+                // printf("pos:%d\n", pos[cur]);
+                int sz = (i - pos[cur]), inc = (n - i) % sz;
+                cur = p[pos[cur] + inc]; break;
+            }
+            p[i] = cur; pos[cur] = i;
+        }
+        printf("%lld\n", cur);
+        return ;
+    }
+};
+void solve() {
+    n = read(); S = read(); T = read(); X = read(); Y = read();
+    if(n <= 1e6)return bf::MAIN(), void();
+    if(X == Y)return S1::MAIN(), void();
+    if(X <= 100 && Y <= 100 && abs(S) <= 100 && abs(T) <= 100)return S2::MAIN(), void();
+}
+signed main() { 
+    freopen("never.in", "r", stdin);
+    freopen("never.out", "w", stdout);
+    int test = read();
+    while(test--)solve();
+    return 0;
+}

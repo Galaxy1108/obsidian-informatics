@@ -1,0 +1,50 @@
+#pragma GCC optimize(2)
+#pragma GCC optimize(3)
+#pragma GCC optimize("Ofast")
+#include<bits/stdc++.h>
+using namespace std;
+const int N=2e4+5,B=400;
+int n,t,mod,ans,prime[N],now[N],fact[N],cnt[N];
+bool vis[N];
+int add(int x,int y) {return x+y>=mod?x+y-mod:x+y;}
+int sub(int x,int y) {return x>=y?x-y:x-y+mod;}
+int mul(int x,int y) {return 1ll*x*y%mod;}
+int fastpow(int x,int y)
+{
+	int res=1;
+	for (;y;y>>=1,x=mul(x,x))
+		if (y&1) res=mul(res,x);
+	return res;
+}
+int inv(int x) {return fastpow(x,mod-2);}
+int main()
+{
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	scanf("%d%d",&n,&mod);
+	for (int i=2;i<=n;++i)
+	{
+		if (!vis[i]) prime[++t]=i;
+		for (int j=1;j<=t && i*prime[j]<=n;++j)
+		{
+			vis[i*prime[j]]=1;
+			if (i%prime[j]==0) break;
+		}
+	}
+	for (int i=1,G=1;i<=n;++i)
+	{
+		int x=i;
+		for (int j=1;j<=t;++j) cnt[j]=0;
+		for (int j=1;j<=t && prime[j]<=x;++j)
+			for (;x%prime[j]==0;x/=prime[j]) ++cnt[j];
+		for (int j=1;j<=t;++j) (fact[j]+=cnt[j])%=mod-1;
+		for (int j=1;j<=t;++j)
+		{
+			G=mul(G,inv(sub(1,fastpow(prime[j],now[j]+1))));
+			(now[j]+=(1ll*i*cnt[j]%(mod-1)-fact[j]+(mod-1))%(mod-1))%=mod-1;
+			G=mul(G,sub(1,fastpow(prime[j],now[j]+1)));
+		}
+		ans=add(ans,G);
+	}
+	printf("%d",ans);
+}

@@ -1,0 +1,79 @@
+#include <bits/stdc++.h>
+#define maxN 20010
+#define LL long long
+using namespace std;
+struct Pair{ int val, cnt; };
+vector<Pair> trs[maxN];
+LL mo = 0;
+int flg[maxN], pr[maxN];
+int hav[maxN], con[maxN];
+int read ()
+{
+	int x = 0, Fu = 1;
+	char c = getchar();
+	while(c < '0' || c > '9')
+	{
+		if(c == '-') Fu = -1;
+		c = getchar();
+	}
+	while(c >= '0' && c <= '9')
+	{
+		x = x * 10 + (c - '0');
+		c = getchar();
+	}
+	return x * Fu;
+}
+int Min (int x, int y) { return x < y ? x : y; }
+int Max (int x, int y) { return x > y ? x : y; }
+LL Pow (LL x, LL y)
+{
+	if(!y) return 1;
+	LL res = Pow(x, y >> 1);
+	if(!(y & 1)) return res * res % mo;
+	else return res * res % mo * x % mo;
+}
+LL calc (int N)
+{
+	for(int i = 2;i <= N; i++)
+		hav[i] = (N + 1) - 2 * (N - i + 1), con[i] = 0;
+	for(int i = 2;i <= N; i++)
+		for(Pair v : trs[i])
+			con[v.val] += hav[i] * v.cnt;
+	LL res = 1;
+	for(int i = 2;i <= N; i++)
+	{
+		if(flg[i]) continue;
+		LL A = Pow(i, con[i] + 1) + mo - 1;
+		LL B = Pow(i - 1, mo - 2);
+		res = res * A % mo * B % mo;
+	}
+	return res;
+}
+int main ()
+{
+	freopen("gonna.in", "r", stdin);
+	freopen("gonna.out", "w", stdout);
+	int n = read(); mo = read();
+	for(int i = 2;i < maxN; i++)
+	{
+		if(flg[i]) continue;
+		pr[++pr[0]] = i;
+		for(int j = i * 2;j < maxN;j += i)
+			flg[j] = true;
+	}
+	for(int i = 2;i < maxN; i++)
+		for(int j = 1;j <= pr[0]; j++)
+		{
+			if(!(i % pr[j]))
+			{
+				int cnt = 0, x = i;
+				while(!(x % pr[j])) x /= pr[j], cnt++;
+				trs[i].push_back((Pair){pr[j], cnt});
+			}
+		}
+	LL Ans = 0;
+	for(int i = 1;i <= n; i++)
+		Ans = (Ans + calc(i)) % mo;
+	printf("%lld", Ans);
+	return 0;
+}

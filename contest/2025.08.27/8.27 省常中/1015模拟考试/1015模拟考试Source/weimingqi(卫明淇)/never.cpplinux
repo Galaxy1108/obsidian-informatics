@@ -1,0 +1,38 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int T;
+
+long long n,s,t,x,y;
+
+int main()
+{
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	cin>>T;
+	while(T--)
+	{
+		cin>>n>>s>>t>>x>>y;
+		vector <long long> tmp;
+		unordered_map <long long,int> pos;
+		bool flag=false;
+		for(int i=1;i<=n;i++)
+		{
+			tmp.push_back(s);
+			pos[s]=tmp.size();
+			if(s>=t) s-=x;
+			else s+=y;
+			if(pos[s])
+			{
+				int u=pos[s]-1;
+				cout<<tmp[u+(n-i)%(tmp.size()-u)]<<"\n";
+				flag=true;
+				break;
+			}
+		}
+		if(!flag)
+			cout<<s<<"\n";
+	}
+	return 0;
+}

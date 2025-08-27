@@ -1,0 +1,93 @@
+#pragma GCC optimize(2)
+
+#include <algorithm>
+#include <iostream>
+#include <cstring>
+#include <cstdio>
+#include <vector>
+
+#define File(a) freopen(a".in", "r", stdin), freopen(a".out", "w", stdout)
+
+using std::pair;
+using std::make_pair;
+
+#define pii pair<int, int>
+#define mp make_pair
+
+using ll = long long;
+const int inf = 1e9;
+const ll infll = 0ll + 1e18;
+
+const int M = 3005;
+
+int N, mod, ans = 0;
+int pnum, pr[M], isp[M], p[M][10][3], tot[M], vis[M];
+
+inline void Euler(int n) {
+  for (int i = 2; i <= n; i ++) {
+    if (isp[i] == 0) pr[++pnum] = i;
+    for (int j = 1; j <= pnum && pr[j] * i <= n; j++) {
+      isp[pr[j] * i] = 1;
+      if (i % pr[j] == 0) break;
+    }
+  }
+}
+
+inline int power(int a, int n) {
+  int ret = 1;
+  while (n) {
+    if (n & 1) ret = 1ll * ret * a % mod;
+    a = 1ll * a * a % mod;
+    n /= 2;
+  }
+  return ret;
+}
+
+signed main(void) {
+  File("gonna");
+  std::cin >> N >> mod;
+  Euler(M - 5);
+  for (int num = 2; num <= N; num ++) {
+    int t = num;
+    for (int i = 2, s; i * i <= t; i ++) {
+      if (t % i) continue;
+      s = 0;
+      while (t % i == 0) t /= i, s ++;
+      tot[num] ++;
+      p[num][tot[num]][0] = i;
+      p[num][tot[num]][1] = s;
+    }
+    if (t > 1) {
+      tot[num] ++;
+      p[num][tot[num]][0] = t;
+      p[num][tot[num]][1] = 1;
+    }
+  }
+  for (int n = 1; n <= N; n ++) {
+    int a = 1;
+    for (int i = 1; i <= n; i ++) vis[i] = 0;
+    for (int i = 2; i <= n; i ++) {
+      for (int j = 1; j <= tot[i]; j ++)
+        vis[p[i][j][0]] += p[i][j][1] * a;
+      a ++;
+    }
+    a = 1;
+    for (int i = n - 1; i >= 2; i --) {
+      for (int j = 1; j <= tot[i]; j ++)
+        vis[p[i][j][0]] -= p[i][j][1] * a;
+      a ++;
+    }
+    int mul = 1;
+    for (int i = 1; i <= n; i ++) {
+      if (vis[i] == 0) continue;
+      int m = power(i, vis[i] + 1) - 1;
+      if (m < 0) m += mod;
+      m = 1ll * m * power(i - 1, mod - 2) % mod;
+      mul = 1ll * mul * m % mod;
+    }
+    ans = (ans + mul) % mod;
+  }
+  ans = (ans % mod + mod) % mod;
+  std::cout << ans << std::endl;
+  return 0;
+}

@@ -1,0 +1,59 @@
+#include<bits/stdc++.h>
+using namespace std;
+const int N=20005,DIV=1<<8;
+int n,P,fac[N],now[N],g[N],ans;
+int t[N],pr[N],cnt;
+long long mi4[N][DIV],mi3[N][DIV],mi2[N][DIV],mi1[N][DIV],mod[N];
+long long mi(int a,int b)
+{
+	if(b<DIV) return mi1[a][b];
+	if(b<DIV*DIV) return (__int128)mi2[a][b/DIV]*mi1[a][b%DIV]%mod[a];
+	if(b<DIV*DIV*DIV) return (__int128)mi3[a][b/DIV/DIV]*mi2[a][b/DIV%DIV]%mod[a]*mi1[a][b%DIV]%mod[a];
+	return (__int128)mi4[a][b/DIV/DIV]*mi3[a][b/DIV/DIV%DIV]%mod[a]*mi2[a][b/DIV%DIV]%mod[a]*mi1[a][b%DIV]%mod[a];
+}
+int main()
+{
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	scanf("%d%d",&n,&P);
+	g[1]=ans=1;
+	for(int i=2;i<=n;i++)
+	{
+		mod[i]=(long long)P*(i-1);
+		mi1[i][0]=mi2[i][0]=mi3[i][0]=mi4[i][0]=1;
+		for(int j=1;j<DIV;j++) mi1[i][j]=mi1[i][j-1]*i%mod[i];
+		for(int j=1;j<DIV;j++)
+		{
+			mi2[i][j]=mi1[i][j];
+			for(int k=1;k<=8;k++) mi2[i][j]=(__int128)mi2[i][j]*mi2[i][j]%mod[i];
+			mi3[i][j]=mi2[i][j];
+			for(int k=1;k<=8;k++) mi3[i][j]=(__int128)mi3[i][j]*mi3[i][j]%mod[i];
+			mi4[i][j]=mi3[i][j];
+			for(int k=1;k<=8;k++) mi4[i][j]=(__int128)mi4[i][j]*mi4[i][j]%mod[i];
+		}
+	}
+//	printf("OK");
+	for(int i=2;i<=n;i++)
+	{
+		int x=i;
+		for(int j=2;(long long)j*j<=x;j++)
+			while(x%j==0) x/=j,now[j]+=i;
+		if(x!=1)
+		{
+			now[x]+=i;
+			if(!t[x]) pr[++cnt]=x,t[x]=1;
+		}
+		x=i;
+		for(int j=2;(long long)j*j<=x;j++)
+			while(x%j==0) x/=j,fac[j]++;
+		if(x!=1) fac[x]++;
+		for(int j=1;j<=cnt;j++) now[pr[j]]-=fac[pr[j]];
+		g[i]=1;
+		for(int j=1;j<=cnt;j++)
+			g[i]=((__int128)g[i]*(mi(pr[j],now[pr[j]]+1)-1)/(pr[j]-1))%P;
+//		for(int j=1;j<=i;j++) printf("%d ",now[j]);
+//		printf(":%d %d\n",cnt,g[i]);
+		ans=(ans+g[i])%P;
+	}
+	printf("%d\n",ans);
+}

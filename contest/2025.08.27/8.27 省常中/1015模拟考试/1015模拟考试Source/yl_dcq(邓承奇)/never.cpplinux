@@ -1,0 +1,77 @@
+#include <bits/stdc++.h>
+#define ll long long
+
+using namespace std;
+
+// inline void work() {
+//     ll n, s, t, x, y;
+//     scanf("%lld%lld%lld%lld%lld", &n, &s, &t, &x, &y);
+//     for (int i = 1; i <= n; ++i) {
+//         if (s >= t)
+//             s -= x;
+//         else
+//             s += y;
+//         printf("%lld ", s);
+//     }
+//     puts("");
+// }
+
+ll n, s, t, x, y;
+ll GCD;
+
+namespace Sub1 {
+ll cyc[205];
+inline void MAIN() {
+    cyc[0] = s;
+    for (int i = 1; i <= x + y; ++i) {
+        if (s >= t)
+            s -= x;
+        else if (s < t)
+            s += y;
+        cyc[i] = s;
+    }
+    printf("%lld\n", cyc[n % (x + y)]);
+}
+
+}  // namespace Sub1
+namespace Sub2 {
+inline void MAIN() {
+    ll pre = s < t ? s + y : s - x;
+    ll nxt = pre < t ? pre + y : pre - x;
+    printf("%lld\n", (n & 1) ? pre : nxt);
+}
+}  // namespace Sub2
+namespace Sub3 {
+inline void MAIN() {}
+}  // namespace Sub3
+
+inline void work() {
+    scanf("%lld%lld%lld%lld%lld", &n, &s, &t, &x, &y);
+
+    int step = 0;
+    if (s < t) {
+        step = (t - s) / y;
+        s += step * y;
+        n -= step;
+    } else if (s >= t) {
+        step = (s - t) / x;
+        s -= step * x;
+        n -= step;
+    }
+    // GCD = __gcd(x, y);
+    if (x <= 100 && y <= 100)
+        Sub1::MAIN();
+    else if (x == y)
+        Sub2::MAIN();
+    else if (s == t)
+        Sub3::MAIN();
+}
+
+int main() {
+    freopen("never.in", "r", stdin);
+    freopen("never.out", "w", stdout);
+    int T;
+    scanf("%d", &T);
+    while (T--) work();
+    return 0;
+}

@@ -1,0 +1,69 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define N 2002
+#define fo(i, l, r) for (int i = (l), ed = (r); i <= ed; i ++)
+#define fd(i, l, r) for (int i = (l), ed = (r); i >= ed; i --)
+#define pb push_back
+#define mp make_pair
+#define fi first
+#define se second
+#define INF 2147483647 //9223372036854775807
+template <typename T> void gi(T &s){
+	s = 0;
+	int b = 1;
+	char ch = getchar();
+	while (ch < '0' || ch > '9') b *= (ch == '-') ? (-1) : 1, ch = getchar();
+	while (ch >= '0' && ch <= '9') s = s * 10 + ch - '0', ch = getchar();
+	s *= b;
+}
+int n, m, P, ans;
+int C[N][N];
+int fpow(int x, int y){
+	int s = 1;
+	for (; y; y >>= 1, x = 1ll * x * x % P)
+		if (y & 1) s = 1ll * s * x % P;
+	return s;
+}
+void dg(int x, int y){
+	if (x > m){
+		ans = (ans + y) % P;
+		return ;
+	}
+	fo (i, 0, C[m][x]){
+		dg(x + 1, 1ll * y * fpow(x, i) % P);
+	}
+}
+int main(){
+	freopen("gonna.in", "r", stdin);
+	freopen("gonna.out", "w", stdout);
+	gi(n), gi(P);
+	fo (i, 1, n)
+		fo (j, 0, i){
+			fo (l, 1, i){
+				int k = l;
+				while (k % 2 == 0) k /= 2, C[i][2] ++;
+				while (k % 3 == 0) k /= 3, C[i][3] ++;
+				while (k % 5 == 0) k /= 5, C[i][5] ++;
+				while (k % 7 == 0) k /= 7, C[i][7] ++;
+			}
+			fo (l, 1, j){
+				int k = l;
+				while (k % 2 == 0) k /= 2, C[i][2] --;
+				while (k % 3 == 0) k /= 3, C[i][3] --;
+				while (k % 5 == 0) k /= 5, C[i][5] --;
+				while (k % 7 == 0) k /= 7, C[i][7] --;
+			}
+			fo (l, 1, i - j){
+				int k = l;
+				while (k % 2 == 0) k /= 2, C[i][2] --;
+				while (k % 3 == 0) k /= 3, C[i][3] --;
+				while (k % 5 == 0) k /= 5, C[i][5] --;
+				while (k % 7 == 0) k /= 7, C[i][7] --;
+				
+			}
+		}
+	for (m = 1; m <= n; m ++) 
+		dg(1, 1);
+	printf("%d", ans);
+}

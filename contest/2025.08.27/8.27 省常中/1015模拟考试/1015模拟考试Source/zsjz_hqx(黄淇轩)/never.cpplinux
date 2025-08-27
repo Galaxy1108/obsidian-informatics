@@ -1,0 +1,70 @@
+#include<cstdio>
+#include<vector>
+#include<cstring>
+#include<algorithm>
+using namespace std;
+using uni=unsigned;
+using ll=long long;
+using db=double;
+const int FSIZE=1<<26; 
+char BuF[FSIZE],*InF=BuF;
+template<typename T>void read(T &x){
+    for(;48>*InF||*InF>57;++InF);
+    for(x=0;47<*InF&&*InF<58;x=x*10+(*InF++^48));
+}
+void rev(ll &s,ll &t,ll &x,ll &y){s=-s;t=-t;swap(x,y);}
+ll ref(ll x,bool org){return(org?x:-x);}
+ll get(ll &n,ll s,ll t,ll x,ll y,bool r){
+    bool org=1;
+    if(x>y){
+        rev(s,t,x,y);
+        org=0;
+        r^=1;
+        s+=y;
+        --n;
+    }
+    t+=r;
+    ll st=(s-t)/x+1;
+    if(n>st){
+        n-=st+1;
+        s-=st*x-y;
+    }
+    ll a=y/x*x+t-1,del=y%x;
+    st=(a-t)/x+1;
+    if(!del) n%=st+1;
+    for(;n>st;){
+        ll bst=(a-s)/del+1;
+        if(n>=(st+1)*bst+st+2){
+            n-=(st+1)*bst+st+2;
+            s+=bst*del+y-(st+1)*x;
+        }else{
+            bst=min(bst,n/(st+1));
+            n-=(st+1)*bst;
+            s+=bst*del;
+            break;
+        }
+    }
+    return(ref(s-exchange(n,0)*x,org));
+}
+void work(){
+    bool org=1;
+    ll n,s,t,x,y;
+    read(n);read(s);read(t);read(x);read(y);
+    if(s>t){
+        rev(s,t,x,y);
+        org=0;
+    }
+    ll st=(t-s-org)/y+1;
+    if(n>=st) printf("%lld\n",ref(get(n-=st,s+st*y,t,x,y,!org),org));
+    else printf("%lld\n",ref(s+n*y,org));
+}
+int main(){
+    freopen("never.in","r",stdin);
+    freopen("never.out","w",stdout);
+    fread(BuF,1,FSIZE,stdin);
+    int t;
+    for(read(t);t--;work());
+    fclose(stdin);
+    fclose(stdout);
+    return(0);
+}

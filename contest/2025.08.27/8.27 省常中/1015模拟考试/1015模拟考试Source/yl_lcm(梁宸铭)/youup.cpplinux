@@ -1,0 +1,102 @@
+#include<bits/stdc++.h>
+#define ll long long    
+#define ull unsigned long long
+#define db double
+#define ldb long double
+#define pb push_back
+#define mp make_pair
+#define pii pair<int, int>
+#define FR first
+#define SE second
+using namespace std;
+inline int read() {
+    int x = 0; bool op = 0;
+    char c = getchar();
+    while(!isdigit(c))op |= (c == '-'), c = getchar();
+    while(isdigit(c))x = (x << 1) + (x << 3) + (c ^ 48), c = getchar();
+    return op ? -x : x;
+}
+const int N = 3e5 + 10; 
+const int P = 998244353;
+void add(int &a, int b) {a = (a + b) % P;}
+void sub(int &a, int b) {a = (a - b + P) % P;}
+int ksm(int x, int k) {
+    int res = 1;
+    for(int pw = x; k; (k & 1) ? res = 1ll * res * pw % P : 0, pw = 1ll * pw * pw % P, k >>= 1);
+    return res;
+}
+int fac[N], ifac[N];
+void init() {
+    fac[0] = ifac[0] = 1;
+    for(int i = 1; i < N; i++)fac[i] = 1ll * fac[i - 1] * i % P;
+    ifac[N - 1] = ksm(fac[N - 1], P - 2);
+    for(int i = N - 2; i; i--)ifac[i] = 1ll * ifac[i + 1] * (i + 1) % P;
+    return ;
+}
+int com(int n, int m) {return n < m || m < 0 ? 0 : 1ll * fac[n] * ifac[m] % P * ifac[n - m] % P;}
+int type, n, k;
+int ans[N];
+vector<int> G[N];
+namespace bf {
+    int pos, mx;
+    int f[N];
+    void dfs(int u, int fa, int d) {
+        if(f[u] && d > mx)pos = u, mx = d;
+        for(int v : G[u])if(v != fa)dfs(v, u, d + 1);
+        return ;
+    }
+    void MAIN() {
+        for(int i = 1; i < (1 << n); i++) {
+            for(int j = 0; j < n; j++) {
+                f[j + 1] = (i >> j & 1);
+                if(f[j + 1])pos = j + 1;
+            }
+            mx = -1; dfs(1, 0, 0); mx = -1; dfs(pos, 0, 0);
+            if(mx <= k)add(ans[__builtin_popcount(i)], 1);
+        }
+        for(int i = 1; i <= n; i++)printf("%d ", ans[i]); putchar('\n');
+        return ;
+    }
+};
+namespace S1 {
+    void MAIN() {
+        if(k == 0)ans[1] = n;
+        else if(k == 1)ans[1] = n, ans[2] = n - 1;
+        else if(k >= 2) {
+            for(int i = 1; i <= n; i++)ans[i] = com(n, i);
+        }
+        for(int i = 1; i <= n; i++)printf("%d ", ans[i]); putchar('\n');
+        return ;
+    }
+};
+namespace S2 {
+    void MAIN() {
+        k++;
+        for(int i = 1; i <= n; i++) {
+            add(ans[i], 1ll * (n - k) * com(k, i) % P);
+            add(ans[i], com(k + 1, i + 1));
+            sub(ans[i], 1ll * (n - k) * com(k - 1, i) % P);
+            sub(ans[i], com(k, i + 1));
+        }
+        for(int i = 1; i <= n; i++)printf("%d ", ans[i]);
+        return ;
+    }
+};
+int deg[N];
+int main() { 
+    freopen("youup.in", "r", stdin);
+    freopen("youup.out", "w", stdout);
+    init();
+    type = read(); n = read(); k = read();
+    for(int i = 1; i < n; i++) {
+        int u = read(), v = read();
+        G[u].pb(v); G[v].pb(u);
+        deg[u]++; deg[v]++;
+    }
+    int fl = 1;
+    for(int i = 1; i < n; i++)fl &= (deg[i] <= 2);
+    if(n <= 20)return bf::MAIN(), 0;
+    if(deg[1] == n - 1)return S1::MAIN(), 0;
+    if(fl)return S2::MAIN(), 0;
+    return 0;
+}

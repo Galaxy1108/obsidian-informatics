@@ -1,0 +1,35 @@
+#include<bits/stdc++.h>
+using namespace std;
+void read(int &x){
+	x=0;char c=getchar();
+	int w=0;
+	while(!isdigit(c)){
+		(c=='-')&&(w=1);
+		c=getchar();
+	}
+	while(isdigit(c)){
+		x=x*10+(c^48);
+		c=getchar();
+	}
+	w&&(x=-x);
+}
+int ttt,n,s,t,x,y;
+int main(){
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	read(ttt);
+	while(ttt--){
+		read(n);
+		read(s);
+		read(t);
+		read(x);
+		read(y);
+		if(n<=1000000&&ttt<=5&&x<=100){
+			while(n--)
+				if(s>=t)s-=x;
+				else s+=y;
+			cout<<s<<endl;
+		}
+	}
+	return 0;
+}

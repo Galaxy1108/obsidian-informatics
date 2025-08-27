@@ -1,0 +1,88 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define N 300005
+#define int long long
+int read(){
+	int w=0,f=1;
+	char c=' ';
+	while(c<'0'||c>'9')c=getchar(),f=c=='-'?-1:f;
+	while(c>='0'&&c<='9')w=w*10+c-48,c=getchar();
+	return w*f;
+}
+const int mod=998244353;
+int pown(int x,int y){
+	int res=1;
+	while(y){
+		if(y&1)res=res*x%mod;
+		x=x*x%mod,y>>=1;
+	}
+	return res;
+}
+int Num,n,k,ans[N];
+vector<int>e[N];
+void print(){
+	for(int i=1;i<=n;i++)
+		printf("%lld%c",ans[i],i==n?'\n':' ');
+}
+namespace sub1{
+	int cnt[1<<20],dis[21][21];
+	bool check(int x){
+		vector<int>v;
+		for(int i=1;i<=n;i++)
+			if(x>>(i-1)&1)v.push_back(i);
+		for(auto i:v)
+			for(auto j:v)
+				if(dis[i][j]>k)return 0;
+		return 1;
+	}
+	void dfs(int u,int ft,int*d){
+		d[u]=d[ft]+1;
+		for(auto v:e[u])
+			if(v!=ft)dfs(v,u,d);
+	}
+	void main(){
+		for(int i=1;i<=n;i++)
+			dis[i][0]=-1,dfs(i,0,dis[i]);
+		for(int i=1;i<(1<<n);i++){
+			cnt[i]=cnt[i>>1]+(i&1);
+			if(check(i))ans[cnt[i]]++;
+		}
+		print();
+	}
+}
+namespace sub2{
+	void case1(){
+		ans[1]=n;
+	}
+	void case2(){
+		ans[1]=n;
+		ans[2]=n-1;
+	}
+	void case3(){
+		ans[1]=n;
+		for(int i=2;i<=n;i++)
+			ans[i]=ans[i-1]*(n-i+1)%mod;
+		int fac=1;
+		for(int i=1;i<=n;i++)
+			fac=fac*i%mod,ans[i]=ans[i]*pown(fac,mod-2)%mod;
+	}
+	void main(){
+		if(k==0)case1();
+		if(k==1)case2();
+		if(k>=2)case3();
+		print();
+	}
+}
+signed main(){
+	freopen("youup.in","r",stdin);
+	freopen("youup.out","w",stdout);
+	Num=read(),n=read(),k=read();
+	for(int i=1;i<n;i++){
+		int x=read(),y=read();
+		e[x].push_back(y);
+		e[y].push_back(x);
+	}
+	if(n<=20)sub1::main();
+	else if(Num==4)sub2::main();
+	return 0;
+}

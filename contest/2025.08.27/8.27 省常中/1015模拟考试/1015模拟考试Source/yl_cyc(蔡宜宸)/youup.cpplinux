@@ -1,0 +1,98 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+inline int read(){
+	int s=0,w=1;char ch=getchar();
+	while((ch<'0')||(ch>'9')){if(ch=='-'){w=-1;}ch=getchar();}
+	while((ch>='0')&&(ch<='9')){s=(s<<3)+(s<<1)+ch-'0';ch=getchar();}
+	return s*w;
+}
+const int N=300005;
+const int M=600005;
+const int Mod=998244353;
+int num,n,d,tot,sum[N],HeadL[N],dis[25][25];
+struct Edge{
+	int from,to,nxt;
+}edge[M];
+inline void AddLine(int x,int y){
+	edge[++tot].from=x;edge[tot].to=y;edge[tot].nxt=HeadL[x];HeadL[x]=tot;return ;
+}
+namespace Brute{
+	vector<int>vec;bool flag;
+	inline void dfs(int x,int fa,int k){
+		int i=HeadL[x];
+		while(i!=0){
+			if(edge[i].to!=fa){
+				dis[k][edge[i].to]=dis[k][x]+1;
+				dfs(edge[i].to,x,k);
+			}
+			i=edge[i].nxt;
+		}
+		return ;
+	}
+	inline void Main(){
+		for(int i=1;i<=n;i++){
+			dfs(i,0,i);
+		}
+		for(int S=0;S<(1<<n);S++){
+			flag=true;
+			vector<int>().swap(vec);
+			for(int i=1;i<=n;i++)
+				if(S&(1<<(i-1)))
+					vec.push_back(i);
+			for(int i=0;i<vec.size();i++)
+				for(int j=0;j<vec.size();j++)
+					if(dis[vec[i]][vec[j]]>d)
+						flag=false;
+			sum[vec.size()]+=(flag==true); 
+		}
+		for(int i=1;i<=n;i++){
+			printf("%lld ",sum[i]%Mod);
+		}
+	}
+}
+namespace Sub3{
+	inline int qp(int x,int y){
+		int res=1ll;
+		while(y){
+			if(y&1)res=(res*x)%Mod;
+			x=(x*x)%Mod;y>>=1ll;
+		}
+		return res;
+	}
+	inline void Main(){
+		if(d==0){
+			printf("%lld ",n);
+			for(int i=2;i<=n;i++)printf("0 ");
+			return ;
+		}
+		if(d==1){
+			printf("%lld %lld ",n,n-1ll);
+			for(int i=3;i<=n;i++)printf("0 ");
+			return ;
+		}
+		int fm=1,fz=1;
+		for(int i=1;i<=n;i++){
+			fz=(fz*(n-i+1))%Mod;
+			fm=(fm*i)%Mod;
+			printf("%lld ",fz*qp(fm,Mod-2)%Mod);
+		}
+		return ;
+	}
+}
+inline void Solve(){
+	num=read();n=read();d=read();
+	for(int i=1,p,q;i<=n-1;i++){
+		p=read();q=read();AddLine(p,q);AddLine(q,p);
+	}
+	if(n<=20){Brute::Main();return ;}
+	if(num==4){Sub3::Main();return ;}
+}
+signed main(){
+	freopen("youup.in","r",stdin);
+	freopen("youup.out","w",stdout);
+	Solve();
+	fclose(stdin);
+	fclose(stdout);
+	return 0;
+}

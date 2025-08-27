@@ -1,0 +1,78 @@
+#include<bits/stdc++.h>
+#define fo(i,a,b) for(int i=a;i<=b;++i)
+#define fd(i,a,b) for(int i=a;i>=b;--i)
+using namespace std;
+const int N=3e5+10;
+int n,m,ans[N],last[N],tot,fa[N];
+struct edge{
+	int st,en,next;
+}E[N<<1];
+namespace subtask{
+	int f[N];
+	bool bz[N];
+	int dfs(int x){
+		int ret=0;
+		f[x]=0;
+		for(int p=last[x];p;p=E[p].next){
+			int y=E[p].en;
+			if(y==fa[x])continue;
+			fa[y]=x;
+			int cur=dfs(y);ret=max(ret,cur);
+			if(f[y]){
+				if(f[x])ret=max(ret , f[x]+f[y]);
+				f[x]=max(f[x],f[y]+1);
+			}
+		}
+		if(bz[x]){
+			if(!f[x])f[x]=1;
+			else ret=max(ret , f[x]);
+		}
+		return ret;
+	}
+	int main(){
+		int lim=(1<<n)-1;
+		fo(i,1,lim){
+			int c=0;
+			fo(j,1,n)if(i&(1<<j-1))++c,bz[j]=1;
+				else bz[j]=0;
+			if(dfs(1)<=m+1)++ans[c];
+		}
+		fo(i,1,n)printf("%d ",ans[i]);
+		printf("\n");
+
+		return 0;
+	}
+}
+namespace chain{
+	int main(){
+		fo(i,1,n){
+			if(i-1>m)break;
+			ans[i]=n-i+1;
+		}
+		fo(i,1,n)printf("%d ",ans[i]);
+		printf("\n");
+
+		return 0;
+	}
+}
+void add(int x,int y){
+	E[++tot]=(edge){x,y,last[x]};
+	last[x]=tot;
+}
+int main(){
+	freopen("youup.in","r",stdin);
+	freopen("youup.out","w",stdout);
+	int Num;
+	scanf("%d",&Num);
+	scanf("%d%d",&n,&m);
+	fo(i,2,n){
+		int x,y;
+		scanf("%d%d",&x,&y);
+		add(x,y);add(y,x);
+	}
+	if(Num<3)return subtask::main();
+	// if(Num==4)return flower::main();
+	if(Num==5)return chain::main();
+
+	return 0;
+}

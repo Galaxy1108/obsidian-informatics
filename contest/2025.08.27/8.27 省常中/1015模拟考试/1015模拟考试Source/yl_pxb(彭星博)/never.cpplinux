@@ -1,0 +1,68 @@
+#include<bits/stdc++.h>
+using namespace std;
+long long T,n,s,t,x,y;
+int main()
+{
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	scanf("%lld",&T);
+	while(T--)
+	{
+		scanf("%lld%lld%lld%lld%lld",&n,&s,&t,&x,&y);
+		if(n<=1000000)
+		{
+			while(n--)
+			{
+				if(s<t) s+=y;
+				else s-=x;
+			}
+			printf("%lld\n",s);
+		}
+		else if(abs(s)<=100&&abs(t)<=100&&x<=100&&y<=100)
+		{
+			while((s<t-y||s>=t+x)&&n>0)
+			{
+				n--;
+				if(s<t) s+=y;
+				else s-=x;
+			}
+			if(n==0) {printf("%lld\n",s);continue;}
+			long long u=s,i;
+			for(i=1;i<=n;i++)
+			{
+				if(u<t) u+=y;
+				else u-=x;
+				if(u==s) break;
+			}
+			long long l=i;
+			if(l>n) {printf("%lld\n",u);continue;}
+			n%=l;
+			for(i=1;i<=n;i++)
+			{
+				if(s<t) s+=y;
+				else s-=x;
+			}
+			printf("%lld\n",s);
+		}
+		else if(x==y)
+		{
+			if(s<t)
+			{
+				long long ansk=(t-s-1)/y;
+				if(n<=ansk) {printf("%lld\n",n*y+s);continue;}
+				n-=ansk;s=s+ansk*y;
+				if(n&1) s+=y;
+				printf("%lld\n",s);
+			}
+			else if(s>=t)
+			{
+				long long ansk=(s-t)/x;
+				if(n<=ansk) {printf("%lld",s-n*x);continue;}
+				n-=ansk;s=s-ansk*x;
+				if(n&1) s-=x;
+				printf("%lld\n",s);
+			}
+		}
+	}
+	return 0;
+}

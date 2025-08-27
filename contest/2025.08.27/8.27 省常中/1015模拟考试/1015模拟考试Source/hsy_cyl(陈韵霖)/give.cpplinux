@@ -1,0 +1,44 @@
+#include<bits/stdc++.h>
+#define re register
+#define ll long long
+#define il inline
+#define file(a) freopen(#a".in","r",stdin);freopen(#a".out","w",stdout);
+
+using namespace std;
+inline int read(){
+    int x=0,y=1;char e=getchar();
+    while(e<'0'||e>'9') {
+        if(e=='-') y=-1;
+        e=getchar();
+    }
+    while(e>='0'&&e<='9') {x=x*10+e-'0';e=getchar();}
+    return x*y;
+}
+const int S=505;
+const int N=55;
+int dp[S],a[N];
+int t,n,m,s;
+int main(){
+    file(give);
+    t=read();
+    while(t--){
+        m=read(),s=read(),n=read();
+        for(int i=1;i<=n;++i){
+            a[i]=read();
+        }
+        dp[0]=1;
+        for(re int i=1,wo;i<=m;++i){
+            for(re int j=s;j>=0;--j){
+                wo=dp[j];
+                for(int p=1;p<=n;++p){
+                    if(a[p]+j>s) break;
+                    dp[a[p]+j]^=wo;
+                }
+                dp[j]^=wo;
+            }
+        }
+        printf("%d\n",dp[s]);
+        memset(dp,0,sizeof(dp));
+    }
+    return 0;
+}

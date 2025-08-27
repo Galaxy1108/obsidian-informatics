@@ -1,0 +1,84 @@
+#include<iostream>
+#include<cstdio>
+#include<cmath>
+#include<algorithm>
+#define R register
+using namespace std;
+int tes;
+long long n,s,t,x,y,cnt,ans,zq[10005];
+int main()
+{
+	freopen("never.in","r",stdin);freopen("never.out","w",stdout);
+	scanf("%d",&tes);
+	while (tes--)
+	{
+		scanf("%lld%lld%lld%lld%lld",&n,&s,&t,&x,&y);
+		if (n<=1000000)
+		{
+			for (int i=1;i<=n;++i)
+			{
+				if (s<t) s+=y;
+				else s-=x;
+			}
+			printf("%lld\n",s);
+			continue;
+		}
+		cnt=ans=0;
+		if (s>t)
+		{
+			cnt=(s-t)/x;
+			if (cnt>=n) 
+			{
+				printf("%lld\n",s-n*x);continue;
+			}
+			s-=(s-t)/x*x;
+		}
+		if (s<t)
+		{
+			cnt=(t-s+y-1)/y;
+			if (cnt>=n)
+			{
+				printf("%lld\n",s+n*y);continue;
+			}
+			s+=(t-s+y-1)/y*y;
+		}
+		s-=t;
+		if (x==y)
+		{
+			if ((n-cnt)%2ll==0) printf("%lld\n",s+t);
+			else printf("%lld\n",s-x+t);
+			continue;
+		}
+		s+=t;
+		for (int i=0;i<=200;++i) zq[i]=0;
+		zq[s+100]=1;int sss=1,jls=s;
+		for (int i=1;i<=n;++i)
+		{
+			if (s<t) s+=y;
+			else s-=x;
+			sss++;
+			if (zq[s+100])
+			{
+				n=(n-sss)%(sss-zq[s+100]);jls=s;break;
+			}
+			else zq[s+100]=sss;
+		}
+		s=jls;
+		for (int i=1;i<=n;++i)
+		{
+			if (s<t) s+=y;
+			else s-=x;
+		}
+		printf("%lld\n",s);
+		if (x>y)
+		{
+//			while (cnt+1+())
+			continue;
+		}
+		if (x<y)
+		{
+			continue;
+		}
+	}
+	return 0;
+}

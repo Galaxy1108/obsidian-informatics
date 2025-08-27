@@ -1,0 +1,40 @@
+#include<iostream>
+#include<cstdio>
+using namespace std;
+long long myabs(long long x){
+	return x>0?x:-x;
+}
+int main(){
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	int T;
+	cin>>T;
+	while(T--){
+		int n,s,t,x,y;
+		cin>>n>>s>>t>>x>>y;
+		long long tmp=s;
+		if(x==y){
+			long long k=myabs(tmp-t);
+			if(tmp<t){
+				tmp+=x*(k/x);
+			}
+			else{
+				tmp-=x*(k/x);
+			}
+			if(tmp<t){
+				if((n-k)&1)tmp+=x; 
+			}
+			else{
+				if((n-k)&1)tmp-=x; 
+			}
+		}
+		else{
+			for(int i=1;i<=n;i++){
+				if(tmp<t)tmp+=y;
+				else tmp-=x;
+			}
+		}
+		cout<<tmp<<endl;
+	}
+	return 0;
+} 

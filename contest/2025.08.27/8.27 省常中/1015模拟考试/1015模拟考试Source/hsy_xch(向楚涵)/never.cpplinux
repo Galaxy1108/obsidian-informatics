@@ -1,0 +1,77 @@
+#include<bits/stdc++.h>
+#define int long long
+using namespace std;
+int T,n,s,t,x,y,ls,ln,len;
+signed main(){
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	scanf("%lld",&T);
+	while(T--){
+		scanf("%lld%lld%lld%lld%lld",&n,&s,&t,&x,&y);
+		if(s>=t){
+			n-=(s-t)/x;
+			if(n<0){
+				n+=(s-t)/x;
+				goto A;
+			}
+			s=t+(s-t)%x;
+		}
+		else{
+			n-=(t-s-1)/y;
+			if(n<0){
+				n+=(t-s-1)/y;
+				goto A;
+			}
+			s=t-(t-s-1)%y-1;
+		}
+		ls=s,ln=n;
+		while(n--){
+			if(s>=t){
+				n-=(s-t)/x;
+				if(n<0){
+					n+=(s-t)/x;
+					s-=x;
+					continue;
+				}
+				s=t+(s-t)%x,s-=x;
+			}
+			else{
+				n-=(t-s-1)/y;
+				if(n<0){
+					n+=(t-s-1)/y;
+					s+=y;
+					continue;
+				}
+				s=t-(t-s-1)%y-1,s+=y;
+			}
+			if(s==ls){
+				len=n-ln;
+				break;
+			}
+		}
+		if(len)n-=((int)n/len)*len;
+		A:
+		while(n-->0){
+			if(s>=t){
+				n-=(s-t)/x;
+				if(n<0){
+					n+=(s-t)/x;
+					s-=x;
+					continue;
+				}
+				s=t+(s-t)%x,s-=x;
+			}
+			else{
+				n-=(t-s-1)/y;
+				if(n<0){
+					n+=(t-s-1)/y;
+					s+=y;
+					continue;
+				}
+				s=t-(t-s-1)%y-1,s+=y;
+			}
+		}
+		printf("%lld\n",s);
+	}
+	return 0;
+}

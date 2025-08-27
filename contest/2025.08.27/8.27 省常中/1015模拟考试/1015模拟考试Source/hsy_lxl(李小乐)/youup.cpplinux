@@ -1,0 +1,92 @@
+#include<bits/stdc++.h>
+using namespace std;
+const int N=70;
+int id[N],dep[N],tot,fa[N],ans[N],ppc[100000000],lg[100000000],n,num[N][23],st[N][23],nxt[N],cnt,head[N],to[N];
+void addnode(int u,int v){
+	nxt[++tot]=head[u];
+	head[u]=tot;
+	to[tot]=v;
+}
+void read(int &x){
+	x=0;char c=getchar();
+	int w=0;
+	while(!isdigit(c)){
+		(c=='-')&&(w=1);
+		c=getchar();
+	}
+	while(isdigit(c)){
+		x=x*10+(c^48);
+		c=getchar();
+	}
+	w&&(x=-x);
+}
+void dfs(int x){
+	st[++cnt][0]=dep[x];
+	num[cnt][0]=x;
+	id[x]=cnt;
+	for(int i=head[x];i;i=nxt[i]){
+		int y=to[i];
+		if(fa[x]==y)continue;
+		fa[y]=x;
+		dep[y]=dep[x]+1;
+		dfs(y);
+		st[++cnt][0]=dep[x];
+		num[cnt][0]=x;
+	}
+}
+void init(){
+	for(int len=1;(1<<len)<=cnt;len++){
+		for(int i=1;i+(1<<len)-1<=cnt;i++){
+			if(st[i][len-1]<st[i+(1<<(len-1))][len-1])st[i][len]=st[i][len-1],num[i][len]=num[i][len-1];
+			else st[i][len]=st[i+(1<<(len-1))][len-1],num[i][len]=num[i+(1<<(len-1))][len-1];
+		}
+	}
+}
+int lca(int x,int y){
+	x=id[x],y=id[y];
+	if(x>y)swap(x,y);
+	int len=y-x+1;
+	return st[x][lg[len]]<st[y-(1<<lg[len])+1][lg[len]]?num[x][lg[len]]:num[y-(1<<lg[len])+1][lg[len]];
+}
+int len(int x,int y){
+	return dep[x]+dep[y]-2*dep[lca(x,y)];
+}
+#define lb(x) (x&-x)
+int main(){
+	freopen("youup.in","r",stdin);
+	freopen("youup.out","w",stdout);
+	int nb,x;
+	read(nb);
+	if(nb==1||nb==2){
+		read(n);
+		read(x);
+		for(int i=2;i<=n;i++){
+			lg[i]=lg[i>>1]+1;
+		}
+		int t=(1<<n)-1;
+		for(int i=1,u,v;i<n;i++){
+			read(u);
+			read(v);
+			addnode(u,v);
+			addnode(v,u);
+		}
+		dep[1]=1;
+		dfs(1);
+		init();
+		for(int i=1;i<=t;i++){
+			ppc[i]=ppc[i-lb(i)]+1;
+		}
+		for(int i=0;i<=t;i++){
+			for(int j=1;j<=n;j++){
+				if(!((i>>(j-1))&1))continue;
+				for(int k=j;k<=n;k++){
+					if(!((i>>(k-1))&1))continue;
+					if(len(k,j)>x)goto l1;
+				}
+			}
+			ans[ppc[i]]++;
+			l1:continue;
+		}
+		for(int i=1;i<=n;i++)cout<<ans[i]<<" ";
+	}
+}

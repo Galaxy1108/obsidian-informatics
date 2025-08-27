@@ -1,0 +1,33 @@
+#include<cstdio>
+#include<cctype>
+long long n, mod, c[3005][3005], f, g, ans;
+int main(){
+	freopen("gonna.in", "r", stdin);
+	freopen("gonna.out", "w", stdout);
+	scanf("%lld%lld", &n, &mod);
+	for(int i = 0; i <= n; i++){
+		c[i][0] = c[i][i] = 1;
+	}
+	for(int i = 1; i <= n; i++){
+		for(int j = 1; j * 2 <= i; j++){
+			c[i][j] = c[i][i - j] = c[i - 1][j - 1] + c[i - 1][j];
+		}
+	}
+	for(int i = 1; i <= n; i++){
+		f = 1, g = 0;
+		for(int j = 0; j <= i; j++){
+			f *= c[i][j];
+		}
+		for(int j = 1; j * j <= f; j++){
+			if(f % j == 0){
+				g += j;
+				if(j * j < f) g += f / j;
+				g %= mod;
+			}
+		}
+		ans += g;
+		ans %= mod;
+	}
+	printf("%lld", ans);
+	return 0;
+}

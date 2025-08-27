@@ -1,0 +1,175 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long
+inline ll read(){
+	ll x=0,f=1;char ch=getchar();
+	while(ch<'0'||ch>'9'){if(ch=='-')f=-1;ch=getchar();}
+	while(ch>='0'&&ch<='9')x=(x<<3)+(x<<1)+ch-'0',ch=getchar();
+	return x*f;
+}
+const ll N=20010,mod=998244353,G=3;
+namespace NTT_Poly{
+	ll Qpow(ll x,ll y){
+		ll z=1;
+		for(;y;y>>=1){
+			if(y&1)z=z*x%mod;
+			x=x*x%mod;
+		}
+		return z;
+	}
+	ll jc[N],jcinv[N],tr[N],_g[N],w,inv[N];
+	struct Complex{
+		ll x,y;
+		Complex(ll _x=0,ll _y=0){x=_x,y=_y;}
+		Complex operator *(const Complex b){return Complex(x*b.x%mod+y*b.y%mod*w%mod,x*b.y%mod+y*b.x%mod);}
+		Complex operator %(const ll mod){return Complex((x%mod+mod)%mod,(y%mod+mod)%mod);}
+		Complex operator =(const ll x){return Complex(x,0);}
+	};
+	template<typename T>
+	T qpow(T x,ll y){
+		T z=1;
+		for(;y;y>>=1){
+			if(y&1)z=z*x%mod;
+			x=x*x%mod;
+		}
+		return z;
+	}
+	const ll invG=Qpow(G,mod-2),inv2=Qpow(2,mod-2);
+	#define ck(x) ((x)>=mod?(x)-mod:(x))
+	void NTT(ll *f,ll flag,ll n){
+		for(ll i=0;i<n;i++)
+			if(i<tr[i])swap(f[i],f[tr[i]]);
+		for(ll p=2;p<=n;p<<=1){
+			ll len=(p>>1);
+			ll wn=Qpow(flag?G:invG,(mod-1)/p);
+			for(ll k=0;k<n;k+=p){
+				ll buf=1;
+				for(ll i=k;i<k+len;i++){
+					ll tmp=buf*f[i+len]%mod;
+					f[i+len]=ck(f[i]-tmp+mod),
+					f[i]=ck(f[i]+tmp),buf=buf*wn%mod;
+				}
+			}
+		}
+		if(!flag){
+			ll invn=Qpow(n,mod-2);
+			for(ll i=0;i<n;i++)f[i]=f[i]*invn%mod;
+		}
+	}
+	void Mul(ll *f,ll *g,ll *p,ll n,ll m){
+		static ll _f[N],_g[N],_n,_m;
+		_n=n,_m=m,m+=n,n=1;while(n<m)n<<=1;
+		for(ll i=0;i<n;i++)
+			tr[i]=((tr[i>>1]>>1)|((i&1)?n>>1:0));
+		for(ll i=0;i<_n;i++)_f[i]=f[i];
+		for(ll i=0;i<_m;i++)_g[i]=g[i];
+		for(ll i=_n;i<n;i++)_f[i]=0;
+		for(ll i=_m;i<n;i++)_g[i]=0;
+		NTT(_f,1,n),NTT(_g,1,n);
+		for(ll i=0;i<n;i++)p[i]=_f[i]*_g[i]%mod;
+		NTT(p,0,n);
+	}
+	void Inv(ll *f,ll *g,ll m){
+		if(m==1){g[0]=qpow(f[0],mod-2);return;}
+		static ll w[N];Inv(f,g,(m+1)>>1);
+		ll n=1;while(n<m<<1)n<<=1;
+		for(ll i=0;i<n;i++)
+			tr[i]=((tr[i>>1]>>1)|((i&1)?n>>1:0)),w[i]=f[i];
+		for(ll i=m;i<n;i++)w[i]=0;
+		NTT(w,1,n),NTT(g,1,n);
+		for(ll i=0;i<n;i++)g[i]=(2-w[i]*g[i]%mod+mod)*g[i]%mod;
+		NTT(g,0,n);
+		for(ll i=m;i<n;i++)g[i]=0;
+	}
+	void Derivative(ll *f,ll *g,ll n){
+		for(ll i=1;i<n;i++)g[i-1]=i*f[i]%mod;
+		g[n-1]=0;
+	}
+	void Integral(ll *f,ll *g,ll n){
+		for(ll i=1;i<n;i++)g[i]=f[i-1]*qpow(i,mod-2)%mod;
+		g[0]=0;
+	}
+	void Ln(ll *f,ll *g,ll n){
+		static ll _f[N],ff[N],_g[N];
+		for(ll i=0;i<n<<2;i++)_f[i]=ff[i]=_g[i]=0;
+		Derivative(f,ff,n),Inv(f,_f,n);
+		Mul(ff,_f,_g,n,n),Integral(_g,g,n);
+	}
+	void Exp(ll *f,ll *g,ll m){
+		if(m==1){g[0]=1;return;}
+		static ll lng[N],w[N];Exp(f,g,(m+1)>>1);
+		ll n=1;while(n<m<<1)n<<=1;
+		for(ll i=0;i<m;i++)lng[i]=0;
+		Ln(g,lng,m);
+		for(ll i=0;i<n;i++)
+			tr[i]=((tr[i>>1]>>1)|((i&1)?n>>1:0)),w[i]=f[i];
+		for(ll i=m;i<n;i++)w[i]=0;
+		NTT(w,1,n),NTT(g,1,n),NTT(lng,1,n);
+		for(ll i=0;i<n;i++)g[i]=g[i]*(1-lng[i]+w[i]+mod)%mod;
+		NTT(g,0,n);
+		for(ll i=m;i<n;i++)g[i]=0;
+	}
+	void Pow(ll *f,ll *g,ll n,ll m){
+		static ll _f[N],lnf[N];ll _n=0;
+		while(!f[_n])_n++;if(_n*m>=n)return;n-=_n;
+		for(ll i=0;i<n;i++)_f[i]=f[i+_n];
+		ll _0=_f[0],inv0=qpow(_0,mod-2);
+		for(ll i=0;i<n;i++)_f[i]=_f[i]*inv0%mod;
+		Ln(_f,lnf,n);
+		for(ll i=0;i<n;i++)lnf[i]=lnf[i]*m%mod;
+		Exp(lnf,g,n),_n*=m;
+		for(ll i=n+_n-1;i>=_n;i--)g[i]=g[i-_n]*qpow(_0,m-1)%mod;
+		for(ll i=_n-1;i>=0;i--)g[i]=0;
+	}
+	ll Residue(ll n,ll p){
+		if(!n)return 0;
+		n%=p;ll a=1;
+		while(1){
+			a=rand()%p,w=((a*a-n)%mod+mod)%mod;
+			if(Qpow(w,p-1>>1)==p-1)break;
+		}
+		return qpow(Complex(a,1),p+1>>1).x;
+	}
+	void Sqrt(ll *f,ll *g,ll m){
+		static ll w[N];
+		if(m==1){ll x=Residue(f[0],mod);g[0]=min(mod-x,x);return;}
+		Sqrt(f,g,m+1>>1);ll n=1;while(n<m<<1)n<<=1;
+		for(ll i=0;i<n;i++)_g[i]=0;Inv(g,_g,m);
+		for(ll i=0;i<n;i++)tr[i]=((tr[i>>1]>>1)|((i&1)?n>>1:0)),w[i]=f[i];
+		for(ll i=m;i<n;i++)w[i]=0;
+		NTT(g,1,n),NTT(_g,1,n),NTT(w,1,n);
+		for(ll i=0;i<n;i++)g[i]=(g[i]+w[i]*_g[i]%mod)*inv2%mod;
+		NTT(g,0,n);
+		for(ll i=m;i<n;i++)g[i]=0;
+	}
+	void Pre(){
+		jc[0]=inv[1]=1;
+		for(ll i=1;i<N;i++)jc[i]=jc[i-1]*i%mod;
+		jcinv[N-1]=Qpow(jc[N-1],mod-2);
+		for(ll i=N-1;i;i--)jcinv[i-1]=jcinv[i]*i%mod;
+		for(ll i=2;i<N;i++)inv[i]=(-(mod/i)+mod)%mod*inv[mod%i]%mod;
+	}
+	ll C(ll x,ll y){return x<y?0:jc[x]*jcinv[y]%mod*jcinv[x-y]%mod;}
+	ll Cn2(ll x){return x*(x-1)/2%(mod-1);}
+}
+ll T,n,m,s,f[N],ans[N],mx;
+void PowPoly(ll y){
+	for(;y;y>>=1){
+		if(y&1)NTT_Poly::Mul(ans,f,ans,s,s);
+		NTT_Poly::Mul(f,f,f,s,s);
+	}
+}
+void work(){
+	memset(f,0,sizeof(f));
+	memset(ans,0,sizeof(ans));
+	m=read(),s=read(),n=read(),ans[0]=1;
+	for(ll i=1,x;i<=n;i++)x=read(),f[x]=1;
+	PowPoly(m),printf("%lld\n",ans[s]%2);
+}
+int main(){
+	freopen("give.in","r",stdin);
+	freopen("give.out","w",stdout);
+	T=read();
+	while(T--)work();
+	return 0;
+}

@@ -1,0 +1,72 @@
+#include <bits/stdc++.h>
+#define fo(i,a,b) for(int i=a;i<=b;++i)
+#define fd(i,a,b) for(int i=a;i>=b;--i)
+#define max(a,b) ((a)>(b)?(a):(b))
+#define min(a,b) ((a)<(b)?(a):(b))
+#define ad(x,y) x+=y,x-=(x>mo?mo:0)
+using namespace std;
+inline int read()
+{
+	int X=0,w=0;char ch=0;
+	while(!isdigit(ch))w|=ch=='-',ch=getchar();
+	while(isdigit(ch))X=(X<<3)+(X<<1)+(ch^48),ch=getchar();
+	return w?-X:X;
+}
+#define N 20005
+#define M 2405
+int mo,p[M],id[N],g[N][M],f1[M][505],f2[M][505],n,pr=0,mi[M][505],ct[M],ct1[M];
+bool bz[N];
+void work(int x)
+{
+	mi[x][0]=1;
+	fo(i,1,500)f1[x][i]=(1ll*f1[x][i-1]*p[x]+1)%mo,mi[x][i]=1ll*mi[x][i-1]*p[x]%mo;
+	fo(i,1,500)f2[x][i]=(1ll*f2[x][i-1]*mi[x][500]+f1[x][500])%mo;
+}
+int clc(int ki,int x)
+{
+	return (1ll*f2[ki][x/500]*mi[ki][x%500]+f1[ki][x%500])%mo;
+}
+int cal(int x)
+{
+	int ret=1;
+	fo(j,1,pr)
+	if(p[j]>x)break;
+	else{
+		ct1[j]+=g[x][j];
+		ct[j]+=x*g[x][j]-ct1[j];
+		ret=1ll*ret*clc(j,ct[j]+1)%mo;
+	}
+	return ret;
+}
+int main()
+{
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	n=read(),pr=0,mo=read();
+	fo(i,2,n)
+	{
+		if(!bz[i])p[id[i]=++pr]=i,work(pr);
+		fo(j,1,pr)
+		{
+			if(i*p[j]>n)break;
+			bz[i*p[j]]=1;
+			if(i%p[j]==0)break;
+		}
+	}
+	int nw=1,su=0;
+	fo(i,1,51)ad(su,nw),nw=1ll*nw*2%mo;
+	fo(i,1,n)
+	{
+		int ii=i;
+		fo(k,1,pr)
+		{
+			if(p[k]*p[k]>ii)break;
+			while(ii%p[k]==0)g[i][k]++,ii/=p[k];
+		}
+		if(ii>1)g[i][id[ii]]++;
+	}
+	int ans=0;
+	fo(i,1,n)ad(ans,cal(i));
+	printf("%d",ans); 
+	return 0;
+}

@@ -1,0 +1,96 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef pair<ll,ll> pll;
+#define mkp make_pair
+
+pll brute(pll ret,ll X,ll Y,ll c1,ll c2)
+{
+	while(ret.second)
+	{
+		if(ret.first >= 0) 
+		{
+			ll tim = min(ret.second / c1,(ll)floor(1.0 * ret.first / X) + 1);
+			if(tim == 0) return ret;
+			ret.second -= c1 * tim;ret.first -= X * tim;
+		}
+		else
+		{
+			ll tim = min(ret.second / c2,(ll)ceil(-1.0 * ret.first / Y));
+			if(tim == 0) return ret;
+			ret.second -= c2 * tim;ret.first += Y * tim;
+		}
+	}
+	return ret;
+}
+pll f(long long N,long long S,long long X,long long Y,long long c1,long long c2)
+{
+	// printf("f:%lld,%lld,%lld,%lld,%lld,%lld\n",N,S,X,Y,c1,c2);
+	if(N == 0) return mkp(S,0);
+	if(X == 0)
+	{
+		if(S >= 0) return mkp(S,N % c1);
+		if(S < 0)
+		{
+			ll tim = min(N / c2,(ll)ceil(-1.0 * S / Y));
+			S += tim * Y;
+			N -= tim * c2;
+			return mkp(S,N);
+		}
+	}
+	if(X > Y) 
+	{
+		pll ret = f(N,-1-S,Y,X,c2,c1);
+		return mkp(- 1 -ret.first,ret.second);
+	}
+	if(S >= 0)
+	{
+		ll tim = min(N / c1,(ll)floor(1.0 * S / X) + 1);
+		if(tim == 0) return mkp(S,N);
+		pll ret = f(N - c1 * tim,S - X * tim,X,Y,c1,c2);
+		// 还有一点操作没有办法处理
+		return brute(ret,X,Y,c1,c2);
+	}
+	else if(-Y <= S)
+	{
+		ll a = Y / X,b = Y % X;
+		ll tim;
+		if(b == 0)
+		{
+			tim = N / (c2 + c1 * a);
+		}
+		else tim = min(N / (c2 + c1 * a),(ll)ceil(-1.0 * S / b));
+		if(tim == 0) return mkp(S,N);
+		pll ret = f(N - (c2 + c1 * a) * tim,S + b * tim,X,b,c1,c2 + c1 * a);
+		// printf("ret:%d,%d\n",ret.first,ret.second);
+		// printf("brd:%d,%d\n",brute(ret,X,Y,c1,c2).first,brute(ret,X,Y,c1,c2).second);
+		return brute(ret,X,Y,c1,c2);
+	}
+	else
+	{
+		ll tim = min(N / c2,(ll)ceil(1.0 * (-Y - S) / Y));
+		if(tim == 0) return mkp(S,N);
+		pll ret = f(N - c2 * tim,S + Y * tim,X,Y,c1,c2);
+		return brute(ret,X,Y,c1,c2);
+	}
+}
+int main()
+{
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	int Tnum;
+	scanf("%d",&Tnum);
+	while(Tnum--)
+	{
+		ll N,S,T,X,Y;
+		cin >> N >> S >> T >> X >> Y;
+		S -= T;
+		pll ret = f(N,S,X,Y,1,1);
+		cout << ret.first + T << endl;
+	}
+	return 0;
+}
+/*
+1
+10000 29 62 2 1
+*/

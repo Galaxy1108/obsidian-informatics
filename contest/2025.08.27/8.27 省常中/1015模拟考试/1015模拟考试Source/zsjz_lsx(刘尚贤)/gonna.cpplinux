@@ -1,0 +1,21 @@
+#include<cstring>
+#include<iostream>
+#include<cstdio>
+#include<algorithm>
+using namespace std;
+long long n,p,f[3030][3030],q=1,ans;
+int main(){
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	scanf("%lld %lld",&n,&p);
+	n++;
+	f[1][1]=1;
+	for(register int i=2;i<=n;i++)
+	 for(register int j=1;j<=n;j++)
+	 f[i][j]=(f[i-1][j-1]+f[i-1][j])%p;
+	for(register int i=1;i<=n;i++)
+	q=(q*f[n][i]);
+	for(register int i=1;i<=q;i++)
+	if(q%i==0) ans+=i;
+	printf("%lld\n",ans);
+}

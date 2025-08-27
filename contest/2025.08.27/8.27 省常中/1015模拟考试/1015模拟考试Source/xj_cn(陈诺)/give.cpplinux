@@ -1,0 +1,46 @@
+//回家？我没有家可以回，我没有退路。
+#include<bits/stdc++.h>
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
+#pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,tune=native")
+using namespace std;
+#define int long long
+inline int read(){
+   int s=0,w=1;
+   char ch=getchar();
+   while(ch<'0'||ch>'9'){if(ch=='-')w=-1;ch=getchar();}
+   while(ch>='0'&&ch<='9') s=s*10+ch-'0',ch=getchar();
+   return s*w;
+}
+int m,s,n;
+bitset<200000> cur,nxt;
+int a[203];
+signed main()
+{
+#ifndef local
+	freopen("give.in","r",stdin),
+	freopen("give.out","w",stdout);
+#endif
+	for(int T=read(); T--;)
+	{
+		m=read(),s=read(),n=read();
+		for(int i=1; i<=n; ++i) a[i]=read();
+		cur.reset(),cur[0]=1;
+		for(int i=0; i<=60; ++i)
+		{
+			if((m>>i)&1)
+			{
+				nxt.reset();
+				for(int j=1; j<=n; ++j)
+					nxt^=(cur<<a[j]);
+			}
+			else nxt=cur;
+			cur.reset();
+			for(int j=(s>>i)&1; j<200000; j+=2)
+				cur[j>>1]=nxt[j];
+		}
+		if(cur[0]) puts("1");
+		else puts("0");
+	}	
+	return 0;
+}

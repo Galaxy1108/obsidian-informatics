@@ -1,0 +1,55 @@
+#include <cstdio>
+#include <iostream>
+#define IN inline
+using namespace std;
+
+template <typename T>
+IN void read(T &x) {
+	x = 0; char ch = getchar(); int f = 0;
+	for(; !isdigit(ch); f = (ch == '-' ? 1 : f), ch = getchar());
+	for(; isdigit(ch); x = (x<<3)+(x<<1)+(ch^48), ch = getchar());
+	if (f) x = ~x + 1;
+}
+
+typedef long long LL;
+const int N = 2e4 + 5;
+int n, P, inv[N];
+LL p[N];
+
+struct node{int c[21][2], n;}b[N];
+IN void build(int x) {
+	int y = x;
+	for(int i = 2; i * i <= y; i++)
+	if (y % i == 0) {
+		b[x].c[++b[x].n][0] = i;
+		while (y % i == 0) ++b[x].c[b[x].n][1], y /= i;
+	}
+	if (y > 1) b[x].c[++b[x].n][0] = y, b[x].c[b[x].n][1] = 1;
+}
+IN LL fpow(LL x, LL y) {
+	LL s = 1;
+	for(; y; y >>= 1, x = x * x % P) if (y & 1) s = s * x % P;
+	return s;
+}
+
+int main() {
+	freopen("gonna.in", "r", stdin);
+	freopen("gonna.out", "w", stdout);
+	read(n), read(P);
+	for(int i = 2; i <= n; i++) build(i);
+	for(int i = 1; i <= n; i++) inv[i] = fpow(i, P - 2);
+	LL ans = 0;
+	for(int i = 2; i <= n; i++) {
+		for(int j = 1, x; j <= i; j++)	{
+			x = i - j + 1;
+			for(int k = 1; k <= b[x].n; k++) p[b[x].c[k][0]] += (i - j + 1) * b[x].c[k][1];
+			x = j;
+			for(int k = 1; k <= b[x].n; k++) p[b[x].c[k][0]] -= (i - j + 1) * b[x].c[k][1];
+		}
+		LL s = 1;
+		for(int j = 2; j <= n; j++)
+			s = s * (fpow(j, p[j] + 1) - 1 + P) % P * inv[j - 1] % P, p[j] = 0;
+		ans = (ans + s) % P;
+	}
+	printf("%lld\n", (ans + 1) % P);
+}

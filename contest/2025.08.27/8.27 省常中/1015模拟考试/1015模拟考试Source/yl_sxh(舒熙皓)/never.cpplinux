@@ -1,0 +1,102 @@
+#include<bits/stdc++.h>
+#define ll long long
+#define For(i,a,b) for(int i=(a);i<=(b);++i)
+#define Rof(i,a,b) for(int i=(a);i>=(b);--i)
+using namespace std;
+const int Maxn=2e5;
+
+inline ll read()
+{
+    ll x=0,f=1;
+    char ch=getchar();
+    while(ch<'0' || ch>'9')
+    {
+        if(ch=='-') f=-1;
+        ch=getchar();
+    }
+    while(ch>='0' && ch<='9')
+    {
+        x=x*10+ch-'0';
+        ch=getchar();
+    }
+    return x*f;
+}
+
+int T; ll n,s,t,x,y;
+map<ll,int> mp;
+
+inline void Solve1()
+{
+    ll t1;
+    if(s<t) t1=(t-s+x-1)/x;
+    else t1=(s-(t-1)+x-1)/x;
+    if(n<=t1)
+    {
+        if(s<t) printf("%lld\n",s+x*n);
+        else printf("%lld\n",s-x*n);
+        return;
+    }
+    ll a,b;
+    if(s<t) a=s+x*t1,b=s+(x-1)*t1;
+    else a=s-x*t1,b=s-(x-1)*t1;
+    n-=t1;
+    if(n&1ll) printf("%lld\n",b);
+    else printf("%lld\n",a);
+}
+inline void Solve2()
+{
+    ll t1;
+    if(s<t) t1=(t-s+y-1)/y;
+    else t1=(s-(t-1)+x-1)/x;
+    if(n<=t1)
+    {
+        if(s<t) printf("%lld\n",s+y*n);
+        else printf("%lld\n",s-x*n);
+        return;
+    }
+    n-=t1;
+    if(s<t) s=s+y*t1;
+    else s=s-x*t1;
+    int L=0,R=0; ll pos;
+    mp.clear();
+    for(int i=1;;++i)
+    {
+        if(s>=t) s-=x;
+        else s+=y;
+        if(mp[s]) {L=mp[s],R=i,pos=s; break;}
+        else mp[s]=i;
+    }
+    int len=R-L;
+    int stp=(n-L)%len;
+    For(i,1,stp)
+    {
+        if(pos>=t) pos-=x;
+        else pos+=y;
+    }
+    printf("%lld\n",pos);
+}
+inline void Solve()
+{
+    n=read(),s=read(),t=read(),x=read(),y=read();
+    if(n<=1000000ll)
+    {
+        For(i,1,n)
+        {
+            if(s>=t) s-=x;
+            else s+=y;
+        }
+        printf("%lld\n",s);
+    }
+    else if(x==y) Solve1();
+    else Solve2();
+}
+
+int main()
+{
+    freopen("never.in","r",stdin);
+    freopen("never.out","w",stdout);
+
+    T=read();
+    while(T--) Solve();
+    return 0;
+}

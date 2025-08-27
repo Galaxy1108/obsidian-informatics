@@ -1,0 +1,101 @@
+#include<bits/stdc++.h>
+#define il inline
+#define cs const
+#define ri register
+#define int long long
+#define F(s) freopen(#s".in","r",stdin),freopen(#s".out","w",stdout);
+using namespace std;
+il int rd(){
+	ri int x=0,f=0;ri char c=getchar();
+	while(c<'0'||c>'9') f|=(c=='-'),c=getchar();
+	while(c>='0'&&c<='9') x=x*10+(c^48),c=getchar();
+	return f?-x:x;
+}
+il void wt(int x){
+	if(x<0) x=-x,putchar('-');
+	if(x>=10) wt(x/10);
+	putchar(x%10+48);
+	return;
+}
+cs int N=3e5+5,mod=998244353;
+int Num,n,x,h[N];
+struct qwq{
+	int v,nxt;
+}e[N*2]; 
+il void add(int u,int v,int id){
+ 	e[id*2-1]={v,h[u]},h[u]=id*2-1;
+	e[id*2]={u,h[v]},h[v]=id*2;
+	return;
+}
+il int qpow(int a,int b){
+	int as=1;
+	while(b){
+		if(b&1) as=as*a%mod;
+		a=a*a%mod,b>>=1;
+	}
+	return as;
+}
+il int done(){
+	
+	return 0;
+}
+signed main(){
+	F(youup)
+	Num=rd(),n=rd(),x=rd();
+	if(!x){
+		wt(n),putchar(' ');
+		for(ri int i=2;i<=n;++i){
+			putchar('0'),putchar(' ');
+		}
+		return 0;		
+	}
+	if(x==1){
+		wt(n),putchar(' ');
+		wt(n-1),putchar(' ');
+		for(ri int i=3;i<=n;++i){
+			putchar('0'),putchar(' ');
+		}
+		return 0;
+	}
+	if(Num==4||x>=n){
+		wt(n),putchar(' ');
+		int jc[N]={0};
+		jc[0]=jc[1]=1;
+		for(ri int i=2;i<=n;++i){
+			jc[i]=jc[i-1]*i%mod;
+		} 
+		for(ri int i=2;i<=n;++i){
+			int as=jc[n]*qpow(jc[i],mod-2)%mod;
+			as=as*qpow(jc[n-i],mod-2)%mod;
+			wt(as),putchar(' '); 
+		} 
+		return 0;
+	}
+	if(Num==5){
+		wt(n),putchar(' ');
+		h[x]=n-x;
+		for(ri int i=x-1;i;--i){
+			h[i]=n-i+h[i+1];
+		}
+		for(ri int i=1;i<=x;++i){
+			wt(h[i]),putchar(' ');
+		}
+		for(ri int i=x+1;i<n;++i){
+			putchar('0'),putchar(' ');
+		}
+		return 0;
+	}
+	for(ri int i=1;i<n;++i){
+		add(rd(),rd(),i);
+	}
+	wt(n),putchar(' ');
+	for(ri int i=1,s;i<=x;++i){
+		s=done();
+		wt(s),putchar(' ');
+	}
+	for(ri int i=x+1;i<n;++i){
+		putchar('0'),putchar(' ');
+	}
+	return 0;
+}
+ 

@@ -1,0 +1,74 @@
+// #pragma GCC optimize("O3")
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
+// #pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,tune=native")
+#include <bits/stdc++.h>
+using namespace std;
+
+#define PB emplace_back
+// #define int long long
+#define ll long long
+#define vi vector<int>
+#define siz(a) ((int)((a).size()))
+#define rep(i, a, b) for (int i = (a); i <= (b); ++i)
+#define per(i, a, b) for (int i = (a); i >= (b); --i)
+#define TIME cout << 1.0 * clock() / CLOCKS_PER_SEC;
+
+const int N = 2e4;
+int a, mod, pm[N + 5], top, w[N + 5][2625];
+bool vis[N + 5];
+vi st[N + 5];
+
+void init() {
+	rep(i, 2, N) {
+		if(!vis[i]) pm[++top] = i;
+		for(int j = 1; i * pm[j] <= N; ++j) {
+			vis[i * pm[j]] = 1;
+			if(i % pm[j] == 0) break;
+		}
+	}
+}
+
+signed main() {
+	freopen("gonna.in", "r", stdin);
+	freopen("gonna.out", "w", stdout);
+	ios::sync_with_stdio(0);
+	cin.tie(0), cout.tie(0);
+	init();
+	// rep(i, 1, top) {
+	// 	cout << siz(st[pm[i] - 1]) << endl;
+	// }
+	cin >> a >> mod;
+	rep(i, 1, top) if(pm[i] <= a) {
+		int cnt = 0, n = pm[i], sum = 0;
+		rep(j, 1, a) {
+			int x = j;
+			if(x % n == 0) {
+				while(x % n == 0) sum += 2 * j - 1, x /= n, ++cnt;
+			}
+			w[j][i] = cnt * -j + sum;
+		}
+	}
+	rep(j, 1, top) {
+		int mx = 0;
+		rep(i, 1, a) mx = max(mx, w[i][j]);
+		st[j].resize(mx + 1);
+		st[j][0] = 1;
+		rep(i, 1, mx) st[j][i] = 1ll * st[j][i - 1] * pm[j] % mod;
+		rep(i, 1, mx) (st[j][i] += st[j][i - 1]) %= mod;
+	}
+	int ans = 0;
+	rep(i, 1, a) {
+		ll tmp = 1;
+		rep(j, 1, top) {
+			if(pm[j] > i) break;
+			// cout << w[i][j] << " ";
+			(tmp *= st[j][w[i][j]]) %= mod;
+			// (tmp *= dec(qp(pm[j], w[i][j] + 1) - 1, pm[j] - 1)) %= mod;
+		}
+		// cout << endl;
+		(ans += tmp) %= mod;
+	}
+	cout << ans;
+	return 0;
+}

@@ -1,0 +1,158 @@
+
+
+#include <bits/stdc++.h>
+#define int long long
+
+using namespace std;
+int n, s, t, x, y;
+
+void lto(){
+	int f = (t - s) / y;
+	int g = s + f * y;
+	if(g < t){
+		f++;
+		g += y;
+	}
+	if(n < f){
+		g = s + n * y;
+		f = n;
+	}
+	n -= f;
+	s = g;
+}
+		
+void rto(){
+	int f = (s - t) / x;
+	int g = s - f * x;
+	if(g >= t){
+		f++;
+		g -= x;
+	}
+	if(n < f){
+		g = s - n * x;
+		f = n;
+	}
+	n -= f;
+	s = g;
+}
+
+void lmi(){
+	if(x == y){
+		if(n & 1){
+			s += y;
+		}
+		n = 0;
+		return;
+	}
+	if(y > x){
+		int f = (t - s) / (y - x);
+		int g = s + f * (y - x);
+		if(g < t){
+			f++;
+			g += (y - x);
+		}
+		if(n < f * 2){
+			if(n & 1){
+				n--;
+				g = s + n / 2 * (y - x) + y;
+			}
+			else{
+				g = s + n / 2 * (y - x);
+			}
+			f = n / 2;
+		}
+		n -= f * 2;
+		s = g; 
+	}
+	else{
+		int u = t - y - 1;
+		int f = (s - u) / (x - y);
+		int g = s - f * (x - y);
+		if(g > u){
+			f++;
+			g -= (x - y);
+		}
+		if(n < f * 2){
+			if(n & 1){
+				n--;
+				g = s - n / 2 * (x - y) + y;
+			}
+			else{
+				g = s - n / 2 * (x - y);
+			}
+			f = n / 2;
+		}
+		n -= f * 2;
+		s = g;
+	}
+}
+
+void rmi(){
+	if(x == y){
+		if(n & 1) s -= x;
+		n = 0;
+		return;
+	}	
+	if(x > y){
+		int f = (s - t) / (x - y);
+		int g = s - f * (x - y);
+		if(g >= t){
+			f++;
+			g -= (x - y);
+		}
+		if(n < f * 2){
+			if(n & 1){
+				n--;
+				g = s - n / 2 * (x - y) - x;
+			}
+			else{
+				g = s - n / 2 * (x - y);
+			}
+			f = n / 2;
+		}
+		n -= f * 2;
+		s = g; 
+	}
+	else{
+		int u = t + x;
+		int f = (u - s) / (y - x);
+		int g = s + f * (y - x);
+		if(g < u){
+			f++;
+			g += (y - x);
+		}
+		if(n < f * 2){
+			if(n & 1){
+				n--;
+				g = s + n / 2 * (y - x) - x;
+			}
+			else{
+				g = s + n / 2 * (y - x);
+			}
+			f = n / 2;
+		}
+		n -= f * 2;
+		s = g;
+	}
+}
+signed main (){
+	freopen("never.in", "r", stdin);
+	freopen("never.out", "w", stdout); 
+	int T;
+	cin >> T;
+	while(T--){
+		cin >> n >> s >> t >> x >> y;
+		while(n){
+			if(s < t){
+				if(s + y < t) lto();
+				else lmi();
+			}
+			else{
+				if(s - x >= t) rto();
+				else rmi();
+			}
+		}
+		cout << s << endl;
+	}
+	return 0;
+}

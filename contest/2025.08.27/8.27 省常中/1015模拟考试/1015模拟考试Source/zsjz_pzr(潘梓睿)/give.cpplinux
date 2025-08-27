@@ -1,0 +1,21 @@
+#include<bits/stdc++.h>
+#define ll long long
+using namespace std;
+int n,T,a[1000],f[5100][5100];
+ll m,s;
+int main(){
+	freopen("give.in","r",stdin);
+	freopen("give.out","w",stdout);
+	scanf("%d",&T);
+	while(T--){
+		scanf("%lld%lld%d",&m,&s,&n);
+		for(int i=1;i<=n;i++)scanf("%d",&a[i]);
+		f[0][0]=1;
+		for(int i=1;i<=m;i++)
+		for(int j=1;j<=s;j++){f[i][j]=0;
+			for(int t=1;t<=n;t++)
+			if(a[t]>j)break;
+			else f[i][j]=(f[i][j]+f[i-1][j-a[t]])&1;
+		}printf("%d\n",f[m][s]);
+	}
+}

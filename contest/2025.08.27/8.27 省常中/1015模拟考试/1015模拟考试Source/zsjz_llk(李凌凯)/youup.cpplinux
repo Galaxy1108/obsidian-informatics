@@ -1,0 +1,79 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define F(i,a,b) for(int i=a;i<=b;i++)
+#define Fd(i,a,b) for(int i=a;i>=b;i--)
+#define mo 998244353
+#define N 300010
+#define M 21
+
+int fac[N],ifac[N];
+int num,n,D,tot,last[N],ans[N];
+int dis[M][M],f[1<<M];
+struct node{int en,next;}e[N*2];
+
+void add(int x,int y){e[++tot]=(node){y,last[x]};last[x]=tot;}
+
+int mod(int x){return x>=mo?x-mo:x;}
+
+int mi(int x,int y){
+	if(y==1)return x;
+	return y&1?1ll*x*mi(1ll*x*x%mo,y/2)%mo:mi(1ll*x*x%mo,y/2);
+}
+
+int C(int x,int y){return x<y?0:1ll*fac[x]*ifac[y]%mo*ifac[x-y]%mo;}
+
+void dfs(int now,int pre,int rt){
+	for(int i=last[now];i;i=e[i].next){
+		int go=e[i].en;
+		if(go==pre)continue;
+		dis[rt][go]=dis[rt][now]+1;
+		dfs(go,now,rt);
+	}
+}
+
+int count(int x){return x?(x&1)+count(x>>1):0;}
+
+int main(){
+	freopen("youup.in","r",stdin);
+	freopen("youup.out","w",stdout);
+	fac[0]=1;
+	F(i,1,N-10)fac[i]=1ll*fac[i-1]*i%mo;
+	ifac[N-10]=mi(fac[N-10],mo-2);
+	Fd(i,N-11,0)ifac[i]=1ll*ifac[i+1]*(i+1)%mo;
+	scanf("%d",&num);
+	scanf("%d%d",&n,&D);
+	F(i,1,n-1){
+		int u,v;
+		scanf("%d%d",&u,&v);
+		add(u,v);add(v,u);
+	}
+	if(num<=3){
+		F(i,1,n)dfs(i,i,i);
+		f[0]=1;
+		F(S,0,(1<<n)-1)if(f[S]){
+			F(i,1,n)if(!((1<<i-1)&S)){
+				bool flag=1;
+				F(j,1,n)if((1<<j-1)&S){
+					if(dis[i][j]>D){
+						flag=0;break;}
+				}
+				if(flag)f[S|(1<<i-1)]=1;
+			}
+		}
+		F(S,0,(1<<n)-1)if(f[S])ans[count(S)]++;
+		F(i,1,n)printf("%d ",ans[i]);
+	}
+	if(num==4){
+		if(D==0)ans[1]=n;
+		if(D==1)ans[1]=n,ans[2]=n-1;
+		if(D>=2){F(i,1,n)ans[i]=C(n,i);}
+		F(i,1,n)printf("%d ",ans[i]);
+	}
+	if(num==5){
+		F(i,0,n-2)ans[i+2]=mod(ans[i+2]+1ll*(n-D)*C(D,i+1)%mo);
+		F(i,0,n-2)ans[i+2]=mod(ans[i+2]+C(D,i+2));
+		ans[1]=n;
+		F(i,1,n)printf("%d ",ans[i]);
+	}
+	return 0;
+}

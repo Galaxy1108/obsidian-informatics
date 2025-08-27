@@ -1,0 +1,70 @@
+#include<bits/stdc++.h>
+using namespace std;
+long long p,n,a[20005],vis[20005];
+long long ans[20005];
+vector<int> prime[20005];
+void init(int x){
+    vis[1]=1;
+    for(int i=2;i<=x;i++){
+        if(!vis[i]){
+            for(int j=i;j<=x;j+=i){
+                vis[j]=1;
+                int k=j;
+                while(k%i==0){
+                    prime[j].push_back(i);k/=i;
+                }
+            }
+        }
+    }
+}
+void fill(int x,int y){
+    for(int q:prime[x])a[q]+=y;
+}
+long long qpow(long long a,long long b,long long p) {
+	a%=p;long long ans=1;
+	for(;b;b>>=1) {
+		if(b&1)ans=ans*a%p;
+		a=a*a%p;
+	}
+	return ans;
+}
+int main() {
+    freopen("gonna.in","r",stdin);
+    freopen("gonna.out","w",stdout);
+    cin>>n>>p;
+    init(n);
+    // for(int i=1;i<=n;i++){
+    //     for(int j:prime[i])cout<<j<<' ';
+    //     cout<<endl;
+    // }
+    // return 0;
+    ans[1]=1;
+    for(int i=2;i<=n;i++){
+        memset(a,0,sizeof a);
+        for(int j=1;j<i;++j){
+            for(int k=1;k<=j;++k){
+                fill(i-k+1,1);
+                if(k!=1)fill(k,-1);
+            }
+        }
+        ans[i]=1;
+        for(int j=2;j<=i;++j){
+            // cout<<a[j]<<' ';
+            if(a[j]){
+                long long tmp=0;
+                for(int k=0;k<=a[j];++k){
+                    tmp=(tmp+qpow(j,k,p))%p;
+                }
+                ans[i]=ans[i]*tmp%p;
+            }
+        }
+        // cout<<endl;
+    }
+    // cout<<endl;
+    long long sum=0;
+    for(int i=1;i<=n;i++){
+        sum=(sum+ans[i])%p;
+    }
+    cout<<sum<<endl;
+    return 0;
+}

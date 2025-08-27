@@ -1,0 +1,94 @@
+#include <bits/stdc++.h>
+#define mo 998244353
+#define maxN 2010
+#define LL long long
+using namespace std;
+struct Edge{ int x, y, g; } b[maxN << 1];
+int len = 0, n = 0, K = 0;
+int a[maxN];
+int F[20][maxN];
+int Ans[maxN], dep[maxN], h[maxN];
+int read ()
+{
+	int x = 0, Fu = 1;
+	char c = getchar();
+	while(c < '0' || c > '9')
+	{
+		if(c == '-') Fu = -1;
+		c = getchar();
+	}
+	while(c >= '0' && c <= '9')
+	{
+		x = x * 10 + (c - '0');
+		c = getchar();
+	}
+	return x * Fu;
+}
+int Min (int x, int y) { return x < y ? x : y; }
+int Max (int x, int y) { return x > y ? x : y; }
+void ins (int x, int y)
+{
+	b[++len] = (Edge){x, y, h[x]};
+	h[x] = len;
+}
+void dfs (int x)
+{
+	for(int i = h[x];i;i = b[i].g)
+	{
+		int y = b[i].y;
+		if(!dep[y])
+			F[0][y] = x, dep[y] = dep[x] + 1, dfs(y);
+	}
+}
+int LCA (int x, int y)
+{
+	if(dep[x] < dep[y]) { int t = x; x = y; y = t; }
+	for(int i = 12;i >= 0; i--)
+		if(dep[F[i][x]] >= dep[y]) x = F[i][x];
+	if(x == y) return x;
+	for(int i = 12;i >= 0; i--)
+		if(F[i][x] != F[i][y]) x = F[i][x], y = F[i][y];
+	return F[0][x];
+}
+int DIS (int x, int y) { return dep[x] + dep[y] - 2 * dep[LCA(x, y)]; }
+void srh (int x)
+{
+	if(x > n)
+	{
+		Ans[1] += (a[0] == 1);
+		if(a[0] <= 1) return ;
+		int A = a[1], B = a[2];
+		int Ma = DIS(A, B);
+		for(int i = 3;i <= a[0]; i++)
+		{
+			int C = DIS(A, a[i]);
+			int D = DIS(B, a[i]);
+			if(C <= Ma && D <= Ma) continue;
+			(C >= D) ? B = a[i] : A = a[i];
+			Ma = DIS(A, B);
+		}
+		if(Ma <= K) Ans[a[0]]++;
+		return ;
+	}
+	a[++a[0]] = x, srh(x + 1);
+	a[a[0]--] = 0, srh(x + 1);
+}
+int main ()
+{
+	freopen("youup.in", "r", stdin);
+	freopen("youup.out", "w", stdout);
+	read(), n = read(), K = read();
+	for(int i = 1;i < n; i++)
+	{
+		int x = read(), y = read();
+		ins(x, y), ins(y, x);
+	}
+	dep[1] = 1, dfs(1);
+	for(int j = 1;j < 13; j++)
+		for(int i = 1;i <= n; i++)
+			F[j][i] = F[j - 1][F[j - 1][i]];
+	srh(1);
+	for(int i = 1;i <= n; i++)
+		printf("%d ", Ans[i]);
+	return 0;
+}

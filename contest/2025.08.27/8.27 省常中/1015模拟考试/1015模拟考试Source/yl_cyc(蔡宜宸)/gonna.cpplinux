@@ -1,0 +1,66 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int long long
+inline int read(){
+	int s=0,w=1;char ch=getchar();
+	while((ch<'0')||(ch>'9')){if(ch=='-'){w=-1;}ch=getchar();}
+	while((ch>='0')&&(ch<='9')){s=(s<<3)+(s<<1)+ch-'0';ch=getchar();}
+	return s*w;
+}
+const int N=3005;
+const int M=505;
+int T,n,p,ans,tot,pri[M],maxx[M],cnt[N][N],sum[N][N],num[N][N];
+bool Pri[N];
+vector<pair<int,int>>vec[N];
+inline void Pre(){
+	memset(Pri,true,sizeof(Pri));
+	for(int i=2;i<=n;i++){
+		if(Pri[i])pri[++tot]=i;
+		for(int j=1;j<=tot&&i*pri[j]<=n;j++){
+			Pri[i*pri[j]]=false;
+			if(i%pri[j]==0)break;
+		}
+	}
+	for(int i=2;i<=n;i++){
+		for(int j=1;j<=tot;j++){
+			int res=0,p=i;
+			while(p%pri[j]==0)p/=pri[j],res++;
+			if(res!=0)vec[i].push_back(make_pair(j,res));
+		}
+	}
+	return ;
+}
+inline void Solve(){
+	n=read();p=read();Pre();
+	for(int i=1;i<=n;i++)
+		for(int j=i;j>=1;j--)
+			cnt[i][j]=i-1-(i-j)*2;
+	for(int i=1;i<=n;i++)
+		for(int j=1;j<=i;j++)
+			for(int k=0;k<vec[j].size();k++)
+				num[i][vec[j][k].first]+=cnt[i][j]*vec[j][k].second;
+	for(int i=1;i<=n;i++)
+		for(int j=1;j<=tot;j++)
+			maxx[j]=max(maxx[j],num[i][j]);
+	for(int i=1;i<=tot;i++){
+		int res=1;sum[i][0]=1;
+		for(int j=1;j<=maxx[i];j++){
+			res=(res*pri[i])%p;sum[i][j]=(sum[i][j-1]+res)%p;
+		}
+	}
+	for(int i=1;i<=n;i++){
+		int res=1;
+		for(int j=1;j<=tot;j++)res=(res*sum[j][num[i][j]])%p;
+		ans=(ans+res)%p;
+	}
+	printf("%lld\n",ans);
+	return ;
+}
+signed main(){
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	Solve();
+	fclose(stdin);
+	fclose(stdout);
+	return 0;
+}

@@ -1,0 +1,84 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long
+const int N=3e5+5,mod=998244353;
+int Num,n,x,tot;
+ll ans[N];
+int head[N],nxt[N<<1],to[N<<1];
+int dis[25][25];
+void add(int u,int v)
+{
+    nxt[++tot]=head[u];
+    head[u]=tot;
+    to[tot]=v;
+}
+void ins(int u,int v) {add(u,v);add(v,u);}
+bool vst[25];
+void dfs(int st,int sum,int op)
+{
+    ans[sum]+=op;
+    if(st>n) return;
+    vst[st]=0;
+    dfs(st+1,sum,0);
+    for(int i=1;i<st;i++) if(vst[i] && dis[i][st]>x) return;
+    vst[st]=1;
+    dfs(st+1,sum+1,1);
+}
+int main()
+{
+	freopen("youup.in","r",stdin);
+	freopen("youup.out","w",stdout);
+    scanf("%d%d%d",&Num,&n,&x);
+    int u,v;
+    for(int i=1;i<n;i++)
+    {
+        scanf("%d%d",&u,&v);
+        ins(u,v);
+        if(Num<=24) dis[u][v]=dis[v][u]=1;
+    }
+    if(Num>=46 && Num<=49)
+    {
+        if(x==0)
+        {
+            printf("%d",n);
+            for(int i=2;i<=n;i++) printf("0 ");
+            puts("");
+            return 0;
+        }
+        if(x==1)
+        {
+            printf("%d %d",n,n-1);
+            for(int i=3;i<=n;i++) printf("0 ");
+            puts("");
+            return 0;
+        }
+        if(x>=2)
+        {
+            ll now=1;
+            for(int i=1;i<=n;i++)
+            {
+                now=now*(n-i+1)%mod;
+                printf("%lld ",now);
+            }
+            puts("");
+            return 0;
+        }
+    }
+    if(Num<=24)
+    {
+        for(int k=1;k<=n;k++)
+            for(int i=1;i<=n;i++)
+            {
+                if(i==k) continue;
+                for(int j=1;j<=n;j++)
+                {
+                    if(i==j || j==k) continue;
+                    if(dis[i][k] && dis[k][j]) dis[i][j]=dis[i][k]+dis[k][j];
+                }
+            }
+        dfs(1,0,0);
+        for(int i=1;i<=n;i++) printf("%lld\n",ans[i]);
+        puts("");
+    }
+	return 0;
+}

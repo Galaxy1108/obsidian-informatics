@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <algorithm>
+#include <cstring>
+#include <iostream>
+#include <vector>
+using namespace std;
+
+#define pb push_back
+
+const int NR = 20 + 5;
+
+int ID;
+int n, m;
+int ans[NR];
+int pc[1 << 20];
+int dis[NR][NR];
+vector<int> g[NR];
+
+void dfs(int now, int fou, int S) {
+	for (int t: g[now]) {
+		if (t == fou) continue;
+		dis[S][t] = dis[S][now] + 1;
+		dfs(t, now, S);
+	}
+}
+
+int main()
+{
+#ifdef WYZ
+	freopen("1.in", "r", stdin);
+	freopen("1.out", "w", stdout);
+#else
+	freopen("youup.in", "r", stdin);
+	freopen("youup.out", "w", stdout);
+#endif
+	ios::sync_with_stdio(0);
+	
+	cin >> ID;
+	cin >> n >> m;
+	for (int i = 1; i < n; i++) {
+		int u, v; cin >> u >> v;
+		g[u].pb(v), g[v].pb(u);
+	}
+
+	if (ID <= 2) {
+		for (int i = 1; i < (1 << 20); i++) pc[i] = pc[i >> 1] + (i & 1);
+		for (int i = 1; i <= n; i++) dfs(i, 0, i);
+		for (int S = 1; S < (1 << n); S++) {
+			bool flag = 1;
+			for (int i = 1; i <= n; i++) {
+				if (!(S & (1 << (i - 1)))) continue;
+				for (int j = i + 1; j <= n; j++) {
+					if (!(S & (1 << (j - 1)))) continue;
+					if (dis[i][j] > m) { flag = 0; break; }
+				}
+				if (!flag) break;
+			}
+			ans[pc[S]] += flag;
+		}
+		for (int i = 1; i <= n; i++) cout << ans[i] << ' ';
+		cout << '\n';
+	}
+
+	return 0;
+}

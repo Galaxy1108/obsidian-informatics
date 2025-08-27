@@ -1,0 +1,67 @@
+#include <iostream>
+#define ll long long
+#define FOR(i,x,y) for(ll i=x;i<=y;++i)
+using namespace std;
+int n,p;
+ll ans;
+ll ksm(ll a,int k)
+{
+    ll res=1ll;
+    while(k)
+    {
+        if(k&1)res=res*a%p;
+        k>>=1;
+        a=a*a%p;
+    }
+    return res%p;
+}
+ll C(ll a,ll b)
+{
+    if(a<b) return 0;
+    ll res=1ll;
+    for(ll i=1,j=a;i<=b;i++,j--)
+    {
+        res=res*j%p;
+        res=res*ksm(i,p-2)%p;
+    }
+    return res%p;
+}
+ll lucas(ll a, ll b)
+{
+    if(a<p&&b<p) return C(a,b);
+    return C(a%p,b%p)*lucas(a/p,b/p)%p;
+}
+inline ll getf(int x)
+{
+	ll res(1ll);
+	FOR(i,1,x)res=(res%p*lucas(x,i))%p;
+	return res%p;
+}
+inline ll getnum(ll x)
+{
+	ll res; 
+	for(ll i=1;i*i<=x;++i)
+	{
+		if(x%i==0)
+		{
+			res=(res+i)%p;
+			if(i!=x/i)res=(res+x/i)%p;
+		}
+	}
+	return res%p;
+}
+int main()
+{
+	ios::sync_with_stdio(false);
+	cin.tie(0),cout.tie(0);
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+    cin>>n>>p;
+	FOR(i,1,n)
+	{
+		ll x=getf(i),y=getnum(x);
+	    ans=(ans+y)%p;
+    }
+    cout<<ans;
+    return 0;
+}

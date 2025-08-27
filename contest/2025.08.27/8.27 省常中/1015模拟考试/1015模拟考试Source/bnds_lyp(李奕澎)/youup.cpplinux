@@ -1,0 +1,206 @@
+#include <cstdio>
+#include <algorithm>
+using namespace std;
+const int NR = 3e5;
+const long long mod = 998244353;
+int num,n,m,t = 0,to[NR * 2 + 5],nxt[NR * 2 + 5],head[NR + 5],dep[NR + 5],f[NR + 5][22],dis[25][25];
+long long mul[NR + 5],inv[NR + 5],res[NR + 5];
+bool vis[NR + 5];
+inline int read()
+{
+	int x = 0;
+	char ch = getchar();
+	while (ch < '0' || ch > '9')
+		ch = getchar();
+	while (ch >= '0' && ch <= '9')
+	{
+		x = (x << 3) + (x << 1) + (ch ^ 48);
+		ch = getchar();
+	}
+	return x;
+}
+inline void write(long long x)
+{
+	if (x > 9)
+		write(x / 10);
+	putchar(x % 10 + '0');
+	return;
+}
+inline void add(int x,int y)
+{
+	t++;
+	to[t] = y;
+	nxt[t] = head[x];
+	head[x] = t;
+	return;
+}
+inline long long ksm(long long x,long long y)
+{
+	if (y == 0)
+		return 1;
+	else
+	{
+		long long res = ksm(x,y >> 1);
+		res = res * res % mod;
+		if (y & 1)
+			res = res * x % mod;
+		return res;
+	}
+}
+inline long long c(int x,int y)
+{
+	return mul[x] * inv[y] % mod * inv[x - y] % mod;
+}
+inline void dfs(int x)
+{
+	for (int i = 1;i <= 17;i++)
+		f[x][i] = f[f[x][i - 1]][i - 1];
+	for (int i = head[x];i != 0;i = nxt[i])
+	{
+		int y = to[i];
+		if (y != f[x][0])
+		{
+			f[y][0] = x;
+			dep[y] = dep[x] + 1;
+			dfs(y);
+		}
+	}
+	return;
+}
+inline int lca(int x,int y)
+{
+	if (dep[x] < dep[y])
+		swap(x,y);
+	for (int i = 17;i >= 0;i--)
+	{
+		if (dep[f[x][i]] >= dep[y])
+			x = f[x][i];
+		if (x == y)
+			return x;
+	}
+	for (int i = 17;i >= 0;i--)
+		if (f[x][i] != f[y][i])
+		{
+			x = f[x][i];
+			y = f[y][i];
+		}
+	return f[x][0];
+}
+inline void sch(int x)
+{
+	if (x <= n)
+	{
+		vis[x] = true;
+		sch(x + 1);
+		vis[x] = false;
+		sch(x + 1);
+	}
+	else
+	{
+		int cnt = 0;
+		for (int i = 1;i <= n;i++)
+			if (vis[i] == true)
+				for (int j = 1;j <= n;j++)
+					if (vis[j] == true && j != i && dis[i][j] > m)
+						return;
+		for (int i = 1;i <= n;i++)
+			if (vis[i] == true)
+				cnt++;
+		res[cnt] = (res[cnt] + 1) % mod;
+	}
+	return;
+}
+int main()
+{
+	freopen("youup.in","r",stdin);
+	freopen("youup.out","w",stdout);
+	num = read();
+	n = read();
+	m = read();
+	for (int i = 1;i <= n - 1;i++)
+	{
+		int u = read(),v = read();
+		add(u,v);
+		add(v,u);
+	}
+	if (num <= 5 || m == 0)
+	{
+		write(n);
+		putchar(' ');
+		for (int i = 2;i <= n;i++)
+		{
+			write(0);
+			putchar(' ');
+		}
+	}
+	else
+	{
+		if (num >= 46 && num <= 49)
+		{
+			if (m == 1)
+			{
+				write(n);
+				putchar(' ');
+				if (n >= 2)
+				{
+					write(n - 1);
+					putchar(' ');
+					for (int i = 3;i <= n;i++)
+					{
+						write(0);
+						putchar(' ');
+					}
+				}
+			}
+			else
+			{
+				write(n);
+				putchar(' ');
+				if (n >= 2)
+				{
+					mul[0] = 1;
+					mul[1] = 1;
+					for (int i = 2;i <= n;i++)
+						mul[i] = mul[i - 1] * (long long)i % mod;
+					inv[n] = ksm(mul[n],mod - 2);
+					for (int i = n - 1;i >= 1;i--)
+						inv[i] = inv[i + 1] * (long long)(i + 1) % mod;
+					inv[0] = 1;
+					for (int i = 2;i <= n;i++)
+					{
+						write(c(n,i));
+						putchar(' ');
+					}
+				}
+			}
+		}
+		else
+		{
+			if ((num >= 6 && num <= 24) || n <= 20)
+			{
+				dfs(1);
+				for (int i = 1;i <= n;i++)
+					for (int j = 1;j <= n;j++)
+						if (j != i)
+							dis[i][j] = dep[i] + dep[j] - dep[lca(i,j)] * 2;
+				sch(1);
+				for (int i = 1;i <= n;i++)
+				{
+					write(res[i]);
+					putchar(' ');
+				}
+			}
+			else
+			{
+				write(n);
+				putchar(' ');
+				for (int i = 2;i <= n;i++)
+				{
+					write(rand());
+					putchar(' ');
+				}
+			}
+		}
+	}
+	return 0;
+}

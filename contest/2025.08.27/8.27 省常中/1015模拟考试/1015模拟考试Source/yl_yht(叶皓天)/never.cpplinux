@@ -1,0 +1,139 @@
+#include <bits/stdc++.h>
+namespace IO {
+  #define iL (1 << 20)
+  char ibuf[iL], *iS = ibuf + iL, *iT = ibuf + iL;
+  #define gc() ((iS == iT) ? (iT = (iS = ibuf) + fread(ibuf, 1, iL, stdin), iS == iT ? EOF : *iS ++) : *iS ++)
+  template<class T> inline void read(T &x) {
+    x = 0;int f = 0;char ch = gc();
+    for (; !isdigit(ch); f |= ch == '-', ch = gc());
+    for (; isdigit(ch); x = (x << 1) + (x << 3) + (ch ^ 48), ch = gc());
+    x = (f == 1 ? ~ x + 1 : x);
+  }
+  char Out[iL], *iter = Out;
+  #define flush() fwrite(Out, 1, iter - Out, stdout), iter = Out
+  template<class T> inline void write(T x, char ch = '\n') {
+    T l, c[35];
+    if (x < 0) *iter ++ = '-', x = ~ x + 1;
+    for (l = 0; !l || x; c[l] = x % 10, l++, x /= 10);
+    for (; l; -- l, *iter ++ = c[l] + '0');*iter ++ = ch;
+    flush();
+  }
+}
+using namespace IO;
+#define N 100005
+#define ll long long
+#define DEBUG
+#define pii pair<int, int>
+#define mp make_pair
+#define fi first
+#define se second
+using namespace std;
+ll TT, n, s, t, x, y;
+namespace sub1 {
+  void main() {
+    for (int i = 1; i <= n; i++) {
+      if (s >= t) s -= x; else s += y;
+    }
+    write(s);
+  }
+}
+namespace sub2 {
+  void main() {
+    ll step = 0; 
+    if (s < t) step = (t - s - 1) / y; else step = (s - t) / x;
+    if (n <= step) { 
+      if (s < t) write(s + n * y); else write(s - n * x);
+      return ;
+    }
+    if (s < t) s += step * y; else s -= step * x;
+    n -= step; n %= 2;
+    if (s < t) s += y * n; else s -= x * n;
+    write(s);
+  }
+}
+namespace sub3 {
+  void main() {
+    ll os = s, cl = 0;
+    for (int i = 1; i <= n; i++) {
+      if (s < t) s += y; else s -= x;
+      if (s == os) { cl = i; break; }
+    }
+    if (!cl) { write(s); return ; }
+    n %= cl;
+    for (int i = 1; i <= n; i++) {
+      if (s < t) s += y; else s -= x;
+    }
+    write(s);
+  }
+}
+namespace sub4 {
+  ll gcd(ll n, ll m) { if (!m) return n; return gcd(m, n % m); }
+  void main() {
+    n %= (x + y) / gcd(x, y);
+    if (!n) { write(s); return ; }
+    n --; ll tmp = x;
+    if (x < y) {
+      while (n) {
+        ll cnt = y % x;
+        ll tot = (tmp - 1) / cnt + 1;
+        ll num = y / x + 1;
+        if (n >= num * tot) {
+          n -= num * tot;
+          tmp -= cnt * tot;
+          if (n) {--n; tmp += x;}
+          continue;
+        }
+        ll p = n / num, q = n - num * p;
+        tmp -= cnt * p; n = q;
+        if (n) {--n; tmp -= y; tmp += n * x;}
+        n = 0;
+      }
+      write(s - tmp); return ;
+    }
+    while (n) {
+      ll cnt = ((x - 1) / y + 1) * y - x;
+      ll tot = (tmp - 1) / cnt + 1;
+      ll num = (x - 1) / y + 2;
+      if (n >= num * tot) {
+        n -= num * tot;
+        tmp -= cnt * tot;
+        if (n) {--n; tmp += x;}
+        continue;
+      }
+      ll p = n / num, q = n - num * p;
+      tmp -= cnt * p; n = q;
+      while (n) {
+        ll r = (tmp - 1) / y + 1;
+        if (n < r) {tmp -= n * y; break;}
+        n -= r; tmp -= r * y;
+        if (n) {--n; tmp += x;}
+      }
+      n = 0;
+    }
+    write(s - tmp); return ;
+  }
+}
+int main() {
+// #ifndef ONLINE_JUDGE
+  // freopen("test.in", "r", stdin);
+  // freopen("test.out", "w", stdout);
+// #endif
+  freopen("never.in", "r", stdin);
+  freopen("never.out", "w", stdout);
+  read(TT);
+  while (TT --) {
+    read(n), read(s), read(t), read(x), read(y);
+    if (x <= 100 && y <= 100 && llabs(s) <= 100 && llabs(t) <= 100) { sub3::main(); continue; }
+    ll step = 0; 
+    if (s < t) step = (t - s - 1) / y; else step = (s - t) / x;
+    if (n <= step) { 
+      if (s < t) write(s + n * y); else write(s - n * x);
+      continue;
+    }
+    if (s < t) s += step * y; else s -= step * x; n -= step;
+    if (n <= 1000000) { sub1::main(); continue; }
+    if (x == y) { sub2::main(); continue; }
+    if (s == t) { sub4::main(); continue; }
+  }
+  return 0;
+}

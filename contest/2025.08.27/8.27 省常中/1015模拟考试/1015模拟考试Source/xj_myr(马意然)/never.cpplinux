@@ -1,0 +1,44 @@
+#include <bits/stdc++.h>
+#define int long long
+#pragma GCC optimize("Ofast", "inline", "-ffast-math")
+#pragma GCC target("avx,sse2,sse3,sse4,mmx")
+using namespace std;
+int T;
+int n,s,p,x,y;
+signed main() {
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	scanf("%lld",&T);
+	while(T--){
+		scanf("%lld%lld%lld%lld%lld",&n,&s,&p,&x,&y);
+		if(x==y){
+			if(p<s){
+				if(n*x+p<=s){
+					printf("%lld\n",s-n*x);
+					continue;
+				}
+				n-=(s-p)/x;
+				s-=((s-p)/x)*x;
+				if(n%2==0) printf("%lld\n",s);
+				else printf("%lld\n",s-x);
+			}else {
+				if(n*x+s<=p){
+					printf("%lld\n",n*x+s);
+					continue;
+				}
+				n-=(p-s)/x;
+				s+=((p-s)/x)*x;
+				if(n%2==0) printf("%lld\n",s);
+				else printf("%lld\n",s+x);
+			}
+			continue;
+		}
+		while(n--){
+			if(s<p) s+=y;
+			else s-=x;
+		}
+		printf("%lld\n",s);
+		
+	}
+	return 0;
+}

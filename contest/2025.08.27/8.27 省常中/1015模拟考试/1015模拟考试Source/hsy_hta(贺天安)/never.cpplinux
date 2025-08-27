@@ -1,0 +1,23 @@
+#include<bits/stdc++.h>
+using namespace std;
+int T,n,s,t,x,y;
+unordered_map<int,int> a;
+int main(){
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	scanf("%d",&T);
+	for(;T;--T){
+		scanf("%d%d%d%d%d",&n,&s,&t,&x,&y);
+		a.clear(),a[s]=0;
+		for(register int i=1;i<=n;++i){
+			if(s>=t) s-=x;
+			else s+=y;
+			if(a[s]){
+				while(i+i-a[s]<=n) n-=i-a[s];
+			}
+			a[s]=i;
+		}
+		printf("%d\n",s);
+	}
+	return 0;
+}

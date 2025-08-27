@@ -1,0 +1,54 @@
+#include<bits/stdc++.h>
+#define int long long
+using namespace std;
+const int NR=1e5+5;
+int n,s,t,x,y;
+map<int,int>vis;
+int gcd(int x,int y){ return y==0?x:gcd(y,x%y); }
+void solve(){
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	cin >> n >> s >> t >> x >> y;
+	/*
+	if(s>=t+y-1){
+		int tmp=(s-(t+y-1))/x+1;
+		s-=x*tmp; n-=tmp;
+	}
+	if(s<t-x){
+		int tmp=((t-x)-s)/y+1;
+		s+=tmp*y; n-=tmp;
+	}
+	if(x<y){
+		int div=y/x,rem=y%x;
+		int cost=div+2;
+	}
+	*/
+	vis.clear();
+	int now=s,step=0,cnt=0;
+	while(step<n&&!vis[now]){
+		vis[now]=++cnt;
+		if(now>=t) now-=x;
+		else now+=y;
+		step++;
+		//cout << now << " " ;
+	}
+	if(step==n) cout << now << endl;
+	else{
+		int tmp=vis[now];
+		int per=step-tmp+1;
+		//cout << tmp << " "<<"TEST" <<endl ;
+		n=n-tmp+1;
+		n%=per;
+		while(n){
+			if(now>=t) now-=x;
+			else now+=y;
+			n--;
+		}
+		cout << now << endl;
+	}
+}
+signed main(){
+	int T; cin >> T;
+	while(T--) solve(); 
+	return 0;
+}

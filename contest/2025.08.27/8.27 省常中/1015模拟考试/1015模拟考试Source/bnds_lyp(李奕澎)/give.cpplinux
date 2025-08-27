@@ -1,0 +1,110 @@
+#include <cstdio>
+#include <map>
+#include <algorithm>
+using namespace std;
+int T,m,n,ans;
+long long s,a[205];
+map <long long,bool> dp,vis;
+inline int read()
+{
+	int x = 0;
+	char ch = getchar();
+	while (ch < '0' || ch > '9')
+		ch = getchar();
+	while (ch >= '0' && ch <= '9')
+	{
+		x = (x << 3) + (x << 1) + (ch ^ 48);
+		ch = getchar();
+	}
+	return x;
+}
+inline long long readll()
+{
+	long long x = 0;
+	char ch = getchar();
+	while (ch < '0' || ch > '9')
+		ch = getchar();
+	while (ch >= '0' && ch <= '9')
+	{
+		x = (x << 3) + (x << 1) + (ch ^ 48);
+		ch = getchar();
+	}
+	return x;
+}
+inline void write(int x)
+{
+	if (x > 9)
+		write(x / 10);
+	putchar(x % 10 + '0');
+	return;
+}
+inline void dfs(int x,long long y)
+{
+	if (x <= m)
+	{
+		for (int i = 1;i <= n;i++)
+		{
+			if (y + a[i] <= s)
+				dfs(x + 1,y + a[i]);
+			else
+				break;
+		}
+	}
+	else
+		if (y == s)
+			ans = (ans + 1) % 2;
+}
+inline long long num(long long x,int y)
+{
+	return x * m + (long long)y;
+}
+inline bool find(long long x,int y)
+{
+	long long tmp = num(x,y);
+	if (vis[tmp] == true)
+		return dp[tmp];
+	else
+	{
+		vis[tmp] = true;
+		if (y == 0)
+			dp[tmp] = true;
+		else
+		{
+			dp[tmp] = false;
+			for (int i = 1;i <= n;i++)
+			{
+				if (a[i] > x)
+					break;
+				else
+					if (find(x - a[i],y - 1) == true)
+						dp[tmp] ^= 1;
+			}
+		}
+		return dp[tmp];
+	}
+}
+int main()
+{
+	freopen("give.in","r",stdin);
+	freopen("give.out","w",stdout);
+	T = read();
+	while (T--)
+	{
+		m = read();
+		s = readll();
+		n = read();
+		for (int i = 1;i <= n;i++)
+			a[i] = readll();
+		sort(a + 1,a + n + 1);
+		if (n <= 5)
+		{
+			ans = 0;
+			dfs(1,0);
+			write(ans);
+		}
+		else
+			write(find(s,m));
+		putchar('\n');
+	}
+	return 0;
+}

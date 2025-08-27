@@ -1,0 +1,85 @@
+#include<bits/stdc++.h>
+#define int long long
+
+using namespace std;
+int T,n,s,t,x,y;
+signed main()
+{
+//	freopen("never.in","r",stdin);
+//	freopen("never.out","w",stdout);
+	cin>>T;
+	for(int ses=1;ses<=T;ses++)
+	{
+		cin>>n>>s>>t>>x>>y;
+		if(n<=1000000)
+		{
+			for(int i=1;i<=n;i++)
+			{
+				s=(s>=t ? s-x : s+y);
+			}
+			cout<<s<<endl;
+		}
+		else if(x<=100&&y<=100)
+		{
+			int to[1000];
+			memset(to,0,sizeof(to));
+			int i;
+			s+=250;t+=250;
+			for(i=1;i<=n&&to[s]==0;i++)
+			{
+				to[s]=i-1;
+				s=(s>=t ? s-x : s+y);
+			}
+			n-=to[s];
+			n%=(i-1-to[s]);
+			for(i=1;i<=n;i++)
+			{
+				s=(s>=t ? s-x : s+y);
+			}
+			cout<<s-250<<endl;
+		}
+		else if(x==y)
+		{
+			if(s<t)
+			{
+				if(n<=(t-s)/x)
+				{
+					s+=x*n;
+					cout<<s<<endl;
+					continue;
+				}
+				n-=(t-s)/x;
+				s+=((t-s)/y)*x;
+				if(s<t)
+				{
+					s+=x;
+					n--;
+					if(n==0)
+					{
+						cout<<s<<endl;
+						continue;
+					}
+				}
+			}
+			if(s-t>=x)
+			{
+				if(n<=(s-t)/x)
+				{
+					s-=x*n;
+					cout<<s<<endl;
+				}
+				n-=(s-t)/x;
+				s=t+(s-t)%x;
+			}
+			if(n%2==1)
+			{
+				cout<<s-y<<endl;
+			}
+			else 
+			{
+				cout<<s<<endl;
+			}
+		}
+	}
+	return 0;
+}

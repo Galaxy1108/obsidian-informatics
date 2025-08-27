@@ -1,0 +1,127 @@
+#include <bits/stdc++.h>
+using ll = long long;
+
+inline void file () {
+	freopen("gonna.in", "r", stdin);
+	freopen("gonna.out", "w", stdout);
+}
+
+int Mod;
+inline int add (int x, int y) { x += y; return x >= Mod ? x - Mod : x; }
+inline int sub (int x, int y) { x -= y; return x < 0 ? x + Mod : x; }
+inline int mul (int x, int y) { return 1ll * x * y % Mod; }
+inline void updAdd (int &x, int y) { x = add(x, y); }
+inline void updSub (int &x, int y) { x = sub(x, y); }
+inline void updMul (int &x, int y) { x = mul(x, y); }
+int exp (int x, ll p) {
+	int r = 1;
+	for (; p; p >>= 1, updMul(x, x)) {
+		if (p & 1) {
+			updMul(r, x);
+		}
+	}
+	
+	return r;
+}
+
+const int N = 2e4 + 5;
+
+bool mark[N];
+std::vector <int> primes;
+int inv[N];
+
+void prework () {
+	inv[1] = 1;
+	for (int i = 2; i <= 2e4; ++ i) {
+		inv[i] = sub(0, mul(inv[Mod % i], Mod / i));
+		
+		if (!mark[i]) {
+			primes.emplace_back(i);
+		}
+		
+		for (auto p : primes) {
+			int s = i * p;
+			if (s > 2e4) {
+				break;
+			}
+			
+			mark[s] = 1;
+			if (i % p == 0) {
+				break;
+			}
+		}
+	}
+}
+
+int n;
+ll f[N], g[N];
+
+std::vector <int> factor (int x) {
+	std::vector <int> pv;
+	for (auto p : primes) {
+		if (p * p > x) {
+			break;
+		}
+		
+		for (; x % p == 0; x /= p) {
+			pv.emplace_back(p);
+		}
+	}
+	
+	if (x > 1) {
+		pv.emplace_back(x);
+	}
+	
+	return pv;
+}
+
+int calc (int p, ll k) {
+	int t = sub(exp(p, k + 1), 1);
+	return mul(t, inv[p - 1]);
+}
+
+int main () {
+	
+	file();
+	std::ios::sync_with_stdio(0);
+	std::cin.tie(nullptr);
+	std::cout.tie(nullptr);
+	
+	std::cin >> n >> Mod;
+	
+	prework();
+	
+	int ans = 1;
+	for (int i = 2; i <= n; ++ i) {
+		for (auto p : primes) {
+			if (p >= i) {
+				break;
+			}
+			
+			g[p] -= i * f[p];
+		}
+		
+		std::vector <int> pv = factor(i);
+		for (auto p : pv) {
+			f[p] ++ ;
+		}
+		
+		int s = 1;
+		for (auto p : primes) {
+			if (p > i) {
+				break;
+			}
+			
+			g[p] += (i - 1) * f[p];
+//			std::cerr << "p = " << p << ' ' << "g[p] = " << g[p] << '\n';
+			updMul(s, calc(p, g[p]));
+		}
+		
+//		std::cerr << "i = " << i << ' ' << "s = " << s << '\n';
+		updAdd(ans, s);
+	}
+	
+	std::cout << ans << '\n';
+	
+	return 0;
+}

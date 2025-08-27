@@ -1,0 +1,35 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+using ll = long long;
+using l3 = __int128_t;
+#define IO(a) freopen(#a".in", "r", stdin), freopen(#a".out", "w", stdout),\
+	cin.tie(0)->sync_with_stdio(0), cout.tie(0)
+#define F(i, a, b) for (int i = (a), i##end = (b); i <= i##end; i++)
+
+ll s, t, x, y, n;
+void solve() {
+	cin >> n >> s >> t >> x >> y;
+	ll l = t - x, r = t + y;
+	if (s < l) {
+		ll step = min(n, (l - s - 1) / y + 1);
+		s += step * y, n -= step;
+	}
+	if (s >= r) {
+		ll step = min(n, (s - r) / x + 1);
+		s -= step * x, n -= step;
+	}
+	if (s >= l && s < r) {
+		s -= l, t -= l, r -= l;
+		s = (s + l3(y) * n) % r;
+		cout << s + l << "\n";
+	} else {
+		cout << s << "\n";
+	}
+}
+
+int main() {
+	IO(never);
+	int T;
+	for (cin >> T; T; T--) solve();
+}

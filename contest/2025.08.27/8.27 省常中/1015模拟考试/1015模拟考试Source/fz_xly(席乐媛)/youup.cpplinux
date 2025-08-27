@@ -1,0 +1,19 @@
+#include<cstdio>
+using namespace std;
+int redd(){
+  int xx=0,fl=1;char ch=getchar();
+  while((ch<'0'||ch>'9')&&ch!='-')ch=getchar();
+  if(ch=='-'){ch=getchar();fl=-1;}
+  for(;ch>='0'&&ch<='9';ch=getchar())
+  	xx=(xx<<3)+(xx<<1)+ch-'0';
+  return xx*fl;
+}
+int main(){
+	freopen("youup.in","r",stdin);
+	freopen("youup.out","w",stdout);
+	int num,n;
+	num=redd();n=redd();
+	printf("%d",n);
+	for(int i=2;i<=n;i++)printf(" 0");
+  return 0;
+}

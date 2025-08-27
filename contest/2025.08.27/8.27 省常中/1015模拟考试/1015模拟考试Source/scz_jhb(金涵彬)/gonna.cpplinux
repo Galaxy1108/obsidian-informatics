@@ -1,0 +1,49 @@
+#include<bits/stdc++.h>
+using namespace std;
+long long p[2300],t;
+int jc[2300],an[2300];
+long long ans=0;
+bool vis[20005];
+long long h[2300],ma[2300],l[2300];
+int n,P;
+int N[2300];
+int main(){
+	cin>>n>>P;
+	for(int i=1;i<=n;i++)vis[i]=0;
+	for(int i=2;i<=n;i++){
+		if(!vis[i])p[++t]=i;
+		for(int j=1;j<=t&&p[j]*i<=n;j++){
+			vis[p[j]*i]=1;
+			if(i%p[j]==0)break;
+		}
+	}
+	for(int i=1;i<=t;i++)jc[i]=0,an[i]=0,h[i]=1,ma[i]=1,l[i]=0;
+	for(int i=1;i<=n;i++){
+		int tn=i;
+		long long jf=0,c=1,pt=1;
+		for(int j=1;j<=t&&p[j]<=tn;j++){
+			while(tn%p[j]==0){
+				tn/=p[j];
+				jc[j]++;
+				an[j]+=i;
+			}
+		}
+		for(int j=1;j<=i;j++){
+			an[j]-=jc[j];
+			jf=1;
+			pt=1; 
+			for(int k=1;k<=an[j];k++){
+				pt*=p[j];
+				pt%=P;
+				jf+=pt;
+				jf%=P;
+			}
+			c*=jf;
+			c%=P;
+		}
+		ans+=c;
+		ans%=P;
+	}
+	cout<<ans<<endl;
+	return 0;
+}

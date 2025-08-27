@@ -1,0 +1,35 @@
+#include<iostream>
+#include<cstring>
+#define mn 210
+#define ll long long
+#define FOR(i,x,y) for(ll i=x;i<=y;++i)
+#define ROF(i,x,y) for(ll i=x;i>=y;--i)
+using namespace std;
+int n;
+long long m;
+long long S;
+int w[mn];
+long long s[5000000];
+int main()
+{
+	freopen("give.in","r",stdin);
+	freopen("give.out","w",stdout);
+	int T;
+	cin>>T;
+	while(T--)
+	{
+		cin>>m>>S>>n;
+		memset(s,0,sizeof(s));
+		FOR(i,1,n)cin>>w[i];
+		s[0]=1;
+		FOR(i,1,m)
+		{
+			FOR(j,w[i],S)
+			{
+				s[j]=(s[j]+s[j-w[i]]+2)%2;
+			}
+		}
+		cout<<m%2-s[S]%2<<endl;
+	}
+	return 0;
+}

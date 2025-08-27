@@ -1,0 +1,57 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define out(x) wrt(x),ptc(' ')
+#define oun(x) wrt(x),ptc('\n')
+#define gtc getchar()
+#define ptc(x) putchar(x)
+#define il inline
+#define re register
+#define ll long long
+#define rd read()
+#define rdl readl()
+il int read(){re int x=0;re bool f=0;re char c=gtc;while(c<'0'||c>'9'){if(c=='-')f=1;c=gtc;}while(c>='0'&&c<='9')x=(x<<1)+(x<<3)+(c^48),c=gtc;return f?-x:x;}
+il ll readl(){re ll x=0;re bool f=0;re char c=gtc;while(c<'0'||c>'9'){if(c=='-')f=1;c=gtc;}while(c>='0'&&c<='9')x=(x<<1)+(x<<3)+(c^48),c=gtc;return f?-x:x;}
+il void wt(re ll x){if(x>9)wt(x/10);ptc(x%10+48);}
+il void wrt(re ll x){if(x<0)ptc('-'),x=-x;wt(x);}
+
+void work(){
+	re ll n=rdl,s=rdl,t=rdl,x=rdl,y=rdl;
+	if(s>=t){
+		if(ceil(1.0*(s-t+1)/x)>=n){
+			oun(s-n*x);
+			return;
+		}
+		n=n-ceil(1.0*(s-t+1)/x);
+		s=s-ceil(1.0*(s-t+1)/x)*x; 
+	}else{
+		if(floor(1.0*(t-s-1)/y)>=n){
+			oun(s+n*y);
+			return;
+		}
+		n=n-floor(1.0*(t-s-1)/y);
+		s=s+floor(1.0*(t-s-1)/y)*y;
+	}
+	if(x==y){
+		n=n%2;
+		oun(s+n*y);
+		return;
+	}
+//	if(n<=10){
+		while(n--){
+			if(s>=t) s=s-x;
+			else s=s+y;
+		}
+		oun(s);
+		return;
+//	}
+}
+
+signed main(){
+	
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	re int t=rd;
+	while(t--)work();
+	
+	return 0;
+}

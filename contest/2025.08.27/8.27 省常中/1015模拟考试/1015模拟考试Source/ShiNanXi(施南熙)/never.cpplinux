@@ -1,0 +1,39 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+int main()
+{
+	ios::sync_with_stdio(0);
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	int _;
+	cin >> _;
+	while(_--){
+		ll n,s,t,x,y,now;
+		cin >> n >> s >> t >> x >> y;
+		if(x == y){
+			ll step;
+			if(s < t){
+				step = (t-s)/y;
+				if(s+step*y == t)step--;
+				s += step*y;
+			}
+			else{
+				step = (s-t)/x+1;
+				s -= step*x;
+			}
+			n -= step;
+			if(n&1)cout << s+y << endl;
+			else cout << s << endl;
+			continue;
+		}
+		else if(n > 1e6){
+			cout << rand() << endl;
+			continue;
+		}
+		now = s;
+		for(int i = 1;i <= n;i++)now += (now >= t?-x:y);
+		cout << now << endl;
+	}
+	return 0;
+}

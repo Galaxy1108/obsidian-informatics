@@ -1,0 +1,131 @@
+#include <iostream>
+using namespace std;
+int T;
+long long n,s,t,x,y,ti;
+long long read()
+{
+	long long s=0,f=1;
+	char ch=getchar();
+	while(!isdigit(ch))
+	{
+		if(ch=='-') f=-1;
+		ch=getchar();
+	}
+	while(isdigit(ch))
+	{
+		s=(s<<3)+(s<<1)+(ch^48);
+		ch=getchar();
+	}
+	return s;
+}
+long long r() {return (t-s+y-1)/y;}
+long long l() {return (s-t+x)/x;}
+void write(long long x)
+{
+	if(x<0)
+	{
+		putchar('-');
+		x=-x;
+	}
+	if(x>9) write(x/10);
+	putchar(x%10+48);
+}
+int main()
+{
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	cin>>T;
+	while(T--)
+	{
+		n=read();
+		s=read();
+		t=read();
+		x=read();
+		y=read();
+		if(x==y)
+		{
+			if(s<t)
+			{
+				ti=r();
+				if(ti<n) s+=ti*y,n-=ti;
+				else
+				{
+					s+=n*y;
+					write(s);
+					putchar('\n');
+					continue;
+				}
+			}
+			else
+			{
+				ti=l();
+				if(ti<n) s-=ti*x,n-=ti;
+				else
+				{
+					s-=n*x;
+					write(s);
+					putchar('\n');
+					continue;
+				}
+			}
+			if(s<t) ti=r();
+			else ti=l();
+			n%=ti*2;
+			while(1)
+			{
+				if(s<t)
+				{
+					ti=r();
+					if(ti<n) s+=ti*y,n-=ti;
+					else
+					{
+						s+=n*y;
+						write(s);
+						putchar('\n');
+						break;
+					}
+				}
+				else
+				{
+					ti=l();
+					if(ti<n) s-=ti*x,n-=ti;
+					else
+					{
+						s-=n*x;
+						write(s);
+						putchar('\n');
+						break;
+					}
+				}
+			}
+		}
+		else while(1)
+		{
+			if(s<t)
+			{
+				ti=r();
+				if(ti<n) s+=ti*y,n-=ti;
+				else
+				{
+					s+=n*y;
+					write(s);
+					putchar('\n');
+					break;
+				}
+			}
+			else
+			{
+				ti=l();
+				if(ti<n) s-=ti*x,n-=ti;
+				else
+				{
+					s-=n*x;
+					write(s);
+					putchar('\n');
+					break;
+				}
+			}
+		}
+	}
+	return 0;
+}

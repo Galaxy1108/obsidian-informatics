@@ -1,0 +1,25 @@
+#include<bits/stdc++.h>
+using namespace std;
+int n,m,s,T;
+int a[2005],f[2005][5005];
+void work(){
+    scanf("%d%d%d",&m,&s,&n);
+    memset(f,0,sizeof(f));
+    for(int i=1;i<=n;i++)scanf("%d",&a[i]);
+    f[0][0]=1;
+    for(int i=1;i<=m;i++){
+        for(int j=1;j<=n;j++){
+            for(int k=s;k-a[j]>=0;k--){
+                f[i][k]=(f[i][k]+f[i-1][k-a[j]])%2;
+            }
+        }
+    }
+    printf("%d\n",f[m][s]);
+}
+int main(){
+    freopen("give.in","r",stdin);
+    freopen("give.out","w",stdout);
+    scanf("%d",&T);
+    while(T--)work();
+    return 0;
+}

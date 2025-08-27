@@ -1,0 +1,50 @@
+#include<bits/stdc++.h>
+using namespace std;
+int T;
+long long n,s,t,x,y,fl;
+int main()
+{
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	scanf("%d",&T);
+	while(T--)
+	{
+		scanf("%lld%lld%lld%lld%lld",&n,&s,&t,&x,&y);
+		s-=t;
+		if(x<y) swap(x,y),s=-s,fl=-1;
+		else fl=1;
+		if(s>=0)
+		{
+			if(s/x+1>n){printf("%lld\n",(s-x*n)*fl+t);continue;}
+			n-=s/x+1;
+			s-=s/x*x+x;
+		}
+		if(s<0)
+		{
+			if((-s+y-1)/y>n){printf("%lld\n",(s+y*n)*fl+t);continue;}
+			n-=(-s+y-1)/y;
+			s+=(-s+y-1)/y*y;
+		}
+		if(x==y)
+		{
+			if(n%2==0) printf("%lld\n",s*fl+t);
+			else printf("%lld\n",(s-x)*fl+t);
+			continue;
+		}
+//		printf("%lld %lld %lld %lld %lld\n",n,s,t,x,y);
+		long long l=0,r=n;
+		while(l<r)
+		{
+			long long mid=(l+r+1)/2;
+			if(((__int128)x/y+1)*mid+(((__int128)x%y)*mid-s+y-1)/y>(__int128)n) r=mid-1;
+			else l=mid;
+		}
+		n-=((__int128)x/y+1)*l+((__int128)x%y)*l/y;
+		s+=(((__int128)x%y)*l-s+y-1)/y*y-((__int128)x%y)*l;
+		if(n==0){printf("%lld\n",s*fl+t);continue;}
+		n--;
+		s-=x;
+		s+=(__int128)n*y;
+		printf("%lld\n",s*fl+t);
+	}
+}

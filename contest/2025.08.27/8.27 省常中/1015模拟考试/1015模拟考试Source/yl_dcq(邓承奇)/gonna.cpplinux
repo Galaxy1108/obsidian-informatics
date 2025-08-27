@@ -1,0 +1,83 @@
+#include <bits/stdc++.h>
+#define ll long long
+
+using namespace std;
+int n, p;
+int ton[20005];
+
+int v[20005], prime[20005], top;
+inline void checkPrimes(int n) {
+    for (int i = 2; i <= n; ++i) {
+        if (v[i] == 0) {
+            v[i] = i;
+            prime[++top] = i;
+        }
+        for (int j = 1; j <= top; ++j) {
+            if (prime[j] > v[i] || prime[j] > n / i) break;
+            v[i * prime[j]] = prime[j];
+        }
+    }
+}
+
+inline int qpow(int x, int y) {
+    int sum = 1;
+    while (y) {
+        if (y & 1) sum = 1ll * sum * x % p;
+        x = 1ll * x * x % p;
+        y >>= 1;
+    }
+    return sum;
+}
+
+inline void calc_frac(int x, int y) {
+    if (y == 0) return;
+    if (y == x) return;
+    for (int k = x; k; --k) {
+        int xx = k;
+        for (int i = 1; i <= top && prime[i] <= xx; ++i)
+            while (xx % prime[i] == 0) ++ton[prime[i]], xx /= prime[i];
+        if (xx != 1) ++ton[xx];
+    }
+    for (int k = y; k; --k) {
+        int yy = k;
+        for (int i = 1; i <= top && prime[i] <= yy; ++i)
+            while (yy % prime[i] == 0) --ton[prime[i]], yy /= prime[i];
+        if (yy != 1) --ton[yy];
+    }
+    for (int k = x - y; k; --k) {
+        int yy = k;
+        for (int i = 1; i <= top && prime[i] <= yy; ++i)
+            while (yy % prime[i] == 0) --ton[prime[i]], yy /= prime[i];
+        if (yy != 1) --ton[yy];
+    }
+}
+inline int calc(int x) {
+    ll ret = 1;
+    memset(ton, 0, sizeof ton);
+    for (int i = 0; i <= x; ++i) calc_frac(x, i);
+
+    for (int i = 1; i <= x; ++i) {
+        ll sum = 1, Sum = 1;
+        for (int j = 1; j <= ton[i]; ++j) {
+            Sum = 1ll * Sum * i % p;
+            sum = (sum + Sum) % p;
+        }
+
+        ret = 1ll * ret * sum % p;
+    }
+    return ret;
+}
+
+int main() {
+    freopen("gonna.in", "r", stdin);
+    freopen("gonna.out", "w", stdout);
+    checkPrimes(20000);
+    scanf("%d%d", &n, &p);
+    ll ans = 0;
+    for (int i = 1; i <= n; ++i) {
+        // cout << calc(i) << endl;
+        (ans += calc(i)) %= p;
+    }
+    printf("%lld\n", ans);
+    return 0;
+}

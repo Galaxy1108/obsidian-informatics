@@ -1,0 +1,87 @@
+#include <bits/stdc++.h>
+using namespace std;
+int n, mod;
+int prime[3030], back[3030], cnt;
+bool isprime(int x) {
+	for(int i = 2; i * i <= x; i++) {
+		if(x % i == 0) return 0;
+	}
+	return 1;
+}
+void init() {
+	for(int i = 2; i <= 3000; i++) {
+		if(isprime(i)) {
+			prime[++cnt] = i, back[i] = cnt;
+		}
+	}
+}
+int v[3030][456], v1[3030][456];
+void work(int x) {
+	int l = x;
+	for(int i = 2; i * i <= x; i++) {
+		if(x % i == 0) {
+			while(x % i == 0) {
+				x /= i;
+				v[l][back[i]]++;
+			}
+		}
+	}
+	if(x != 1) {
+		v[l][back[x]]++;
+	}
+}
+int TMP[450];
+int POW[450][21040];
+void add(int p, int tim) {
+	for(int i = 1; i <= cnt; i++) {
+		TMP[i] += tim * v[p][i];
+	}
+}
+void del1(int p) {
+	for(int i = 1; i <= cnt; i++) {
+		TMP[i] -= v1[p][i];
+	}
+}
+void del(int p) {
+	for(int i = 1; i <= cnt; i++) {
+		TMP[i] -= v[p][i];
+	}
+}
+int main() {
+	freopen("gonna.in", "r", stdin);
+	freopen("gonna.out", "w", stdout);
+	ios::sync_with_stdio(0);
+	cin >> n >> mod;
+	init();
+	for(int i = 1; i <= 3000; i++) work(i);
+	for(int i = 1; i <= cnt; i++) {
+		int LAS = 1;
+		POW[i][0] = 1;
+		for(int j = 1; j <= 20000; j++) {
+			LAS = 1LL * LAS * prime[i] % mod;
+			POW[i][j] = (POW[i][j - 1] + LAS) % mod;
+		}
+	}
+	for(int i = 1; i <= 3000; i++) {
+		for(int j = 1; j <= cnt; j++) v[i][j] += v[i - 1][j];
+	}
+	for(int i = 1; i <= 3000; i++) {
+		for(int j = 1; j <= cnt; j++) {
+			v1[i][j] = v1[i - 1][j] + v[i][j];
+		}
+	}
+	int ANS1 = 0;
+	for(int i = 1; i <= n; i++) {
+		memset(TMP, 0, sizeof(TMP));
+		add(i, i);
+		del1(i);
+		del1(i - 1);
+		int ANS = 1;
+		for(int j = 1; j <= cnt; j++) {
+			ANS = 1LL * ANS * (POW[j][TMP[j]]) % mod;
+		}
+		ANS1 = (ANS1 + ANS) % mod;
+	}
+	cout << ANS1 << endl;
+	return 0; 
+}

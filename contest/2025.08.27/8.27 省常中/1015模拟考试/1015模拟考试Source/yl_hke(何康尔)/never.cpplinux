@@ -1,0 +1,25 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+int n, s, t, x, y;
+
+int main() {
+    freopen("never.in", "r", stdin);
+    freopen("never.out", "w", stdout);
+    int T;
+
+    scanf("%d", &T);
+    while(T--) {
+        scanf("%d%d%d%d%d", &n, &s, &t, &x, &y);
+        for(int i = 1; i <= n; i++) {
+            if(s >= t) {
+                s -= x;
+            } else if(s < t) {
+                s += y;
+            }
+        }
+        printf("%d\n", s);
+    }
+
+    return 0;
+}

@@ -1,0 +1,47 @@
+#include<bits/stdc++.h>
+typedef long long ll;
+using namespace std;
+int Test;
+ll N,S,T,X,Y;
+pair <ll,ll> ans;
+pair <ll,ll> operator + (pair <ll,ll> x,pair <ll,ll> y)
+	{return {x.first+y.first,x.second+y.second};}
+ll count(pair <ll,ll> x) {return x.first+x.second;}
+void move(ll X,ll Y,pair <ll,ll> Cx,pair <ll,ll> Cy,int T=INT_MAX)
+{
+	for (;N && T--;)
+	{
+		if (S>=0)
+		{
+			if (count(Cx)>N) break;
+			ll step=min(X?S/X+1:LLONG_MAX,N/count(Cx));
+			S-=step*X,N-=step*count(Cx),ans=ans+Cx;
+		}
+		if (S<0)
+		{
+			if (count(Cy)>N) break;
+			ll step=min(Y?(-S-1)/Y+1:LLONG_MAX,N/count(Cy));
+			S+=step*Y,N-=step*count(Cy),ans=ans+Cy;
+		}
+	}
+}
+void solve(ll X,ll Y,pair <ll,ll> Cx,pair <ll,ll> Cy)
+{
+	if (N==0) return;
+	move(X,Y,Cx,Cy,2);
+	if (X && Y)
+		X>Y?solve(X-Y,Y,Cx+Cy,Cy):solve(X,Y-X,Cx,Cx+Cy);
+	move(X,Y,Cx,Cy);
+}
+int main()
+{
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	scanf("%d",&Test);
+	for (;Test--;)
+	{
+		scanf("%lld%lld%lld%lld%lld",&N,&S,&T,&X,&Y);
+		S-=T,solve(X,Y,{1,0},{0,1});
+		printf("%lld\n",S+T);
+	}
+}

@@ -1,0 +1,44 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define N 205
+#define M 100005
+#define int long long
+int read(){
+	int w=0,f=1;
+	char c=' ';
+	while(c<'0'||c>'9')c=getchar(),f=c=='-'?-1:f;
+	while(c>='0'&&c<='9')w=w*10+c-48,c=getchar();
+	return w*f;
+}
+int T,m,s,n,a[N];
+bitset<(M<<1)>f,g;
+void solve(){
+	m=read(),s=read(),n=read();
+	for(int i=0;i<n;i++)
+		a[i]=read();
+	while(s){
+		if(m&1){
+			g.reset();
+			for(int i=0;i<n;i++)
+				g^=f<<a[i];
+		}
+		else g=f;
+		f.reset();
+		for(int i=0;i<=a[n-1];i++)
+			f[i]=g[(i<<1)|(s&1)];
+		s>>=1,m>>=1;
+	}
+	if(!a[0]||!m)printf("%lld\n",(int)f[0]);
+	else puts("0");
+}
+void clear(){
+	f.reset(),f.set(0);
+}
+signed main(){
+	freopen("give.in","r",stdin);
+	freopen("give.out","w",stdout);
+	T=read();
+	while(T--)
+		clear(),solve();
+	return 0;
+}

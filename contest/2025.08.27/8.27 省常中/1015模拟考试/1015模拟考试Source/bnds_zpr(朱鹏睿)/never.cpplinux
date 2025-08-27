@@ -1,0 +1,48 @@
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#define ll long long
+#define lll __int128
+using namespace std;
+int T;ll n,s,t,x,y;
+ll proc(lll n,lll s,lll t,lll x,lll y)
+{
+	lll f=1;if(y>x){swap(x,y);--t;s=2*t-s;f=-1;}
+	s-=t;lll L=0,R=n;
+	if(s<0)
+	{
+		lll cnt=(-s+y-1)/y;
+		if(n<=cnt)return f*(s+n*y)+t;
+		s+=cnt*y;n-=cnt;
+	}
+	else if(s>=x)
+	{
+		lll cnt=s/x;
+		if(n<=cnt)return f*(s-n*x)+t;
+		s-=cnt*x;n-=cnt;
+	}
+	lll z=s,res=0;
+	while(L<=R)
+	{
+		lll mid=L+R>>1;
+		lll nz=((z%y-(x%y)*mid)%y+y)%y;
+		lll step=(x*mid-z+nz)/y+mid;
+		if(step<=n)res=mid,L=mid+1;else R=mid-1;
+	}
+	lll nz=((z%y-(x%y)*res)%y+y)%y;
+	lll step=(x*res-z+nz)/y+res;
+	n-=step;
+	if(!n)return f*nz+t;
+	--n;nz-=x;
+	return f*(nz+n*y)+t;
+}
+int main()
+{
+	freopen("never.in","r",stdin);freopen("never.out","w",stdout);
+	scanf("%d",&T);while(T--)
+	{
+		scanf("%lld%lld%lld%lld%lld",&n,&s,&t,&x,&y);
+		printf("%lld\n",proc(n,s,t,x,y));
+	}
+	fclose(stdin);fclose(stdout);return 0;
+}

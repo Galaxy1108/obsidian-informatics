@@ -1,0 +1,154 @@
+/*
+刚好昨天学了逆元
+今天来玩一玩
+
+考虑质数部分
+我直接暴力求解
+50pts总得有罢
+但是我不会等比数列求和
+
+如果mod了f(x)那么因数和怎么求
+bzd 
+
+考虑杨辉三角然后预处理所有质因数
+然后等比数列求和
+50pts 
+*/
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define ull unsigned long long
+const double eps = 0.000001;
+inline ll read()
+{
+	ll x=0,f=1;
+	char ch = getchar();
+	while (ch > '9' || ch < '0')
+		{
+			if (ch == '-')
+				f = -1;
+			ch = getchar();
+		}
+	while (ch <= '9' && ch >= '0')
+		{
+			x = x * 10 + ch - 48;
+			ch = getchar();
+		}
+	return x*f;
+}
+inline void write(ll x)
+{
+	if (x < 0)
+		{
+			putchar('-');
+			x = -x;
+		}
+	if (x > 9)
+		write(x/10);
+	putchar(x%10+'0');
+}
+ll n,mod;
+ll isnt_prime[200100],prime[200100],cnt;
+ll prcnt[20010],inv[200010];
+map<ll,ll> pr;
+void Get_prime1(ll a)
+{
+	ll temp = a;
+	for (ll i=1;i<=cnt;++i)
+		while (temp%prime[i] == 0)
+			{
+				++prcnt[pr[prime[i]]];
+				temp /= prime[i];
+			}
+}
+void Get_prime2(ll a)
+{
+	ll temp = a;
+	for (ll i=1;i<=cnt;++i)
+		while (temp%prime[i] == 0)
+			{
+				--prcnt[pr[prime[i]]];
+				temp /= prime[i];
+			}
+}
+void C(ll a,ll b)
+{
+	for (ll i=a-b+1;i<=a;++i)
+		Get_prime1(i);
+	for (ll i=1;i<=b;++i)
+		Get_prime2(i);
+}
+ll fastpow(ll a,ll b)
+{
+	ll base = a;
+	ll ans = 1;
+	while (b > 0)
+		{
+			if (b & 1)
+				{
+					ans *= base;
+					ans %= mod;
+				}
+			base *= base;
+			base %= mod;
+			b >>= 1;
+		}
+	return ans;
+}
+void pretreat_inv()
+{
+	inv[1] = 1;
+	for (ll i=2;i<=20000;++i)
+		{
+			inv[i] = (mod-mod/i) * inv[mod%i];
+			inv[i] %= mod;
+		}
+}
+int main()
+{
+	//freopen("testdata.txt","r",stdin);
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	n = read();
+	mod = read();
+	pretreat_inv();
+	for (ll i=2;i<=20000;++i)
+		{
+			if (isnt_prime[i] == 0)
+				{
+					++cnt;
+					prime[cnt] = i;
+					pr[i] = cnt;
+				}
+			for (ll j=1;j<=cnt;++j)
+				{
+					if (i*prime[j] > 20000)
+						break;
+					isnt_prime[i*prime[j]] = 1;
+					if (i%prime[j] == 0)
+						break;
+				}
+		}
+	ll tot = 0;
+	for (ll i=1;i<=n;++i)
+		{
+			for (ll j=1;j<=cnt;++j)
+				prcnt[j] = 0;
+			for (ll j=1;j<=i;++j)
+				C(i,j);
+			ll tot1 = 1;
+			for (int j=1;j<=cnt;++j)
+				if (prcnt[j] != 0)
+					{
+						//cout<<prime[j]<<" "<<prcnt[j]<<endl;
+						tot1 *= pow(prime[j],prcnt[j]+1)-1;
+						tot1 %= mod;
+						tot1 *= inv[prime[j]-1];
+						tot1 %= mod;
+					}
+			tot += tot1;
+			tot %= mod;
+		}
+	printf("%lld\n",tot);
+	return 0;
+}

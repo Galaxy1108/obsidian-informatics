@@ -1,0 +1,47 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long
+ll Q, n, S, T, X, Y;
+void work(ll p, ll a, ll q, ll b, int tp){
+	while (n >= a && n >= b){
+		if (S >= 0){
+			if (!p) return ; 
+			ll k = min(n / a, S / p + 1);
+			S -= k * p;
+			n -= k * a;
+		}
+		if (S < 0){
+			if (!q) return ;
+			ll k = min(n / b, (-S) / q + ((-S) % q > 0));
+			S += k * q;
+			n -= k * b;
+		}
+		if (!tp) break;
+	}
+}
+void calc(ll p, ll a, ll q, ll b){
+	if (a > n && b > n) return ;
+	work(p, a, q, b, 0);
+	if (!p || !q){
+		work(p, a, q, b, 0);
+		n = n % (!p ? a : b);
+		work(p, a, q, b, 1);
+		return ;
+	}
+	else if (p > q){
+		calc(p % q, a + (p / q) * b, q, b);
+	}
+	else calc(p, a, q % p, b + (q / p) * a);
+	work(p, a, q, b, 1);
+}
+int main(){
+	freopen("never.in", "r", stdin);
+	freopen("never.out", "w", stdout);
+	scanf("%lld", &Q);
+	while (Q --){
+		scanf("%lld%lld%lld%lld%lld", &n, &S, &T, &X, &Y);
+		S -= T;
+		calc(X, 1, Y, 1);
+		printf("%lld\n", S + T);
+	}
+}

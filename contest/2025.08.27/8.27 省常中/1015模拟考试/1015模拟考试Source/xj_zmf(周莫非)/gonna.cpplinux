@@ -1,0 +1,96 @@
+/*
+    长弓背负，仙女月鹫，
+	梦中徐来，长夜悠悠。
+	今宵共君，夜赏囃子，
+	盼君速归，长夜悠悠。
+	睡意袭我，眼阖梦徭，
+	睡意袭我，意归襁褓。
+	手扶卓揭，仙女水狃，
+	盼君速归，长夜悠悠。
+	今宵共君，戏于西楼，
+	盼君速归，长夜悠悠。
+	睡意袭我，涟锜池留，
+	睡意袭我，意归海角。
+					                  ——《ever17》
+*/
+
+/*
+	『月正笑，地正润潮，星正舞，风正凉。』
+*/
+
+/*
+	『长夜伴浪破晓梦，梦晓破浪伴夜长。』
+*/
+#pragma GCC optimize(3)
+#include <bits/stdc++.h>
+using namespace std;
+//#define int long long
+inline int read()
+{
+	int sum = 0, nega = 1;
+	char ch = getchar();
+	while (ch > '9'||ch < '0')
+	{
+	    if (ch == '-') nega = -1;
+		ch = getchar();
+	}
+	while (ch <= '9' && ch >= '0') sum = sum * 10 + ch - '0', ch = getchar();
+	return sum * nega;
+}
+const int N = 1e6 + 9;
+int n, mod, cnt, pown1[N], pown2[N], sum[N], pep[N], ans[N], lst[N], fuck;
+int func[N], sumc[N];
+inline bool pri(int x) 
+{
+	for (int i = 2; i * i <= x; i++) 
+		if(x % i == 0) return 0;
+	return 1;
+}
+inline int get(int l, int r) 
+{
+	if(l <= n) return 1ll * sum[r - l] * pown1[l] % mod;
+	return 1ll * sum[r - l] * pown2[l / n] % mod * pown1[l % n] % mod;
+}
+inline void work(int x)
+{
+	cnt = 0;
+	int now = 0, res = 1;
+	for (int i = 1; i <= n; i++) func[i] = 0;
+	for (int i = x; i <= n; i *= x) 
+	{
+		cnt++; 
+		for (int j = i; j <= n; j += i) func[j]++;
+	}
+	for (int i = 1; i <= n; i++) sumc[i] = sumc[i - 1] + func[i];
+	pown1[0] = pown2[0] = 1; sum[0] = 1;
+	for (int i = 1; i <= n * cnt; i++) 
+		pown1[i] = 1ll * pown1[i - 1] * x % mod, sum[i] = (sum[i - 1] + pown1[i]) % mod;
+	for (int i = 1; i <= n; i++) pown2[i] = 1ll * pown2[i - 1] * pown1[n] % mod;
+	for (int i = 1; i <= n; i++) 
+	{
+		lst[i] = lst[i - 1]; now = i;
+		lst[i] += i * func[i];
+		now = i;
+		lst[i] -= sumc[i];
+		if(lst[i] > lst[i - 1]) res = (res + get(lst[i - 1] + 1, lst[i])) % mod;
+		else if(lst[i] < lst[i - 1]) res = (res - get(lst[i] + 1, lst[i - 1]) + mod) % mod;
+		ans[i] = 1ll * ans[i] * res % mod;
+	}
+	return ;
+}
+signed main()
+{
+	freopen("gonna.in", "r", stdin);
+	freopen("gonna.out", "w", stdout);
+	n = read(), mod = read();
+	for (int i = 1; i <= n; i++) ans[i] = 1;
+	for (int i = 2; i <= n; i++) 
+		if(pri(i)) work(i);
+	int tot = 0;
+	for (int i = 1; i <= n; i++) tot = (tot + ans[i]) % mod;
+	cout << tot << endl;
+	return 0;
+}
+/*
+20000 1000000009
+*/

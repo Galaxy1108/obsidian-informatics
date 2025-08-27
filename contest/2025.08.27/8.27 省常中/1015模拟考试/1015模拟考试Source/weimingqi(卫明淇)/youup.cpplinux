@@ -1,0 +1,80 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+const int MAXN=303030;
+
+int num,n,x,u,v;
+
+struct Edge{
+	int to,nxt;
+} es[MAXN<<1];
+int cnt=0;
+
+int first[MAXN],d[MAXN];
+
+void addE(int from,int to)
+{
+	es[++cnt]=(Edge){to,first[from]};
+	first[from]=cnt;
+}
+
+int dis[25][25];
+
+void dfs(int p,int from,int *now)
+{
+	for(int e=first[p];e;e=es[e].nxt)
+	{
+		int to=es[e].to;
+		if(to==from) continue;
+		now[to]=now[p]+1;
+		dfs(to,p,now);
+	}
+}
+
+bool vis[MAXN];
+
+int ans[MAXN];
+
+void Count(int step,int t)
+{
+	if(step==n+1)
+	{
+		ans[t]++;
+		return;
+	}
+	bool flag=true;
+	for(int i=1;i<step;i++)
+		if(vis[i] && dis[step][i]>x)
+		{
+			flag=false;
+			break;
+		}
+	if(flag)
+	{
+		vis[step]=true;
+		Count(step+1,t+1);
+		vis[step]=false;
+	}
+	Count(step+1,t);
+}
+
+int main()
+{
+	freopen("youup.in","r",stdin);
+	freopen("youup.out","w",stdout);
+	cin>>num>>n>>x;
+	for(int i=1;i<n;i++)
+	{
+		cin>>u>>v;
+		addE(u,v),addE(v,u);
+		d[u]++,d[v]++;
+	}
+	for(int i=1;i<=n;i++)
+		dfs(i,0,dis[i]);
+	Count(1,0);
+	for(int i=1;i<=n;i++)
+		cout<<ans[i]<<" ";
+	cout<<"\n";
+	return 0;
+}

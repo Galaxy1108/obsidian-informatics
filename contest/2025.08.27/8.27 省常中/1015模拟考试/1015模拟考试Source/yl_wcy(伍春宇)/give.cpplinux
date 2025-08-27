@@ -1,0 +1,41 @@
+#include <bits/stdc++.h>
+using namespace std;
+const int kN = 210, kM = 2e3 + 10, kS = 5e3 + 10;
+int n, m, s, T, a[kM], C[kM][kM], f[2][kM][kS];
+
+int main()
+{
+  freopen("give.in", "r", stdin);
+  freopen("give.out", "w", stdout);
+  scanf("%d", &T);
+  for (int i = 0; i < kM; i++)
+    C[i][0] = 1;
+  for (int i = 1; i < kM; i++)
+    for (int j = 1; j < kM; j++)
+      (C[i][j] = C[i - 1][j - 1] + C[i - 1][j]) &= 1;
+  while (T--) {
+    scanf("%d %d %d", &m, &s, &n);
+    for (int i = 1; i <= n; i++) {
+      scanf("%d", &a[i]);
+      if (a[i] > s) i--, n--;
+    }
+    for (int i = 0; i <= m; i++)
+      for (int j = 0; j <= s; j++)
+        f[0][i][j] = 0;
+    f[0][0][0] = 1;
+    int p = 1;
+    for (int i = 1; i <= n; i++, p ^= 1) {
+      for (int j = 0; j <= m; j++)
+        for (int k = 0; k <= s; k++)
+          f[p][j][k] = 0;
+      int u = s / a[i];
+      u = min(u, m);
+      for (int c = 0; c <= u; c++)
+        for (int j = c; j <= m; j++)
+          for (int k = c * a[i]; k <= s; k++)
+            (f[p][j][k] += f[!p][j - c][k - c * a[i]] * C[m - j + c][c]) &= 1;
+    }
+    printf("%d\n", f[!p][m][s]);
+  }
+  return 0;
+}

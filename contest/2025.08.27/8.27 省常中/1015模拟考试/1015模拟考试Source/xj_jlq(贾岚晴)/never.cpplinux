@@ -1,0 +1,98 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long
+inline ll read(){
+	ll x=0,f=1;char ch=getchar();
+	while(ch<'0'||ch>'9'){if(ch=='-')f=-1;ch=getchar();}
+	while(ch>='0'&&ch<='9')x=(x<<3)+(x<<1)+ch-'0',ch=getchar();
+	return x*f;
+}
+const ll N=20010;
+ll T,n,s,t,X,Y,x,re;
+ll gcd(ll x,ll y){return y?gcd(y,x%y):x;}
+ll lcm(ll x,ll y){return min(x,y)/gcd(x,y)*max(x,y);}
+void work(){
+	n=read(),s=read(),t=read(),
+	X=read(),Y=read(),x=s,re=n;
+	if(n<=1e6){
+		for(ll i=1;i<=n;i++)x+=x<t?Y:-X;
+		printf("%lld\n",x);
+	}
+	else if(X==Y){
+		if(x<t){
+			if((t-x)/X<re){
+				re-=(t-x)/X,x+=(t-x)/X*X;
+				if(x<t)x+=X,re--;
+			}
+			else{
+				printf("%lld\n",x+X*re);
+				return;
+			}
+		}
+		else if(x>=t){
+			if((x-t)/X<re){
+				re-=(x-t)/X,x-=(x-t)/X*X;
+				if(x>=t)x-=X,re--;
+			}
+			else{
+				printf("%lld\n",x-X*re);
+				return;
+			}
+		}
+		printf("%lld\n",(re&1)?(x<t?x+X:x-X):x);
+	}
+	else{
+		if(x<t){
+			if((t-x)/Y<re){
+				re-=(t-x)/Y,x+=(t-x)/Y*Y;
+				if(x<t)x+=Y,re--;
+			}
+			else{
+				printf("%lld\n",x+Y*re);
+				return;
+			}
+		}
+		else if(x>=t){
+			if((x-t)/X<re){
+				re-=(x-t)/X,x-=(x-t)/X*X;
+				if(x>=t)x-=X,re--;
+			}
+			else{
+				printf("%lld\n",x-X*re);
+				return;
+			}
+		}
+		int L=lcm(X,Y);
+		while(re){
+			if(L/X+L/Y<re)re%=L/X+L/Y;
+			if(x<t){
+				if((t-x)/Y<re){
+					re-=(t-x)/Y,x+=(t-x)/Y*Y;
+					if(x<t)x+=Y,re--;
+				}
+				else{
+					printf("%lld\n",x+Y*re);
+					return;
+				}
+			}
+			else if(x>=t){
+				if((x-t)/X<re){
+					re-=(x-t)/X,x-=(x-t)/X*X;
+					if(x>=t)x-=X,re--;
+				}
+				else{
+					printf("%lld\n",x-X*re);
+					return;
+				}
+			}
+		}
+		printf("%lld\n",x);
+	}
+}
+int main(){
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	T=read();
+	while(T--)work();	
+	return 0;
+}

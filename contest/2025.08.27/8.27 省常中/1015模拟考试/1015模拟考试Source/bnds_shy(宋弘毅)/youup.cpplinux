@@ -1,0 +1,90 @@
+#include <algorithm>
+#include <bitset>
+#include <fstream>
+#include <vector>
+using namespace std;
+ifstream cin( "youup.in" );
+ofstream cout( "youup.out" );
+vector< int > edges[ 300010 ];
+int dis[ 30 ][ 30 ];
+int n, X;
+void dfsontree( int x, int fa, int u )
+{
+    if ( x == u )
+    {
+        dis[ u ][ x ] = 0;
+    }
+    else
+    {
+        dis[ u ][ x ] = dis[ u ][ fa ] + 1;
+    }
+    for ( auto i : edges[ x ] )
+    {
+        if ( i != fa )
+        {
+            dfsontree( i, x, u );
+        }
+    }
+}
+long long int ans[ 30 ];
+void dfs( int x, bitset< 30 > f, int madis )
+{
+    if ( x != n )
+    {
+        dfs( x + 1, f, madis );
+    }
+    int cnt = 0;
+    for ( int i = 1; i <= n; i++ )
+    {
+        if ( f[ i ] )
+        {
+            madis = max( madis, dis[ x ][ i ] );
+            cnt++;
+        }
+    }
+    if ( madis <= X )
+    {
+        ans[ cnt + 1 ]++;
+        f[ x ] = 1;
+        // cerr << f << " " << x << " " << madis << endl;
+        if ( x != n )
+        {
+            dfs( x + 1, f, madis );
+        }
+    }
+}
+int main()
+{
+    cin.tie( 0 );
+    int num;
+    cin >> num;
+    cin >> n >> X;
+    if ( num == 1 )
+    {
+        cout << n;
+        for ( int i = 2; i <= n; i++ )
+        {
+            cout << " " << 0;
+        }
+        cout << endl;
+        return 0;
+    }
+    for ( int i = 1; i < n; i++ )
+    {
+        int u, v;
+        cin >> u >> v;
+        edges[ u ].push_back( v );
+        edges[ v ].push_back( u );
+    }
+    for ( int i = 1; i <= n; i++ )
+    {
+        dfsontree( i, 0, i );
+    }
+    bitset< 30 > begin;
+    dfs( 1, begin, -1 );
+    for ( int i = 1; i <= n; i++ )
+    {
+        cout << ans[ i ] << " ";
+    }
+    cout << endl;
+}

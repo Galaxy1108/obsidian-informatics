@@ -1,0 +1,120 @@
+#include<bits/stdc++.h>
+using namespace std;
+//#define int long long
+#define ll long long
+#define fo(i,a,b) for(int i=a;i<=b;i++)
+#define fr(i,a,b) for(int i=a;i>=b;i--)
+#define py puts("Yes")
+#define pn puts("No")
+#define pt puts("")
+#define fe(i,u) for(int i=head[u];i;i=e[i].next)
+#define wt(x) write(x),puts("")
+#define tx printf("fds")
+#define mp make_pair
+#define pb push_back
+#define fi first
+#define se second
+inline int read(){
+	int x=0,k=1;
+	char ch=getchar();
+	while(ch<'0'||ch>'9'){
+		if(ch=='-') k=-1;
+		ch=getchar();
+	}
+	while(ch>='0'&&ch<='9'){
+		x=(x<<1)+(x<<3)+ch-48;
+		ch=getchar();
+	}
+	return x*k;
+}
+void write(int x){
+	if(x<0){
+		x=-x;
+		putchar('-');
+	}
+	if(x>9) write(x/10);
+	putchar(x%10+'0');
+}
+int power(int x,int y,int mod){
+	int num=1;
+	while(y){
+		if(y&1) num=(num*x)%mod;
+		x=x*x%mod;
+		y>>=1;
+	}
+	return num;
+}
+int mul(int x,int y,int mod){
+	int num=0;
+	while(y){
+		if(y&1) num=(num+x)%mod;
+		x=(x+x)%mod;
+		y>>=1;
+	}
+	return num;
+}
+const int N=1e6+7,mod=998244353;
+int n,m,tot,cnt,ans;
+int a[N],b[N];
+int sub1(int s,int t,int x,int y){
+	int now=s;
+	if(now>=t){
+		int num=now-t;
+		int cs=ceil((num+1)*1.0/y);
+		if(cs>=n){
+			return now-n*y;
+		}
+		n-=cs;
+		n%=2;
+		if(n==0) return now-cs*y;
+		else return now-(cs-1)*y;
+	}
+	else{
+		int num=t-now;
+		int cs=ceil(num*1.0/(double)x);
+		if(cs>=n){
+			return now+n*y;
+		}
+		n-=cs;
+		n%=2;
+		if(n==0) return now+cs*x;
+		else return now+(cs-1)*x;
+	}
+}
+signed main(){
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	int tt=read();
+	while(tt--){
+		n=read();
+		int s=read(),t=read(),x=read(),y=read();
+		if(x==y){
+			wt(sub1(s,t,x,y));
+			continue;
+		}
+		s+=10000;
+		t+=10000;
+		fo(i,1,100000) a[i]=-1;
+		int now=0;
+		while(a[s]==-1&&now<n){
+			a[s]=now;
+			if(s<t) s+=y;
+			else s-=x;
+			now++;
+		}
+		if(now==n){
+			wt(s-10000);
+			continue;
+		}
+		int round=now-a[s];
+		n-=now;
+		n%=round;
+		while(n){
+			if(s<t) s+=y;
+			else s-=x;
+			n--;
+		}
+		wt(s-10000);
+	}
+	return 0;
+}

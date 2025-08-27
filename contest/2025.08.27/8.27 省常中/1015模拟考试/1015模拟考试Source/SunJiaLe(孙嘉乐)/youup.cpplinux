@@ -1,0 +1,42 @@
+#include<iostream>
+#include<fstream>
+#include<vector>
+using namespace std;
+vector<int> g[300005];
+typedef long long ll;
+const ll mod = 998244353;
+ll inv[300005];
+ll c(ll n, ll m)
+{
+	if(m*2 < n) m = n-m;
+	ll ans = 1;
+	for(ll i = n; i > m; i--) ans = ans*i%mod;
+	for(ll i = 2; i <= n-m; i++) ans = ans*inv[i]%mod;
+	return ans;
+}
+void getinv()
+{
+	inv[1] = 1;
+	for(int i = 2; i <= 30005; i++) inv[i] = (mod-mod/i*inv[mod%i]%mod)%mod;
+}
+int main()
+{
+	int num, n, x;
+	ifstream cin("youup.in");
+	ofstream cout("youup.out");
+	cin >> num >> n >> x;
+	if(!x)
+	{
+		cout << n << " ";
+		for(int i = 1; i < n; i++) cout << 0 << " ";
+		return 0;
+	}
+//	for(int i = 1; i < n; i++)
+//	{
+//		int a, b;
+//		cin >> a >> b;
+//		g[a].push_back(b);
+//		g[b].push_back(a);
+//	}
+	return 0;
+}

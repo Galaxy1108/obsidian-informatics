@@ -1,0 +1,92 @@
+#if IN_LOCAL
+import local;
+#endif // IN_LOCAL
+#include<cstring>
+#include<iostream>
+using namespace std;
+#if !IN_LOCAL
+#include<fstream>
+ifstream fin("gonna.in", ifstream::binary);
+ofstream fout("gonna.out", ofstream::binary);
+#define cin fin
+#define cout fout
+#endif // !IN_LOCAL
+#define SC(a, b) static_cast<a>(b)
+using ull = unsigned long long;
+constexpr const size_t sizeof_unsigned = sizeof(unsigned);
+unsigned mod, mod2;
+__uint128_t v;
+inline unsigned Reduce(const ull val)
+{
+	return SC(unsigned, val - SC(ull, (val * v) >> 64) * mod);
+}
+inline unsigned OverflowReduce(const unsigned val)
+{
+	return val >= mod2 ? val - mod2 : val;
+}
+inline constexpr void UpdateMax(unsigned& pos, const unsigned val)
+{
+	if (pos < val)
+	{
+		pos = val;
+	}
+	return;
+}
+bool is_not_prime[20002];
+unsigned prime[2262], f[2262][20002], g[2262], pool[40000004], siz[2262], * h[2262];
+constexpr const double ___memory___ = (sizeof(f) + sizeof(pool)) / 1024.0 / 1024.0;
+int main()
+{
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	unsigned n;
+	cin >> n >> mod;
+	mod2 = mod * 2;
+	v = (SC(__uint128_t, 1) << 64) / mod;
+	unsigned siz_prime = 0;
+	for (unsigned i = 2; i <= n; ++i)
+	{
+		if (!is_not_prime[i])
+		{
+			prime[siz_prime] = i;
+			auto& f_sp = f[siz_prime++];
+			for (unsigned j = i, t1 = 1, t2 = i * 2; j <= n; f_sp[j] = f_sp[t1] + t1, t1 += ((++j) == t2), t2 = (j == t2 ? t2 + i : t2));
+		}
+		for (unsigned j = 0; j < siz_prime && i * prime[j] <= n; ++j)
+		{
+			is_not_prime[i * prime[j]] = 1;
+			if (i % prime[j] == 0)
+			{
+				break;
+			}
+		}
+	}
+	prime[siz_prime++] = 0xffffffff;
+	for (unsigned i = 1; i <= n; ++i)
+	{
+		const unsigned iP1 = i + 1;
+		for (unsigned j = 0; prime[j] <= i; UpdateMax(siz[j], f[j][i] * iP1 - (g[j] += f[j][i]) * 2), ++j);
+	}
+	unsigned* p_pool = pool;
+	for (unsigned i = 0; prime[i] <= n; ++i)
+	{
+		unsigned* const h_i = h[i] = p_pool;
+		*h_i = 1;
+		const unsigned siz_i = siz[i], prime_i = prime[i];
+		p_pool += siz_i + 1;
+		for (unsigned j = 1, v = 1; j <= siz_i; h_i[j] = OverflowReduce(h_i[j - 1] + (v = Reduce(v * SC(ull, prime_i)))), ++j);
+	}
+	unsigned long long ans = 0;
+	memset(g, 0, SC(size_t, siz_prime - 1) * sizeof_unsigned);
+	for (unsigned i = 1; i <= n; ++i)
+	{
+		const unsigned iP1 = i + 1;
+		unsigned upd = 1;
+		for (unsigned j = 0; prime[j] <= i; upd = Reduce(upd * SC(ull, h[j][f[j][i] * iP1 - (g[j] += f[j][i]) * 2])), ++j);
+		ans += upd;
+	}
+	const unsigned t = Reduce(ans);
+	cout << (t >= mod ? t - mod : t);
+	return 0;
+}

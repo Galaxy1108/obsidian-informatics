@@ -1,0 +1,142 @@
+#include <cstdio>
+using namespace std;
+int T;
+__int128 n,s,t,a,b;
+inline int read()
+{
+	int x = 0;
+	char ch = getchar();
+	while (ch < '0' || ch > '9')
+		ch = getchar();
+	while (ch >= '0' && ch <= '9')
+	{
+		x = (x << 3) + (x << 1) + (ch ^ 48);
+		ch = getchar();
+	}
+	return x;
+}
+inline __int128 readll()
+{
+	__int128 x = 0,y = 1;
+	char ch = getchar();
+	while (ch < '0' || ch > '9')
+	{
+		if (ch == '-')
+			y = -1;
+		ch = getchar();
+	}
+	while (ch >= '0' && ch <= '9')
+	{
+		x = (x << 3) + (x << 1) + (ch ^ 48);
+		ch = getchar();
+	}
+	return x * y;
+}
+inline void write(__int128 x)
+{
+	if (x < 0)
+	{
+		putchar('-');
+		x = -x;
+	}
+	if (x > 9)
+		write(x / 10);
+	putchar(x % 10 + '0');
+	return;
+}
+int main()
+{
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	T = read();
+	while (T--)
+	{
+		n = readll();
+		s = readll();
+		t = readll();
+		a = readll();
+		b = readll();
+		if (s < t - a)
+		{
+			__int128 k = (t - a - s - 1) / b + 1;
+			if (k >= n)
+			{
+				s += n * b;
+				n = 0;
+			}
+			else
+			{
+				s += k * b;
+				n -= k;
+			}
+		}
+		if (s >= t + b)
+		{
+			__int128 k = (s - t - b) / a + 1;
+			if (k >= n)
+			{
+				s -= n * a;
+				n = 0;
+			}
+			else
+			{
+				s -= k * a;
+				n -= k;
+			}
+		}
+		if (n == 0)
+		{
+			write(s);
+			putchar('\n');
+		}
+		else
+		{
+			s -= t - a;
+			if (a == b)
+			{
+				if (n & 1)
+					s += a;
+				write(s + t - a);
+				putchar('\n');
+			}
+			else
+			{
+				__int128 k;
+				while (n)
+				{
+					if (s < a)
+					{
+						k = (a - s - 1) / b + 1;
+						if (k >= n)
+						{
+							s += n * b;
+							n = 0;
+						}
+						else
+						{
+							s += k * b;
+							n -= k;
+						}
+					}
+					else
+					{
+						k = (s - a) / a + 1;
+						if (k >= n)
+						{
+							s -= n * a;
+							n = 0;
+						}
+						else
+						{
+							s -= k * a;
+							n -= k;
+						}
+					}
+				}
+				write(s + t - a);
+				putchar('\n');
+			}
+		}
+	}
+	return 0;
+}

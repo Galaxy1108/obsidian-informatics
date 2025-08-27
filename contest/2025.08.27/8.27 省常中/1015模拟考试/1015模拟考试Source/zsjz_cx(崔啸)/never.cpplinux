@@ -1,0 +1,53 @@
+#include<cstdio>
+#include<algorithm>
+using namespace std;
+
+int Q;
+long long n,s,t,x,y,tt;
+int main()
+{
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	scanf("%d",&Q);
+	while(Q--)
+	{
+		scanf("%lld%lld%lld%lld%lld",&n,&s,&t,&x,&y);
+		tt=0;
+		while(tt<1000000&&n)
+		{
+			if(s>=t)s-=x;
+			else s+=y;
+			n--;
+			tt++;
+		}
+		if(!n)printf("%lld\n",s);
+		else
+		{
+			if(s>=t)
+			{
+				tt=(s-t)/x;
+				if(n<tt)printf("%lld\n",s-n*x);
+				else
+				{
+					n-=tt;
+					s-=tt*x;
+					if(n&1)printf("%lld\n",s-x);
+					else printf("%lld\n",s);
+				}
+			}
+			else
+			{
+				tt=(t-s-1)/y;
+				if(n<tt)printf("%lld\n",s+n*y);
+				else
+				{
+					n-=tt;
+					s+=tt*y;
+					if(n&1)printf("%lld\n",s+y);
+					else printf("%lld\n",s);
+				}
+			}
+		}
+	}
+	return 0;
+}

@@ -1,0 +1,59 @@
+#include<iostream>
+#include<cstdio>
+using namespace std;
+long long m, s;
+int n, t, odd[205], even[205], odd_cnt, even_cnt, min_num, r, max_num;
+long long cnt;
+void dfs(long long x, long long y)
+{
+	if(y<x*min_num||y>x*max_num)
+		return;
+	//printf("%lld %lld\n", x, y);
+	if(x==0&&y==0)
+		cnt++;
+	else
+	{
+		if(!(x&1))
+		{
+			if(y&1)
+				return;
+			dfs(x>>1, y>>1);
+		}
+		else
+		{
+			if(y&1)
+				for(int i=1; i<=odd_cnt; i++)
+					dfs(x>>1, (y-odd[i])>>1);
+			else
+				for(int i=1; i<=even_cnt; i++)
+					dfs(x>>1, (y-even[i])>>1);
+		}
+	}
+}
+int main()
+{
+	freopen("give.in", "r", stdin);
+	freopen("give.out", "w", stdout);
+	scanf("%d", &t);
+	while(t--)
+	{
+		cnt=odd_cnt=even_cnt=0;
+		min_num=0x7fffffff;
+		max_num=0;
+		scanf("%lld%lld%d", &m, &s, &n);
+		for(int i=0; i<n; i++)
+		{
+			scanf("%d", &r);
+			min_num=min(min_num, r);
+			max_num=max(max_num, r);
+			if(r&1)
+				odd[++odd_cnt]=r;
+			else
+				even[++even_cnt]=r;
+		}
+		dfs(m, s);
+		printf("%lld\n", cnt&1);
+	}
+	fclose(stdin);
+	fclose(stdout);
+}

@@ -1,0 +1,27 @@
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+int T, K, Mx, A[205];
+ll N, S;
+bitset<200005> f, g;
+int main(){
+	freopen("give.in", "r", stdin);
+	freopen("give.out", "w", stdout);
+    for(scanf("%d",&T); T--;){
+        scanf("%lld%lld%d", &N, &S, &K), Mx = 0;
+        for(int i = 1; i <= K; ++i){
+			scanf("%d", A + i);
+			Mx = max(Mx, A[i]);
+		}
+        f.reset(), f[0] = 1;
+        for(int i = 0; N; N >>= 1, S >>= 1, ++i){
+            if(N & 1){
+                g.reset();
+                for(int j = 1;j <= K; ++j) g ^= f << A[j];
+            }else g = f;
+            f.reset();
+            for(int j = S & 1;j <= 2 * Mx; j += 2) f[j >> 1]=g[j];
+        }
+        printf("%d\n", int(f[S]));
+    }
+}

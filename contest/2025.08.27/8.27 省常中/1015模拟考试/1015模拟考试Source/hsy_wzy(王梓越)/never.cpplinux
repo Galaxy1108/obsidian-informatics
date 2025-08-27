@@ -1,0 +1,26 @@
+#include<bits/stdc++.h>
+using namespace std;
+int read(){
+	int r=0;
+	char ch;
+	while(ch<'0'||ch>'9')ch=getchar();
+	while(ch>='0'&&ch<='9')r=(r<<3)+(r<<1)+(ch^48),ch=getchar();
+	return r;
+}
+long long t,n,s,t1,x,y;
+int main(){
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	t=read();
+	for(int i=1;i<=t;i++){
+		n=read(),s=read(),t1=read(),x=read(),y=read();
+		while(n){
+			if(s>=t1)s-=x;
+			else s+=y;
+			n--;
+//			Sleep(100);
+		}
+		cout<<s<<endl;
+	}
+	return 0;
+}

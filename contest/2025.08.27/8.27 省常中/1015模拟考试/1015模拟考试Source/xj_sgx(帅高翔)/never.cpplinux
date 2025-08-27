@@ -1,0 +1,99 @@
+#include<bits/stdc++.h>
+
+using namespace std;
+
+typedef long long ll;
+const int MAXN=500006;
+
+inline int read(int t=0,bool f=1,char c=0){
+	while(!isdigit(c=getchar())) f=c^45;
+	while(isdigit(c)) t=(t<<1)+(t<<3)+(c^48),c=getchar();
+	return f ? t : -t ;
+}
+
+unordered_map<int,int> dic;
+
+int main(){
+
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);	
+
+	int T;
+	cin>>T;
+	while(T--){
+		ll n,s,t,x,y;
+		// cin>>n>>s>>t>>x>>y;
+		n=read();
+		s=read();
+		t=read();
+		x=read();
+		y=read();
+		if(x==y){
+			if(s<=t){
+				ll delta=t-s;
+				int cnt=delta/y;
+				n-=cnt;
+				s+=cnt*y;
+				if(n&1){
+					if(s==t)
+						s-=x;
+					else
+						s+=y;
+				}
+				cout<<s<<endl;
+			}
+			else{
+				ll delta=s-t;
+				int cnt=delta/x;
+				n-=cnt;
+				s-=cnt*x;
+				if(n&1){
+					if(s==t)
+						s+=y;
+					else
+						s-=x;
+				}
+				cout<<s<<endl;
+			}
+		}
+		else if(n<=4000000){
+			for(int i=1;i<=n;++i)
+				if(s<t)
+					s+=y;
+				else
+					s-=x;
+			cout<<s<<endl;
+		}
+		else{
+			dic.clear();
+			int now=0;
+			while(1){
+				if(s<t)
+					s+=y;
+				else
+					s-=x;
+				now++;
+				if(dic[s]) break;
+				dic[s]=now;
+				if(now==n)	break;
+			}
+			if(now==n)
+				cout<<s<<endl;
+			else{
+				int delta=now-dic[s];
+				n-=now;
+				n%=delta;
+				for(int i=1;i<=n;++i){
+					if(s<t)
+						s+=y;
+					else
+						s-=x;
+				}
+				cout<<s<<endl;
+			}
+		}
+	}
+	
+
+	return 0;
+}	

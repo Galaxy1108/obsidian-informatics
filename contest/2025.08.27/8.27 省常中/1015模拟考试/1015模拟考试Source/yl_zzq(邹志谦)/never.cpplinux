@@ -1,0 +1,51 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define int int
+int T,s,t,x,y,n;
+vector<int> rnd;
+void work(){
+    scanf("%d%d%d%d%d",&n,&s,&t,&x,&y);
+    rnd.clear();
+    if(s<t){
+        int step=(t-s)/y;
+        if(step>n){
+            printf("%d\n",s+n*y);
+            return;
+        }
+        s+=(step*y);
+        n-=step;
+    }
+    if(s>=t){
+        int step=(s-t)/x;
+        if(step>n){
+            printf("%d\n",s-n*x);
+            return;
+        }
+        s-=(step*x);
+        n-=step;
+    }
+    int pos=s,len=0;rnd.push_back(0);
+    //cout<<"asdasda"<<endl;
+    for(int i=1;i<=n;i++){
+        if(pos>=t)pos-=x;
+        else pos+=y;
+        if(i==n){
+            printf("%d\n",pos);
+            return;
+        }
+        rnd.push_back(pos);len++;
+        if(rnd[len]==rnd[1]&&len!=1){
+            len--;break;
+        }
+        //cout<<len<<" ";
+    }
+    n=(n-1)%len+1;
+    printf("%d\n",rnd[n]);
+}
+int main(){
+    freopen("never.in","r",stdin);
+    freopen("never.out","w",stdout);
+    scanf("%d",&T);
+    while(T--)work();
+    return 0;
+}

@@ -1,0 +1,104 @@
+#include <bits/stdc++.h>
+#define FOR(i,j,k) for(int i=j; i<=k; ++i)
+#define ROF(i,j,k) for(int i=j; i>=k; --i)
+inline int read (void) {
+  int x = 0, f = 1, ch = getchar();
+  while(!isdigit(ch)) { if(ch == '-') f = -f; ch = getchar(); }
+  while(isdigit(ch)) { x = x * 10 + ch - '0'; ch = getchar(); }
+  return x * f;
+}
+using ll = long long;
+using ull = unsigned long long;
+int M; ull iM = -1;
+struct fastmod {} FM;
+inline ll operator % (ll x, fastmod) {
+  x -= ll((__uint128_t) x * iM >> 64) * M + M;
+  return x + (M & (x >> 63));
+}
+inline void inc (int &x, int y) { (x += y) >= M ? x -= M : x; }
+inline int ksm (int a, int b) {
+  int c = 1;
+  while(b) {
+    if(b&1) c = 1ll * c * a % FM;
+    a = 1ll * a * a % FM; b >>= 1;
+  }
+  return c;
+}
+const int maxn = 20005;
+const int maxl = 2265;
+bool np[maxn];
+int l, p[maxl], f[maxn][maxl], g[maxn];
+inline int solve (int n, int m) {
+  int res = 0;
+  while(n /= m) res += n;
+  return res;
+}
+inline int func (int p, int k) {
+  ll res = 0; int now = 1;
+  FOR(i,0,k) {
+    res += now;
+    now = 1ll * now * p % FM;
+  } return res % FM;
+}
+std::pair <int, int> pr[maxn];
+int gcd (int a, int b) {
+  return b ? gcd(b, a%b) : a;
+}
+void exgcd (int a, int b, int &x, int &y) {
+  if(!b) x = 1, y = 0;
+  else { exgcd (b, a%b, y, x); y -= a / b * x; }
+}
+inline int getinv (int a, int b) {
+  int x, y;
+  exgcd (a, b, x, y);
+  return (x % b + b) % b;
+}
+const int maxv = 500;
+struct Node {
+  int w[maxv+5], pw[maxv+5];
+  inline void prepare (int x) {
+    w[0] = pw[0] = 1;
+    FOR(i,1,maxv) w[i] = 1ll * w[i-1] * x % FM;
+    FOR(i,1,maxv) pw[i] = 1ll * pw[i-1] * w[maxv] % FM;
+  }
+  inline int gksm (int b) {
+    return 1ll * pw[b / maxv] * w[b % maxv] % FM;
+  }
+} node;
+int main (void) {
+  freopen("gonna.in", "r", stdin);
+  freopen("gonna.out", "w", stdout);
+  int n = read(); iM /= M = read();
+  np[0] = np[1] = 1;
+  FOR(i,2,n) {
+    if(!np[i]) p[++ l] = i;
+    for(int j=1; j<=l&&i*p[j]<=n; ++j) {
+      np[i*p[j]] = 1;
+      if(i%p[j] == 0) break;
+    }
+  }
+  FOR(i,1,n) {
+    FOR(j,1,l) f[i][j] = (f[i-1][j] + 1ll * solve (i, p[j]) * (i - 1) + 1ll * solve (i-1, p[j]) * (M - i)) % FM;
+    g[i] = 1;
+  }
+  int inv = 1;
+  FOR(j,1,l) if(gcd(M, p[j]) != 1){
+    FOR(i,1,n) pr[i] = std::make_pair(f[i][j], i);
+    std::sort(pr+1, pr+n+1);
+    int w = 1, s = 0, k = 0;
+    FOR(i,1,n) {
+      while(k <= pr[i].first) {
+        inc (s, w); ++ k;
+        w = 1ll * w * p[j] % FM;
+      }
+      g[pr[i].second] = 1ll * g[pr[i].second] * s % FM;
+    }
+  } else {
+    inv = 1ll * inv * getinv(p[j]-1, M) % FM; node.prepare (p[j]);
+    FOR(i,1,n) g[i] = 1ll * g[i] * (node.gksm (f[i][j]+1) + M - 1) % FM;
+  }
+  FOR(i,1,n) g[i] = 1ll * g[i] * inv % FM;
+  FOR(i,2,n) inc (g[i], g[i-1]);
+  printf("%d\n", g[n]);
+  return 0;
+}

@@ -1,0 +1,63 @@
+#include<bits/stdc++.h>
+#define pc putchar
+#define int long long
+using namespace std;
+inline int read()
+{
+	int x=0,f=1;char ch=getchar();
+	while(ch<'0'||ch>'9'){f=ch=='-'?-1:f;ch=getchar();}
+	while(ch>='0'&&ch<='9'){x=x*10+(ch^48);ch=getchar();}
+	return x*f;
+}
+void write(int x)
+{
+	if(x<0){x=-x;pc('-');}
+	if(x>9)write(x/10);
+	pc(x%10+48);
+}
+int n,p,ans;
+int pri[20005],mn[20005],cnt;
+int c[20005],ad[20005];
+bool vis[20005];
+void init()
+{
+	for(int i=2;i<=n;++i)
+	{
+		if(!vis[i])pri[++cnt]=i,mn[i]=cnt;
+		for(int j=1;j<=cnt&&pri[j]*i<=n;++j)
+		{
+			vis[pri[j]*i]=true;mn[pri[j]*i]=mn[i];
+			if(i%pri[j]==0)break;
+		}
+	}
+}
+int qpow(int x,int y)
+{
+	int res=1;
+	while(y)
+	{
+		if(y&1)res=res*x%p;
+		x=x*x%p;y>>=1;
+	}return res;
+}
+int calc(int x)
+{
+	fill(ad+1,ad+x+1,0);int mx=0;
+	for(int i=x;i>=2;--i)
+	{
+		ad[i]+=2*i-x-1;c[mn[i]]+=ad[i];
+		ad[i/pri[mn[i]]]+=ad[i];mx=max(mx,mn[i]);
+	}int res=1;
+	for(int i=1;i<=mx;++i)
+		if(c[i])res=res*(qpow(pri[i],c[i]+1)-1)%p*qpow(pri[i]-1,p-2)%p,c[i]=0;
+	return (res+p)%p;
+}
+signed main()
+{
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	n=read(),p=read();init();
+	for(int i=1;i<=n;++i)ans=(ans+calc(i))%p;
+	write(ans),pc('\n');
+	return 0;
+}

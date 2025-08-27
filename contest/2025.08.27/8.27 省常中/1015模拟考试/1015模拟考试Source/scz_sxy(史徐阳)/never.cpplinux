@@ -1,0 +1,45 @@
+#include<bits/stdc++.h>
+using namespace std;
+namespace base{
+	template<class T>inline void read(T&n){
+		n = 0; T f = 1; char ch = 0;
+		for (; ch < '0' || ch > '9'; ch = getchar()) if (ch == '-') f = -f;
+		for (; ch >= '0' && ch <= '9'; ch = getchar()) n = (n << 1) + (n << 3) + (ch ^ 48);
+		n *= f;
+	}
+	template<class T>inline void write(T n, char ch){
+		if (n == 0) putchar('0');
+		if (n < 0) putchar('-'), n = -n;
+		static char buf[233]; int tmp = 0;
+		for (; n; n /= 10) buf[++tmp] = n % 10 + '0';
+		for (; tmp; --tmp) putchar(buf[tmp]);
+		putchar(ch);
+	}
+}
+using namespace base;
+__int128 T;
+int main(){
+	freopen("never.in", "r", stdin);
+	freopen("never.out", "w", stdout);
+	read(T);
+	while (T--){
+		__int128 n, s, t, x, y;
+		read(n), read(s), read(t), read(x), read(y);
+		if (s + y * n <= t){
+			write(s + y * n, '\n'); continue;
+		} 
+		if (s - x * n >= t){
+			write(s - x * n, '\n'); continue;
+		}
+		__int128 l = 0, r = n;
+		while (l + 1 < r){
+			__int128 mid = (l + r) / 2;
+			if (mid * (x + y) < s + y * n - y - t) l = mid;
+			else r = mid;
+		}
+		__int128 X = s + y * n - l * (x + y);
+		if (T - x <= X && X <= T + y) write(X, '\n');
+		else write(s + y * n - r * (x + y), '\n');
+	}	
+	return 0;
+}

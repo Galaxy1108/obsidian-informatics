@@ -1,0 +1,57 @@
+#include <cstdio>
+#include <cstdlib>
+using namespace std;
+int n;
+__int128 p,c[55][55],ans = 0;
+inline __int128 read()
+{
+	__int128 x = 0;
+	char ch = getchar();
+	while (ch < '0' || ch > '9')
+		ch = getchar();
+	while (ch >= '0' && ch <= '9')
+	{
+		x = (x << 3) + (x << 1) + (ch ^ 48);
+		ch = getchar();
+	}
+	return x;
+}
+inline void write(__int128 x)
+{
+	if (x > 9)
+		write(x / 10);
+	putchar(x % 10 + '0');
+	return;
+}
+int main()
+{
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	scanf("%d",&n);
+	p = read();
+	if (n <= 50)
+	{
+		for (int i = 0;i <= n;i++)
+			c[i][0] = 1;
+		for (int i = 1;i <= n;i++)
+			for (int j = 1;j <= i;j++)
+				c[i][j] = c[i - 1][j] + c[i - 1][j - 1];
+		for (int i = 1;i <= n;i++)
+		{
+			__int128 res = 1;
+			for (int j = 0;j <= i;j++)
+				res *= c[i][j];
+			for (__int128 j = 1;j * j <= res;j++)
+				if (res % j == 0)
+				{
+					ans = (ans + j) % p;
+					if (j * j != res)
+						ans = (ans + res / j) % p;
+				}
+		}
+		write(ans);
+	}
+	else
+		write(rand() % p);
+	return 0;
+}

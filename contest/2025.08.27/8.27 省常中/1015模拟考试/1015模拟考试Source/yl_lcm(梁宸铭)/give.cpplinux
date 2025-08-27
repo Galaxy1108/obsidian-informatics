@@ -1,0 +1,126 @@
+#include<bits/stdc++.h>
+#define ll long long    
+#define ull unsigned long long
+#define db double
+#define ldb long double
+#define pb push_back
+#define mp make_pair
+#define pii pair<int, int>
+#define FR first
+#define SE second
+#define int long long
+using namespace std;
+inline int read() {
+    int x = 0; bool op = 0;
+    char c = getchar();
+    while(!isdigit(c))op |= (c == '-'), c = getchar();
+    while(isdigit(c))x = (x << 1) + (x << 3) + (c ^ 48), c = getchar();
+    return op ? -x : x;
+}
+const int N = 1e5 + 10;
+int m, s, n;
+int a[N];
+namespace bf {
+    const int N = 510;
+    int f[N], g[N];
+    void MAIN() {
+        memset(f, 0, sizeof(f));
+        f[0] = 1;
+        for(int i = 1; i <= m; i++) {
+            swap(f, g);
+            memset(f, 0, sizeof(f));
+            for(int j = 0; j <= s; j++) {
+                for(int x = 1; x <= n; x++) {
+                    if(j + a[x] <= s)f[j + a[x]] ^= g[j];
+                }
+            }
+        }
+        printf("%lld\n", f[s]);
+        return ;
+    }
+};
+namespace S1 {
+    const int N = 5e3 + 10;
+    bitset<N> f, g;
+    void MAIN() {
+        f.reset();
+        f[0] = 1;
+        for(int i = 1; i <= m; i++) {
+            swap(f, g); f.reset();
+            for(int x = 1; x <= n; x++) {
+                f ^= (g << a[x]);
+            }
+        }
+        printf("%lld\n", (int)f[s]);
+        return ;
+    }
+};
+namespace S2 {
+    const int N = 1e5 + 10;
+    int f[N], g[N];
+    void MAIN() {
+        int mx = 0;
+        for(int i = 1; i <= n; i++)mx = max(mx, a[i]);
+        memset(f, 0, sizeof(f));
+        f[0] = 1;
+        for(int i = 0; (1 << i) <= max(m, s); i++) {
+            swap(f, g);
+            memset(f, 0, sizeof(f));
+            if((m >> i & 1) == 0) {
+                for(int j = 0; j <= mx; j++) {
+                    if((j & 1) == (s >> i & 1)) {
+                        f[j >> 1] ^= g[j];
+                    }
+                }
+            }
+            else {
+                for(int j = 0; j <= mx; j++) {
+                    for(int k = 1; k <= n; k++) {
+                        if(((j + a[k]) & 1) == (s >> i & 1)) {
+                            f[(j + a[k]) >> 1] ^= g[j];
+                        }
+                    }
+                }
+            }
+        }
+        printf("%d\n", f[0]);
+        return ;
+    }
+};
+namespace S3 {
+    const int N = 1e5 + 10;
+    bitset<N * 2> f, g;
+    void MAIN() {
+        f.reset(); f[0] = 1;
+        int mx = 0;
+        for(int i = 1; i <= n; i++)mx = max(mx, a[i]);
+        for(int i = 0; (1 << i) <= max(m, s); i++) {
+            swap(f, g); f.reset();
+            if((m >> i & 1) == 0) {
+                for(int j = 0; j <= mx / 2; j++) {
+                    f[j] = g[j << 1 | (s >> i & 1)];
+                }
+            }
+            else {
+                bitset<N * 2> tmp; tmp.reset();
+                for(int k = 1; k <= n; k++)tmp ^= g << a[k];
+                for(int j = 0; j <= mx; j++)f[j] = tmp[j << 1 | (s >> i & 1)];
+            }
+            if(f.any() == false)break;
+        }
+        printf("%d\n", (int)f[0]);
+    }
+};
+void solve() {
+    m = read(); s = read(); n = read();
+    for(int i = 1; i <= n; i++)a[i] = read();
+    S3::MAIN();
+    return ;
+}
+signed main() { 
+    freopen("give.in", "r", stdin);
+    freopen("give.out", "w", stdout);
+    int test = read();
+    while(test--)solve();
+    return 0;
+}

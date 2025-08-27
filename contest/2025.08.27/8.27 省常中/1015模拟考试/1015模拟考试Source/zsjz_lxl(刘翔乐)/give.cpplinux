@@ -1,0 +1,42 @@
+#if IN_LOCAL
+import local;
+#endif // IN_LOCAL
+#include<cstring>
+#include<iostream>
+using namespace std;
+#if !IN_LOCAL
+#include<fstream>
+ifstream fin("give.in", ifstream::binary);
+ofstream fout("give.out", ofstream::binary);
+#define cin fin
+#define cout fout
+#endif // !IN_LOCAL
+int a[202];
+bool f[2][5005];
+int main()
+{
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int T;
+	for (cin >> T; T--;)
+	{
+		int m, s, n;
+		cin >> m >> s >> n;
+		for (int i = 1; i <= n; cin >> a[i++]);
+		memset(f[0], 0, sizeof(bool) * (s + 1));
+		f[0][0] = 1;
+		for (int i = 1; i <= m; ++i)
+		{
+			auto& f_to = f[i % 2], & f_from = f[(i % 2) ^ 1];
+			memset(f_to, 0, sizeof(bool) * (s + 1));
+			for (int j = 1; j <= n; ++j)
+			{
+				const int a_j = a[j];
+				for (int k = a_j; k <= s; f_to[k] ^= f_from[k - a_j], ++k);
+			}
+		}
+		cout << static_cast<char>(static_cast<char>(f[m % 2][s]) | '0') << '\n';
+	}
+	return 0;
+}

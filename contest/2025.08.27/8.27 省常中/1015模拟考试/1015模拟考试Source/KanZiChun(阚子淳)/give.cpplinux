@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#include <algorithm>
+#include <unordered_map>
+
+#define LOG(FMT...) fprintf(stderr, FMT)
+
+using namespace std;
+
+typedef long long LL;
+typedef __int128 LLL;
+const int N = 5005, M = 100005;
+
+int n, a[N], mna, mxa;
+int ks[66], szc;
+LL m, s, prs[66];
+char res, ws[M];
+unordered_map<LL, char> bc[66];
+
+void cmin(int &x, int y) {
+	if (x > y) {
+		x = y;
+	}
+}
+
+void cmax(int &x, int y) {
+	if (x < y) {
+		x = y;
+	}
+}
+
+char dfs(int u, LL v) {
+	if (u == 0) {
+		if (v & prs[0] - 1) {
+			return 0;
+		}
+		v >>= ks[0];
+		return (v > mxa ? 0 : ws[v]);
+	}
+	if (prs[u - 1] * (LLL)mna > v) {
+		return 0;
+	}
+	if (bc[u].count(v)) {
+		return bc[u][v];
+	}
+	char ret = 0;
+	LL lim = v - prs[u - 1] * mna >> ks[u];
+	// LOG("%lld %lld\n", v, prs[u - 1] * mna);
+	for (int i = 1; i <= n && a[i] <= lim; ++i) {
+		if (v - (a[i] << ks[u]) > prs[u - 1] * (LLL)mxa) {
+			continue;
+		}
+		ret ^= dfs(u - 1, v - (a[i] << ks[u]));
+	}
+	return bc[u][v] = ret;
+}
+
+int main() {
+	freopen("give.in", "r", stdin);
+	freopen("give.out", "w", stdout);
+	int task;
+	for (scanf("%d", &task); task--; ) {
+		scanf("%lld%lld%d", &m, &s, &n);
+		mna = 200000, mxa = 0;
+		for (int i = 1; i <= n; ++i) {
+			scanf("%d", a + i);
+			cmin(mna, a[i]);
+			cmax(mxa, a[i]);
+			ws[a[i]] = 1;
+		}
+		szc = 0;
+		for (int i = 0; i < 60; ++i) {
+			if (m >> i & 1) {
+				ks[szc++] = i;
+				// LOG("%d\n", i);
+			}
+		}
+		// LOG("%d %d\n", task, szc);
+		for (int i = 0; i < szc; ++i) {
+			prs[i] = (1ll << ks[i]);
+		}
+		for (int i = 1; i < szc; ++i) {
+			prs[i] |= prs[i - 1];
+		}
+		printf("%d\n", dfs(szc - 1, s));
+		memset(ws, 0, mxa + 1);
+		for (int k = 0; k < szc; ++k) {
+			bc[k].clear();
+		}
+	}
+	return 0;
+}

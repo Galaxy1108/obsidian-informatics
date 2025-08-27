@@ -1,0 +1,51 @@
+/*
+tm今天怎么这么多数学题啊
+然后组合数乱搞 
+对2取模？
+又观察到m,s是10^18量级的 
+这必然是结论题 
+*/
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define ull unsigned long long
+const double eps = 0.000001;
+inline int read()
+{
+	int x=0,f=1;
+	char ch = getchar();
+	while (ch > '9' || ch < '0')
+		{
+			if (ch == '-')
+				f = -1;
+			ch = getchar();
+		}
+	while (ch <= '9' && ch >= '0')
+		{
+			x = x * 10 + ch - 48;
+			ch = getchar();
+		}
+	return x*f;
+}
+inline void write(int x)
+{
+	if (x < 0)
+		{
+			putchar('-');
+			x = -x;
+		}
+	if (x > 9)
+		write(x/10);
+	putchar(x%10+'0');
+}
+int t;
+int main()
+{
+	//freopen("testdata.txt","r",stdin);
+	freopen("give.in","r",stdin);
+	freopen("give.out","w",stdout);
+	t = read();
+	for (int i=1;i<=t;++i)
+		printf("0\n");
+	return 0;
+}

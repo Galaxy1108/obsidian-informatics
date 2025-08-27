@@ -1,0 +1,50 @@
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+using lll = __int128;
+int T;
+ll n, s, t, x, y;
+ll gcd(ll x, ll y) {
+    return y ? gcd(y, x % y) : x;
+}
+int main() {
+    freopen("never.in", "r", stdin);
+    freopen("never.out", "w", stdout);
+    scanf("%d", &T);
+    while (T--) {
+        scanf("%lld%lld%lld%lld%lld", &n, &s, &t, &x, &y);
+        s -= t;
+        if (s >= 0) {
+            ll tmp = min(s / x + 1, n);
+            n -= tmp;
+            s -= tmp * x;
+        } else {
+            ll tmp = min((-s + y - 1) / y, n);
+            n -= tmp;
+            s += tmp * y;
+        }
+        n %= (x + y) / gcd(x, y);
+        bool flg;
+        if ((flg = x < y)) {
+            swap(x, y);
+            s = -s;
+        }
+        if (s < 0) {
+            ll tmp = min((-s + y - 1) / y, n);
+            n -= tmp;
+            s += tmp * y;
+        }
+        if (n) {
+            ll res = 0;
+            for (ll l = 1, r = y / gcd(x, y), mid; l <= r; ) {
+                mid = (l + r) >> 1;
+                mid + ((lll) x * mid - s + y - 1) / y >= n ? res = mid, r = mid - 1 : l = mid + 1;
+            }
+            s = s - res * x + (n - res) * y;
+        }
+        if (flg)
+            s = -s;
+        printf("%lld\n", s + t);
+    }
+    return 0;
+}

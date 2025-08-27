@@ -1,0 +1,82 @@
+#include <bits/stdc++.h>
+#define int long long
+#pragma GCC optimize("Ofast", "inline", "-ffast-math")
+#pragma GCC target("avx,sse2,sse3,sse4,mmx")
+using namespace std;
+int n,mod,cnt,ans;
+int pre[20005],ff[20005],f[20005];
+int jc[20005][2263];
+bool prime(int k) {
+	for(int i=2; i*i<=k; ++i) {
+		if(k%i==0) return 0;
+	}
+	return 1;
+}
+int _pow(int x,int y){
+	int k=1;
+	while(y){
+		if(y&1) k=k*x%mod;
+		x=x*x%mod,y>>=1;
+	}
+	return k;
+}
+signed main() {
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	scanf("%lld%lld",&n,&mod);
+	for(int i=2; i<=20000; ++i) {
+		if(prime(i)) {
+			pre[i]=++cnt;
+			ff[cnt]=i;
+		}
+	}
+	for(int i=2; i<=n; ++i) {
+		for(int j=1; j<=min(2262LL,i); ++j) {
+			jc[i][j]=jc[i-1][j];
+		}
+		if(prime(i)) {
+			jc[i][pre[i]]++;
+			continue;
+		}
+		int p=i;
+		for(int j=2; j<=i; ++j) {
+			while(p%j==0) {
+				jc[i][pre[j]]++;
+				p/=j;
+			}
+			if(p==1) break;
+		}
+	}
+//	for(int i=1;i<=2262LL;++i){
+//		if(jc[10][i]) {
+//			printf("%lld %lld\n",jc[10][i],ff[i]);
+//		}
+//	}
+//f(x)=f(x-1)*x^x/x!
+	ans=1;
+	for(int T=2; T<=n; ++T) {
+		int sum=1;
+		if(prime(T)) {
+			f[pre[T]]+=T;
+		} else {
+			int p=T;
+			for(int i=2; i<=T; ++i) {
+				while(p%i==0) {
+					f[pre[i]]+=T;
+					p/=i;
+				}
+				if(p==1) break;
+			}
+		}
+		for(int i=1; i<=min(2262LL,T); ++i) { 
+            f[i]-=jc[T][i];
+		}
+		for(int i=min(T,2262LL);i;--i){
+			int k=f[i],q=ff[i];//1+q+.
+			sum=sum*(_pow(q,k+1)-1)%mod*_pow(q-1,mod-2)%mod;
+		}
+		ans=(ans+sum)%mod;
+	}
+	printf("%lld",(ans%mod+mod)%mod);
+	return 0;
+}

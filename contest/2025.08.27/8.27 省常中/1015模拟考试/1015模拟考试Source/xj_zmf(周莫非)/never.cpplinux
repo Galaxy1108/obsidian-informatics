@@ -1,0 +1,79 @@
+/*
+    长弓背负，仙女月鹫，
+	梦中徐来，长夜悠悠。
+	今宵共君，夜赏囃子，
+	盼君速归，长夜悠悠。
+	睡意袭我，眼阖梦徭，
+	睡意袭我，意归襁褓。
+	手扶卓揭，仙女水狃，
+	盼君速归，长夜悠悠。
+	今宵共君，戏于西楼，
+	盼君速归，长夜悠悠。
+	睡意袭我，涟锜池留，
+	睡意袭我，意归海角。
+					                  ——《ever17》
+*/
+
+/*
+	『月正笑，地正润潮，星正舞，风正凉。』
+*/
+
+/*
+	『长夜伴浪破晓梦，梦晓破浪伴夜长。』
+*/
+
+//#pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,tune=native")
+#include <bits/stdc++.h>
+using namespace std;
+#define int __int128
+inline int read()
+{
+	int sum = 0, nega = 1;
+	char ch = getchar();
+	while (ch > '9'||ch < '0')
+	{
+	    if (ch == '-') nega = -1;
+		ch = getchar();
+	}
+	while (ch <= '9' && ch >= '0') sum = sum * 10 + ch - '0', ch = getchar();
+	return sum * nega;
+}
+inline void write(int X) 
+{
+	if(X < 0) putchar('-'), X = -X;
+	if(X > 9) write(X / 10);
+	putchar(X % 10 + '0');
+}
+int n, s, t, x, y, L, R, l, r, ans, v;
+inline void solve()
+{
+	n = read(), s = read(), t = read(), x = read(), y = read();
+	L = t - x, R = t + y - 1;
+	if(s - n * x > R) 
+	{
+		write(s - n * x); puts(""); return ;
+	}
+	else if(s + n * y < L) 
+	{
+		write(s + n * y); puts(""); return ;
+	}
+	l = 0, r = n, ans = 0;
+	while(l <= r) 
+	{
+		int mid = (l + r) >> 1;
+		v = s + mid * y - (n - mid) * x;
+		if(L <= v && v <= R) {ans = mid; break;}
+		if(v > R) r = mid - 1;
+		else l = mid + 1;
+	}
+	write(s + ans * y - (n - ans) * x); puts("");
+	return ;
+}
+signed main()
+{
+	freopen("never.in", "r", stdin);
+	freopen("never.out", "w", stdout);
+	int TT = read();
+	for (int ttt = 1; ttt <= TT; ttt++) solve();
+	return 0;
+}

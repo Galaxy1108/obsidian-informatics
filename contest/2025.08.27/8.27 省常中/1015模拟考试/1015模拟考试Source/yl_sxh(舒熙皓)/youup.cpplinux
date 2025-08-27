@@ -1,0 +1,150 @@
+#include<bits/stdc++.h>
+#define For(i,a,b) for(int i=(a);i<=(b);++i)
+#define Rof(i,a,b) for(int i=(a);i>=(b);--i)
+using namespace std;
+const int Maxn=3e5,Mod=998244353;
+
+inline int read()
+{
+    int x=0,f=1;
+    char ch=getchar();
+    while(ch<'0' || ch>'9')
+    {
+        if(ch=='-') f=-1;
+        ch=getchar();
+    }
+    while(ch>='0' && ch<='9')
+    {
+        x=x*10+ch-'0';
+        ch=getchar();
+    }
+    return x*f;
+}
+inline int Pow(int x,int y)
+{
+    int res=1;
+    while(y)
+    {
+        if(y&1) res=1ll*res*x%Mod;
+        x=1ll*x*x%Mod,y>>=1;
+    }
+    return res;
+}
+
+int Cr,n,m,fa[Maxn+5],dep[Maxn+5],siz[Maxn+5];
+int son[Maxn+5],top[Maxn+5];
+vector<int> v[Maxn+5];
+
+inline void dfs1(int x,int f)
+{
+    fa[x]=f,dep[x]=dep[f]+1,siz[x]=1;
+    for(auto y:v[x])
+    {
+        if(y==f) continue;
+        dfs1(y,x),siz[x]+=siz[y];
+        son[x]=(siz[y]>siz[son[x]]?y:son[x]);
+    }
+}
+inline void dfs2(int x,int t)
+{
+    top[x]=t;
+    if(son[x]) dfs2(son[x],t);
+    for(auto y:v[x]) if(y!=son[x] && y!=fa[x]) dfs2(y,y);
+}
+inline int LCA(int x,int y)
+{
+    while(top[x]!=top[y]) (dep[top[x]]>dep[top[y]]?x=fa[top[x]]:y=fa[top[y]]);
+    return (dep[x]<dep[y]?x:y);
+}
+inline int Dis(int x,int y) {return dep[x]+dep[y]-2*dep[LCA(x,y)];}
+
+namespace T1
+{
+    int vis[Maxn+5],ans[Maxn+5];
+    #define pop(x) __builtin_popcount(x)
+    inline void dfs(int x,int y)
+    {
+        if(x>n) {ans[pop(y)]++; return;}
+        dfs(x+1,y);
+        if(!(y&vis[x])) dfs(x+1,y|(1<<x-1));
+    }
+    inline void Run()
+    {
+        dfs1(1,0),dfs2(1,1);
+        For(i,1,n) For(j,1,n) if(Dis(i,j)>m) vis[i]|=(1<<j-1);
+        dfs(1,0);
+        For(i,1,n) printf("%d ",ans[i]);
+        printf("\n");
+    }
+}
+namespace T2
+{
+    int fac[Maxn+5],inv[Maxn+5];
+    inline int C(int x,int y) {return 1ll*fac[x]*inv[x-y]%Mod*inv[y]%Mod;}
+    inline void Run()
+    {
+        fac[0]=inv[0]=1;
+        For(i,1,n) fac[i]=1ll*fac[i-1]*i%Mod;
+        inv[n]=Pow(fac[n],Mod-2);
+        Rof(i,n-1,1) inv[i]=1ll*inv[i+1]*(i+1)%Mod;
+        if(m>=2)
+        {
+            For(i,1,n) printf("%d ",C(n,i));
+            printf("\n");
+        }
+        if(m==1)
+        {
+            printf("%d %d ",n,n-1);
+            For(i,3,n) printf("0 ");
+            printf("\n");
+        }
+        if(m==0)
+        {
+            printf("%d ",n);
+            For(i,2,n) printf("0 ");
+            printf("\n");
+        }
+    }
+}
+namespace T3
+{
+    int fac[Maxn+5],inv[Maxn+5];
+    inline int C(int x,int y)
+    {
+        if(y>x) return 0;
+        return 1ll*fac[x]*inv[x-y]%Mod*inv[y]%Mod;
+    }
+    inline void Run()
+    {
+        fac[0]=inv[0]=1;
+        For(i,1,n) fac[i]=1ll*fac[i-1]*i%Mod;
+        inv[n]=Pow(fac[n],Mod-2);
+        Rof(i,n-1,1) inv[i]=1ll*inv[i+1]*(i+1)%Mod;
+        For(i,1,m+1)
+        {
+            int ans1=1ll*(n-m)*C(m+1,i)%Mod;
+            int ans2=1ll*(n-m-1)*C(m,i)%Mod;
+            ans1=(ans1-ans2+Mod)%Mod;
+            printf("%d ",ans1);
+        }
+        For(i,m+2,n) printf("0 ");
+        printf("\n");
+    }
+}
+
+int main()
+{
+    freopen("youup.in","r",stdin);
+    freopen("youup.out","w",stdout);
+
+    Cr=read(),n=read(),m=read();
+    For(i,1,n-1)
+    {
+        int a=read(),b=read();
+        v[a].push_back(b),v[b].push_back(a);
+    }
+    if(Cr<=2) {T1::Run(); return 0;}
+    if(Cr==4) {T2::Run(); return 0;}
+    if(Cr==5) {T3::Run(); return 0;}
+    return 0;
+}

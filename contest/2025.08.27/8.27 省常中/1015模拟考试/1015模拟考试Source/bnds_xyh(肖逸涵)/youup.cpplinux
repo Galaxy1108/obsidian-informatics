@@ -1,0 +1,76 @@
+#include<bits/stdc++.h>
+#define int long long
+using namespace std;
+const int NR=1e5+5;
+int n,num,x;
+const int mod=998244353;
+struct node{
+	int next,to;
+}edge[NR<<1];
+int head[NR],cnt;
+void add(int u,int v){
+	edge[++cnt].next=head[u];
+	edge[cnt].to=v;
+	head[u]=cnt;
+}
+int f[NR];
+int ans=0;
+void dfs(int lim,int step,int k){//lim表示现在选的最大的数 step表示选了几个数 
+	if(step==k){
+		ans++;
+		return;
+	}
+	for(int i=lim+1;i<=n;i++){
+		
+	}
+} 
+int fp(int base,int cif){
+	int res=1;
+	while(cif){
+		if(cif&1) res=res*base%mod;
+		base=base*base%mod;
+		cif>>=1; 
+	}
+	return res;
+}
+int C(int n,int m){
+	//cout << f[n] << " " << f[m] << " " << f[n-m] << endl; 
+	//cout << fp(f[n],mod-2) << endl;;
+	return f[n]*fp(f[m],mod-2)%mod*fp(f[n-m],mod-2)%mod;
+}
+signed main(){
+	freopen("youup.in","r",stdin);
+	freopen("youup.out","w",stdout);
+	cin >> num >> n >> x;
+	for(int i=1,u,v;i<n;i++){
+		cin >> u >> v;
+		add(u,v); add(v,u); 
+	}
+	f[0]=f[1]=1;
+	for(int i=2;i<=n;i++){
+		f[i]=f[i-1]*i%mod;
+	}
+	//cout << f[4] << " ";
+	if(x==0){
+		cout << n << " ";
+		for(int i=2;i<=n;i++) cout << 0 << " ";
+		return 0;
+	}
+	if(num<=2){
+		cout << n << " ";
+		for(int i=2;i<=n;i++) cout << 0 << " ";
+	}else if(num==4){
+		if(x==1){
+			cout << n << " " << n-1 << " ";
+			for(int i=3;i<=n;i++) cout << 0 << " ";
+		}else{
+			for(int i=1;i<=n;i++){
+				cout << C(n,i) << " ";
+			}
+		}
+	}else if(num==5){
+		
+	}
+	return 0;
+}
+

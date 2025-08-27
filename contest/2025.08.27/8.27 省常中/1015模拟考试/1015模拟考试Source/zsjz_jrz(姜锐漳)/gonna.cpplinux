@@ -1,0 +1,67 @@
+#include<bits/stdc++.h>
+using namespace std;
+const int N=2e4+5,B=500;
+class FastMod{
+    typedef unsigned long long ull;
+    typedef __uint128_t u128;
+    ull m,v;
+public:
+    FastMod(ull mod){v=mod,m=((u128)(1)<<64)/mod;}
+    inline ull operator () (ull a){
+        ull t=((u128)(m)*a)>>64;
+        a=a-t*v;
+        return a>=v?a-v:a;
+    }
+}Mod(2);
+bool bz[N];
+int n,p,cnt=0;
+inline int mod(int x){return x>=p?x-p:x;}
+struct Prime{
+    int num,cnt,val,fac;
+    int b1[505],b2[505];// bsgss
+    int s1[505],s2[505];
+    inline void build(int number){
+        num=number;cnt=fac=0,val=1;
+        b1[0]=b2[0]=s1[0]=s2[0]=1;
+        for (int i=1;i<B;++i) b1[i]=Mod(1ull*b1[i-1]*num),s1[i]=mod(s1[i-1]+b1[i]);
+        for (int i=1;i<B;++i) b2[i]=Mod(1ull*b2[i-1]*b1[B]),s2[i]=mod(s2[i-1]+b2[i]);
+    }
+    inline int sum(){// num^0 + ... + num^r
+        int r0=cnt/B,r1=cnt%B;
+        int tmp=(r0?Mod(1ull*s2[r0-1]*s1[B-1]):0);
+        return mod(tmp+Mod(1ull*b2[r0]*s1[r1]));
+    }
+    void add(int c){
+        if (c!=0){
+            cnt+=c;
+            val=sum();
+        }
+    }
+}pr[2300];
+int main(){
+    freopen("gonna.in","r",stdin);
+    freopen("gonna.out","w",stdout);
+    scanf("%d%d",&n,&p);
+    Mod=FastMod(p);
+    for (int i=2;i<=n;++i)
+        if (!bz[i]){
+            pr[++cnt].build(i);
+            for (int j=i;j<=n;j+=i) bz[j]=1;
+        }
+    int ans=0;
+    for (int i=1;i<=n;++i){
+        int x=i,tmp=1;
+        for (int j=1;j<=cnt;++j){
+            while (x%pr[j].num==0){
+                x/=pr[j].num;
+                pr[j].add(i);
+                ++pr[j].fac;
+            }
+            pr[j].add(-pr[j].fac);
+            tmp=Mod(1ull*tmp*pr[j].val);
+        }
+        ans=mod(ans+tmp);
+    }
+    printf("%d\n",ans);
+    return 0;
+}

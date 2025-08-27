@@ -1,0 +1,24 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+int T;
+
+void solve(){
+    int N,S,T,X,Y,ans;
+    cin>>N>>S>>T>>X>>Y;
+    for(int i=1;i<=N;i++){
+        if(S>=T) S-=X;
+        else if(S<T) S+=Y;
+    }
+    cout<<S<<endl;
+}
+
+int main()
+{
+    cin>>T;
+    while(T--){
+        solve();
+    }
+
+    return 0;
+}

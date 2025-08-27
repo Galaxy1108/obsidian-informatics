@@ -1,0 +1,25 @@
+#include<bits/stdc++.h>
+#define ll long long
+#define ull unsigned long long
+using namespace std;
+ll T,n,x,y,s,t;
+int main(){
+    freopen("never.in","r",stdin);
+    freopen("never.out","w",stdout);
+    ios::sync_with_stdio(false);
+    cin>>T;
+    while(T--){
+        cin>>n>>s>>t>>x>>y;
+        for(ll i=1;i<=n;i++){
+            if(s>=t){
+                s-=x;
+            }
+            else{
+                s+=y;
+            }
+        }
+        cout<<s<<endl;
+    }
+
+    return 0;
+}

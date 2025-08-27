@@ -1,0 +1,88 @@
+#include<iostream>
+#include<fstream>
+using namespace std;
+typedef long long ll;
+ll n, s, t, x, y;
+ll solve()
+{
+	ll g = 0;
+	if(s < t)
+	{
+		g = (t-s-1)/y;
+		if(g+1 >= n)
+		{
+			return s+n*y;
+		}
+		s += g*y;
+	}
+	else
+	{
+		g = (s-t)/x+1;
+		if(g >= n)
+		{
+			return s-n*x;
+		}
+		s -= g*x;
+	}
+	while(1)
+	{
+		ll p = (s+x+y-t)/x;
+		if(g+p+1 > n)
+		{
+			return s+y-(n-g-1)*x;
+		}
+		g += p+1;
+		s = s+y-p*x;
+		if(g == n)
+		{
+			return s;
+		}
+	}
+}
+ll solve2()
+{
+	ll g = 0;
+	if(s < t)
+	{
+		g = (t-s-1)/y;
+		if(g+1 >= n)
+		{
+			return s+n*y;
+		}
+		s += g*y;
+	}
+	else
+	{
+		g = (s-t)/x+1;
+		if(g >= n)
+		{
+			return s-n*x;
+		}
+		s -= g*x;
+	}
+	if((n-g)&1) return s+y;
+	else return s;
+}
+int main()
+{
+	ifstream cin("never.in");
+	ofstream cout("never.out");
+	ios::sync_with_stdio(false);
+	int T;
+	cin >> T;
+	while(T--)
+	{
+		cin >> n >> s >> t >> x >> y;
+		if(y > x)
+		cout << solve() << endl;
+		else if(x > y)
+		{
+			s = -s;
+			t = -t;
+			swap(x, y);
+			cout << -solve() << endl;
+		}
+		else cout << solve2() << endl;
+	}
+	return 0;
+}

@@ -1,0 +1,68 @@
+//#pragma GCC optimize("Ofast")
+#include<bits/stdc++.h>
+using namespace std;
+#define LL long long
+#define F(i,a,b) for(int i=a;i<=b;i++)
+
+int T,vis[210],len,line[210];
+LL n,x,y,s,t;
+
+int main(){
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	scanf("%d",&T);
+	while(T--){
+		scanf("%lld%lld%lld%lld%lld",&n,&s,&t,&x,&y);
+		if(x==y){
+			if(s>=t){
+				LL w=s;
+				LL ti=(s-t)/x;
+				if(n<=ti){
+					printf("%lld\n",w-n*x);
+				}else{
+					n-=ti;
+					w-=ti*x;
+					if(n&1)printf("%lld\n",w-x);
+					else printf("%lld\n",w);
+				}
+			}else{
+				LL w=s;
+				LL ti=(t-s)/x;
+				if(n<=ti){
+					printf("%lld\n",w+n*x);
+				}else{
+					n-=ti;
+					w+=ti*x;
+					if(w==t){
+						if(n&1)printf("%lld\n",w-x);
+						else printf("%lld\n",w);
+					}else{
+						if(n&1)printf("%lld\n",w+x);
+						else printf("%lld\n",w);
+					}
+				}
+			}
+		}else{
+			LL w=s;
+			memset(vis,0,sizeof(vis));
+			len=0;
+			F(i,1,n){
+				w=(w>=t?w-x:w+y);
+				if(vis[w+100]){
+					int ti=(n-i)%len;
+					F(j,1,len)line[j+len]=line[j];
+					F(j,1,len)if(line[j]==w){
+						w=line[j+ti];
+						break;
+					}
+					break;
+				}else{
+					vis[w+100]=1;
+					line[++len]=w;
+				}
+			}
+			printf("%lld\n",w);
+		}
+	}
+	return 0;
+}

@@ -1,0 +1,96 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define N 20005
+#define P 2265
+#define S 500
+int read(){
+	int w=0,f=1;
+	char c=' ';
+	while(c<'0'||c>'9')c=getchar(),f=c=='-'?-1:f;
+	while(c>='0'&&c<='9')w=w*10+c-48,c=getchar();
+	return w*f;
+}
+struct fastmod{
+	#define ull unsigned long long
+	#define u128 __uint128_t
+	ull b,m;
+	fastmod(ull _b=998244353){b=_b,m=(ull)(((u128)(1)<<64)/b);}
+	int reduce(ull a){
+		ull q=(ull)(((u128)(m)*a)>>64),r=a-q*b;
+		return r>=b?r-b:r;
+	}
+	#undef ull
+	#undef u128
+}F;
+int mod;
+struct mint{
+	int x;
+	mint(int X=0){x=X;}
+	mint operator=(int o){return x=o,*this;}
+	mint operator+=(mint o){return x=x+o.x>=mod?x+o.x-mod:x+o.x,*this;}
+	mint operator-=(mint o){return x=x-o.x<0?x-o.x+mod:x-o.x,*this;}
+	mint operator*=(mint o){return x=F.reduce(1ll*x*o.x),*this;}
+	mint operator^=(int y){
+		mint res=1,z=*this;
+		while(y){
+			if(y&1)res*=z;
+			z*=z,y>>=1;
+		}
+		return x=res.x,*this;
+	}
+	mint operator^=(mint y){return *this^=y.x;}
+	mint operator+=(int o){return x=x+o>=mod?x+o-mod:x+o,*this;}
+	mint operator-=(int o){return x=x-o<0?x-o+mod:x-o,*this;}
+	mint operator*=(int o){return x=F.reduce(1ll*x*o),*this;}
+	friend mint operator+(mint a,int b){return a+=b;}
+	friend mint operator-(mint a,int b){return a-=b;}
+	friend mint operator*(mint a,int b){return a*=b;}
+	friend mint operator^(mint a,int b){return a^=b;}
+	friend mint operator+(mint a,mint b){return a+=b;}
+	friend mint operator-(mint a,mint b){return a-=b;}
+	friend mint operator*(mint a,mint b){return a*=b;}
+	friend mint operator^(mint a,mint b){return a^=b;}
+	bool operator!(){return !x;}
+	mint operator-(){return x?mod-x:0;}
+	operator int(){return x;}
+}p1[P][S],s1[P][S],s2[P][S],ans;
+int n,pri[P],cnt,w[P][N];
+bool vis[N];
+void init(){
+	for(int i=2;i<=n;i++){
+		if(!vis[i])pri[++cnt]=i;
+		for(int j=1;j<=cnt&&i*pri[j]<=n;j++){
+			vis[i*pri[j]]=1;
+			if(!i%pri[j])break;
+		}
+	}
+	for(int i=1;i<=cnt;i++){
+		p1[i][0]=1,s1[i][0]=0;
+		for(int j=1;j<S;j++)
+			p1[i][j]=p1[i][j-1]*pri[i],s1[i][j]=s1[i][j-1]+p1[i][j-1];
+		s2[i][0]=0,s2[i][1]=s1[i][S-1]+p1[i][S-1];
+		mint x=p1[i][S-1]*pri[i],y=s1[i][S-1]+p1[i][S-1];
+		for(int j=1;j<S;j++)
+			s2[i][j]=s2[i][j-1]*x+y;
+	}
+}
+mint calc(int x,int y){
+	return s2[x][y/S]*p1[x][y%S]+s1[x][y%S];
+}
+signed main(){
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	n=read(),mod=read(),F=fastmod(mod);
+	init();
+	for(int i=1;i<=cnt;i++)
+		for(int j=1,p=pri[i];j<=n;j++)
+			w[i][j]=w[i][j/p]+j/p;
+	for(int i=1;i<=n;i++){
+		mint now=1;
+		for(int j=1;j<=cnt;j++)
+			now*=calc(j,w[j][i]*(i-1)-w[j][i-1]*2+1),w[j][i]+=w[j][i-1];
+		ans+=now;
+	}
+	printf("%d\n",(int)ans);
+	return 0;
+}

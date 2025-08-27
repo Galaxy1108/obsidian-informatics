@@ -1,0 +1,49 @@
+#include<bits/stdc++.h>
+#define ll long long
+using namespace std;
+ll T,n,s,t,x,y;
+int main(){
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	cin>>T;
+	while(T--){
+		cin>>n>>s>>t>>x>>y;
+		if(n<=1e6){
+			ll now=s;
+			for(int i=1;i<=n;i++){
+				if(now>=t)now-=x;
+				else now+=y;
+			}
+			cout<<now<<endl;
+		}
+		else if(x==y){
+			if(s<t){
+				ll step=(t-s+(x-1))/x;
+				if(step>=n){
+					cout<<s+n*x<<endl;
+					continue;
+				}
+				else{
+					n-=step;
+					ll now=s+step*x;
+					if(n%2==0)cout<<now<<endl;
+					else cout<<now-x<<endl;
+				}
+			}
+			else{
+				ll step=(s-t)/x+1;
+				if(step>=n){
+					cout<<s-n*x<<endl;
+					continue;
+				}
+				else{
+					n-=step;
+					ll now=s-step*x;
+					if(n%2==0)cout<<now<<endl;
+					else cout<<now+x<<endl;
+				}
+			}
+		}
+	}
+	return 0;
+}

@@ -1,0 +1,67 @@
+#include<bits/stdc++.h>
+using namespace std;
+inline int read(){
+    int ans=0,a=getchar();
+    while('0'>a||a>'9')a=getchar();
+    while('0'<=a&&a<='9')ans=ans*10+a-'0',a=getchar();
+    return ans;
+}
+struct node{
+    int nxt,to;
+}edge[600005];
+int head[300005],tot;
+inline void add(int x,int y){
+    edge[++tot]={head[x],y};
+    head[x]=tot;
+}
+const int mod=998244353;
+inline int pw(int x,int y){
+    int ans=1,tmp=x;
+    while(y){
+        if(y&1)ans=1ll*ans*tmp%mod;
+        tmp=1ll*tmp*tmp%mod;
+        y>>=1;
+    }
+    return ans;
+}
+int fac[300005],inv[300005];
+inline int C(int x,int y){
+    return 1ll*fac[x]*inv[y]%mod*inv[x-y]%mod;
+}
+int main(){
+    freopen("youup.in","r",stdin);
+    freopen("youup.out","w",stdout);
+    int num=read();
+    int n=read(),d=read();
+    for(int i=1;i<n;i++){
+        int x=read(),y=read();
+        add(x,y);
+        add(y,x);
+    }
+    fac[0]=1;
+    for(int i=1;i<=n;i++)fac[i]=1ll*fac[i-1]*i%mod;
+    inv[n]=pw(fac[n],mod-2);
+    for(int i=n-1;i>=0;i--){
+        inv[i]=(1ll*inv[i+1]*(i+1))%mod;
+    }
+    if(d==0){
+        printf("%d ",n);
+        for(int i=2;i<=n;i++)printf("0 ");
+        puts("");
+        return 0;
+    }
+    if(num==4){
+        if(d==1){
+            printf("%d %d ",n,n-1);
+            for(int i=3;i<=n;i++)printf("0 ");
+            puts("");
+            return 0;
+        }
+        for(int i=1;i<=n;i++){
+            printf("%d ",C(n,i));
+        }
+        puts("");
+        return 0;
+    }
+    
+}

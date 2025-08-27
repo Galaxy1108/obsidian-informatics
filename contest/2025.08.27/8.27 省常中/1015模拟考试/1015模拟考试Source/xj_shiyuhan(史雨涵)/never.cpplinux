@@ -1,0 +1,40 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+typedef long long LL;
+
+int q;
+LL s, t, x, y, n;
+
+int main() {
+
+    freopen("never.in", "r", stdin);
+    freopen("never.out", "w", stdout);
+
+    scanf("%d", &q);
+    while (q--) {
+
+        scanf("%lld%lld%lld%lld%lld", &n, &s, &t, &x, &y);
+
+        LL step;
+        if (s <= t) {
+            step = (t - s) / y;
+            s += min(n, step) * y;
+            n -= min(n, step);
+            cerr << s << endl;
+        } else {
+            step = (s - t) / x;
+            s -= min(n, step) * x;
+            n -= min(n, step);
+        } n %= (x + y) / __gcd(x, y);
+        while (n--) {
+            if (s >= t) s -= x;
+            else s += y;
+        }
+
+        printf("%lld\n", s);
+    }
+
+    return 0;
+}

@@ -1,0 +1,36 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+int n, k, f[25][25], dep[25];
+vector<int> e[300005];
+void dfs(int u, int fa) {
+    f[u][0] = fa;
+    dep[u] = dep[fa] + 1;
+    for (int i = 1; (1 << i) <= dep[u]; ++i) f[u][i] = f[f[u][i - 1]][i - 1];
+    for (auto v : e[u])
+        if (v != fa) dfs(v, u);
+}
+
+int main() {
+    freopen("youup.in", "r", stdin);
+    freopen("youup.out", "w", stdout);
+    int Case;
+    scanf("%d", &Case);
+    scanf("%d%d", &n, &k);
+    for (int i = 1; i < n; ++i) {
+        int u, v;
+        scanf("%d%d", &u, &v);
+        e[u].push_back(v);
+        e[v].push_back(u);
+    }
+    if (Case <= 5) {
+        printf("%d ", n);
+        for (int i = 2; i <= n; ++i) printf(" 0");
+        puts("");
+    } else if (Case <= 24) {
+        dfs(1, 0);
+        for (int i = 1; i <= n; ++i) {  // how many points
+        }
+    }
+    return 0;
+}

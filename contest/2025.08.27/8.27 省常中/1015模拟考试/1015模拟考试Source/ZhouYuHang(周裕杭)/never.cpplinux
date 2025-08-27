@@ -1,0 +1,86 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+using LL = long long;
+
+int main () {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr), cout.tie(nullptr);
+	
+	freopen("never.in", "r", stdin);
+	freopen("never.out", "w", stdout);
+	
+	int T;
+	cin >> T;
+	while (T--) {
+		LL n, s, t, x, y;
+		cin >> n >> s >> t >> x >> y;
+		if (n <= 1000000) {
+			while (n--) {
+				if (s < t) s += y;
+				else s -= x;
+			}
+			cout << s << endl;
+		} else if (x <= 100 && y <= 100) {
+			s -= t;
+			if (s >= 0)	{
+				if (s / x >= n) {
+					cout << s - x * n + t << endl;
+					continue;
+				}
+				n -= s / x;
+				s -= s / x * x;
+			} else {
+				if ((-s) / y >= n) {
+					cout << s + y * n + t << endl;
+					continue;
+				}
+				n -= (-s) / y;
+				s += (-s) / y * y;
+			}		
+			int tmp = s, cnt = 0;
+			do {
+				if (s < 0) s += y;
+				else s -= x;
+				++cnt;
+			} while (--n && s != tmp);
+			if (n) {
+				n %= cnt;
+				while (n--) {
+					if (s < 0) s += y;
+					else s -= x;
+				}
+			}
+			cout << s + t << endl;	
+		} else if (x == y) {
+			s -= t;
+			if (s >= 0)	{
+				if (s / x >= n) {
+					cout << s - x * n + t << endl;
+					continue;
+				}
+				n -= s / x;
+				s -= s / x * x;
+			} else {
+				if ((-s) / y >= n) {
+					cout << s + y * n + t << endl;
+					continue;
+				}
+				n -= (-s) / y;
+				s += (-s) / y * y;
+			}
+			n %= 2;
+			if (n) {
+				if (s < 0) s += y;
+				else s -= x;
+			}
+			cout << s + t << endl;
+		} else if (x < y) {
+			
+		} else {
+			
+		}
+	}
+	
+	return 0;
+}

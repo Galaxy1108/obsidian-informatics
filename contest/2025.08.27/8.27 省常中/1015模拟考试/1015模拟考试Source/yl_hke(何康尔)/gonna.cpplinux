@@ -1,0 +1,127 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+const int MAXN = 20000 + 5;
+const int MAXT = 2262 + 5;
+
+int sum[MAXN], cnt[MAXN];
+int pri[MAXN], minp[MAXN];
+bool vis[MAXN];
+int n, p, tot;
+
+void init() {
+    for(int i = 2; i <= n; i++) {
+        if(!vis[i]) {
+            pri[++tot] = i;
+            minp[i] = tot;
+        }
+        for(int j = 1; j <= tot && i * pri[j] <= n; j++) {
+            vis[i * pri[j]] = true;
+            minp[i * pri[j]] = j;
+            if(i % pri[j] == 0) {
+                break;
+            }
+        }
+    }
+}
+
+void work(int n, int v) {
+    while(n > 1) {
+        cnt[minp[n]] += v;
+        n /= pri[minp[n]];
+    }
+}
+
+long long qpow(long long b, long long p, long long k) {
+    long long res = 1;
+    while(p) {
+        if(p & 1) {
+            res = res * b % k;
+        }
+        b = b * b % k;
+        p >>= 1;
+    }
+    return res;
+}
+
+/*pair<long long, long long> getSum(long long b, long long p, long long k) {
+    if(p == 0) {
+        return make_pair(1ll, 1ll);
+    }
+    pair<long long, long long> res;
+    if(p % 2 == 0) {
+        pair<long long, long long> tmp = getSum(b, p / 2, k);
+        long long t = tmp.first, pw = tmp.second;
+        res.first = (t + (t - 1) * pw % k + k) % k;
+        res.second = pw * pw % k;
+    } else {
+        pair<long long, long long> tmp = getSum(b, p / 2, k);
+        long long t = tmp.first, pw = tmp.second;
+        res.second = pw * pw % k * b % k;
+        res.first = (t + (t - 1) * pw % k + res.second + k) % k;
+    }
+    return res;
+}*/
+
+long long getS(long long b, long long p, long long k) {
+    long long res1 = 1, res2 = 1;
+    int bit[64], t = 0;
+    memset(bit, 0, sizeof(bit));
+    while(p) {
+        bit[t++] = (p & 1);
+        p >>= 1;
+    }
+    for(int i = t - 1; i >= 0; i--) {
+        long long t = res1, pw = res2;
+        if(bit[i]) {
+            res2 = pw * pw % k * b % k;
+            res1 = (t + (t - 1) * pw % k + res2 + k) % k;
+        } else {
+            res2 = pw * pw % k;
+            res1 = (t + (t - 1) * pw % k + k) % k;
+        }
+    }
+    return res1;
+}
+
+int g(int n) {
+    for(int i = 1; i <= n; i++) {
+        sum[i] = cnt[i] = 0;
+    }
+    for(int i = 1; i <= n - 1; i++) {
+        sum[1]++; sum[n + 1]--;
+        sum[1]--; sum[i + 1]++;
+        sum[1]--; sum[n - i + 1]++;
+    }
+    for(int i = 1; i <= n; i++) {
+        sum[i] += sum[i - 1];
+        //printf("%d ", sum[i]);
+    }
+    //printf("\n");
+    for(int i = 1; i <= n; i++) {
+        work(i, sum[i]);
+    }
+    int ans = 1;
+    for(int i = 1; i <= tot; i++) {
+        //printf("Cnt %d: %d\n", pri[i], cnt[i]);
+        //ans = (1ll * ans * getSum(pri[i], cnt[i], p).first) % p;
+        ans = (1ll * ans * getS(pri[i], cnt[i], p)) % p;
+    }
+    //printf("Now: %d %d\n", n, ans);
+    return ans;
+}
+
+int main() {
+    freopen("gonna.in", "r", stdin);
+    freopen("gonna.out", "w", stdout);
+
+    scanf("%d%d", &n, &p);
+    init();
+    int ans = 0;
+    for(int i = 1; i <= n; i++) {
+        ans = (ans + g(i)) % p;
+    }
+    printf("%d\n", ans);
+
+    return 0;
+}

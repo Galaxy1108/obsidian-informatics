@@ -1,0 +1,55 @@
+#include <bits/stdc++.h>
+namespace IO {
+	#define iL (1 << 20)
+	char ibuf[iL], *iS = ibuf + iL, *iT = ibuf + iL;
+	#define gc() ((iS == iT) ? (iT = (iS = ibuf) + fread(ibuf, 1, iL, stdin), iS == iT ? EOF : *iS ++) : *iS ++)
+	template<class T> inline void read(T &x) {
+		x = 0;int f = 0;char ch = gc();
+		for (; !isdigit(ch); f |= ch == '-', ch = gc());
+		for (; isdigit(ch); x = (x << 1) + (x << 3) + (ch ^ 48), ch = gc());
+		x = (f == 1 ? ~ x + 1 : x);
+	}
+	char Out[iL], *iter = Out;
+	#define flush() fwrite(Out, 1, iter - Out, stdout), iter = Out
+	template<class T> inline void write(T x, char ch = '\n') {
+		T l, c[35];
+		if (x < 0) *iter ++ = '-', x = ~ x + 1;
+		for (l = 0; !l || x; c[l] = x % 10, l++, x /= 10);
+		for (; l; -- l, *iter ++ = c[l] + '0');*iter ++ = ch;
+		flush();
+	}
+}
+using namespace IO;
+#define N 5005
+#define M 2005
+#define ll long long
+#define DEBUG
+#define pii pair<int, int>
+#define mp make_pair
+#define fi first
+#define se second
+using namespace std;
+ll t, n, s, m, a[N], f[M][N];
+int main() {
+// #ifndef ONLINE_JUDGE
+	// freopen("test.in", "r", stdin);
+	// freopen("test.out", "w", stdout);
+// #endif
+	freopen("give.in", "r", stdin);
+	freopen("give.out", "w", stdout);
+	read(t);
+	while (t --) {
+		read(n), read(s), read(m); for (int i = 1; i <= m; i++) read(a[i]);
+		for (int i = 0; i <= n; i++) for (int j = 0; j <= s; j++) f[i][j] = 0;
+		f[0][0] = 1;
+		for (int i = 1; i <= n; i++) {
+			for (int j = 1; j <= m; j++) {
+				for (int k = a[j]; k <= s; k++) {
+					f[i][k] = (f[i - 1][k - a[j]] + f[i][k]) % 2ll;
+				}
+			}
+		}
+		write(f[n][s]);
+	}
+	return 0;
+}

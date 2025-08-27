@@ -1,0 +1,72 @@
+#include<bits/stdc++.h>
+using namespace std;
+__int128 read()
+{
+    __int128 x=0,f=1;
+    char c=getchar();
+    while(c<'0'||c>'9')
+	{
+        if(c=='-') f=-1;
+		c=getchar();
+	}
+    while(c>='0'&&c<='9') x=(x<<3)+(x<<1)+c-'0',c=getchar();
+    return x*f;
+}
+void write(__int128 x)
+{
+    if(x<0) putchar('-'),x=-x;
+    if(x>9) write(x/10);
+    putchar(x%10+'0');
+}
+__int128 n,s,t,x,y,dis;
+int main()
+{
+    freopen("never.in","r",stdin);
+    freopen("never.out","w",stdout);
+    int T;
+    scanf("%d",&T);
+    while(T--)
+    {
+        __int128 k;
+        n=read(),s=read(),t=read();
+        x=read(),y=read();
+        s-=t;
+        if(s<0&&-s/y>=n)
+        {
+            write(s+n*y+t);
+            printf("\n");
+            continue;
+        }
+        if(s>0&&s/x>=n)
+        {
+            write(s-n*x+t);
+            printf("\n");
+            continue;
+        }
+        // write(s);
+        // printf("%lld %lld\n",n,s);
+        // if(s<0)
+        // {
+        //     n-=abs(s)/y;
+        //     s+=abs(s)/y*y;
+        // }
+        // if(s>0)
+        // {
+        //     n-=abs(s)/x;
+        //     s-=abs(s)/x*x;
+        // }
+        // printf("%lld %lld\n",n,s);
+        __int128 left=0,right=n,mid,ans;
+        while(left<=right)
+        {
+            mid=(left+right)>>1;
+            dis=s+y*mid-x*(n-mid);
+            // printf("%d %lld\n",mid,dis);
+            if(dis<0) left=mid+1;
+            else ans=mid,right=mid-1;
+        }
+        if(s+y*ans-x*(n-ans)<y) write(s+y*ans-x*(n-ans)+t);
+        else write(s+y*(ans-1)-x*(n-ans+1)+t);
+        printf("\n");
+    }
+}

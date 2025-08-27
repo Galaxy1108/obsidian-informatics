@@ -1,0 +1,40 @@
+#include <bits/stdc++.h>
+using namespace std;
+const int maxn=1e3+10;
+inline int read()
+{
+	int x=0,f=1;char c=getchar();
+	while(!isdigit(c)) {if(c=='-') f=-1;c=getchar();}
+	while(isdigit(c)) {x=x*10+(c^48);c=getchar();}
+	return x*f;
+}
+int T,n,x,y,s,t;
+int f[maxn];
+bool b[maxn];
+int main()
+{
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	T=read();
+	while(T--)
+	{
+		n=read();s=read();t=read();x=read();y=read();
+		if(s+y<t) {n-=(t-s)/y,s+=((t-s)/y)*y;}
+		else if(s-x>t) {n-=(s-t)/x;s-=((s-t)/x)*x;}
+		if(abs(s)<=100&&abs(t)<=100&&abs(x)<=100&&abs(y)<=100)
+		{
+		    memset(b,0,sizeof(b));
+			int w=abs(min(s,t))+100;s+=w;t+=w;
+			int cnt=0;
+			while(!b[s])
+			{
+				b[s]=1;f[++cnt]=s;
+				if(s>=t) s-=x;
+				else s+=y;
+			}
+//			for(int i=1;i<=cnt;i++) printf("%d ",f[i]);
+			printf("%d\n",f[n%cnt+1]-w);
+		}
+	}
+	return 0;
+}

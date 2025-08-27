@@ -1,0 +1,101 @@
+#include<bits/stdc++.h>
+using namespace std;
+long long n,mod,cnt,ans,d[10005],p[20005],prime[10005],pos[20005],dp[10005];
+vector<long long>pp[4005];
+bool b[20005];
+vector<int>v[20005];
+long long po(long long a,int x)
+{
+	long long ans=1,e=a;
+	while(x)
+	{
+		if(x%2)ans=ans*e%mod;
+		e=e*e%mod;
+		x/=2;
+	}
+	return ans;
+}
+int main()
+{
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	cin>>n>>mod;
+	for(int i=2;i<=n;i++)
+	{
+		if(!b[i])
+		{
+			prime[++cnt]=i;
+			pos[i]=cnt;
+		}
+		for(int j=1;j<=cnt;j++)
+		{
+			if(i*prime[j]>n)break;
+			b[i*prime[j]]=true;
+			if(i%prime[j]==0)break;
+		}
+	}
+	memset(b,0,sizeof(b));
+	for(int i=n;i>=1;i--)
+	{
+		for(int j=0;j<=i;j++)
+		{
+			p[1]++;
+			p[i+1]--;
+			p[1]--;
+			p[j+1]++;
+			p[1]--;
+			p[(i-j)+1]++;
+		}
+		for(int j=1;j<=i;j++)
+		{
+			p[j]+=p[j-1];
+			if(!b[j])
+			{
+				b[j]=true;
+				int t=j;
+				for(int l=1;prime[l]*prime[l]<=t;l++)
+				{
+					while(t%prime[l]==0)
+					{
+						t/=prime[l];
+						v[j].push_back(l);
+					}
+				}
+				if(t>1)v[j].push_back(pos[t]);
+			}
+			for(auto y:v[j])
+			{
+				d[y]+=p[j];
+			}
+			p[j-1]=0;
+		}
+		p[i]=0;
+		p[i+1]=0;
+		dp[0]=1;
+		for(int j=1;j<=cnt;j++)
+		{
+			long long e=prime[j];
+			long long lp=0;
+			if(pp[j].size()>=d[j]+1)lp=pp[j][d[j]];
+			long long sum=1;
+			if(pp[j].size()<d[j]+1)
+			{
+				sum=(pp[j].size()==0)?1:pp[j][pp[j].size()-1];
+				if(!pp[j].size())pp[j].push_back(sum);
+				e=max(prime[j],po(prime[j],pp[j].size()));
+				for(int k=max(1,(int)pp[j].size());k<=d[j];k++)
+				{
+					sum=(sum+e)%mod;
+					pp[j].push_back(sum);
+					e=e*prime[j]%mod;
+				}
+				lp=pp[j][d[j]];
+			}
+			dp[j]=dp[j-1]*lp%mod;
+			d[j]=0;
+		}
+		ans=(ans+dp[cnt])%mod;
+	}
+	printf("%lld\n",ans);
+	return 0;
+}

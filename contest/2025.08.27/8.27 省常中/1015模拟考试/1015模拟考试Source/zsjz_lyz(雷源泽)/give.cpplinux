@@ -1,0 +1,32 @@
+#include <cstdio>
+#include <iostream>
+#define IN inline
+using namespace std;
+
+template <typename T>
+IN void read(T &x) {
+	x = 0; char ch = getchar(); int f = 0;
+	for(; !isdigit(ch); f = (ch == '-' ? 1 : f), ch = getchar());
+	for(; isdigit(ch); x = (x<<3)+(x<<1)+(ch^48), ch = getchar());
+	if (f) x = ~x + 1;
+}
+
+const int P = 2;
+int n, s, m, f[2005][5005], a[205];
+
+int main() {
+	freopen("give.in", "r", stdin);
+	freopen("give.out", "w", stdout);
+	int t; read(t);
+	for(; t; --t) {
+		read(m), read(s), read(n);
+		for(int i = 1; i <= n; i++) read(a[i]);
+		for(int i = 0; i <= m; i++)
+			for(int j = 0; j <= s; j++) f[i][j] = 0;
+		f[0][0] = 1;
+		for(int i = 1; i <= m; i++)
+			for(int k = 1; k <= n; k++)
+				for(int j = a[k]; j <= s; j++) f[i][j] ^= f[i - 1][j - a[k]];
+		printf("%d\n", f[m][s]);
+	}
+}

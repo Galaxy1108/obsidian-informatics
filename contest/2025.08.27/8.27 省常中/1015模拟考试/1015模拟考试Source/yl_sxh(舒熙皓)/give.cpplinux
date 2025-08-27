@@ -1,0 +1,52 @@
+#include<bits/stdc++.h>
+#define For(i,a,b) for(int i=(a);i<=(b);++i)
+#define Rof(i,a,b) for(int i=(a);i>=(b);--i)
+using namespace std;
+const int Maxn=200;
+
+inline int read()
+{
+    int x=0,f=1;
+    char ch=getchar();
+    while(ch<'0' || ch>'9')
+    {
+        if(ch=='-') f=-1;
+        ch=getchar();
+    }
+    while(ch>='0' && ch<='9')
+    {
+        x=x*10+ch-'0';
+        ch=getchar();
+    }
+    return x*f;
+}
+
+int T,m,s,n,A[Maxn+5];
+
+namespace T1
+{
+    bitset<5005> f[2005];
+    inline void Run()
+    {
+        f[0][0]=1;
+        For(i,1,m) For(j,1,n) f[i]^=(f[i-1]<<A[j]);
+        putchar(f[m][s]+'0'),putchar('\n');
+        For(i,0,m) f[i].reset();
+    }
+}
+inline void Solve()
+{
+    m=read(),s=read(),n=read();
+    For(i,1,n) A[i]=read();
+    if(n<=200 && m<=2000 && s<=5000) {T1::Run(); return;}
+}
+
+int main()
+{
+    freopen("give.in","r",stdin);
+    freopen("give.out","w",stdout);
+
+    T=read();
+    while(T--) Solve();
+    return 0;
+}

@@ -1,0 +1,35 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+using ll = long long;
+
+const int N = 200;
+const int V = 1e5;
+
+ll m, s;
+int n, a[N], len;
+bitset<V * 2 + 5> f, g;
+
+void solve() {
+  scanf("%lld%lld%d", &m, &s, &n);
+  for (int i = 0; i < n; ++i) scanf("%d", a + i);
+  len = a[n - 1];
+  f.reset(), f.set(0);
+  for (; s; s >>= 1, m >>= 1) {
+    if (m & 1) {
+      g.reset();
+      for (int i = 0; i < n; ++i) g ^= f << a[i];
+    } else g = f;
+    f.reset();
+    for (int i = 0; i <= len; ++i) f[i] = g[(i << 1) | (s & 1)];
+  }
+  if (a[0] == 0 || m == 0) printf("%d\n", (bool)f[0]);
+  else puts("0");
+}
+
+int main() {
+  freopen("give.in", "r", stdin), freopen("give.out", "w", stdout);
+  int T;
+  for (scanf("%d", &T); T; --T) solve();
+}

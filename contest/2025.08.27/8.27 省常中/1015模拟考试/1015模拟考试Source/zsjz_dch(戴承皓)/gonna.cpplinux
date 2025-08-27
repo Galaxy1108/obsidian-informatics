@@ -1,0 +1,59 @@
+#include <cstdio>
+#include <iostream>
+#define LL long long
+using namespace std;
+template <typename T>
+inline void read(T &x) {
+	x = 0; int f = 0; char ch = getchar();
+	for(; !isdigit(ch); ch = getchar()) if(ch == '-') f = 1;
+	for(; isdigit(ch); ch = getchar()) x = (x << 3) + (x << 1) + (ch ^ 48);
+	if(f) x = ~x + 1;
+}
+const int N = 20010;
+int n, P, ans, phiP;
+int vis[N], p[N], tot;
+int cnt[2270];
+LL f[2270][N], g[2270][N];
+void Sieve() {
+	vis[1] = 1;
+	for(int i = 2; i <= n; ++i) {
+		if(!vis[i]) p[++tot] = i;
+		for(int j = 1; j <= tot && p[j] * i <= n; ++j) {
+			vis[i * p[j]] = 1;
+			if(i % p[j] == 0) break;
+		}
+	}
+}
+int fpow(LL x, LL pnt) {
+	int res = 1;
+	for(; pnt; pnt >>= 1, x = x * x % P) if(pnt & 1) res = x * res % P;
+	return res;
+}
+LL calc(int p, int pnt) {
+	if(pnt == 0) return 1;
+	if(pnt == 1) return p + 1;
+	int s = (pnt + 1 >> 1) - 1;
+	LL pp = fpow(p, s + 1);
+	int res = (calc(p, s) * (pp + 1) % P + ((pnt & 1) ? 0 : pp * pp % P)) % P;
+	return res;
+}
+int main() {
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	read(n), read(P);
+	Sieve(); 
+	for(int i = 1; i <= tot; ++i) 
+		for(int j = 1; j <= n; ++j) 
+			f[i][j] = (f[i][j / p[i]] + j / p[i]),
+			g[i][j] = (g[i][j - 1] + f[i][j]);
+	for(int i = 1; i <= n; ++i) {
+		LL s = 1;
+		for(int j = 1; j <= tot; ++j) {
+			LL pnt = (1ll * (i + 1) * f[j][i] - 2 * g[j][i]);
+			s = s * calc(p[j], pnt) % P;
+		}
+		ans += s;
+		if(ans > P) ans -= P;
+	}
+	printf("%lld\n",ans);
+}

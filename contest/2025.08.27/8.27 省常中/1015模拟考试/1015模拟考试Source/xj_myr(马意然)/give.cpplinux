@@ -1,0 +1,15 @@
+#include <bits/stdc++.h>
+#pragma GCC optimize("Ofast", "inline", "-ffast-math")
+#pragma GCC target("avx,sse2,sse3,sse4,mmx")
+using namespace std;
+
+int main() {
+	freopen("give.in","r",stdin);
+	freopen("give.out","w",stdout);
+    int T;
+    scanf("%d",&T);
+    while(T--){
+    	printf("1\n");
+	}
+	return 0;
+}

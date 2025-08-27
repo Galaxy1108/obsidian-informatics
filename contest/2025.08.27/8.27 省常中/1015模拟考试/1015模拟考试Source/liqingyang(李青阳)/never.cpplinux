@@ -1,0 +1,40 @@
+#include<iostream>
+using namespace std;
+int main()
+{
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	int T;
+	cin>>T;
+	while(T--)
+	{
+		long long n,s,t,x,y;
+		cin>>n>>s>>t>>x>>y;
+		if(s<t&&s+__int128(y)*n<t)
+		{
+			cout<<s+y*n<<endl;
+			continue;
+		}
+		if(s>=t&&s-__int128(x)*n>=t)
+		{
+			cout<<s-x*n<<endl;
+			continue;
+		}
+		long long l=0,r=n,ans;
+		while(l<=r)
+		{
+			long long mid=l+r>>1;
+			__int128 now=s-__int128(x)*mid+__int128(y)*(n-mid);
+			if(t-x<=now)
+			{
+				ans=mid,l=mid+1;
+			}
+			else
+			{
+				r=mid-1;
+			}
+		}
+		cout<<(long long)(s-__int128(x)*ans+__int128(y)*(n-ans))<<endl;
+	}
+	return 0;
+}

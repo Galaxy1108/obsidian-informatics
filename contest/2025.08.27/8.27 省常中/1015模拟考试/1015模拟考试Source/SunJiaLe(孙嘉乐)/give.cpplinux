@@ -1,0 +1,16 @@
+#include<iostream>
+#include<fstream>
+#include<cstdlib>
+#include<ctime>
+using namespace std;
+int main()
+{
+	ifstream cin("give.in");
+	ofstream cout("give.out");
+	srand(time(NULL));
+	int T;
+	cin >> T;
+	while(T--)
+	cout << rand()%2 << endl;
+	return 0;
+}

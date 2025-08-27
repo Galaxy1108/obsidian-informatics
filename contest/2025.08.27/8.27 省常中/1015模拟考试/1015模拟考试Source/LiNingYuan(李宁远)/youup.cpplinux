@@ -1,0 +1,89 @@
+#include<bits/stdc++.h>
+#define itn int
+#define ll long long
+using namespace std;
+
+int read(){
+	int a=0, b=0; char c=getchar();
+	while(c<'0'||c>'9')b^=(c=='-'), c=getchar();
+	while(c>='0'&&c<='9')a=a*10+c-48, c=getchar();
+	return b?-a:a;
+}
+
+const int N=300005;
+const ll mod=998244353;
+int id, n, x;
+vector<int>e[N];
+ll f[N], iv[N], fv[N];
+void init(){
+	f[0]=iv[0]=fv[0]=f[1]=iv[1]=iv[1]=1;
+	for(int i=2;i<N;i++)f[i]=f[i-1]*i%mod, iv[i]=(mod-mod/i)*iv[mod%i]%mod, fv[i]=fv[i-1]*iv[i]%mod;
+}
+ll C(ll n, ll m){ return n<0||m<0||n<m ? 0 : f[n]*fv[m]%mod*fv[n-m]%mod; }
+ll ans[N];
+
+ll dp[22][22][22];
+int de[N], sz[N];
+
+void dfs(int u, int p){
+	de[u]=de[p]+1;sz[u]=1;
+	auto du=dp[u];
+	du[1][de[u]]=1;
+	for(int v:e[u])if(v!=p){
+		dfs(v, u);
+		auto dv=dp[v];
+		for(int i=sz[u];i>=1;i--){
+			for(int j=de[u];j<=n;j++)if(du[i][j]){
+				for(int k=1;k<=sz[v];k++){
+					for(int l=de[v];l<=n && (j+l-2*de[u]<=x||(j==de[u]&&l-de[u]<=x));l++){
+						//cout<<u<<' '<<v<<' '<<du[i][j]<<' '<<dv[k][l]<<' '<<i<<' '<<j<<' '<<k<<' '<<l<<'\n';
+						du[i+k][max(j,l)]+=du[i][j]*dv[k][l]%mod;
+					}
+				}
+			}
+		}
+		for(int i=1;i<=sz[u];i++)for(int j=de[u];j<=n;j++)du[i][j]=(du[i][j]+dv[i][j])%mod;
+		sz[u]+=sz[v];
+	}/*
+	cout<<u<<" :\n";
+	for(int i=1;i<=sz[u];i++){
+		for(int j=de[u];j<=n;j++){
+			cout<<du[i][j]<<' ';
+		}
+		cout<<'\n';
+	}*/
+}
+
+int main(){
+	freopen("youup.in","r",stdin);
+	freopen("youup.out","w",stdout);
+	id=read(), n=read(), x=read();
+	for(int i=1;i<n;i++){int x=read(), y=read(); e[x].push_back(y);e[y].push_back(x);}
+	init();
+	if(x==0){
+		cout<<n<<' '; for(int i=2;i<=n;i++)cout<<"0 "; cout<<'\n';
+		return 0;
+	}
+	if(x==1){
+		cout<<n<<' '<<n-1<<' '; for(int i=3;i<=n;i++)cout<<"0 "; cout<<'\n';
+		return 0;
+	}
+	if(id==4){
+		for(int i=1;i<=n;i++)cout<<C(n, i)<<' ';cout<<'\n';
+		return 0;
+	}else if(id==5){
+		for(int i=1;i<=n;i++){
+			int c=min(x, n-i);
+			for(int j=0;j<=c;j++){
+				ans[j+1]+=C(c, j);
+			}
+		}
+		for(int i=1;i<=n;i++)cout<<ans[i]%mod<<' ';cout<<'\n';
+		return 0;
+	}else{
+		dfs(1,1);
+		for(int i=1;i<=n;i++)for(int j=1;j<=n;j++)ans[i]+=dp[1][i][j];
+		for(int i=1;i<=n;i++)cout<<ans[i]%mod<<' ';cout<<'\n';
+	}
+	return 0;
+}

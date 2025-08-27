@@ -1,0 +1,56 @@
+#include<bits/stdc++.h>
+#define int long long
+using namespace std;
+inline int read(){
+    int ans=0,a=getchar(),flg=1;
+    while('0'>a||a>'9')flg=(a=='-'?-1:1),a=getchar();
+    while('0'<=a&&a<='9')ans=ans*10+a-'0',a=getchar();
+    return ans*flg;
+}
+map<int ,int >q;
+int pos[1000005];
+signed main(){
+    freopen("never.in","r",stdin);
+    freopen("never.out","w",stdout);
+    int T=read();
+    while(T--){
+        q.clear();
+        int n=read(),s=read(),t=read(),x=read(),y=read();
+        if(s<t){
+            int tmp=(t-s-1)/y+1;
+            if(tmp>=n){
+                printf("%lld\n",s+n*y);
+                continue;
+            }
+            n-=tmp;
+            s+=tmp*y;
+        }
+        else{
+            int tmp=(s-t)/x+1;
+            if(tmp>=n){
+                printf("%lld\n",s-n*x);
+                continue;
+            }
+            n-=tmp;
+            s-=tmp*x;
+        }
+        q[s]=0;
+        pos[0]=s;
+        bool flg=0;
+        for(int i=1;i<=n;i++){
+            if(s>=t){
+                s-=x;
+                pos[i]=s;
+            }
+            else s+=y,pos[i]=s;
+            if(q[s]){
+                int x=q[s];
+                printf("%lld\n",pos[x+(n-x)%(i-x)]);
+                flg=1;
+                break;
+            }
+            q[s]=i;
+        }
+        if(!flg)printf("%lld\n",s);
+    }
+}

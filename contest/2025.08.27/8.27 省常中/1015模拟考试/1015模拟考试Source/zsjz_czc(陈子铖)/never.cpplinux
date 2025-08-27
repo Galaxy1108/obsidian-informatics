@@ -1,0 +1,73 @@
+#include <iostream>
+#include <cstdio>
+using namespace std;
+#define ll long long
+namespace IO {
+	const int MAXSIZE = 1 << 20;
+	char buf[MAXSIZE], *p1, *p2;
+	#define gc() (p1 == p2 && (p2 = (p1 = buf) + fread(buf, 1, MAXSIZE, stdin), p1 == p2) ? EOF : *p1++)
+	inline ll rd() {
+		ll an(0), ch(gc()), w(1);
+		for (; !isdigit(ch) ; ch = gc())
+			if (ch == '-')w = -1;
+		for (; isdigit(ch) ; ch = gc())
+			an = (an << 3) + (an << 1) + (ch ^ 48);
+		return an * w;
+	}
+}
+using namespace IO;
+
+ll T, n, s, t, v, x, y;
+ll q[305], he, ta;
+int main() {
+	freopen("never.in", "r", stdin);
+	freopen("never.out", "w", stdout);
+	T = rd();
+	while (T--) {
+		n = rd();
+		s = rd();t = rd();
+		x = rd();y = rd();
+		v = s - t;
+		if (v < 0) {
+			if (n <= -v / y + (-v % y != 0)) {
+				printf("%lld\n", v + n * y + t);
+				continue;
+			}
+			else {
+				n -= -v / y + (-v % y != 0);
+				v += (-v / y + (-v % y != 0)) * y;
+			}
+		}
+		else {
+			if (n <= v / x + (v % x != x - 1)) {
+				printf("%lld\n", v + n * x + t);
+				continue;
+			}
+			else {
+				n -= v / x + (v % x != x - 1);
+				v -= (v / x + (v % x != x - 1)) * x;
+			}
+		}
+		if (x == y) {
+			if (n % 2 == 1) {
+				if (v < 0)printf("%lld\n", v + y + t);
+				else printf("%lld\n", v - x + t);
+			}
+			else printf("%lld\n", v + t);
+			continue;
+		}
+		if (x <= 100 && y <= 100) {
+			he = ta = 0;q[0] = v;
+			while (q[ta] != v || !he) {
+				if (q[he] >= 0)q[++ta] = q[he] - x;
+				else q[++ta] = q[he] + y;
+				++he;
+			}
+			n %= ta;
+			printf("%lld\n", q[n] + t);
+			continue;
+		}
+	}
+	fclose(stdin);fclose(stdout);
+	return 0;
+}

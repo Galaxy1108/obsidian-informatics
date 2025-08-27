@@ -1,0 +1,106 @@
+#include<bits/stdc++.h>
+using namespace std;
+int T,n,s,t,x,y,d[1005];
+map<int,int>p;
+void read(int &s)
+{
+	s=0;
+	int f=1;
+	char c=getchar();
+	while(!isdigit(c))
+	{
+		if(c=='-')f=-1;
+		c=getchar();
+	}
+	while(isdigit(c))
+	{
+		s=(s<<3)+(s<<1)+(c-48);
+		c=getchar();
+	}
+	s=s*f;
+}
+int main()
+{
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	read(T);
+	while(T--)
+	{
+		read(n);read(s);read(t);read(x);read(y);
+		if(x<=100&&y<=100)
+		{
+			d[0]=s;
+			p.clear();
+			for(int i=-100;i<=100;i++)
+			{
+				p[i]=-1;
+			}
+			p[s]=0;
+			int tt=0;
+			bool ff=false;
+			while(n--)
+			{
+				if(s<t)s+=y;
+				else s-=x;
+				if(p[s]>=0)
+				{
+					ff=true;
+					int ll=(++tt)-p[s];
+					n%=ll;
+					cout<<d[p[s]+n]<<endl;
+					break;
+				}
+				else
+				{
+					p[s]=++tt;
+					d[tt]=s;
+				}
+			}
+			if(!ff)cout<<s<<endl;
+		}
+		else if(x==y)
+		{
+			if(s<t)
+			{
+				int bs=(t-s-1)/x+1;
+				if(bs>n)
+				{
+					cout<<s+n*x<<endl;
+				}
+				else
+				{
+					n-=bs;
+					s=s+bs*x;
+					if(n%2)
+					{
+						s-=x;
+					}
+					cout<<s<<endl;
+				}
+			}
+			else if(s>=t)
+			{
+				int bs=(s-t-1)/x+1;
+				if((s-t)%s==0)
+				{
+					bs++;
+				}
+				if(bs>n)
+				{
+					cout<<s-n*x<<endl;
+				}
+				else
+				{
+					n-=bs;
+					s=s-bs*x;
+					if(n%2)
+					{
+						s+=x;
+					}
+					cout<<s<<endl;
+				}
+			}
+		}
+	}
+	return 0;
+}

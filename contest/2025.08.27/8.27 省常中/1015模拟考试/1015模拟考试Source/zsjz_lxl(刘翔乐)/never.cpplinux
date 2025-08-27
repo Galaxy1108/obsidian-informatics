@@ -1,0 +1,125 @@
+#if IN_LOCAL
+import local;
+#endif // IN_LOCAL
+#include<iostream>
+using namespace std;
+#if !IN_LOCAL
+#include<fstream>
+ifstream fin("never.in", ifstream::binary);
+ofstream fout("never.out", ofstream::binary);
+#define cin fin
+#define cout fout
+#endif // !IN_LOCAL
+using ll = long long;
+ll n, s, t, x, y;
+inline ll F()
+{
+	if (n <= 1)
+	{
+		cout << (s - n * x) << '\n';
+		return 0;
+	}
+	--n;
+	s -= x;
+	ll ans = 1, v = (t - s + y - 1) / y;
+	if (n <= v)
+	{
+		cout << (s + n * y) << '\n';
+		return 0;
+	}
+	n -= v;
+	ans += v;
+	s += v * y;
+	if (n <= (v = (s - t) / x))
+	{
+		cout << (s - n * x) << '\n';
+		return 0;
+	}
+	n -= v;
+	s -= v * x;
+	return ans + v;
+}
+int main()
+{
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+	int T;
+	for (cin >> T; T--;)
+	{
+		cin >> n >> s >> t >> x >> y;
+		if (s >= t)
+		{
+			const ll v = (s - t) / x;
+			if (n <= v)
+			{
+				cout << (s - n * x) << '\n';
+				continue;
+			}
+			n -= v;
+			s -= v * x;
+		}
+		else
+		{
+			const ll v = (t - s + y - 1) / y;
+			if (n <= v)
+			{
+				cout << (s + n * y) << '\n';
+				continue;
+			}
+			n -= v;
+			s += v * y;
+		}
+		for (;;)
+		{
+			const ll s1 = s, f = F(), s2 = s;
+			if (f == 0)
+			{
+				break;
+			}
+			ll d = s1 - s2;
+			if (d == 0)
+			{
+				n %= f;
+				F();
+				break;
+			}
+			if (d > 0)
+			{
+				const ll v = (s2 - t) / d;
+				if (n <= v * f)
+				{
+					s -= n / f * d;
+					n %= f;
+					F();
+					break;
+				}
+				n -= v * f;
+				s -= v * d;
+				if (F() == 0)
+				{
+					break;
+				}
+			}
+			else
+			{
+				d = -d;
+				const ll v = (x - 1 - (s2 - t)) / d;
+				if (n <= v * f)
+				{
+					s += n / f * d;
+					n %= f;
+					F();
+					break;
+				}
+				n -= v * f;
+				s += v * d;
+				if (F() == 0)
+				{
+					break;
+				}
+			}
+		}
+	}
+	return 0;
+}

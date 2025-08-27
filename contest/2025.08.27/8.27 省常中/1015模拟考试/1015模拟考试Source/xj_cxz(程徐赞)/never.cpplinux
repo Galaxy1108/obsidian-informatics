@@ -1,0 +1,64 @@
+#pragma GCC optimize(2)
+#include<bits/stdc++.h>
+#define Re register
+#define FOR(x,l,r) for(Re int (x)=(l);(x)<=(r);(x)++)
+#define _FOR(x,l,r) for(Re int (x)=(r);(x)>=(l);(x)--)
+#define gc getchar()
+#define pb push_back
+#define mp make_pair
+#define pii pair<int, int >
+#define PII pair<ll, ll >
+#define fi first
+#define se second
+#define p_q priority_queue
+#define int ll
+#define il inline
+using namespace std;
+typedef long long ll;
+
+const int N = 1e5 + 5,MOD = 1e9 + 7;
+int n,t,s,x,y,a[N];
+
+il int read(int x=0,int f=1){char c=gc;while(!isdigit(c)){if(c=='-')f=-1;c=gc;}while(isdigit(c)){x=(x<<1)+(x<<3)+(c^48),c=gc;}return x*f;}
+il int max(int a,int b){return a > b ? a : b;}
+il int min(int a,int b){return a < b ? a : b;}
+il int Mod(int x){return x > MOD ? x - MOD : x;}
+il int qpow(int a,int n,int mod){
+	if(a == 0 && n != 0) return 0;
+	if(n == 0) return 1;
+    if(n == 1) return a % mod;
+    int tmp = qpow(a % mod,n >> 1,mod) % mod;
+    if(!(n & 1)) return tmp % mod * tmp % mod;
+    else return tmp % mod * tmp % mod * a % mod;
+}
+
+il void solve(){
+	n = read(),s = read(),t = read(),x = read(),y = read();
+	int l = x * y / __gcd(x,y),st = l / x + l / y;
+	if(s - t > 0){
+		n -= (s - t) / x,s -= ((s - t) / x) * x;
+		if(n < 0){
+			s += -n * x;
+			cout << s << endl;
+			return;
+		}
+	}
+	if(s - t < 0){
+		n -= (t - s) / y,s += ((t - s) / y) * y;
+		if(n < 0){
+			s -= -n * y;
+			cout << s << endl;
+			return;
+		}
+	}
+	n %= st;
+	FOR(i,1,n) s >= t ? s -= x : s += y;
+	cout << s << endl;
+}
+
+signed main(){
+	//freopen("never.in","r",stdin);//freopen("never.out","w",stdout);
+	int T = read();
+	while(T--) solve();
+	return 0;
+}

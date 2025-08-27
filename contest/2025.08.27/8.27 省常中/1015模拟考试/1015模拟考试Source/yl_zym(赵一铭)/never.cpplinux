@@ -1,0 +1,49 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long
+ll n,s,t,x,y;
+ll gcd(ll a,ll b) {return b?gcd(b,a%b):a;}
+void get_ans(ll a,ll b,ll lst1,ll lst2,ll op)
+{
+    
+    ll now=a/b,sum=a-b*now;
+    if((n-lst2)/now<lst1) return;
+    if(sum) get_ans(b,sum,lst1*now+lst2,lst1,-op);
+    s+=op*n/(lst1*now+lst2)*sum;
+    n%=lst1*now+lst2;
+    //cout<<a<<" "<<b<<" "<<lst<<" "<<op<<endl;
+    //cout<<now<<" "<<sum<<endl;
+    //cout<<n<<" "<<s<<endl;
+}
+int main()
+{
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+    int T;
+    scanf("%d",&T);
+    while(T--)
+    {
+        scanf("%lld%lld%lld%lld%lld",&n,&s,&t,&x,&y);
+        ll p=gcd(x,y);
+        n%=(x/p+y/p);
+        if(!n) {printf("%lld\n",s);continue;}
+        s-=t;
+        if(x<y)
+        {
+            get_ans(y,x,1,1,1);
+            for(int i=1;i<=n;i++)
+                if(s<0) s+=y;
+                else s-=x;
+            printf("%lld\n",t+s);
+        }
+        else 
+        {
+            get_ans(x,y,1,1,-1);
+            for(int i=1;i<=n;i++)
+                if(s<0) s+=y;
+                else s-=x;
+            printf("%lld\n",t+s);
+        }
+    }
+	return 0;
+}

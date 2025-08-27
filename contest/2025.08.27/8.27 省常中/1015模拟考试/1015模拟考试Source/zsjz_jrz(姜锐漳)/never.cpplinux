@@ -1,0 +1,75 @@
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+namespace sub1{
+    void main(ll n,ll s,ll t,ll x,ll y){
+        while (n--){
+            if (s>=t) s-=x;
+            else s+=y;
+        }
+        printf("%lld\n",s);
+    }
+}
+namespace sub2{
+    int d[205],h[205],tot;
+    void main(ll n,ll s,ll t,ll x,ll y){
+        memset(d,0,sizeof(d));
+        memset(h,-1,sizeof(h));
+        tot=0;
+        while (h[s+100]==-1){
+            d[tot]=s;
+            h[s+100]=tot;
+            if (s>=t) s-=x;
+            else s+=y;
+            ++tot;
+        }
+        if (n<=tot){
+            printf("%d\n",d[n]);
+            return;
+        }
+        printf("%d\n",d[h[s+100]+(n-tot)%(tot-h[s+100])]);
+    }
+}
+namespace sub3{
+    void main(ll n,ll s,ll t,ll x,ll y){
+        if (s>=t){
+            ll step=(s-t)/x;
+            if (n<=step){
+                printf("%lld\n",s-n*x);
+                return;
+            }
+            else{
+                n-=step;
+                s-=step*x;
+            }
+        }
+        else{
+            ll step=(t-s+x-1)/x;
+            if (n<=step){
+                printf("%lld\n",s+n*x);
+                return;
+            }
+            else{
+                n-=step;
+                s+=step*x;
+            }
+        }
+        if (n&1) s-=x;
+        printf("%lld\n",s);
+    }
+}
+void work(){
+    ll n,s,t,x,y;
+    scanf("%lld%lld%lld%lld%lld",&n,&s,&t,&x,&y);
+    if (n<=1e6){sub1::main(n,s,t,x,y);return;}
+    if (x<=100 && y<=100 && abs(s)<=100 && abs(t)<=100){sub2::main(n,s,t,x,y);return;}
+    if (x==y){sub3::main(n,s,t,x,y);return;}
+}
+int main(){
+    freopen("never.in","r",stdin);
+    freopen("never.out","w",stdout);
+    int T;
+    scanf("%d",&T);
+    while (T--) work();
+    return 0;
+}

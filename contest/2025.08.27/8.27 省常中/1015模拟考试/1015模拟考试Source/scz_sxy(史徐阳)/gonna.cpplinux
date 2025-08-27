@@ -1,0 +1,46 @@
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+const int N = 20005, M = 2305;
+int n, P, tot, ans, pl[M];
+int Cnt[N][M], cnt[N][M], pw[N][M], s[M];
+inline void sieve(){
+	for (int i = 2; i <= n; ++i){
+		int flag = 1;
+		for (int j = 2; j * j <= i; ++j)
+			if (i % j == 0) {flag = 0; break;}
+		if (flag) pl[++tot] = i;
+	}
+}
+int main(){
+	freopen("gonna.in", "r", stdin);
+	freopen("gonna.out", "w", stdout);
+	scanf("%d%d", &n, &P);
+	sieve();
+	for (int i = 1; i <= tot; ++i){
+		pw[i][0] = 1;
+		if (pl[i] <= 1000){
+			for (int j = 1; j <= 20000; ++j) pw[i][j] = 1ll * pw[i][j - 1] * pl[i] % P; 
+			for (int j = 1; j <= 20000; ++j) pw[i][j] = (pw[i][j] + pw[i][j - 1]) % P;
+		}else{
+			for (int j = 1; j <= 10000; ++j) pw[i][j] = 1ll * pw[i][j - 1] * pl[i] % P; 
+			for (int j = 1; j <= 10000; ++j) pw[i][j] = (pw[i][j] + pw[i][j - 1]) % P;
+		}
+	}
+	for (int i = 1; i <= n; ++i){
+		int x = i;
+		for (int j = 1; j <= tot; ++j){
+			Cnt[i][j] += Cnt[i - 1][j];
+			while (x % pl[j] == 0) ++Cnt[i][j], ++cnt[i][j], x /= pl[j];
+		}
+	}
+	for (int i = 1; i <= n; ++i){
+		for (int j = 1; j <= tot; ++j) s[j] += cnt[i][j] * i;
+		for (int j = 1; j <= tot; ++j) s[j] -= Cnt[i][j];
+		int tmp = 1;
+		for (int j = 1; j <= tot; ++j) tmp = 1ll * tmp * pw[j][s[j]] % P;
+		ans = (ans + tmp) % P;
+	}
+	printf("%d\n", ans);
+	return 0;
+}

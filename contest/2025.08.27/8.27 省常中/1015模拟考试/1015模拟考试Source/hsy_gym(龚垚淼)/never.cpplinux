@@ -1,0 +1,48 @@
+#include<iostream>
+#include<cmath>
+#define db double
+#define ll long long
+using namespace std;
+ll n,s,t,x,y;
+int main()
+{
+	ios::sync_with_stdio(false);
+	cin.tie(0),cout.tie(0);
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	int T;
+	cin>>T;
+	while(T--)
+	{
+		cin>>n>>s>>t>>x>>y;
+		ll tmp=s-t,cnt=0,num=0;
+		while(n>0)
+		{
+			if(tmp<0)
+			{
+				num=ceil((db)(-tmp)/y);
+				if(n>num)n-=num;
+				else
+				{
+					tmp+=n*y;
+					break;
+				}
+				tmp+=num*y;
+			}
+			else
+			{
+				if(tmp==0)num=1;
+				else num=ceil((db)(tmp)/x);
+				if(n>num)n-=num;
+				else
+				{
+					tmp-=n*x;
+					break;
+				}
+				tmp-=num*x;
+			}
+		}
+		cout<<t+tmp<<endl;
+	}
+	return 0;
+}

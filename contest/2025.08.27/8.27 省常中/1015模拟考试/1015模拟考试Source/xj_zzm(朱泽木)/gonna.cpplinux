@@ -1,0 +1,95 @@
+#include<bits/stdc++.h>
+#define pb push_back
+#define mp make_pair
+#define pii pair<int,int>
+#define x first
+#define y second
+#define WT int TT=read();while(TT--) 
+#define NO puts("NO");
+#define YES puts("YES");
+using namespace std;
+
+inline int read()
+{
+	char c=getchar();int x=0;bool f=0;
+	for(;!isdigit(c);c=getchar())f^=!(c^45);
+	for(;isdigit(c);c=getchar())x=(x<<1)+(x<<3)+(c^48);
+	if(f)x=-x;return x;
+}
+void ckmax(int &a,int b){a=(a>b?a:b);}
+void ckmin(int &a,int b){a=(a<b?a:b);}
+
+const int M=2e4+10;
+int n,f[M],Mod,tot,cnt[M],b[M],c[M],ans,maxn[M];
+vector<int>vp;
+vector<pii>d[M];
+
+struct fastmod{
+    #define ull unsigned long long
+    #define u128 __uint128_t
+    ull b,m;
+    fastmod(ull _b=998244353){b=_b,m=(ull)(((u128)(1)<<64)/b);}
+    int reduce(ull a){
+        ull q=(ull)(((u128)(m)*a)>>64),r=a-q*b;
+        return r>=b?r-b:r;
+    }
+    #undef ull
+    #undef u128
+}F,t;
+
+struct node
+{
+	int B;
+	vector<int>v1,v2,v3,v4;
+	void init(int x)
+	{
+		B=2000;
+		v1.pb(1),v2.pb(1);
+		for (int i=1;i<=B;i++)v1.pb(F.reduce(1ll*v1[i-1]*x)),v2.pb(F.reduce(v2[i-1]+v1[i]));
+		v3.pb(v1[B]),v4.pb(v2[B-1]);
+		for (int i=1;i<=B;i++)
+			v3.pb(F.reduce(1ll*v3[i-1]*v3[0])),v4.pb(F.reduce(v4[i-1]+1ll*v3[i-1]*v4[0]));
+	}
+	int query(int x)
+	{
+		if (x<=B)return v2[x];
+		else return F.reduce(v4[x/B-1]+1ll*v2[x%B]*v3[x/B-1]);
+	}
+}S[M];
+
+signed main()
+{
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	n=read(),Mod=read();
+	fastmod t(Mod);F=t;
+//	cerr<<clock()<<'\n';
+	for (int i=2;i<=n;i++)
+	{
+		if (f[i])continue;
+		tot++;vp.pb(i);
+		for (int j=i;j<=n;j+=i)f[j]=1;
+	}
+//	cerr<<tot<<'\n';
+	for (auto x:vp)
+		for (int j=x;j<=n;j+=x)
+		{
+			int cnt=0,w=j;
+			while(w%x==0)w/=x,cnt++;
+			d[j].pb(mp(x,cnt));
+		}
+	for (auto x:vp)S[x].init(x);
+//	cerr<<clock()<<'\n';
+	for (int i=1;i<=n;i++)
+	{
+		for (auto x:d[i])b[x.x]+=x.y*(i-1);
+		int res=1;
+//		for (auto x:vp)ckmax(maxn[x],b[x]);
+		for (auto x:vp)res=F.reduce(1ll*res*S[x].query(b[x]));
+		ans=(ans+res)%Mod;
+		for (auto x:d[i])c[x.x]+=x.y;
+		for (auto x:vp)b[x]-=c[x];
+	}
+	cout<<ans<<'\n';
+	return 0;
+}

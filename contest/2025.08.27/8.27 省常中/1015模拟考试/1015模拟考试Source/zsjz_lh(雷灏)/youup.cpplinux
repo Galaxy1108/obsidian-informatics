@@ -1,0 +1,103 @@
+#include<cstdio>
+#include<bitset>
+#include<algorithm>
+#define fo(i,x,y) for(int i = x;i <= y;++i)
+#define fd(i,x,y) for(int i = x;i >= y;--i)
+#define _is 1048576 * 10
+#define _os 1048576 * 10
+#define gc() ib[++bi]
+#define pc(ch) ob[++bo] = ch
+#define p 998244353
+using namespace std;
+char ib[_is],ob[_os];
+int bi = -1,bo = -1;
+int rd()
+{
+	int x = 0;char ch = gc();
+	while(ch < 48 || ch > 57) ch = gc();
+	while(ch >= 48 && ch <= 57) x = x * 10 + ch - 48,ch = gc();return x;
+}
+void pr(int x)
+{
+	char ch[20];int w = -1;
+	if(x == 0) ch[++w] = 48;
+	while(x) ch[++w] = x % 10 + 48,x /= 10;
+	fd(i,w,0) pc(ch[i]);pc(' ');
+}
+int num,n,x,y,k,d[300010],e[600010][2],tot,lst[300010],ca[300010];
+void add(int x,int y) {e[++tot][0] = y,e[tot][1] = lst[x],lst[x] = tot;}
+bitset<2010> a[2010],b[2010],c[2010];
+int id[300010];
+int f[300010],fac[300010],ifac[300010];
+void dg(int I,int x,int fa,int dis)
+{
+	if(dis > k) return;
+	a[I].set(x,1);
+	for(int i = lst[x];i;i = e[i][1]) if(e[i][0] ^ fa) dg(I,e[i][0],x,dis + 1);
+}
+bool cmp(int x,int y) {return ca[x] < ca[y];}
+//inline void inc(int &x,int y) {x = (x + y >= p ? x + y - p : x + y);}
+int ksm(int x,int y)
+{
+	int res = 1;
+	for(;y;y >>= 1,x = 1ll * x * x % p) if(y & 1) res = 1ll * res * x % p;
+	return res;
+}
+void bf(int x,int cnt,int d)
+{
+	if(x > n)
+	{
+		fo(i,0,d) f[cnt + i] = (f[cnt + i] + 1ll * fac[d] * ifac[i] % p * ifac[d - i]) % p;
+		return;
+	}
+	if(c[x - 1][id[x]] == 0) {c[x] = c[x - 1],bf(x + 1,cnt,d);return;}
+	bitset<2010> C = (c[x - 1] & b[x]) ^ c[x - 1];
+	if(C.none()) c[x] = c[x - 1],bf(x + 1,cnt,d + 1);
+	else
+	{
+		c[x] = c[x - 1],bf(x + 1,cnt,d);
+		c[x] &= b[x],bf(x + 1,cnt + 1,d);
+	}
+}
+int main()
+{
+	freopen("youup.in","r",stdin);
+	freopen("youup.out","w",stdout);
+	fread(ib,1,_is,stdin);
+	num = rd(),n = rd(),k = rd();
+	fo(i,1,n - 1) x = rd(),y = rd(),add(x,y),add(y,x),++d[x],++d[y];
+	bool bz = 1;
+	fo(i,1,n) if(d[i] > 2) {bz = 0;break;}
+	fac[0] = 1;
+	fo(i,1,n) fac[i] = 1ll * fac[i - 1] * i % p;
+	ifac[n] = ksm(fac[n],p - 2);
+	fd(i,n - 1,0) ifac[i] = 1ll * ifac[i + 1] * (i + 1) % p;
+	if(d[1] == n - 1)
+	{
+		if(k == 0) {pr(n);fo(i,2,n) pr(0);}
+		if(k == 1) {pr(n),pr(n - 1);fo(i,3,n) pr(0);}
+		if(k >= 2) {fo(i,1,n) pr(1ll * fac[n] * ifac[i] % p * ifac[n - i] % p);}
+	}
+	else if(bz)
+	{
+		f[1] = n;
+		fo(j,1,k)
+		{
+			fo(i,j,k) f[j + 1] = (f[j + 1] + 1ll * fac[i - 1] * ifac[i - j] % p * (n - i)) % p;
+			f[j + 1] = 1ll * f[j + 1] * ifac[j - 1] % p;
+		}
+		fo(i,1,n) pr(f[i]);
+	}
+	else
+	{
+		fo(i,1,n) dg(i,i,0,0);
+		fo(i,1,n) id[i] = i,ca[i] = a[i].count();
+		sort(id + 1,id + n + 1,cmp);
+		fo(i,1,n) b[i] = a[id[i]];
+		c[0].set(),bf(1,0,0);
+		fo(i,1,n) pr(f[i]);
+	}
+	pc('\n');
+	fwrite(ob,1,bo + 1,stdout);
+	return 0;
+}

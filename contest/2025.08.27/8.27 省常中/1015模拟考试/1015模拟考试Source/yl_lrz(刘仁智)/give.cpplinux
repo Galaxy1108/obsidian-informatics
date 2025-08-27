@@ -1,0 +1,39 @@
+#include<bits/stdc++.h>
+using namespace std;
+int n, m, S, A[35];
+int a[35], ans;
+void dfs(int u, int s)
+{
+	if(s > S) return ;
+	if(m + 1 == u)
+	{
+		if(S == s)
+		{ 
+			// for(int i = 1;i <= m;i ++) cout << A[a[i]] << ' ';
+			// cout << endl;
+			ans = ans ^ 1;
+		}
+		return ;
+	}
+	if(s == S) return ;
+	for(int i = 1;i <= n;i ++)
+		a[u] = i, dfs(u + 1, s + A[i]);
+}
+void solve()
+{
+	ans = 0, a[0] = 1;
+	scanf("%d%d%d", &m, &S, &n);
+	for(int i = 1;i <= n;i ++) scanf("%d", &A[i]);
+	dfs(1, 0);
+	printf("%d\n", ans);
+}
+int main()
+{
+	freopen("give.in", "r", stdin);
+	freopen("give.out", "w", stdout);
+	int t;
+	cin >> t;
+	while(t --)solve();
+	
+    return 0;
+}

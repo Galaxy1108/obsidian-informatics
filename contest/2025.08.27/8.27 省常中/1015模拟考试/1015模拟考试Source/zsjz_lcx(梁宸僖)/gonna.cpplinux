@@ -1,0 +1,68 @@
+#include<cstdio>
+#include<vector>
+#include<cstring>
+#define N 3000
+using namespace std;
+int ans,n,mo,a[N+10],p[N+10],tot,mi[N+10][25010];
+bool v[N+10];
+vector<int> pre[N+10],c[N+10];
+void init()
+{
+	for (int i=2;i<=N;i++)
+	{
+		if (!v[i]) p[++tot]=i;
+		for (int j=1;j<=tot;j++)
+		{
+			if (p[j]*i>N) break;
+			v[p[j]*i]=true;
+			if (i%p[j]==0) break;
+		}
+	}
+	for (int i=2;i<=N;i++)
+	{
+		int now=i;
+		for (int j=1;j<=tot;j++)
+			if (now%p[j]==0)
+			{
+				pre[i].push_back(p[j]);
+				int sum=0;
+				while (now%p[j]==0) sum++,now/=p[j];
+				c[i].push_back(sum);
+			}
+	}
+	for (int i=1;i<=tot;i++)
+	{
+		int ret=0;
+		for (int j=0,now=1;j<=25000;j++,now=1ll*now*p[i]%mo)
+			ret=(ret+now)%mo,mi[i][j]=ret;
+	}
+}
+int solve(int x)
+{
+	memset(a,0,sizeof(a));
+	for (int i=x,j=x;i>=2;i--,j--)
+	{
+		for (int k=0;k<pre[i].size();k++)
+			a[pre[i][k]]+=j*c[i][k];
+	}
+	for (int i=2,j=x-1;i<=x;i++,j--)
+	{
+		for (int k=0;k<pre[i].size();k++)
+			a[pre[i][k]]-=j*c[i][k];
+	}
+	int ans=1;
+	for (int i=1;i<=tot;i++)
+		if (a[p[i]]) ans=1ll*ans*mi[i][a[p[i]]]%mo;  
+	return ans;
+}
+signed main()
+{
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	scanf("%d%d",&n,&mo);
+	init();
+	for (int i=1;i<=n;i++)
+		ans=(ans+solve(i))%mo;
+	printf("%d\n",ans);
+	return 0;
+}

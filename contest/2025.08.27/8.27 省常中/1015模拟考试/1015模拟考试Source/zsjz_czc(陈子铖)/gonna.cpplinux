@@ -1,0 +1,68 @@
+#include <iostream>
+#include <cstdio>
+using namespace std;
+#define ll long long
+const ll N = 20050;
+const int mx = 20005;
+const int k = 470;
+ll p, ans;
+ll fc[N][2300], sum[N][2300], ed[N];
+ll s1[2300][500], s2[2300][500];
+ll pw[2300][500], pri[2300];
+ll G, now;
+int n, p1, p2;
+bool bz[N];
+int main() {
+	freopen("gonna.in", "r", stdin);
+	freopen("gonna.out", "w", stdout);
+	scanf("%d %lld", &n, &p);
+	for (int i(2) ; i <= mx ; ++i) {
+		if (!bz[i]) {
+			pri[++pri[0]] = i;
+			pw[pri[0]][0] = s1[pri[0]][0] = s2[pri[0]][0] = 1;
+			for (int j(1) ; j <= k ; ++j) {
+				pw[pri[0]][j] = pw[pri[0]][j - 1] * 1ll * i % p;
+				s1[pri[0]][j] = (s1[pri[0]][j - 1] + pw[pri[0]][j]) % p;
+			}
+			for (int j(1) ; j <= k ; ++j) {
+				s2[pri[0]][j] = (pw[pri[0]][k] * s2[pri[0]][j - 1] % p + s1[pri[0]][k - 1]) % p;
+			}
+		}
+		for (int j(1) ; j <= pri[0] ; ++j) {
+			if (pri[j] * i > mx)break;
+			bz[pri[j] * i] = 1;
+			if (i % pri[j] == 0)break;
+		}
+	}
+	for (int i(2) ; i <= mx ; ++i) {
+		int now(i);
+		for (int j(1) ; j <= pri[0] ; ++j) {
+			fc[i][j] = fc[i - 1][j];
+			sum[i][j] = sum[i - 1][j];
+			sum[i - 1][j] = fc[i - 1][j] * i - sum[i - 1][j];
+			if (sum[i - 1][j] > 0)ed[i - 1] = j;
+			while (now % pri[j] == 0) {
+				fc[i][j]++;
+				now /= pri[j];
+			}
+			sum[i][j] += fc[i][j] * 2;
+			if (i == mx)
+				sum[i][j] = fc[i][j] * (i + 1) - sum[i][j];
+		}
+	}
+	ed[20000] = pri[0];
+	ans = 1;
+	for (int i(2) ; i <= n ; ++i) {
+		G = 1;
+		for (int j(1) ; j <= ed[i] ; ++j) {
+			p1 = sum[i][j] / k;p2 = sum[i][j] - p1 * k;
+			if (p2)now = (s2[j][p1] * pw[j][p2] + s1[j][p2 - 1]) % p;
+			else now = s2[j][p1] * pw[j][p2] % p;
+			G = G * now - (G * now / p) * p;
+		}
+		ans += G;
+	}
+	printf("%lld\n", ans % p);
+	fclose(stdin);fclose(stdout);
+	return 0;
+}

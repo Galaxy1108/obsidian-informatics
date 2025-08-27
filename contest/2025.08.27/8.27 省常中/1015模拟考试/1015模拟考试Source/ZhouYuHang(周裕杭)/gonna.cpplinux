@@ -1,0 +1,77 @@
+#include <bits/stdc++.h>
+#define il inline
+
+using namespace std;
+using LL = long long;
+
+const int N = 2e4 + 10, S = 2300;
+
+int n, mod;
+
+bool np[N];
+int tot = 0, ps[S];
+
+int facv[N], sum[N], pw[N];
+
+il int v (int n, int p) {
+	int cnt = 0;
+	while (n % p == 0) n /= p, ++cnt;
+	return cnt;	
+}
+
+int g[N];
+
+struct Node {
+	int sum, pw;
+	Node (int a = 0, int b = 0) {
+		sum = a, pw = b;
+	}
+};
+
+int B;
+
+il Node calc (int n, int p) {
+	if (n <= B) return Node(sum[n], pw[n]);
+	Node t = calc((n - 1) / 2, p);
+	Node ans(t.sum * ((LL)t.pw * p % mod + 1) % mod, (LL)t.pw * t.pw % mod * p % mod); 
+	if (!(n & 1)) ans.pw = (LL)ans.pw * p % mod, ans.sum = (ans.sum + ans.pw) % mod;
+	return ans;
+}
+
+int main () {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr), cout.tie(nullptr);
+	
+	freopen("gonna.in", "r", stdin);
+	freopen("gonna.out", "w", stdout);
+
+	cin >> n >> mod;
+
+	for (int i = 2; i <= n; ++i) if (!np[i]) {
+		ps[++tot] = i;
+		for (int j = i + i; j <= n; j += i) np[j] = true;
+	}
+	
+	for (int i = 1; i <= n; ++i) g[i] = 1;
+	for (int i = 1; i <= tot; ++i) {
+		int p = ps[i];
+		facv[0] = 0, pw[0] = sum[0] = 1;
+		for (int j = 1; j <= n; ++j) {
+			facv[j] = facv[j - 1] + v(j, p);
+			pw[j] = (LL)pw[j - 1] * p % mod;
+			sum[j] = (sum[j - 1] + pw[j]) % mod;
+		}
+		B = n;
+		int sum = 0;
+		for (int j = 1; j <= n; ++j) {
+			sum += facv[j];
+			int fv = (j + 1) * facv[j] - sum * 2;
+			g[j] = (LL)g[j] * calc(fv, p).sum % mod;
+		}
+	}
+	
+	int ans = 0;
+	for (int i = 1; i <= n; ++i) ans = (ans + g[i]) % mod;
+	cout << ans << endl;
+	return 0;
+}

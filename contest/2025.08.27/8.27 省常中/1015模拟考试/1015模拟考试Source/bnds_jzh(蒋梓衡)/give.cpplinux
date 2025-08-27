@@ -1,0 +1,36 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+
+
+using ll = long long;
+#define IO(a) freopen(#a".in", "r", stdin), freopen(#a".out", "w", stdout),\
+	cin.tie(0)->sync_with_stdio(0), cout.tie(0)
+#define F(i, a, b) for (int i = (a), i##end = (b); i <= i##end; i++)
+#define R(i, a, b) for (int i = (a), i##end = (b); i >= i##end; i--)
+
+ll m, s;
+int n, a[210];
+bitset<400100> f, g;
+
+void solve() {
+	cin >> m >> s >> n;
+	f.reset(), f[0] = 1;
+	F(i, 1, n) cin >> a[i];
+	R(i, 60, 0) {
+		R(j, 200000, 1) f[j * 2] = f[j], f[j * 2 - 1] = 0;
+		if (s >> i & 1) f <<= 1;
+		if (m >> i & 1) {
+			g.reset();
+			F(k, 1, n) g ^= f >> a[k];
+			swap(f, g);
+		}
+	}
+	cout << f[0] << "\n";
+}
+
+int main() {
+	IO(give);
+	int T;
+	for (cin >> T; T; T--) solve();
+}

@@ -1,0 +1,13 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+	freopen("youup.in","r",stdin);
+	freopen("youup.out","w",stdout);
+	int n;
+	cin>>n>>n;
+	printf("%lld",n);
+	for(int i=1;i<n;i++)printf(" 0");
+
+	return 0;
+}

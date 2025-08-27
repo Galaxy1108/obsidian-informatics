@@ -1,0 +1,42 @@
+#include<bits/stdc++.h>
+using namespace std;
+long long T,a,b,c,d[100001],dp[61][5001],C[5001][5001];
+int main()
+{
+	freopen("give.in","r",stdin);
+	freopen("give.out","w",stdout);
+	scanf("%lld",&T);
+	for(int i=0;i<=5000;i++)
+	{
+		C[i][0]=1;
+		for(int j=1;j<=i;j++) C[i][j]=(C[i-1][j-1]^C[i-1][j]);
+	}
+	for(int ii=1;ii<=T;ii++)
+	{
+		scanf("%lld%lld%lld",&a,&b,&c);
+		for(int i=1;i<=c;i++) scanf("%lld",&d[i]);
+		memset(dp,0,sizeof(dp));
+		dp[0][0]=1;
+		for(int i=1;i<=60;i++)
+		{
+			if(a&((long long)(1)<<(i-1)))
+			{
+				long long tt=(1<<(i-1));
+				for(int k=1;k<=c;k++)
+				{
+					for(int j=tt*d[k];j<=b;j++)
+					{
+						dp[i][j]+=dp[i-1][j-tt*d[k]];
+						dp[i][j]%=2;
+					}
+				}
+			}
+			else
+			{
+				for(int j=0;j<=b;j++) dp[i][j]=dp[i-1][j];
+			}
+		}
+		printf("%lld\n",dp[60][b]);
+	}
+	return 0;
+}

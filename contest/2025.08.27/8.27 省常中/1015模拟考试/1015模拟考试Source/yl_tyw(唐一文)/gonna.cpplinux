@@ -1,0 +1,113 @@
+#include <bits/stdc++.h>
+#define il inline
+#define re register
+#define ll long long
+#define ull unsigned ll
+#define db double
+#define ldb long db
+#define fi first
+#define se second
+#define pii pair<int, int>
+#define MP(x, y) make_pair(x, y)
+#define eb emplace_back
+using namespace std;
+namespace FastIO {
+  const int iL = 1 << 20;
+  char ibuf[iL], *iS = ibuf + iL, *iT = ibuf + iL;
+  #define GC() (iS == iT) ? \
+  (iT = (iS = ibuf) + fread(ibuf, 1, iL, stdin), (iS == iT) ? EOF : *iS++) : *iS++
+  template <class T>il void read(T &x) {
+    x = 0;
+    char c = GC(); bool flg = false;
+    while(!isdigit(c)) {flg |= c == '-'; c = GC();}
+    while(isdigit(c)) {x = (x << 1) + (x << 3) + (c & 15); c = GC();}
+    if(flg) x = -x;
+  }
+  template <class T>il void gread(T &x) {
+    x = 0;
+    char c = getchar(); bool flg = false;
+    while(!isdigit(c)) {flg |= c == '-'; c = getchar();}
+    while(isdigit(c)) {x = (x << 1) + (x << 3) + (c & 15); c = getchar();}
+    if(flg) x = -x;
+  }
+  il int read() {
+    int x = 0;
+    char c = GC(); bool flg = false;
+    while(!isdigit(c)) {flg |= c == '-'; c = GC();}
+    while(isdigit(c)) {x = (x << 1) + (x << 3) + (c & 15); c = GC();}
+    return flg ? -x : x;
+  }
+  char Out[iL], *iter = Out;
+  #define Flush() fwrite(Out, 1, iter - Out, stdout); iter = Out
+  template <class T>il void write(T x, char LastChar = '\n') {
+    int c[35], len = 0;
+    if(x < 0) {*iter++ = '-'; x = -x;}
+    do {c[++len] = x % 10; x /= 10;} while(x);
+    while(len) *iter++ = c[len--] + '0';
+    *iter++ = LastChar; Flush();
+  }
+}
+using namespace FastIO;
+#define N 20005
+#define P 2265
+#define LOG 12
+int pri[P], pcnt; bool pvis[N];
+int pw[P][N], pre[P][N]/*, pwr[P][LOG]*/, cnt[P]/*, MX*/;
+struct node {int x, y;} ;
+vector<node> s[N];
+int main() {
+  freopen("gonna.in", "r", stdin);
+  freopen("gonna.out", "w", stdout);
+  const int n = read(), MOD = read();
+  for(re int i = 2; i <= n; ++i) {
+    if(!pvis[i]) pri[++pcnt] = i;
+    for(re int j = 1; j <= pcnt && i * pri[j] <= n; ++j) {
+      pvis[i * pri[j]] = true; if(!(i % pri[j])) break;
+    }
+  }
+  for(re int i = 1; i <= pcnt; ++i) {
+    int p = pri[i], t = p; pw[i][0] = pre[i][0] = 1;
+    for(re int j = 1; j <= n; ++j) {
+      pw[i][j] = p; pre[i][j] = (pre[i][j - 1] + p) % MOD;
+      p = 1ll * p * t % MOD;
+    }
+//    int PW = pw[i][n], PRE = pre[i][n - 1];
+//    pwr[i][0] = 1;
+//    for(re int j = 1; j < LOG; ++j) {
+//      pwr[i][j] = (1ll * pwr[i][j - 1] * PW + PRE) % MOD;
+//    }
+//    for(; cnt[j] >= n; cnt[j] -= n) h = (1ll * h * PW + PRE) % MOD;
+//    while(p <= n) {pw[i][++t] = p; pw[i][t] += pw[i][t - 1]; p *= pri[i];}
+//    for(re int j = 1; j <= t; ++j) printf("%d ", pw[i][j]); printf("\n");
+  }
+  for(re int i = 1; i <= pcnt; ++i)
+    for(re int p = pri[i], j = p; j <= n; j += p) {
+      int k = j, t = 0; while(!(k % p)) {k /= p; ++t;}
+      s[j].eb(node {i, t});
+    }
+//  for(re int i = 1; i <= n; ++i) {
+//    for(auto t : s[i]) printf("(%d, %d), ", t.x, t.y); printf("\n");
+//  }
+  int ans = 0;
+  for(re int i = 1, t = 1; i <= n; ++i) {
+    while(t <= pcnt && pri[t] <= i) cnt[t++] = 0;
+    for(re int j = 1; j <= i; ++j)
+      for(auto t : s[j]) cnt[t.x] += t.y * (j + j - i - 1);
+    int sum = 1;
+//    for(re int j = 1; j < t; ++j) printf("%d ", cnt[j]); printf("\n");
+    for(re int j = 1, PW, PRE; j < t; ++j) {
+      int h = /*pwr[j][cnt[j] / n]*/1;// cnt[j] %= n;
+//      MX = max(MX, cnt[j]);
+      if(cnt[j] > n) {
+        PW = pw[j][n]; PRE = pre[j][n - 1];
+        for(; cnt[j] >= n; cnt[j] -= n) h = (1ll * h * PW + PRE) % MOD;
+      }
+      if(cnt[j]) h = (1ll * h * pw[j][cnt[j]] + pre[j][cnt[j] - 1]) % MOD;
+      sum = 1ll * sum * h % MOD; cnt[j] = 0;
+    }
+    (ans += sum) %= MOD;
+  }
+//  write(MX);
+  write(ans);
+  return 0;
+}

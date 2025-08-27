@@ -1,0 +1,74 @@
+#include<iostream>
+#include<cstdio>
+using namespace std;
+#define fo(i,a,b) for(int i=a;i<=b;++i)
+#define fod(i,a,b) for(int i=a;i>=b;--i)
+#define LL long long
+int n,p;
+int z[3011],p2[20011];
+int h[20011][3011];
+int cm[3011][1011],cm2[3011][1011];
+int c[3011][1011],c2[3011][1011];
+void ycl(){
+	fo(i,2,20000){
+		if(!p2[i])z[++z[0]]=i;
+		fo(j,1,z[0]){
+			if(i*z[j]>20000)break;
+			p2[i*z[j]]=1;
+		}
+	}
+	fo(i,2,20000){
+		int u=i;
+		fo(j,1,z[0]){
+			if(!u)break;
+			while(u%z[j]==0){
+				u/=z[j];
+				++h[i][j];
+			}
+		}
+		fo(j,1,z[0]){
+			if(z[j]>i)break;
+			h[i][j]+=h[i-1][j];
+		}
+	}
+	fo(i,1,z[0]){
+		cm[i][0]=c[i][0]=1;
+		fo(j,1,1000)cm[i][j]=(LL)cm[i][j-1]*z[i]%p;
+		fo(j,1,1000)c[i][j]=(cm[i][j]+c[i][j-1])%p;
+	}
+	fo(i,1,z[0]){
+		cm2[i][0]=c2[i][0]=1;
+		fo(j,1,1000)cm2[i][j]=(LL)cm2[i][j-1]*cm[i][1000]%p;
+		fo(j,1,1000)c2[i][j]=((LL)(c[i][1000]-1)*cm2[i][j-1]%p+c2[i][j-1])%p;
+	}
+}
+int f[3011];
+LL ans=1;
+int main(){
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	scanf("%d%d",&n,&p);
+	ycl();
+	int t=0;
+	fo(i,2,n){
+		fo(j,1,z[0]){
+			if(z[j]>i)break;
+			f[j]+=h[i][j]*2;
+		}
+		LL v=1;
+		fo(j,1,z[0]){
+			if(z[j]>i)break;
+			int g=h[i][j]*(i+1)-f[j];
+			if(g<=1000)g=c[j][g];
+			else {
+				int g2=g/1000;if(g%1000==0)--g2;
+				g=((LL)cm2[j][g2]*(c[j][g-g2*1000]-1)%p+c2[j][g2])%p;
+			}
+			v=v*g%p;
+		}
+		ans+=v;
+	}
+	ans%=p;
+	printf("%lld",ans);
+	return 0;
+}

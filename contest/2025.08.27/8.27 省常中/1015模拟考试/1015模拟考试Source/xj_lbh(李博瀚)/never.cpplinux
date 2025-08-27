@@ -1,0 +1,65 @@
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+ll n,s,t,x,y,block;
+#include<ext/pb_ds/assoc_container.hpp>
+#include<ext/pb_ds/hash_policy.hpp>
+using namespace __gnu_pbds;
+cc_hash_table<ll,ll> mp;
+
+ll Gee(ll now,ll n) {
+	for(ll i=1; i<=n; i++) {
+		if(now>=t) now-=x;
+		else now+=y;
+	}
+	return now;
+}
+ll cnt;
+ll Bai(ll now){
+	if(mp[now]) return mp[now];
+	return mp[now]=Gee(now,block);
+}
+
+ll Run() {
+	scanf("%lld%lld%lld%lld%lld",&n,&s,&t,&x,&y);
+	if(n<=1000000){
+		ll now=s;
+		while(n--){
+			if(now>=t) now-=x;
+			else now+=y;
+		}
+		return now;
+	}	
+	block=sqrt(n);
+	mp.clear();
+	ll ans=s;
+	cnt=0;
+	for(ll i=1;i<=block;i++)
+		ans=Bai(ans);
+	return Gee(ans,n-block*block);
+}
+
+int main() {
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	int T;
+	scanf("%d",&T);
+	while(T--){
+//		double nextime=clock();
+		printf("%lld\n",Run());
+//		printf("time : %.2f\n",((double)clock()-nextime)/1000.0);
+	}	
+}
+/*
+10
+10 25 29 71 3
+100 10 7 8 63
+1000 90 23 60 9
+10000 29 62 2 1
+100000 6 18 28 8
+1000000 7272269 170342490 866711109 2
+10000000 18952212 320992334 545940189 83078511
+100000000 5186 96 433929148 608105279
+1000000000 708573089 241363401 834032431 8895
+10000000000 5534095 8081 943105538 462639095    
+*/

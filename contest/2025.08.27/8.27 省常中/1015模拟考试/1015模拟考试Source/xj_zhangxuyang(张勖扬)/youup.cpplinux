@@ -1,0 +1,94 @@
+#pragma GCC optimize("Ofast")
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long LL;
+const int NUM=2005;
+const LL MOD=998244353;
+int read()
+{
+    int x=0,f=1;
+    char c=getchar();
+    while(c<'0'||c>'9')
+	{
+        if(c=='-') f=-1;
+		c=getchar();
+	}
+    while(c>='0'&&c<='9') x=(x<<3)+(x<<1)+c-'0',c=getchar();
+    return x*f;
+}
+int n,x,num,head[NUM],val[NUM],ans[NUM],result,cnt,rt,mx;
+LL p[NUM],inv[NUM];
+struct edge
+{
+    int next,to;
+}e[NUM<<1];
+void add_edge(int from,int to)
+{
+    e[++num].next=head[from];
+    e[num].to=to,head[from]=num;
+}
+LL Fast_pow(LL base,LL k)
+{
+    LL result=1;
+    while(k)
+    {
+        if(k&1) result=(result*base)%MOD;
+        base=(base*base)%MOD;
+        k>>=1;
+    }
+    return result;
+}
+LL C(int a,int b)
+{
+    return (((p[a]*inv[b])%MOD)*inv[a-b])%MOD;
+}
+void dfs(int u,int dep,int fa)
+{
+    int v;
+    if(dep<=x) cnt++;
+    else result++;
+    for(int i=head[u];i;i=e[i].next)
+    {
+        v=e[i].to;
+        if(v!=fa&&val[v]) dfs(v,dep+1,u);
+    }
+}
+void dfs2(int u,int dep,int fa)
+{
+    int v;
+    if(dep>mx) mx=dep,rt=u;
+    for(int i=head[u];i;i=e[i].next)
+    {
+        v=e[i].to;
+        if(v!=fa&&val[v]) dfs2(v,dep+1,u);
+    }
+}
+int main()
+{
+    freopen("youup.in","r",stdin);
+    freopen("youup.out","w",stdout);
+    int u,v;
+    read(),n=read(),x=read();
+    p[0]=1;
+    for(int i=1;i<=n;i++) p[i]=(p[i-1]*i)%MOD;
+    for(int i=0;i<=n;i++) inv[i]=Fast_pow(p[i],MOD-2);
+    for(int i=1;i<n;i++)
+    {
+        u=read(),v=read();
+        add_edge(u,v),add_edge(v,u);
+    }
+    int st=1;
+    for(int i=1;i<=n+1;i++) val[i]=1;
+    for(int i=1;i<=n;i++)
+    {
+        mx=0,cnt=-1;
+        dfs2(st,1,0);
+        result=val[rt]=0;
+        dfs(rt,0,0);
+        for(int j=1;j<=result;j++)
+            for(int h=0;h<=cnt;h++)
+                ans[j+h+1]=((p[result]*inv[j]%MOD*inv[result-j]%MOD*p[cnt]%MOD*inv[h]%MOD*inv[cnt-h])+ans[j+h+1])%MOD;
+        while(!val[st]) st++;
+    }
+    for(int i=1;i<=n;i++) printf("%lld ",(MOD+C(n,i)-ans[i])%MOD);
+}

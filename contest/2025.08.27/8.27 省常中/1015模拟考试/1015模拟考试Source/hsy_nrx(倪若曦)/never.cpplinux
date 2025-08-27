@@ -1,0 +1,55 @@
+#include<bits/stdc++.h>
+#define il inline
+#define cs const
+#define ri register
+#define int long long
+#define F(s) freopen(#s".in","r",stdin),freopen(#s".out","w",stdout);
+using namespace std;
+il int rd(){
+	ri int x=0,f=0;ri char c=getchar();
+	while(c<'0'||c>'9') f|=(c=='-'),c=getchar();
+	while(c>='0'&&c<='9') x=x*10+(c^48),c=getchar();
+	return f?-x:x;
+}
+il void wt(int x){
+	if(x<0) x=-x,putchar('-');
+	if(x>=10) wt(x/10);
+	putchar(x%10+48);
+	return;
+}
+int q,n,s,t,x,y;
+int r[205];
+signed main(){
+	F(never)
+	q=rd();
+	while(q--){
+		n=rd(),s=rd(),t=rd(),x=rd(),y=rd();
+		if(s>=t){
+			if(n<=(s-t)/x){
+				wt(s-n*x),putchar('\n');
+				continue;
+			}
+			n-=(s-t)/x;
+			s-=((s-t)/x)*x;
+		}
+		else{
+			if(n<=(t-s)/y){
+				wt(s+n*y),putchar('\n');
+				continue;
+			}
+			n-=(t-s)/y;
+			s+=((t-s)/y)*y;
+		}
+		for(ri int i=1;i<=min(n,x+y);++i){
+			if(s>=t) s-=x;
+			else s+=y;
+			r[i]=s;
+		}
+		r[0]=r[x+y];
+		wt(r[n%(x+y)]),putchar('\n');
+	}
+
+
+	return 0;
+}
+

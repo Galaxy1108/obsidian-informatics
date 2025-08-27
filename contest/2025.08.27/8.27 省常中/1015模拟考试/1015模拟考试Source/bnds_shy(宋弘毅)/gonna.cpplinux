@@ -1,0 +1,101 @@
+#include <fstream>
+#include <vector>
+using namespace std;
+ifstream cin( "gonna.in" );
+ofstream cout( "gonna.out" );
+long long int p;
+long long int qpow( long long int a, long long int b )
+{
+    if ( b == 0 )
+    {
+        return 1;
+    }
+    if ( b == 1 )
+    {
+        return a;
+    }
+    long long int t = qpow( a, b / 2 ) % p;
+    if ( b & 1 )
+    {
+        return ( ( t * t ) % p * a ) % p;
+    }
+    else
+    {
+        return ( t * t ) % p;
+    }
+}
+long long int sump( long long int m, long long int n )  // 1+n+n^2+...+n^m
+{
+    long long int fz = qpow( n, m + 1 ) - 1;
+    fz = ( fz + p ) % p;
+    long long int fm = n - 1;
+    fm = qpow( fm, p - 2 ) % p;
+    return ( fz * fm ) % p;
+}
+bool vis[ 20010 ];
+vector< int > primes;
+long long int vp[ 3010 ][ 20010 ], vpsum[ 3010 ][ 20010 ];
+void shy( int n )
+{
+    for ( int i = 2; i <= n; i++ )
+    {
+        if ( !vis[ i ] )
+        {
+            primes.push_back( i );
+            for ( int j = i + i; j <= n; j += i )
+            {
+                vis[ j ] = 1;
+            }
+        }
+    }
+}
+int vn( int n, int p )
+{
+    int ans = 0;
+    while ( n )
+    {
+        if ( n % p )
+        {
+            return ans;
+        }
+        ans++;
+        n /= p;
+    }
+    return ans;
+}
+void vnf( int n )
+{
+    for ( int i = 0; i < primes.size(); i++ )
+    {
+        for ( int j = 1; j <= n; j++ )
+        {
+            vp[ i ][ j ] = vp[ i ][ j - 1 ] + vn( j, primes[ i ] );
+            ( vpsum[ i ][ j ] = vpsum[ i ][ j - 1 ] + vp[ i ][ j ] ) %= p;
+        }
+    }
+}
+long long int g( int n )
+{
+    long long int ans = 1;
+    for ( int i = 0; i < primes.size(); i++ )
+    {
+        long long int vpfn = ( n + 1 ) * vp[ i ][ n ] - 2 * vpsum[ i ][ n ];
+        // cerr << vpfn << endl;
+        ( ans *= sump( vpfn, primes[ i ] ) % p ) %= p;
+    }
+    // cerr << ans << endl << "#######" << endl;
+    return ans;
+}
+int main()
+{
+    int n;
+    cin >> n >> p;
+    shy( n );
+    vnf( n );
+    long long int ans = 0;
+    for ( int i = 1; i <= n; i++ )
+    {
+        ( ans += g( i ) ) %= p;
+    }
+    cout << ans << endl;
+}

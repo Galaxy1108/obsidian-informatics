@@ -1,0 +1,95 @@
+#include<bits/stdc++.h>
+using namespace std;
+long long tt=0,N;
+void work(long long X,long long Y,long long v1,long long v2)
+{
+//	cout<<tt<<" "<<X<<" "<<Y<<" "<<v1<<" "<<v2<<"\n";
+	if(tt<0)
+	{
+		if(Y==0)
+		{
+			N%=v2;return;
+		}
+		if(N<=v2*((-tt)/Y))
+		{
+			tt=tt+Y*(N/v2);N%=v2;return;
+		}N-=v2*((-tt)/Y);tt+=((-tt)/Y)*Y;
+		if(tt<0)
+		{
+			if(N<=v2)
+			{
+				tt=tt+Y*(N/v2);N%=v2;return;
+			}N-=v2,tt+=Y;
+		}
+		work(X%Y,Y,v1+v2*(X/Y),v2);
+	}
+	else
+	{
+		if(X==0)
+		{
+			N%=v1;return;
+		}
+		if(N<=v1*(tt/X))
+		{
+			tt=tt-X*(N/v1);N%=v1;return;
+		}N-=v1*(tt/X);tt-=(tt/X)*X;
+		if(tt>=0)
+		{
+			if(N<=v1)
+			{
+				tt=tt-X*(N/v1);N%=v1;return;
+			}N-=v1,tt-=X;
+		}
+		work(X,Y%X,v1,v2+v1*(Y/X));
+	}
+	if(tt<0)
+	{
+		if(Y==0)
+		{
+			N%=v2;return;
+		}
+		if(N<=v2*((-tt)/Y))
+		{
+			tt=tt+Y*(N/v2);N%=v2;return;
+		}N-=v2*((-tt)/Y);tt+=((-tt)/Y)*Y;
+		if(tt<0)
+		{
+			if(N<=v2)
+			{
+				tt=tt+Y*(N/v2);N%=v2;return;
+			}N-=v2,tt+=Y;
+		}work(X%Y,Y,v1+v2*(X/Y),v2);
+	}
+	else
+	{
+		if(X==0)
+		{
+			N%=v1;return;
+		}
+		if(N<=v1*(tt/X))
+		{
+			tt=tt-X*(N/v1);N%=v1;return;
+		}N-=v1*(tt/X);tt-=(tt/X)*X;
+		if(tt>=0)
+		{
+			if(N<=v1)
+			{
+				tt=tt-X*(N/v1);N%=v1;return;
+			}N-=v1,tt-=X;
+		}work(X%Y,Y,v1+v2*(X/Y),v2);
+	}
+}
+long long TT,a,b,S,T,X,Y;
+int main()
+{
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	scanf("%lld",&TT);
+	for(int ii=1;ii<=TT;ii++)
+	{
+		scanf("%lld%lld%lld%lld%lld",&N,&S,&T,&X,&Y);
+		tt=S-T;work(X,Y,1,1);
+		printf("%lld\n",tt+T);
+	}
+	return 0;
+}

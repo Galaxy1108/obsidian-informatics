@@ -1,0 +1,60 @@
+#include<cstring>
+#include<iostream>
+#include<cstdio>
+#include<algorithm>
+#define M 200
+using namespace std;
+long long f[200200];
+long long n,s,t,x,y;
+int T;
+bool vis[200200];
+int main(){
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+   	scanf("%d",&T);
+   	while(T--){
+   		memset(f,0,sizeof(f));
+   		memset(vis,0,sizeof(vis));
+   	    scanf("%lld %lld %lld %lld %lld",&n,&s,&t,&x,&y);
+   	    if(x==y){
+           if(s<t){
+		   if(n<=(t-s)/y){
+			s=s+min(n,((t-s)/y))*y;
+			printf("%lld\n",s);
+			continue;
+		   }
+		   n=n-(t-s)/y;
+		   s=s+((t-s)/y)*y;
+	      }
+	      else{
+	  	  if(n<=(s-t)/x){
+	  		s=s-min(n,((s-t)/x))*x;
+	  		printf("%lld\n",s);
+	  		continue;
+		  }
+		  n=n-(s-t)/x;
+		  s=s-((s-t)/x)*x;
+	      }
+          if(n%2==0)
+          printf("%lld\n",s);
+          else {
+          	if(s>=t) s-=x;
+          	else x+=y;
+          	printf("%lld\n",s);
+		  }
+		  continue;
+	    }
+   	    s+=M,t+=M;
+   	    f[s]=0,vis[s]=1;
+   	    int step=0;
+	    while(n){
+	   	  n--;
+	   	  step++;
+	   	  if(s>=t) s-=x;
+	   	  else s+=y;
+	   	  if(vis[s]) n=n%(step-f[s]);
+		  vis[s]=1,f[s]=step;
+	    }
+	    printf("%lld\n",s-M);
+	}
+}

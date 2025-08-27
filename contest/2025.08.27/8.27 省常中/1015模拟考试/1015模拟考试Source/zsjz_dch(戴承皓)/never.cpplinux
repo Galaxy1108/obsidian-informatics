@@ -1,0 +1,27 @@
+#include <cstdio>
+#include <iostream>
+#define LL long long
+using namespace std;
+template <typename T>
+inline void read(T &x) {
+	x = 0; int f = 0; char ch = getchar();
+	for(; !isdigit(ch); ch = getchar()) if(ch == '-') f = 1;
+	for(; isdigit(ch); ch = getchar()) x = (x << 3) + (x << 1) + (ch ^ 48);
+	if(f) x = ~x + 1;
+}
+int T;
+LL n, s, t, x, y, d;
+int main() {
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	read(T);
+	while(T--) {
+		read(n), read(s), read(t), read(x), read(y), s -= t;
+		while(n) {
+			if(-y <= s && s < x && x == y) n %= 2;
+			if(s >= 0) d = min((s + x) / x, n), n -= d, s = s - x * d;
+			else d = min((-s + y - 1) / y, n), n -= d, s = s + y * d;
+		}
+		printf("%lld\n",s + t);
+	}
+}

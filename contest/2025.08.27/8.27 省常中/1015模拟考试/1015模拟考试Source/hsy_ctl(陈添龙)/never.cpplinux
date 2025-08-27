@@ -1,0 +1,55 @@
+#include<bits/stdc++.h>
+#define pc putchar
+#define int long long
+using namespace std;
+inline int read()
+{
+	int x=0,f=1;char ch=getchar();
+	while(ch<'0'||ch>'9'){f=ch=='-'?-1:f;ch=getchar();}
+	while(ch>='0'&&ch<='9'){x=x*10+(ch^48);ch=getchar();}
+	return x*f;
+}
+void write(int x)
+{
+	if(x<0){x=-x;pc('-');}
+	if(x>9)write(x/10);
+	pc(x%10+48);
+}
+int T,n,s,t,x,y;
+signed main()
+{
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	T=read();
+	while(T--)
+	{
+		n=read(),s=read(),t=read(),x=read(),y=read();//n%=(x+y);
+		//double tim=clock();
+		if(s<t&&s+y<t){int add=min((t-s-1)/y,n);n-=add;s+=add*y;}
+		else if(s>=t&&s-x>=t){int add=min((s-t)/x,n);n-=add;s-=add*x;}
+		if(x==y){write(s<t?(n&1?s+x:s):(n&1?s-x:s)),pc('\n');continue;}
+		int cnt=0;
+		n%=(x+y);
+		while(cnt<n)
+		{
+			if(s<t)
+			{
+				if(t-s>y)
+				{
+					int add=min((t-s-1)/y+1,n-cnt);
+					s+=add*y;cnt+=add;
+				}else s+=y,++cnt;
+			}
+			else
+			{
+				if(s-t+1>x)
+				{
+					int add=min((s-t)/x+1,n-cnt);
+					s-=add*x;cnt+=add;
+				}else s-=x,++cnt;
+			}
+		}write(s),pc('\n');
+		//printf("%.2lf ms\n",(double)clock()-tim);
+	}
+	return 0;
+}

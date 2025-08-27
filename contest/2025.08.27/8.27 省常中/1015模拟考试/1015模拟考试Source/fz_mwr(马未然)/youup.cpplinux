@@ -1,0 +1,172 @@
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#define ll long long
+#define mod 998244353
+using namespace std;
+int Qpow(int a,int p){
+	if (p==0)return 1;
+	int t=Qpow(a,p/2);
+	t=1ll*t*t%mod;
+	if (p&1)t=1ll*t*a%mod;
+	return t;
+}
+int type,n,k,totm,u[2400005],v[2400005],first[1200005],nxt[2400005];
+void add_edge(int x,int y){
+	int i=++totm;
+	u[i]=x,v[i]=y;
+	nxt[i]=first[u[i]],first[u[i]]=i;
+	i=++totm;
+	u[i]=y,v[i]=x;
+	nxt[i]=first[u[i]],first[u[i]]=i;
+	return;
+}
+int num[1200005];
+int book[1200005];
+int sum,rt,_rt;
+int sz[1200005];
+void getrt(int now,int fa){
+	sz[now]=1;
+	int mx=0;
+	for (int i=first[now];i;i=nxt[i])
+		if (v[i]!=fa&&book[v[i]]==0){
+			getrt(v[i],now);
+			mx=max(mx,sz[v[i]]);
+			sz[now]+=sz[v[i]];
+		}
+	mx=max(mx,sum-sz[now]);
+	if (2*mx<=sum)rt=now;
+	return;
+}
+int tot,c[1200005],depth[1200005],mxd;
+void dfs2(int now,int fa,int d){
+	c[++tot]=now;
+	depth[now]=d;
+	mxd=max(mxd,d);
+	for (int i=first[now];i;i=nxt[i])
+		if (v[i]!=fa&&book[v[i]]==0)dfs2(v[i],now,d+1);
+	return;
+}
+int val[1200005];
+void dfs1(int now){
+	book[now]=1;
+	tot=0,mxd=0;
+	dfs2(now,0,0);
+	for (int i=1;i<=tot;i++)
+		if (c[i]<=n)val[depth[c[i]]]++;
+	for (int i=1;i<=mxd;i++)val[i]+=val[i-1];
+	for (int i=1;i<=tot;i++){
+		int id=c[i];
+		if (id<=2*n&&depth[id]<=2*k)num[id]+=val[min(mxd,2*k-depth[id])];
+		if (id>2*n&&depth[id]<=2*k-1)num[id]+=val[min(mxd,(2*k-1)-depth[id])];
+	}
+	for (int i=0;i<=mxd;i++)val[i]=0;
+	for (int i=first[now];i;i=nxt[i])
+		if (book[v[i]]==0){
+			tot=0,mxd=0;
+			dfs2(v[i],0,1);
+			for (int j=1;j<=tot;j++)
+				if (c[j]<=n)val[depth[c[j]]]++;
+			for (int j=1;j<=mxd;j++)val[j]+=val[j-1];
+			for (int j=1;j<=tot;j++){
+				int id=c[j];
+				if (id<=2*n&&depth[id]<=2*k)num[id]-=val[min(mxd,2*k-depth[id])];
+				if (id>2*n&&depth[id]<=2*k-1)num[id]-=val[min(mxd,(2*k-1)-depth[id])];
+			}
+			for (int j=0;j<=mxd;j++)val[j]=0;
+		}
+	for (int i=first[now];i;i=nxt[i])
+		if (book[v[i]]==0){
+			sum=sz[v[i]],rt=0;
+			getrt(v[i],0);
+			_rt=rt;
+			getrt(_rt,0);
+			dfs1(_rt);
+		}
+	return;
+}
+int qwq[300005];
+int fac[300005],invfac[300005];
+int ans[300005];
+int C(int n,int m){
+	if (m<0||m>n)return 0;
+	return 1ll*fac[n]*invfac[m]%mod*invfac[n-m]%mod;
+}
+int tr[1200005];
+void upd(int &x,int y){
+	x+=y;
+	if (x>=mod)x-=mod;
+	return;
+}
+void ntt(ll *f,int n,int fg){//fg=0:dft fg=1:idft
+	for (int i=0;i<n;i++){
+		if (i&1)tr[i]=tr[i/2]/2+n/2;
+		else tr[i]=tr[i/2]/2;
+	}
+	for (int i=0;i<n;i++)
+		if (i<tr[i])swap(f[i],f[tr[i]]);
+	for (int len=2;len<=n;len*=2){
+		ll w1;
+		if (fg==0)w1=Qpow(3,(mod-1)/len);
+		if (fg==1)w1=Qpow(3,(mod-1)-(mod-1)/len);
+		for (int i=0;i<n;i+=len){
+			ll w=1;
+			for (int j=i;j<i+len/2;j++){
+				ll qwq=1ll*w*f[j+len/2]%mod;
+				f[j+len/2]=f[j]+mod-qwq;
+				if (f[j+len/2]>=mod)f[j+len/2]-=mod;
+				f[j]=f[j]+qwq;
+				if (f[j]>=mod)f[j]-=mod;
+				w=1ll*w*w1%mod;
+			}
+		}
+	}
+	return;
+}
+void mul(int l1,int l2,ll *f,ll *g,ll *h){
+	int n=1;
+	while(n<=(l1+l2))n*=2;
+	ntt(f,n,0);
+	ntt(g,n,0);
+	for (int i=0;i<n;i++)h[i]=1ll*f[i]*g[i]%mod;
+	ntt(h,n,1);
+	int invn=Qpow(n,mod-2);
+	for (int i=0;i<n;i++)h[i]=1ll*h[i]*invn%mod;
+	for (int i=0;i<n;i++)f[i]=g[i]=0;
+	return;
+}
+ll f[1200005],g[1200005],h[1200005];
+int main(){
+	freopen("youup.in","r",stdin);
+	freopen("youup.out","w",stdout);
+	cin>>type>>n>>k;
+	for (int i=1;i<n;i++){
+		int x,y;
+		scanf("%d%d",&x,&y);
+		add_edge(x,2*n+i);
+		add_edge(2*n+i,n+i);
+		add_edge(n+i,3*n+i);
+		add_edge(3*n+i,y);
+	}
+	sum=4*n-3,rt=0;
+	getrt(1,0);
+	_rt=rt;
+	getrt(_rt,0);
+	dfs1(_rt);
+	fac[0]=1;
+	for (int i=1;i<=n;i++)fac[i]=1ll*fac[i-1]*i%mod;
+	invfac[n]=Qpow(fac[n],mod-2);
+	for (int i=n-1;i>=0;i--)invfac[i]=1ll*invfac[i+1]*(i+1)%mod;
+	for (int i=1;i<=4*n;i++){
+		if (i==2*n||i==3*n||i==4*n)continue;
+		if (i<=2*n)qwq[num[i]]++;
+		if (i>2*n)qwq[num[i]]--;
+	}
+	for (int i=0;i<=n;i++)f[i]=1ll*qwq[i]*fac[i]%mod;
+	for (int i=0;i<=n;i++)g[i]=invfac[n-i];
+	mul(n+1,n+1,f,g,h);
+	for (int i=1;i<=n;i++)ans[i]=1ll*h[n+i]*invfac[i]%mod;
+	for (int i=1;i<=n;i++)printf("%d ",ans[i]);
+	printf("\n");
+	return 0;
+}

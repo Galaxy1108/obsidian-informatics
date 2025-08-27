@@ -1,0 +1,87 @@
+#include<bits/stdc++.h>
+#define N 300009
+#define M 29
+#define int long long
+#define mod 998244353
+using namespace std;
+int read(){
+    char ch=getchar();int x=0;
+    while(ch>'9'||ch<'0')ch=getchar();
+    while(ch<='9'&&ch>='0'){x=x*10+ch-48;ch=getchar();}
+    return x;
+}
+void write(int x){
+	if(x>9)write(x/10);
+	putchar(x%10+'0');
+}
+int qpow(int mt,int p){
+    int ret=1;
+	for(;p;p>>=1,mt=mt*mt%mod)if(p&1)ret=ret*mt%mod;
+	return ret;
+}
+int type;
+int n,k,ans[N];
+namespace sub2{
+	int d[M][M];
+	vector<int>v;
+	void dfs(int x){
+		if(x==n+1){
+			ans[v.size()]++;
+			return;
+		}
+		dfs(x+1);
+		bool flag=1;
+		for(auto y:v)if(d[x][y]>k)flag=0;
+		if(flag){
+			v.push_back(x);
+			dfs(x+1);
+			v.pop_back();
+		}
+	}
+	void main(){
+		n=read();k=read();
+		fill(d[0],d[0]+M*M,1000000000);
+		for(int i=1;i<=n;i++)d[i][i]=0;
+		for(int i=1;i<n;i++){
+			int a=read(),b=read();
+			d[a][b]=d[b][a]=1;
+		}
+		for(int k=1;k<=n;k++){
+			for(int i=1;i<=n;i++){
+				for(int j=1;j<=n;j++){
+					d[i][j]=min(d[i][j],d[i][k]+d[k][j]);
+				}
+			}
+		}
+		dfs(1);
+	}
+}
+namespace sub4{
+	void main(){
+		n=read();k=read();
+		for(int i=1;i<n;i++){
+			int a=read(),b=read();
+		}
+		ans[1]=n;
+		if(k==1)ans[2]=n-1;
+		else if(k>=2){
+			int tmp=1;
+			for(int i=1;i<=n;i++){
+				tmp=tmp*(n+1-i)%mod;
+				tmp=tmp*qpow(i,mod-2)%mod;
+				ans[i]=tmp;
+			}
+		}
+	}
+}
+signed main(){
+	freopen("youup.in","r",stdin);
+	freopen("youup.out","w",stdout);
+	type=read();
+	if(type==2)sub2::main();
+	if(type==4)sub4::main();
+	for(int i=1;i<=n;i++){
+		write(ans[i]);putchar(' ');
+	}
+	return 0;
+}

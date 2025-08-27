@@ -1,0 +1,34 @@
+#include<bits/stdc++.h>
+using namespace std;
+__int128 n,s,t,x,y,a,b,c;
+long long k,i,d;
+int main()
+{
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	scanf("%lld",&k);
+	for(i=1;i<=k;i=i+1)
+	{
+		scanf("%lld",&d);n=d;
+		scanf("%lld",&d);s=d;
+		scanf("%lld",&d);t=d;
+		scanf("%lld",&d);x=d;
+		scanf("%lld",&d);y=d;
+		if(s+n*y<t)
+		{
+			d=s+n*y;
+			printf("%lld\n",d);
+		}
+		else if(s-n*x>=t)
+		{
+			d=s-n*x;
+			printf("%lld\n",d);
+		}
+		else
+		{
+			a=s+n*y;b=t-x;c=(a-b)/(x+y);d=s-c*x+(n-c)*y;
+			printf("%lld\n",d);
+		}
+	}
+	return 0;
+}

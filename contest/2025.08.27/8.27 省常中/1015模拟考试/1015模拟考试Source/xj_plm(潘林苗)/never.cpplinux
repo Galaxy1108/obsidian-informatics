@@ -1,0 +1,47 @@
+#include <bits/stdc++.h>
+using namespace std;
+inline int read(){
+	int x=0,f=1;
+	char g=getchar();
+	while(!isdigit(g)){
+		if(g=='-')f=-f;
+		g=getchar();
+	}
+	while(isdigit(g)){
+		x=(x<<3)+(x<<1)+(g^48);
+		g=getchar();
+	}
+	return x*f;
+}
+inline long long raed(){
+	long long x=0,f=1;
+	char g=getchar();
+	while(!isdigit(g)){
+		if(g=='-')f=-f;
+		g=getchar();
+	}
+	while(isdigit(g)){
+		x=(x<<3)+(x<<1)+(g^48);
+		g=getchar();
+	}
+	return x*f;
+}
+int T;
+int main(){
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	T=read();
+	long long n,s,t,x,y;
+	while(T--){
+		n=raed(),s=raed(),t=raed(),x=raed(),y=raed();
+		for(int i=1;i<=n;++i){
+			if(s>=t)s-=x;
+			else{
+				s+=y;
+			} 
+		
+		}
+		printf("%lld\n",s);
+	}
+	return 0;
+}

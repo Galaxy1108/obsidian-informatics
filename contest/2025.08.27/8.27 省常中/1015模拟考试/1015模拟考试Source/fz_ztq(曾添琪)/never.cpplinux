@@ -1,0 +1,29 @@
+#include <bits/stdc++.h>
+#define FOR(i,j,k) for(int i=j; i<=k; ++i)
+#define ROF(i,j,k) for(int i=j; i>=k; --i)
+using ll = long long;
+int main (void) {
+  freopen("never.in", "r", stdin);
+  freopen("never.out", "w", stdout);
+  int t;
+  scanf("%d", &t);
+  while(t--) {
+    ll n, x, y, s, t;
+    scanf("%lld %lld %lld %lld %lld", &n, &s, &t, &x, &y);
+    s -= t; __int128 now;
+    ll left = 0, right = n, mid, ans;
+    while(left <= right) {
+      mid = (left + right >> 1);
+      now = s + (__int128) mid * y - (__int128) (n - mid) * x;
+      if(now >= y) right = mid - 1;
+      else if(now < -x) left = mid + 1;
+      else { ans = now; break; }
+    }
+    now = s + (__int128) n * y;
+    if(now < y) ans = now;
+    now = s - (__int128) n * x;
+    if(now >= -x) ans = now;
+    printf("%lld\n", ans + t);
+  }
+  return 0;
+}

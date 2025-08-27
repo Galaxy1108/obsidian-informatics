@@ -1,0 +1,57 @@
+#include <bits/stdc++.h>
+#define ll long long
+#define maxn 210
+#define writeln(X) write(X), putchar('\n')
+using namespace std;
+static char buf[1 << 21], *p1 = buf, *p2 = buf, obuf[1 << 21], *O = obuf;
+#define getchar() (p1 == p2 && (p2 = (p1 = buf) + fread(buf, 1, 1 << 21, stdin), p1 == p2) ? EOF : *p1++)
+#define putchar(X) *O++ = (X)
+template < typename T >
+inline void read(T &X)
+{
+    X = 0; bool f = false; char ch = getchar();
+    while (!isdigit(ch)) {f |= ch == '-'; ch = getchar();}
+    while (isdigit(ch)) {X = (X * 10) + (ch ^ 48); ch = getchar();}
+    X = f ? -X : X;
+}
+template < typename T >
+inline void write(T X)
+{
+    if (X == 0) {putchar('0'); return;}
+    if (X < 0) {putchar('-'); X = -X;}
+    static int cnt = 0, num[21];
+    while (X) {num[++cnt] = X % 10; X /= 10;}
+    while (cnt) putchar(num[cnt--] ^ 48);
+}
+int T;
+ll m, s;
+int n, a[maxn];
+int ans, maxdep;
+void dfs(const ll &sum, const ll &ch)
+{
+    if (ch == 0) {if (sum == 0) ans ^= 1; return;}
+    int repr = __builtin_ffsll(ch) - 1, repl = __builtin_ffsll(ch ^ (1 << repr)) - 1;
+    int rsum = sum & ((1 << repl) - 1);
+    for (int i = 1; i <= n; ++i)
+        if ((((*(a + i) << repr) & ((1 << repl) - 1)) ^ rsum) == 0) 
+            dfs(sum - (*(a + i) << repr), ch ^ (1 << repr));
+    return;
+}
+int main()
+{
+    freopen("give.in", "r", stdin);
+    freopen("give.out", "w", stdout);
+    read(T);
+    while (T--)
+    {
+        read(m); read(s); read(n);
+        for (int i = 1; i <= n; ++i) read(*(a + i));
+        ans = 0;
+        dfs(s, m);
+        writeln(ans);
+    }
+    fwrite(obuf,O - obuf, 1, stdout);
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}

@@ -1,0 +1,54 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long
+inline ll read(){
+	ll x=0;char ch=' ';
+	while(!isdigit(ch))ch=getchar();
+	while(isdigit(ch))x=(x<<1)+(x<<3)+(ch^48),ch=getchar();
+	return x;
+}
+inline void writeln(int x){
+	putchar(x|48),putchar('\n');
+}
+bool f[65][200005],g[61][200005];
+int a[205],n,mx,l;
+ll m,s;
+void work(){
+	m=read(),s=read(),n=read();
+	for(int i=1;i<=n;++i){
+		a[i]=read();
+		mx=max(mx,a[i]);
+	}
+	l=log(max(m,s))/log(2)+1;
+	f[0][0]=g[0][0]=1;
+	for(int i=1;i<=l;++i){
+		if((m>>i-1)&1){
+			for(int k=0;k<=mx;++k){
+				if(!g[i-1][k])continue;
+				for(int j=1;j<=n;++j){
+					int tmp=k+a[j];
+					if((tmp&1)==((s>>i-1)&1)){
+						f[i][tmp>>1]^=f[i-1][k];
+						g[i][tmp>>1]=1;
+					}
+				}
+			}
+			continue;
+		}
+		for(int j=0;j<=(mx<<1);++j){
+			if((j&1)==((s>>i-1)&1)&&g[i-1][j]){
+				f[i][j>>1]^=f[i-1][j];
+				g[i][j>>1]=1;
+			}
+		}
+	}
+	writeln(f[l][0]);
+	for(int i=1;i<=l;++i)for(int j=0;j<=(mx<<1);++j)g[i][j]=f[i][j]=0;
+}
+int main(){
+	freopen("give.in","r",stdin);
+	freopen("give.out","w",stdout);
+	int t=read();
+	while(t--)work();
+	return 0;
+} 

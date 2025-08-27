@@ -1,0 +1,118 @@
+#include <bits/stdc++.h>
+#define il inline
+#define re register
+#define ll long long
+#define ull unsigned ll
+#define db double
+#define ldb long db
+#define fi first
+#define se second
+#define pii pair<int, int>
+#define MP(x, y) make_pair(x, y)
+#define eb emplace_back
+using namespace std;
+namespace FastIO {
+  const int iL = 1 << 20;
+  char ibuf[iL], *iS = ibuf + iL, *iT = ibuf + iL;
+  #define GC() (iS == iT) ? \
+  (iT = (iS = ibuf) + fread(ibuf, 1, iL, stdin), (iS == iT) ? EOF : *iS++) : *iS++
+  template <class T>il void read(T &x) {
+    x = 0;
+    char c = GC(); bool flg = false;
+    while(!isdigit(c)) {flg |= c == '-'; c = GC();}
+    while(isdigit(c)) {x = (x << 1) + (x << 3) + (c & 15); c = GC();}
+    if(flg) x = -x;
+  }
+  template <class T>il void gread(T &x) {
+    x = 0;
+    char c = getchar(); bool flg = false;
+    while(!isdigit(c)) {flg |= c == '-'; c = getchar();}
+    while(isdigit(c)) {x = (x << 1) + (x << 3) + (c & 15); c = getchar();}
+    if(flg) x = -x;
+  }
+  il int read() {
+    int x = 0;
+    char c = GC(); bool flg = false;
+    while(!isdigit(c)) {flg |= c == '-'; c = GC();}
+    while(isdigit(c)) {x = (x << 1) + (x << 3) + (c & 15); c = GC();}
+    return flg ? -x : x;
+  }
+  char Out[iL], *iter = Out;
+  #define Flush() fwrite(Out, 1, iter - Out, stdout); iter = Out
+  template <class T>il void write(T x, char LastChar = '\n') {
+    int c[35], len = 0;
+    if(x < 0) {*iter++ = '-'; x = -x;}
+    do {c[++len] = x % 10; x /= 10;} while(x);
+    while(len) *iter++ = c[len--] + '0';
+    *iter++ = LastChar; Flush();
+  }
+}
+using namespace FastIO;
+#define N 300005
+#define MOD 998244353
+int n, m;
+vector<int> G[N];
+namespace sub1 {
+  int u[N], dis[N], ans[N];
+  void DFS(int x, int fa) {
+    if(fa) dis[x] = dis[fa] + 1; else dis[x] = 0;
+    for(auto y : G[x]) if(y != fa) DFS(y, x);
+  }
+  il void MAIN() {
+    for(re int S = 1; S < (1 << n); ++S) {
+      for(re int i = 1; i <= n; ++i) u[i] = S >> i - 1 & 1;
+      int id = 0;
+      for(re int i = 1; i <= n; ++i) if(u[i]) {DFS(id = i, 0); break;}
+      for(re int i = 1; i <= n; ++i) if(u[i]) {if(dis[id] < dis[i]) id = i;}
+      DFS(id, 0);
+      for(re int i = 1; i <= n; ++i) if(u[i]) {if(dis[id] < dis[i]) id = i;}
+      if(dis[id] <= m) ++ans[__builtin_popcount(S)];
+    }
+    for(re int i = 1; i <= n; ++i) write(ans[i], " \n"[i == n]);
+  }
+}
+il int QP(int p, int n) {
+  int ans = 1;
+  while(n) {
+    if(n & 1) ans = 1ll * ans * p % MOD;
+    n >>= 1; p = 1ll * p * p % MOD;
+  }
+  return ans;
+}
+int fac[N], ifac[N];
+il int C(int n, int m) {
+  return 1ll * fac[n] * ifac[m] % MOD * ifac[n - m] % MOD;
+}
+namespace sub2 {
+  il void MAIN() {
+    if(n == 1) {write(1); return ;}
+    if(m == 0) {
+      write(n, ' ');
+      for(re int i = 2; i <= n; ++i) write(0, " \n"[i == n]);
+      return ;
+    }
+    if(m == 1) {
+      write(n, ' '); write(n - 1, " \n"[2 == n]);
+      for(re int i = 3; i <= n; ++i) write(0, " \n"[i == n]);
+      return ;
+    }
+    for(re int i = 1; i <= n; ++i) write(C(n, i), " \n"[i == n]);
+  }
+}
+int main() {
+  freopen("youup.in", "r", stdin);
+  freopen("youup.out", "w", stdout);
+  int TNUM; read(TNUM);
+  read(n); read(m);
+  for(re int i = 1; i < n; ++i) {
+    int x, y; read(x); read(y);
+    G[x].eb(y); G[y].eb(x);
+  }
+  if(TNUM <= 24) {sub1::MAIN(); return 0;}
+  fac[0] = 1;
+  for(re int i = 1; i <= n; ++i) fac[i] = 1ll * fac[i - 1] * i % MOD;
+  ifac[n] = QP(fac[n], MOD - 2);
+  for(re int i = n - 1; ~i; --i) ifac[i] = 1ll * ifac[i + 1] * (i + 1) % MOD;
+  if(TNUM >= 46 && TNUM <= 49) {sub2::MAIN(); return 0;}
+  return 0;
+}

@@ -1,0 +1,58 @@
+#include<bits/stdc++.h>
+using namespace std;
+inline long long qread()
+{
+	long long a=0,f=1;char ch=getchar();
+	while(ch>'9'||ch<'0'){if(ch=='-')f=-1;ch=getchar();}
+	while(ch>='0'&&ch<='9'){(a*=10)+=(ch^48);ch=getchar();}
+	return a*f;
+}
+long long T,n,s,t,x,y,tt,vis[500];
+int main()
+{
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	T=qread();
+	while(T--)
+	{
+		n=qread();
+		s=qread();
+		t=qread();
+		x=qread();
+		y=qread();
+		if(n>1e6&&x==y)
+		{
+			s-=t;
+			tt=t;
+			t=0;
+			if(s<0&&s/y*-1>n)s+=n*y;
+			else if(s>=0&&s/x>n)s-=n*x;
+			else
+			{
+				s<t?(n-=s*-1/y,s%=y):(n-=s/x,s%=x);
+				n&=1;
+				if(n)s<t?s+=y:s-=x;
+			}
+			printf("%lld\n",s+tt);
+		}
+		else if(n>1e6&&abs(s)<=100&&abs(t)<=100&&x<=100&&y<=100)
+		{
+			memset(vis,0,sizeof(vis));
+			s+=200;
+			t+=200;
+			while(n--)
+			{
+				s<t?s+=y:s-=x;
+				if(vis[s])n%=vis[s]-n;
+				vis[s]=n;
+			}
+			printf("%lld\n",s-200);
+		}
+		else
+		{
+			for(int i=1;i<=n;++i)s<t?s+=y:s-=x;
+			printf("%lld\n",s);
+		}
+	}
+	return 0;
+}

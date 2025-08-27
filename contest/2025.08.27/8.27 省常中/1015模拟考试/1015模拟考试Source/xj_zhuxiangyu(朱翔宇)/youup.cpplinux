@@ -1,0 +1,73 @@
+// #pragma GCC optimize("O3")
+// // #pragma GCC optimize("Ofast")
+// #pragma GCC optimize("unroll-loops")
+// #pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,tune=native")
+#include <bits/stdc++.h>
+using namespace std;
+
+#define PB emplace_back
+#define int long long
+#define ll long long
+#define vi vector<int>
+#define siz(a) ((int)((a).size()))
+#define rep(i, a, b) for (int i = (a); i <= (b); ++i)
+#define per(i, a, b) for (int i = (a); i >= (b); --i)
+
+const int N = 3e5, mod = 998244353;
+int a, T, b, vis[N + 5], mx[N + 5], dep[N + 5], res, ans[N + 5], fac[N + 5], inv[N + 5];
+vi st[N + 5];
+
+void dfs(int n, int fa) {
+	dep[n] = dep[fa] + 1;
+	mx[n] = vis[n] ? dep[n] : 0;
+	for(int v : st[n]) {
+		if(v == fa) continue;
+		dfs(v, n);
+		if(mx[n]) res = max(res, mx[n] + mx[v] - dep[n] * 2);
+		mx[n] = max(mx[n], mx[v]);
+	}
+}
+void init() {
+	fac[0] = fac[1] = inv[0] = inv[1] = 1;
+	rep(i, 2, N) fac[i] = fac[i - 1] * i % mod, inv[i] = (mod - mod / i) * inv[mod % i] % mod;
+	rep(i, 2, N) (inv[i] *= inv[i - 1]) %= mod;
+}
+int C(int n, int m) {return fac[n] * inv[m] % mod * inv[n - m] % mod;}
+
+signed main() {
+	freopen("youup.in", "r", stdin);
+	freopen("youup.out", "w", stdout);
+	ios::sync_with_stdio(0);
+	cin.tie(0), cout.tie(0);
+	init();
+	cin >> T;
+	cin >> a >> b;
+	if(T == 4) {
+		if(b == 0) {
+			cout << a << ' ';
+			rep(i, 2, a) cout << 0 << ' ';
+		}
+		else if(b == 1) {
+			cout << a << ' ' << a - 1 << ' ';
+			rep(i, 3, a) cout << 0 << ' ';
+		}
+		else {
+			rep(i, 1, a) cout << C(a, i) << ' ';
+		}
+		return 0;
+	}
+	int x, y;
+	rep(i, 1, a - 1) {
+		cin >> x >> y;
+		st[x].PB(y);
+		st[y].PB(x);
+	}
+	rep(i, 1, (1 << a) - 1) {
+		rep(j, 1, a) vis[j] = ((i >> (j - 1)) & 1);
+		res = 0;
+		dfs(1, 0);
+		ans[__builtin_popcount(i)] += res <= b;
+	}
+	rep(i, 1, a) cout << ans[i] << " \n"[i == a];
+	return 0;
+}

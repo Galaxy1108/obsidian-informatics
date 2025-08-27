@@ -1,0 +1,110 @@
+/*
+subtask 1,4,5
+19pts
+subtask 2,3
+O(n^3)说不定能草过去
+ 
+subtask 6,7应该分别是O(n^2),O(nlogn)
+但我没想到怎么做 
+
+考虑从每个节点向外拓展链 
+*/
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define ull unsigned long long
+const double eps = 0.000001;
+inline int read()
+{
+	int x=0,f=1;
+	char ch = getchar();
+	while (ch > '9' || ch < '0')
+		{
+			if (ch == '-')
+				f = -1;
+			ch = getchar();
+		}
+	while (ch <= '9' && ch >= '0')
+		{
+			x = x * 10 + ch - 48;
+			ch = getchar();
+		}
+	return x*f;
+}
+inline void write(int x)
+{
+	if (x < 0)
+		{
+			putchar('-');
+			x = -x;
+		}
+	if (x > 9)
+		write(x/10);
+	putchar(x%10+'0');
+}
+int subtask,n,k;
+int head[2001000],nnext[2000100],to[2001000],cnt;
+void add(int u,int v)
+{
+	++cnt;
+	nnext[cnt] = head[u];
+	head[u] = cnt;
+	to[cnt] = v;
+}
+int main()
+{
+	//freopen("testdata.txt","r",stdin);
+	freopen("youup.in","r",stdin);
+	freopen("youup.out","w",stdout);
+	subtask = read();
+	n = read();
+	k = read();
+	for (int i=1;i<n;++i)
+		{
+			int a,b;
+			a = read();
+			b = read();
+			add(a,b);
+			add(b,a);
+		}
+	if (subtask == 1)
+		{
+			printf("%d ",n);
+			for (int i=2;i<=n;++i)
+				printf("0 ");
+		}
+	else if (subtask == 2 || subtask == 3)
+		{
+			if (k == 0)
+				{
+					printf("%d ",n);
+					for (int i=2;i<=n;++i)
+						printf("0 ");
+				}
+				
+		}
+	else if (subtask == 4)
+		{
+			if (k == 0)
+				{
+					printf("%d ",n);
+					for (int i=2;i<=n;++i)
+						printf("0 ");
+				}
+			else if (k == 1)
+				{
+					
+				}
+		}
+	else if (subtask == 5)
+		{
+			if (k == 0)
+				{
+					printf("%d ",n);
+					for (int i=2;i<=n;++i)
+						printf("0 ");
+				}
+				
+		}
+	return 0;
+}

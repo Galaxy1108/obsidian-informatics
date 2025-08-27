@@ -1,0 +1,30 @@
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+const int N = 210, M = 2010;
+int T;
+int a[N];
+ll m, s, n;
+bitset <M> f[M];
+int main() {
+    freopen("give.in", "r", stdin);
+    freopen("give.out", "w", stdout);
+    scanf("%d", &T);
+    while (T--) {
+        scanf("%lld%lld%lld", &m, &s, &n);
+        for (int i = 1; i <= n; ++i)
+            scanf("%d", &a[i]);
+        m %= M - 1;
+        s %= M - 1;
+        f[0] = 0;
+        f[0][0] = 1;
+        for (int i = 1; i <= m; ++i) {
+            f[i] = 0;
+            for (int j = 1; j <= n; ++j)
+                f[i] ^= f[i - 1] << a[j];
+        }
+        int ans = f[m][s];
+        printf("%d\n", ans);
+    }
+    return 0;
+}

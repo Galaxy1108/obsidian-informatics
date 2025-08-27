@@ -1,0 +1,28 @@
+#include<bits/stdc++.h>
+#define ll long long
+#define F(i,a,b) for(int i(a),i##i(b);i<=i##i;++i)
+#define R(i,a,b) for(int i(a),i##i(b);i>=i##i;--i)
+#define _ 0
+using namespace std;
+ll n,s,t,x,y;
+inline ll input(){
+	ll x;char ch;
+	for(ch=getchar();!isdigit(ch);ch=getchar());
+	for(x=0;isdigit(ch);ch=getchar()) x=x*10+(ch^48);
+	return x;
+}
+int main(){
+	freopen("never.in","r",stdin);
+	freopen("never.out","w",stdout);
+	R(T,input(),1){
+		n=input(),s=input(),t=input(),x=input(),y=input();
+		ll fn(s),now(0);
+		for(ll jump=(fn>=t?(fn-t)/x+1:(t-fn-1)/y+1);now+jump<=n;jump=(fn>=t?(fn-t)/x+1:(t-fn-1)/y+1)){
+			fn=fn+(fn>=t?-((fn-t)/x+1)*x:((t-fn-1)/y+1)*y);
+			now+=jump;
+		}
+		for(++now;now<=n;++now) fn=(fn>=t?fn-x:fn+y);
+		printf("%lld\n",fn);
+	}
+	return ~~(0^_^0);
+}

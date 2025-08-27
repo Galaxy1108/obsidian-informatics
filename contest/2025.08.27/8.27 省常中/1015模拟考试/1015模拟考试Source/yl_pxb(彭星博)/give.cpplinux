@@ -1,0 +1,27 @@
+#include<bits/stdc++.h>
+using namespace std;
+int T,m,s,n,a[1000010];
+bitset<5010> pf[5010];
+int main()
+{
+	freopen("give.in","r",stdin);
+	freopen("give.out","w",stdout);
+	scanf("%d",&T);
+	while(T--)
+	{
+		scanf("%d%d%d",&m,&s,&n);
+		int i,j,k;
+		for(i=1;i<=n;i++) scanf("%d",&a[i]);
+		if(s<=5000)
+		{
+			pf[0][0]=1;
+			for(i=1;i<=m;i++)
+			{
+				pf[i]=0;
+				for(j=1;j<=n;j++) pf[i]=pf[i]^(pf[i-1]<<a[j]); 
+			}
+			printf("%d\n",(int)pf[m][s]);
+		}
+	}
+	return 0;
+}

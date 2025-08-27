@@ -1,0 +1,63 @@
+#include<iostream>
+#include<vector>
+using namespace std;
+int n,mod,d[20010],num=0,prime[2300],s[20010],f[20010];
+vector<int> p[2300];
+inline void Add(int &x,int y)
+{
+	x+=y;
+	x=x<mod?x:x-mod;
+}
+inline void init()
+{
+	static bool mark[20010];
+	for(int i=2;i<=n;i++)
+	{
+		if(!mark[i])
+		{
+			prime[++num]=i;
+			d[i]=i,p[num].resize(2);
+			p[num][0]=1,p[num][1]=i+1;
+		}
+		for(int j=1,t=2;j<=num&&i*t<=n;t=prime[++j])
+		{
+			mark[i*t]=1,d[i*t]=t;
+			if(i%t==0)
+			{
+				break;
+			}
+		}
+	}
+}
+int main()
+{
+	freopen("gonna.in","r",stdin);
+	freopen("gonna.out","w",stdout);
+	cin>>n>>mod;
+	init();
+	long long ans=0;
+	for(int i=1;i<=n;i++)
+	{
+		int x=i;
+		while(x>1)
+		{
+			s[d[x]]++;
+			x/=d[x];
+		}
+		int S=1;
+		for(int j=1,t=2;t<=i&&j<=num;t=prime[++j])
+		{
+			f[t]+=s[t]<<1;
+			int v=s[t]*(i+1)-f[t];
+			for(int k=p[j].size();k<=v;k++)
+			{
+				p[j].push_back(((long long)p[j].back()*(t+1)
+				+(long long)(mod-p[j][k-2])*t)%mod);
+			}
+			S=(long long)S*p[j][v]%mod;
+		}
+		ans+=S;
+	}
+	cout<<ans%mod<<endl;
+	return 0;
+}
