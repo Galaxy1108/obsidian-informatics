@@ -165,7 +165,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 200
+    "width": 545.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -180,7 +180,7 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "2287d6a1b3dc2bb9",
+  "active": "30b0cdcb450af4d2",
   "lastOpenFiles": [
     "contest/2025.08.27/down/problem.pdf",
     "contest/2025.08.27/8.27 省常中/source/王子诚/youup/youup.cpp",
