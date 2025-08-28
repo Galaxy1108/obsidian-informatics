@@ -8,20 +8,51 @@
         "type": "tabs",
         "children": [
           {
-            "id": "2287d6a1b3dc2bb9",
+            "id": "e72b47fc334f4586",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "solution/2025.08.27.md",
+                "file": "solution/2025.08.28.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2025.08.27"
+              "title": "2025.08.28"
             }
           }
         ]
+      },
+      {
+        "id": "1805502f8fdc5b13",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "36dea31c72f9b7b1",
+            "type": "leaf",
+            "state": {
+              "type": "pdf",
+              "state": {
+                "file": "contest/2025.08.28/statement.pdf"
+              },
+              "icon": "lucide-file-text",
+              "title": "statement"
+            }
+          },
+          {
+            "id": "0765fa36f2c4ce77",
+            "type": "leaf",
+            "state": {
+              "type": "pdf",
+              "state": {
+                "file": "contest/2025.08.28/solution.pdf"
+              },
+              "icon": "lucide-file-text",
+              "title": "solution"
+            }
+          }
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -165,11 +196,10 @@
       }
     ],
     "direction": "horizontal",
-    "width": 545.5
+    "width": 200
   },
   "left-ribbon": {
     "hiddenItems": {
-      "bases:创建新数据库": false,
       "switcher:打开快速切换": false,
       "graph:查看关系图谱": false,
       "canvas:新建白板": false,
@@ -180,19 +210,24 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "30b0cdcb450af4d2",
+  "active": "e72b47fc334f4586",
   "lastOpenFiles": [
-    "contest/2025.08.27/down/problem.pdf",
-    "contest/2025.08.27/8.27 省常中/source/王子诚/youup/youup.cpp",
+    "contest/2025.08.28/solution.pdf",
+    "solution/2025.08.28.md",
+    "contest/2025.08.28/statement.pdf",
     "solution/2025.08.27.md",
-    "contest/2025.08.27/8.27 省常中/1015Solution.pdf",
-    "contest/2025.08.27/8.27 省常中/1015std/1015std/gonna.cpp",
-    "contest/2025.08.27/8.27 省常中/1015std/1015std/never.cpp",
-    "contest/2025.08.27/8.27 省常中/1015std/1015std/give.cpp",
-    "contest/2025.08.27/8.27 省常中/~$roblem.docx",
-    "contest/2025.08.27/down/never/never/never/ex_never2.out",
-    "contest/2025.08.27/down/never/never/never/ex_never2.in",
-    "contest/2025.08.27/down/never/never/never/ex_never1.out",
+    "contest/2025.08.28/source/马姚源/easy/easy3.in",
+    "contest/2025.08.28/source/马姚源/easy/easy4.in",
+    "contest/2025.08.28/source/马姚源/easy/easy4.ans",
+    "contest/2025.08.28/source/马姚源/easy/easy3.ans",
+    "contest/2025.08.28/source/马姚源/easy/easy2.in",
+    "contest/2025.08.28/source/马姚源/easy/easy2.ans",
+    "contest/2025.08.28/source/马姚源/easy/easy1.in",
+    "contest/2025.08.28/source/马姚源/easy/easy1.ans",
+    "contest/2025.08.28/statement.md",
+    "contest/2025.08.28/solution.md",
+    "contest/8.15数据结构/statement.md",
+    "contest/8.15数据结构/solution.md",
     "contest/2025.08.27/8.27 省常中/source/孙祥哲/give/无题.png",
     "doc/2025.08.22.md",
     "contest/2025.08.22/sol.md",
@@ -215,13 +250,8 @@
     "contest/2025.08.12/p3.png",
     "contest/2025.08.12/p4.png",
     "contest/8.12/statement.md",
-    "contest/8.12/solution.md",
     "contest/8.12/p4.png",
     "contest/8.12/p3.png",
-    "contest/2025.08.11/solution.md",
-    "solution/2025.08.1.md",
-    "solution/2025.07.22.md",
-    "solution/2025.07.21.md",
     "未命名.canvas",
     "contest/2024.09.16/p1.png",
     "contest/2024.09.16/p3.png",
