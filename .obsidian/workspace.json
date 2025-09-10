@@ -22,37 +22,6 @@
             }
           }
         ]
-      },
-      {
-        "id": "1805502f8fdc5b13",
-        "type": "tabs",
-        "children": [
-          {
-            "id": "36dea31c72f9b7b1",
-            "type": "leaf",
-            "state": {
-              "type": "pdf",
-              "state": {
-                "file": "contest/2025.08.28/statement.pdf"
-              },
-              "icon": "lucide-file-text",
-              "title": "statement"
-            }
-          },
-          {
-            "id": "0765fa36f2c4ce77",
-            "type": "leaf",
-            "state": {
-              "type": "pdf",
-              "state": {
-                "file": "contest/2025.08.28/solution.pdf"
-              },
-              "icon": "lucide-file-text",
-              "title": "solution"
-            }
-          }
-        ],
-        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -200,6 +169,7 @@
   },
   "left-ribbon": {
     "hiddenItems": {
+      "bases:创建新数据库": false,
       "switcher:打开快速切换": false,
       "graph:查看关系图谱": false,
       "canvas:新建白板": false,
@@ -210,7 +180,7 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "e72b47fc334f4586",
+  "active": "30b0cdcb450af4d2",
   "lastOpenFiles": [
     "contest/2025.08.28/solution.pdf",
     "solution/2025.08.28.md",
