@@ -1,0 +1,13 @@
+views:
+  - type: cards
+    name: 表格
+    filters:
+      and:
+        - file.ext == "md"
+        - file.path.containsAny("sol")
+    order:
+      - file.name
+      - file.backlinks
+      - file.basename
+    imageFit: ""
+    image: note.熟练度
