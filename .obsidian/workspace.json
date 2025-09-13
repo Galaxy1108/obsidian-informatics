@@ -4,39 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "2829e39c3ae6df54",
+        "id": "ff3194419074eb41",
         "type": "tabs",
         "children": [
           {
-            "id": "2b9b40853e4677b4",
+            "id": "9472f4e56c0ca6e6",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "solution/2025.09.12.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "2025.09.12"
-            }
-          }
-        ]
-      },
-      {
-        "id": "abc1055113ae110c",
-        "type": "tabs",
-        "children": [
-          {
-            "id": "adbc5d0e08f4e3d1",
-            "type": "leaf",
-            "state": {
-              "type": "pdf",
-              "state": {
-                "file": "contest/2025.09.12/down/problem.pdf"
-              },
-              "icon": "lucide-file-text",
-              "title": "problem"
+              "title": "新标签页"
             }
           }
         ]
@@ -198,10 +176,10 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "2b9b40853e4677b4",
+  "active": "30b0cdcb450af4d2",
   "lastOpenFiles": [
-    "contest/2025.09.12/down/problem.pdf",
     "solution/2025.09.12.md",
+    "contest/2025.09.12/down/problem.pdf",
     "solution/2025.08.11.md",
     "contest/2025.09.12/down/sample/shattersong/testlib.h",
     "contest/2025.09.12/down/sample/shattersong/ex_shattersong6.in",
@@ -212,7 +190,6 @@
     "contest/2025.09.12/down/sample/shattersong/ex_shattersong2.in",
     "contest/2025.09.12/down/sample/shattersong/ex_shattersong1.in",
     "contest/2025.09.12/down/sample/labyrinth/ex_labyrinth4.out",
-    "contest/2025.09.12/down/sample/labyrinth/ex_labyrinth4.in",
     "contest/2025.09.12/8.29 题解.md",
     "contest/2025.09.12/９.12贪心/8.29 题解.md",
     "contest/９.12贪心/９.12贪心/8.29 题解.md",
