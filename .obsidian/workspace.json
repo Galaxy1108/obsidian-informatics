@@ -161,7 +161,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 200
+    "width": 428.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -178,6 +178,11 @@
   },
   "active": "30b0cdcb450af4d2",
   "lastOpenFiles": [
+    "contest/2025.09.13/1111sol/1111std/matrixcascade.cpp",
+    "contest/2025.09.13/1111sol/1111std/jyrg.cpp",
+    "contest/2025.09.13/1111sol/1111std/virtual.cpp",
+    "contest/2025.09.13/1111sol/1111std/game.cpp",
+    "contest/2025.09.13/1111sol/1111std",
     "solution/2025.09.12.md",
     "contest/2025.09.12/down/problem.pdf",
     "solution/2025.08.11.md",
@@ -186,10 +191,6 @@
     "contest/2025.09.12/down/sample/shattersong/ex_shattersong5.in",
     "contest/2025.09.12/down/sample/shattersong/ex_shattersong4.in",
     "contest/2025.09.12/down/sample/shattersong/ex_shattersong3.in",
-    "contest/2025.09.12/down/sample/shattersong/checker.cpp",
-    "contest/2025.09.12/down/sample/shattersong/ex_shattersong2.in",
-    "contest/2025.09.12/down/sample/shattersong/ex_shattersong1.in",
-    "contest/2025.09.12/down/sample/labyrinth/ex_labyrinth4.out",
     "contest/2025.09.12/8.29 题解.md",
     "contest/2025.09.12/９.12贪心/8.29 题解.md",
     "contest/９.12贪心/９.12贪心/8.29 题解.md",
